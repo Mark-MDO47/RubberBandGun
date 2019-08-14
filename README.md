@@ -16,9 +16,10 @@ At the same time as the sound, the LED rings will be doing trippy patterns to ma
 # Parts List
 We are still in the design stages but expect to use these parts or similar:
 - 1 @ clothespin in homage to rubber band guns everywhere
-- 2 @ V3.0 ATmega328P 5V 16M CH340 Compatible to Arduino Nano V3 with 32Kbyte Flash (program storage), 2Kbyte SRAM, 1Kbyte EEPROM: ***source TBS***
-- 1 @ UBEC 3Amp: ***source TBS***
 - 2 @ sets of LED rings: https://smile.amazon.com/gp/product/B07437X7SL/ref=ppx_yo_dt_b_asin_title_o03_s00?ie=UTF8&psc=1
+- 2 @ V3.0 ATmega328P 5V 16M CH340 Compatible to Arduino Nano V3 with 32Kbyte Flash (program storage), 2Kbyte SRAM, 1Kbyte EEPROM: ***source TBS***
+- 1 @ small selenoid for rubber-band release coordinated with sound/light effects: ***source TBS***
+- 1 @ UBEC 3Amp: ***source TBS***
 - 2 @ Button top 18650 Rechargeable Batteries: https://smile.amazon.com/gp/product/B07VGC84Q6/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1
 - 1 @ WT588D 8mByte sound player: https://smile.amazon.com/gp/product/B07VHFCYTY/ref=ppx_yo_dt_b_asin_title_o02_s00?ie=UTF8&psc=1
 - 1 @ Piezo speaker, perhaps one of the following:
