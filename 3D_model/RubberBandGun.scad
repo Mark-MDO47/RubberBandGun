@@ -6,9 +6,12 @@
 
 // all measurements in millimeters (mm)
 
-Bat18650Btn_Len   = 70; // slightly more than 650
-Bat18650Btn_Rad   = 18;
-Barrel_Rad        = 30;
+Bat18650Btn_Len   = 70; // slightly more than 650 with the button
+Bat18650Btn_Rad   = 9;  // diameter is 18
+Bat18650Btn_Num   = 2;  // how many batteries in gun; min is 2 to get > 6 Volts
+
+Barrel_Rad_extra  = 8;
+Barrel_Rad        = Bat18650Btn_Rad+Barrel_Rad_extra;
 
 LED_Small_Dim     = 2;  // thickness of ring
 LED_Large_Dim     = 15; // width of ring
@@ -23,7 +26,7 @@ LED_Handle_offset = 15;
 Handle_Len        = 55;
 Handle_Height     = 120;
 Handle_Width      = 2*Barrel_Rad/3;
-Barrel_Len        = 2*Bat18650Btn_Len + Handle_Len + 50;
+Barrel_Len        = Bat18650Btn_Num*Bat18650Btn_Len + Handle_Len + 50;
 
 
 COLOR_Barrel = "aqua";
