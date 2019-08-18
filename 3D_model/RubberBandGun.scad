@@ -41,10 +41,12 @@ COLOR_Handle = "brown";
 // COLOR_ = "blue";
 // COLOR_ = "purple";
 
+// draw one member of wooden clothespin
 module clothespin_mmbr() {
     linear_extrude(height = ClothesPin_Mmbr_Height, center = true, convexity = 10, scale=1) square([ClothesPin_Mmbr_Thick,ClothesPin_Mmbr_Width]);
 }
 
+// draw clothespin
 module clothespin() {
     clothespin_mmbr();
     rotate([0,-5,180]) translate([ClothesPin_Mmbr_Thick/2,-ClothesPin_Mmbr_Width,0]) clothespin_mmbr();
