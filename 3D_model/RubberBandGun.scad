@@ -16,7 +16,7 @@ Barrel_Rad_extra  = 8;  // wood for barrel around batteries
 Barrel_Rad        = Bat18650Btn_Rad+Barrel_Rad_extra;
 
 LED_Small_Dim     = 2;  // thickness of ring
-LED_Large_Dim     = 15; // width of ring
+LED_Large_Dim     = 8;  // width of ring
 
 LED_Num           = 4;
 LED_ORadius_Delta = 20/2;
