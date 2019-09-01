@@ -13,5 +13,5 @@ https://www.gw-openscience.org/audiogwtc1/
 
 I particularly like GW170817-template.wav; it has the ramp-up and then the kick at the end. Of course, I would make it just like itself but even more so!!!
 
-Another one I like:
+Another one I like: Gravitational Waves from a Neutron Star Merger Produced a Signal Detected by LIGO
 https://www.youtube.com/watch?v=CH9JSqUfnSw
