@@ -1,4 +1,4 @@
-update=9/13/2019 11:55:21 AM
+update=9/14/2019 9:51:12 AM
 version=1
 last_client=kicad
 [pcbnew]
@@ -25,16 +25,6 @@ version=1
 NetIExt=net
 [general]
 version=1
-[schematic_editor]
-version=1
-PageLayoutDescrFile=
-PlotDirectoryName=
-SubpartIdSeparator=0
-SubpartFirstId=65
-NetFmtName=
-SpiceForceRefPrefix=0
-SpiceUseNetNumbers=0
-LabSize=118
 [eeschema]
 version=1
 LibDir=
@@ -75,3 +65,13 @@ LibName33=valves
 LibName34=mdoLibrary
 LibName35=C:/Program Files/KiCad/share/kicad/library/atmel
 LibName36=Arduino_Nano/Arduino_Nano-cache
+[schematic_editor]
+version=1
+PageLayoutDescrFile=
+PlotDirectoryName=
+SubpartIdSeparator=0
+SubpartFirstId=65
+NetFmtName=
+SpiceForceRefPrefix=0
+SpiceUseNetNumbers=0
+LabSize=118
