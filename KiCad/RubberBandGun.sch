@@ -34,6 +34,7 @@ LIBS:contrib
 LIBS:valves
 LIBS:mdoLibrary
 LIBS:Arduino_Nano-cache
+LIBS:RubberBandGun-cache
 EELAYER 25 0
 EELAYER END
 $Descr A 11000 8500
@@ -218,23 +219,12 @@ Arduino 1 of 2
 $Comp
 L R R?
 U 1 1 5A767559
-P 7100 1250
-F 0 "R?" V 7180 1250 50  0000 C CNN
-F 1 "10K" V 7100 1250 50  0000 C CNN
-F 2 "" V 7030 1250 30  0000 C CNN
-F 3 "" H 7100 1250 30  0000 C CNN
-	1    7100 1250
-	1    0    0    -1  
-$EndComp
-$Comp
-L ARD_of_4 A?
-U 1 1 5A7681AD
-P 7800 3850
-F 0 "A?" H 7800 3850 60  0000 C CNN
-F 1 "ARD_of_2" H 7800 3950 60  0000 C CNN
-F 2 "" H 7800 3850 60  0001 C CNN
-F 3 "" H 7800 3850 60  0001 C CNN
-	1    7800 3850
+P 4200 1250
+F 0 "R?" V 4280 1250 50  0000 C CNN
+F 1 "10K" V 4200 1250 50  0000 C CNN
+F 2 "" V 4130 1250 30  0000 C CNN
+F 3 "" H 4200 1250 30  0000 C CNN
+	1    4200 1250
 	1    0    0    -1  
 $EndComp
 Connection ~ 3050 6400
@@ -277,12 +267,6 @@ Wire Wire Line
 	4900 2200 4900 700 
 Wire Wire Line
 	4900 700  9300 700 
-Wire Wire Line
-	3200 950  7100 950 
-Wire Wire Line
-	6800 950  6800 4350
-Wire Wire Line
-	6800 2000 6550 2000
 Wire Wire Line
 	5350 2300 3600 2300
 Wire Wire Line
@@ -331,33 +315,6 @@ Wire Wire Line
 Wire Wire Line
 	9750 1850 9850 1850
 Connection ~ 9850 1850
-Wire Wire Line
-	7100 950  7100 1100
-Connection ~ 6800 950 
-Wire Wire Line
-	3600 3650 7350 3650
-Connection ~ 4000 3650
-Connection ~ 3800 3650
-Connection ~ 3600 3650
-Wire Wire Line
-	7100 1400 7100 3650
-Connection ~ 7100 3650
-Wire Wire Line
-	5350 3100 5250 3100
-Wire Wire Line
-	5250 3100 5250 3300
-Wire Wire Line
-	5250 3300 8250 3300
-Connection ~ 7100 3300
-Wire Wire Line
-	7350 4050 7250 4050
-Wire Wire Line
-	5350 3000 5150 3000
-Wire Wire Line
-	5150 3000 5150 3450
-Wire Wire Line
-	5150 3450 7100 3450
-Connection ~ 7100 3450
 $Sheet
 S 2150 7250 500  150 
 U 5B063CC5
@@ -394,12 +351,6 @@ Wire Wire Line
 	5600 5050 5600 6400
 Connection ~ 5600 6400
 Wire Wire Line
-	6550 3000 6950 3000
-Wire Wire Line
-	6950 3000 6950 4550
-Wire Wire Line
-	6950 4550 6800 4550
-Wire Wire Line
 	5350 2700 4450 2700
 Wire Wire Line
 	4450 2700 4450 5700
@@ -429,13 +380,6 @@ Wire Wire Line
 	7100 5400 7100 4950
 Wire Wire Line
 	7100 4950 6800 4950
-Connection ~ 6800 2000
-Wire Wire Line
-	7250 4050 7250 4300
-Wire Wire Line
-	7250 4300 8250 4300
-Wire Wire Line
-	8250 4300 8250 3300
 Wire Wire Line
 	6800 4450 7700 4450
 Wire Wire Line
@@ -446,4 +390,33 @@ Wire Wire Line
 	4300 5850 4300 2600
 Wire Wire Line
 	4300 2600 5350 2600
+$Comp
+L ARD_of_4 A?
+U 1 1 5A7681AD
+P 7850 3600
+F 0 "A?" H 7850 3600 60  0000 C CNN
+F 1 "ARD_of_2" H 7850 3700 60  0000 C CNN
+F 2 "" H 7850 3600 60  0001 C CNN
+F 3 "" H 7850 3600 60  0001 C CNN
+	1    7850 3600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6550 3000 7000 3000
+Wire Wire Line
+	7000 3000 7000 4550
+Wire Wire Line
+	7000 4550 6800 4550
+Wire Wire Line
+	7400 3800 3600 3800
+Connection ~ 3600 3800
+Wire Wire Line
+	6550 2000 7400 2000
+Wire Wire Line
+	7400 950  7400 3400
+Wire Wire Line
+	3200 950  7400 950 
+Connection ~ 7400 2000
+Connection ~ 3800 3800
+Connection ~ 4000 3800
 $EndSCHEMATC
