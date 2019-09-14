@@ -517,4 +517,9 @@ Wire Wire Line
 Connection ~ 8900 6400
 Text Notes 900  3500 0    118  ~ 0
 7.4 Volts
+Wire Wire Line
+	7400 3400 6800 3400
+Wire Wire Line
+	6800 3400 6800 4350
+Connection ~ 7400 3400
 $EndSCHEMATC
