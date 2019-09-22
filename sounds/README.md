@@ -15,3 +15,15 @@ I particularly like GW170817-template.wav; it has the ramp-up and then the kick 
 
 Another one I like: Gravitational Waves from a Neutron Star Merger Produced a Signal Detected by LIGO
 https://www.youtube.com/watch?v=CH9JSqUfnSw
+
+Here are the Creative Commons licenses in the files I used:
+zero/1.0/	  Creative Commons 0 License	          https://creativecommons.org/publicdomain/zero/1.0/
+by/3.0/	    Creative Commons Attribution License 	https://creativecommons.org/licenses/by/3.0/
+by-nc/3.0/	Creative Commons Attribution Noncommercial License	https://creativecommons.org/licenses/by-nc/3.0/
+
+Here are the files I used, modified, and combined for the prototype sound (other than GW170817-template.wav)
+zero/1.0/	  407052__sojan__power-charge.flac	https://freesound.org/people/crashoverride61088/sounds/193610/
+by/3.0/	    216096__richerlandtv__u-f-o.mp3 	https://freesound.org/people/RICHERlandTV/sounds/216096/
+by/3.0/	    88635__uair01__bicycle-picture-in-spectrum.wav	https://freesound.org/people/uair01/sounds/88635/
+by/3.0/	    7967__cfork__boing-raw.aiff	https://freesound.org/people/cfork/sounds/7967/
+by-nc/3.0/	179281__timbre__boingy-sweep.flac 	https://freesound.org/people/Timbre/sounds/179281/
