@@ -9,6 +9,8 @@
  */
 
 /*
+ * This information from "WT588D CHIP&MODULE DETAILED INFORMATION.doc" section 1.6.2 "SPEECH AND COMMAND"
+ * 
  * selecting an audio file by number (0x00 to 0xDA)
  * commands other than selecting an audio file by number:
  * CODE       FUNCTION            DESCRIPTION
@@ -24,21 +26,24 @@
  * I don't see a reason to use I/O Extension Output mode
  * Comments in forums indicate volume 0xE5 is default and settings above that are noisy
  * 
- * Serial bits sent as follows:
- * RST, CS, CLK all high; DAT is don't care. NOTE: clock cycle is anywhere from 40 microsec to 2 millisec per bit
- * RST goes low for two milliseconds then back high
- * wait for 17 milliseconds
- * CS goes low and then stays low until at least 2 millisec past last CLK-to-high transition
- * CS still low; wait 2 milliseconds
- * CS still low; CLK goes low; wait 20 microseconds or more
- * CS still low; DAT to lsbit (bit 0); wait ???
- * CS still low; CLK goes high; wait 20 microseconds or more
- * CS still low; repeat above 3 steps for remaining 7 bits
- * CS still low; wait 2 milliseconds
- * CS still low; diagram shows hold CS low until busy goes high then low but probably can raise CS here
+ * The sequence below is is based on the timing diagram in "WT588D CHIP&MODULE DETAILED INFORMATION.doc"
+ *     see section 12.6.5 "THREE-LINE SERIAL CONTROL TIMING"
+ * In WT588D timing diagram (not the code from the article), serial bits sent as follows:
+ *    RST, CS, CLK all high; DAT is don't care. NOTE: clock cycle is anywhere from 40 microsec to 2 millisec per bit
+ *    RST goes low for two milliseconds then back high
+ *    wait for 17 milliseconds
+ * At this point the code below and the timing diagram merge
+ *    CS goes low and then stays low until at least 2 millisec past last CLK-to-high transition
+ *    CS still low; wait 2 milliseconds
+ *    CS still low; CLK goes low; wait 20 microseconds or more
+ *    CS still low; DAT to lsbit (bit 0); wait ???
+ *    CS still low; CLK goes high; wait 20 microseconds or more
+ *    CS still low; repeat above 3 steps for remaining 7 bits
+ *    CS still low; wait 2 milliseconds
+ *    CS still low; diagram shows hold CS low until busy goes high then low but PROBABLY can raise CS here
  * 
  * code below does not use the RSTpin; the Instructables article did not use it
- * I fixed a few typos etc. in the original code.
+ * I fixed a few typos etc. in the original code. Also changed the output pins.
  * 
  */
 const int CSpin = 11;
