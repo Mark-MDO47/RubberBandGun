@@ -3,7 +3,7 @@ A high-tech imagining of the rubber band gun
 
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/RubberBandGun_small.png "Crude model of Science Fiction Rubber Band Gun")
 
-Keith and Jim and I are working on a Science-Fiction Rubber Band Gun!
+Jim and I are working on a Science-Fiction Rubber Band Gun!
 
 It will have four rings of WS2812b 5050 RGB LED Ring proceeding up the barrel, each one larger than the previous in a "blunderbuss" shape. Note: this shape when applied to a handgun was known as a dragon, from which the term dragoon; see https://en.m.wikipedia.org/wiki/Blunderbuss
 
