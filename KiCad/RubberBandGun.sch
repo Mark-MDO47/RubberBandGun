@@ -234,25 +234,14 @@ F0 "RubberBandWiring" 197
 F1 "RubberBandWiring.sch" 197
 $EndSheet
 $Comp
-L WT588D A?
-U 1 1 5D7C6302
-P 6200 5050
-F 0 "A?" H 6200 5050 60  0000 C CNN
-F 1 "WT588D" H 6200 4950 60  0000 C TNN
-F 2 "" H 6200 5050 60  0000 C CNN
-F 3 "" H 6200 5050 60  0000 C CNN
-	1    6200 5050
-	1    0    0    -1  
-$EndComp
-$Comp
 L Speaker LS?
 U 1 1 5D7C69A9
-P 5300 4550
-F 0 "LS?" H 5350 4775 50  0000 R CNN
-F 1 "Speaker" H 5350 4700 50  0000 R CNN
-F 2 "" H 5300 4350 50  0001 C CNN
-F 3 "" H 5290 4500 50  0001 C CNN
-	1    5300 4550
+P 5400 4500
+F 0 "LS?" H 5450 4725 50  0000 R CNN
+F 1 "Speaker" H 5450 4650 50  0000 R CNN
+F 2 "" H 5400 4300 50  0001 C CNN
+F 3 "" H 5390 4450 50  0001 C CNN
+	1    5400 4500
 	-1   0    0    -1  
 $EndComp
 $Comp
@@ -401,74 +390,19 @@ Wire Wire Line
 	9750 1850 9850 1850
 Connection ~ 9850 1850
 Wire Wire Line
-	5500 4550 5600 4550
-Wire Wire Line
-	5500 4650 5600 4650
-Wire Wire Line
-	5600 5050 5600 6400
-Connection ~ 5600 6400
-Wire Wire Line
-	7500 5700 7500 4750
-Wire Wire Line
-	7500 4750 6800 4750
-Wire Wire Line
-	7300 5550 7300 4850
-Wire Wire Line
-	7300 4850 6800 4850
-Wire Wire Line
-	7100 5400 7100 4950
-Wire Wire Line
-	7100 4950 6800 4950
-Wire Wire Line
-	6800 4450 7700 4450
-Wire Wire Line
-	7700 4450 7700 5850
-Wire Wire Line
-	6550 3000 7000 3000
-Wire Wire Line
-	7000 3000 7000 4550
-Wire Wire Line
-	7000 4550 6800 4550
-Wire Wire Line
 	7400 3800 3600 3800
 Connection ~ 3600 3800
 Wire Wire Line
 	6550 2000 7400 2000
 Wire Wire Line
-	7400 950  7400 3400
+	7400 3400 7400 950 
 Wire Wire Line
-	3200 950  7400 950 
+	7400 950  3200 950 
 Connection ~ 7400 2000
 Connection ~ 3800 3800
 Connection ~ 4000 3800
 Wire Wire Line
-	7300 4450 7300 3800
-Connection ~ 7300 3800
-Connection ~ 7300 4450
-Wire Wire Line
-	4950 5400 4950 3100
-Wire Wire Line
-	7100 5400 4950 5400
-Wire Wire Line
-	4950 3100 5350 3100
-Wire Wire Line
-	4850 5550 4850 3000
-Wire Wire Line
-	7300 5550 4850 5550
-Wire Wire Line
-	4850 3000 5350 3000
-Wire Wire Line
-	4750 5700 4750 2900
-Wire Wire Line
-	4750 5700 7500 5700
-Wire Wire Line
-	4750 2900 5350 2900
-Wire Wire Line
-	4650 5850 4650 2800
-Wire Wire Line
 	4650 2800 5350 2800
-Wire Wire Line
-	7700 5850 4650 5850
 Wire Wire Line
 	4200 1100 4200 950 
 Connection ~ 4200 950 
@@ -517,9 +451,66 @@ Wire Wire Line
 Connection ~ 8900 6400
 Text Notes 900  3500 0    118  ~ 0
 7.4 Volts
-Wire Wire Line
-	7400 3400 6800 3400
-Wire Wire Line
-	6800 3400 6800 4350
 Connection ~ 7400 3400
+$Comp
+L YX5200 A?
+U 1 1 5D90CF9F
+P 6400 4600
+F 0 "A?" H 6400 4500 60  0000 C CNN
+F 1 "YX5200" H 6400 4400 60  0000 C TNN
+F 2 "" H 6400 4600 60  0000 C CNN
+F 3 "" H 6400 4600 60  0000 C CNN
+	1    6400 4600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7400 3400 5750 3400
+Wire Wire Line
+	5750 3400 5750 3900
+Wire Wire Line
+	5750 3900 5800 3900
+Wire Wire Line
+	7000 4500 7050 4500
+Wire Wire Line
+	7050 4500 7050 6400
+Connection ~ 7050 6400
+Wire Wire Line
+	4950 4000 5800 4000
+Wire Wire Line
+	4850 4100 5800 4100
+Wire Wire Line
+	5800 4600 5600 4600
+Wire Wire Line
+	5600 4500 5700 4500
+Wire Wire Line
+	5700 4500 5700 4400
+Wire Wire Line
+	5700 4400 5800 4400
+$Comp
+L R R?
+U 1 1 5D915A72
+P 4950 3500
+F 0 "R?" V 5030 3500 50  0000 C CNN
+F 1 "1K" V 4950 3500 50  0000 C CNN
+F 2 "" V 4880 3500 50  0001 C CNN
+F 3 "" H 4950 3500 50  0001 C CNN
+	1    4950 3500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4850 2900 4850 4100
+Wire Wire Line
+	4950 3000 4950 3350
+Wire Wire Line
+	4950 3650 4950 4000
+Wire Wire Line
+	5350 3000 4950 3000
+Wire Wire Line
+	5350 2900 4850 2900
+Wire Wire Line
+	7000 3900 7000 3700
+Wire Wire Line
+	7000 3700 5350 3700
+Wire Wire Line
+	5350 3700 5350 3100
 $EndSCHEMATC
