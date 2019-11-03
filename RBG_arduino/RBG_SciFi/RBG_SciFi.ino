@@ -30,12 +30,15 @@
 #include <EEPROM.h>                          // to store configuration info
 
 #include "FastLED.h"                         // to manipulate WS2812b 5050 RGB LED Rings
+#include "RBG_SciFi_LEDs.h"                  // 
 #include "DFRobotDFPlayerMini.h"             // to communicate with the YX5200 audio player
 
 #define SERIALDEBUG 1                        // serial debugging
+
 // #define DFPRINTDETAIL (1&SERIALDEBUG)     // if need detailed status from myDFPlayer
 #define DFPRINTDETAIL 0                      // will not print detailed status from myDFPlayer
 void DFprintDetail(uint8_t type, int value); // definition of call doesn't hurt
+void DFsetup();                              // initialize myDFPlayer
 
 #define DPIN_FASTLED      3  // talk to FASTLED library
 #define DPIN_BTN_TRIGGER  4
@@ -69,6 +72,12 @@ void setup() {
   pinMode(DPIN_BTN_BLACK,   INPUT);
   pinMode(DPIN_AUDIO_BUSY,  INPUT);
   pinMode(DPIN_SOLENOID,   OUTPUT);
+
+  DFsetup();
+
+  FastLED.addLeds<NEOPIXEL,DPIN_FASTLED>(led_display, NUM_LEDS_PER_DISK);
+  FastLED.setBrightness(BRIGHTMAX); // we will do our own power management
+
 } // end setup()
 
 void loop() {
@@ -78,7 +87,7 @@ void loop() {
 
 }  // end loop()
 
-void setupDFPlayer() {
+void DFsetup() {
   Serial.println(F("Initializing DFPlayer ... (May take 3~5 seconds)"));
   
   if (!myDFPlayer.begin(mySoftwareSerial)) {  // Use softwareSerial to communicate with mp3.
@@ -91,8 +100,8 @@ void setupDFPlayer() {
   }
   Serial.println(F("DFPlayer Mini online."));
   myDFPlayer.volume(10);  //Set volume value. From 0 to 30
+} // end DFsetup()
 
-}
 
 #if DFPRINTDETAIL
 void DFprintDetail(uint8_t type, int value){
