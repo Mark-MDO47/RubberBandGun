@@ -50,6 +50,36 @@ void DFsetup();                              // initialize myDFPlayer
 #define DPIN_AUDIO_BUSY  12
 #define DPIN_SOLENOID    13  // often has internal LED and resistor soldered to board, can make INPUT not work
 
+// masks for button, trigger and barrel states and state changes
+#define mB01   0x01  // mask for DPIN_BTN_YELLOW only
+#define mB02   0x02  // mask for DPIN_BTN_GREEN  only
+#define mB03   0x03  // mask for DPIN_BTN_YELLOW and DPIN_BTN_GREEN
+#define mB04   0x04  // mask for DPIN_BTN_BLACK  only
+#define mB05   0x05  // mask for DPIN_BTN_YELLOW and DPIN_BTN_BLACK
+#define mB06   0x06  // mask for DPIN_BTN_GREEN  and DPIN_BTN_BLACK
+#define mB07   0x07  // mask for DPIN_BTN_YELLOW and DPIN_BTN_GREEN and DPIN_BTN_BLACK
+#define mBANY  0x08  // mask for any DPIN_BTN_ combination but at least one of them
+#define mBNONE 0x10  // mask for no DPIN_BTN_ depressed
+#define mTRIG  0x20  // mask for just depressed the trigger
+#define mLOCK  0x40  // mask for just connected the barrel
+#define mOPEN  0x80  // mask for just disconnected the barrel
+
+// values that can be stored
+#define VYBG 0x10    // whatever is in DPIN_BTN_YELLOW and DPIN_BTN_GREEN and DPIN_BTN_BLACK (0 thru 7)
+#define V00  0x00    // the value 0
+#define V01  0x01    // the value 1
+#define V02  0x02    // the value 2
+#define V03  0x03    // the value 3
+#define V04  0x04    // the value 4
+#define V05  0x05    // the value 5
+#define V06  0x06    // the value 6
+#define V07  0x07    // the value 7
+
+EEPROM addresses
+// EEPROM[eeSoundSave+idx] idx: 1 WindUp, 2 Shoot, 4 Open, 7 Load
+#define eeSoundSave 0x00 // EEPROM starting address for sound configuration
+#define eeLEDSave   0x10 // EEPROM starting address for LED pattern configuration
+
 
 SoftwareSerial mySoftwareSerial(DPIN_SWSRL_RX, DPIN_SWSRL_TX); // to talk to YX5200 audio player
 DFRobotDFPlayerMini myDFPlayer;                                // to talk to YX5200 audio player
@@ -102,6 +132,20 @@ void DFsetup() {
   myDFPlayer.volume(10);  //Set volume value. From 0 to 30
 } // end DFsetup()
 
+void stateTable_store(stateTable_ROW * theRow, stateTable_STATE * theStates) {
+  uint_8  val  = 0;
+  uint_32 addr = 0;
+  if (VYBG == theRow->storeVal) {
+    val = stateTable_STATE->VYBG;
+  } else {
+    val = stateTable_ROW->storeVal;
+  }
+  addr = (stateTable_ROW->storeAddr & mADDRLOW) + ((stateTable_ROW->storeAddr & mADDRHI) >> mADDRHIrshift)
+  if (stateTable_ROW->storeAddr & mIDX) {
+    addr += theStates->ramVals[(stateTable_ROW->storeAddr & mIDX) >> mIDXrshift]
+  }
+  EEPROM[stateTable_ROW->storeAddr] = val
+} // end stateTable_store()
 
 #if DFPRINTDETAIL
 void DFprintDetail(uint8_t type, int value){
