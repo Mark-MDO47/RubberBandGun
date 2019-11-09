@@ -75,11 +75,23 @@ void DFsetup();                              // initialize myDFPlayer
 #define V06  0x06    // the value 6
 #define V07  0x07    // the value 7
 
-EEPROM addresses
+// EEPROM addresses
 // EEPROM[eeSoundSave+idx] idx: 1 WindUp, 2 Shoot, 4 Open, 7 Load
 #define eeSoundSave 0x00 // EEPROM starting address for sound configuration
 #define eeLEDSave   0x10 // EEPROM starting address for LED pattern configuration
 
+// STATE TABLE
+//  EEPROM[stateTable_ROW->storeAddr] = addr
+//  EEPROM[stateTable_ROW->storeVal] = val
+typedef struct _RBGStateTable {
+  uint8_t soundAfterInput;  // index for sound to make after input match
+  uint8_t lights;           // index for light pattern while waiting
+  uint8_t inputRBG;         // mask for input expected
+  uint8_t storeVal;         // value to store, 8 bit uint
+  uint8_t storeAddr;        // address to store; includes mask for mFUNC, mVAL, eeSoundSave|mFUNC: idx= 1 WindUp, 2 Shoot, 4 Open, 7 Load
+  uint8_t gotoOnInput;      // index within table to go with matching input    
+  uint8_t gotoWithoutInput; // index within table to go without waiting for input
+} RBGStateTable;
 
 SoftwareSerial mySoftwareSerial(DPIN_SWSRL_RX, DPIN_SWSRL_TX); // to talk to YX5200 audio player
 DFRobotDFPlayerMini myDFPlayer;                                // to talk to YX5200 audio player
@@ -144,7 +156,8 @@ void stateTable_store(stateTable_ROW * theRow, stateTable_STATE * theStates) {
   if (stateTable_ROW->storeAddr & mIDX) {
     addr += theStates->ramVals[(stateTable_ROW->storeAddr & mIDX) >> mIDXrshift]
   }
-  EEPROM[stateTable_ROW->storeAddr] = val
+  EEPROM[stateTable_ROW->storeAddr] = addr
+  EEPROM[stateTable_ROW->storeVal] = val
 } // end stateTable_store()
 
 #if DFPRINTDETAIL
