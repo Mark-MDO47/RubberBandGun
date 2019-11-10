@@ -166,6 +166,13 @@ def MakeStateTable():
                err = MarkEndBlock(SYMBTABLECurrent, STATETABLEIdx)
             STATETABLEIdx, SYMBTABLECurrent = MakeNewBlock(rowIndexSymb, STATETABLEIdx)
             FillStateTablePass1(row, STATETABLEIdx)
+   if STATETABLEIdx >= 0:  # mark end of previous block if there is one
+      err = MarkEndBlock(SYMBTABLECurrent, STATETABLEIdx)
+   # mark block start/end in STATETABLE
+   for symb in SYMBTABLE:
+      STATETABLE[SYMBTABLE[symb]['blockStart']]['blkFlags'] = "mBlockStart"
+      STATETABLE[SYMBTABLE[symb]['blockEnd']]['blkFlags'] = "mBlockEnd"
+      # mBlockEnd only can be both start and end
 
    print("Pass 1 SYMBTABLE")
    print("  %s" % SYMBTABLE)
@@ -177,12 +184,37 @@ def MakeStateTable():
    for idx in STATETABLE:
       print("  %s %s" % (idx, str(STATETABLE[idx])))
 
-   print("Pass 1 FOUNDINCOLUMN")
-   print("  %s" % FOUNDINCOLUMN)
-   for key in FOUNDINCOLUMN.keys():
-      print("  %s %s" % (key, FOUNDINCOLUMN[key]))
+   foundSymbols = []
+   for col in ("gotoOnInput", "gotoWithoutInput"):
+      for symb in FOUNDINCOLUMN[col]:
+         if symb not in foundSymbols:
+            foundSymbols.append(symb)
 
 
-if __name__ == "__main__": 
+   print("Pass 1 foundSymbols")
+   print("  %s" % foundSymbols)
+   for key in foundSymbols:
+      if key == "mNONE":
+         print("  %s is valid" % key)
+      elif key in SYMBTABLE.keys():
+         print("  %s in SYMBTABLE" % key)
+      else:
+         print("  ERROR - %s not in SYMBTABLE" % key)
+
+   # Pass 2
+   """
+   for col in ("gotoOnInput", "gotoWithoutInput"):
+       for idx in
+      for symb in FOUNDINCOLUMN[col]:
+         if symb not in foundSymbols:
+   for key in foundSymbols:
+      if key == "mNONE":
+         print("  %s is valid" % key)
+      elif key in SYMBTABLE.keys():
+         print("  %s in SYMBTABLE" % key)
+   """
+
+
+if __name__ == "__main__":
    MakeStateTable()
    
