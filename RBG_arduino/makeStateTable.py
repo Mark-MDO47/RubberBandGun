@@ -26,6 +26,8 @@ FOUNDINCOLUMN = {
    "gotoWithoutInput": []
 }
 
+DEBUGflag = False # global debug flag
+
 # INPUT:
 COLTOINDEX = {"index": -1, "soundAfterInput": -1, "lights": -1, "inputRBG": -1, "storeVal": -1, "storeAddr": -1, "gotoOnInput": -1, "gotoWithoutInput": -1 }
 
@@ -67,37 +69,40 @@ translateToMasks = {
    "gotoWithoutInput": {}
 }
 
+def printDebug(theStr):
+   if DEBUGflag:
+      print("%s" % theStr)
 
 def MarkEndBlock(currSymb, currStateTableIdx):
    global SYMBTABLE
-   print("DEBUG CALL MarkEndBlock on currSymb |%s| with currStateTableIdx %s" % (currSymb, currStateTableIdx))
-   print("  DEBUG BEFORE %s" % SYMBTABLE)
+   printDebug("DEBUG CALL MarkEndBlock on currSymb |%s| with currStateTableIdx %s" % (currSymb, currStateTableIdx))
+   printDebug("  DEBUG BEFORE %s" % SYMBTABLE)
    if 0 == len(currSymb):
-      print("  DEBUG AFTER  %s" % SYMBTABLE)
+      printDebug("  DEBUG AFTER  %s" % SYMBTABLE)
       return "Tried to MarkEndBlock on zero-length currSymb |%s| with currStateTableIdx %s" % (currSymb, currStateTableIdx)
-   print("DEBUG MarkEndBlock on currSymb %s with currStateTableIdx %s" % (currSymb, currStateTableIdx))
+   printDebug("DEBUG MarkEndBlock on currSymb %s with currStateTableIdx %s" % (currSymb, currStateTableIdx))
    if currSymb in SYMBTABLE.keys():
       SYMBTABLE[currSymb]["blockEnd"] = currStateTableIdx
-      print("  DEBUG AFTER  %s" % SYMBTABLE)
+      printDebug("  DEBUG AFTER  %s" % SYMBTABLE)
       return ""
    else:
-      print("  DEBUG AFTER  %s" % SYMBTABLE)
+      printDebug("  DEBUG AFTER  %s" % SYMBTABLE)
       return "Tried to MarkEndBlock on currSymb %s with currStateTableIdx %s but %s not in SYMBTABLE" % (currSymb, currStateTableIdx, currSymb)
 
 def MakeNewBlock(currSymb: object, currStateTableIdx: object, debugString: object = "debugUNKNOWN") -> object:
    global SYMBTABLE
    global STATETABLE
    if currSymb in SYMBTABLE.keys():
-      print("DEBUG NEW %s BEFORE: currStateTableIdx %d SYMBTABLE[%s] %s" % (debugString, currStateTableIdx, currSymb, SYMBTABLE[currSymb]))
+      printDebug("DEBUG NEW %s BEFORE: currStateTableIdx %d SYMBTABLE[%s] %s" % (debugString, currStateTableIdx, currSymb, SYMBTABLE[currSymb]))
    else:
-      print("DEBUG NEW %s BEFORE: currStateTableIdx %d %s" % (debugString, currStateTableIdx, currSymb))
-   print("  DEBUG SYMBTABLE %s" % SYMBTABLE)
+      printDebug("DEBUG NEW %s BEFORE: currStateTableIdx %d %s" % (debugString, currStateTableIdx, currSymb))
+   printDebug("  DEBUG SYMBTABLE %s" % SYMBTABLE)
    currStateTableIdx += 1
    SYMBTABLE[currSymb] = copy.deepcopy(SYMBTABLEROW)
    SYMBTABLE[currSymb]["blockStart"] = currStateTableIdx
 
-   print("DEBUG NEW %s  AFTER: currStateTableIdx %d SYMBTABLE[%s] %s" % (debugString, currStateTableIdx, currSymb, SYMBTABLE[currSymb]))
-   print("  DEBUG SYMBTABLE %s" % SYMBTABLE)
+   printDebug("DEBUG NEW %s  AFTER: currStateTableIdx %d SYMBTABLE[%s] %s" % (debugString, currStateTableIdx, currSymb, SYMBTABLE[currSymb]))
+   printDebug("  DEBUG SYMBTABLE %s" % SYMBTABLE)
    return currStateTableIdx, currSymb
 
 
@@ -148,8 +153,8 @@ def MakeStateTable():
       if "nan" == rowIndexSymb: # rows with nothing in "index" column are ignored
          err = MarkEndBlock(SYMBTABLECurrent, STATETABLEIdx)
          if 0 != len(err):
-            print("DEBUG %s SYMBTABLECurrent |%s| from rows with nothing in index column" % (err, SYMBTABLECurrent))
-         print("  DEBUG %s" % SYMBTABLE)
+            printDebug("DEBUG %s SYMBTABLECurrent |%s| from rows with nothing in index column" % (err, SYMBTABLECurrent))
+         printDebug("  DEBUG %s" % SYMBTABLE)
          continue
    
       if 0 == len(SYMBTABLECurrent): # this is a new symbol, possibly the first symbol
@@ -175,12 +180,12 @@ def MakeStateTable():
       # mBlockEnd only can be both start and end
 
    print("Pass 1 SYMBTABLE")
-   print("  %s" % SYMBTABLE)
+   printDebug("  %s" % SYMBTABLE)
    for symb in SYMBTABLE:
       print("  %s %s" % (symb, SYMBTABLE[symb]))
 
    print("Pass 1 STATETABLE")
-   print("  %s" % STATETABLE)
+   printDebug("  %s" % STATETABLE)
    for idx in STATETABLE:
       print("  %s %s" % (idx, str(STATETABLE[idx])))
 
@@ -192,7 +197,7 @@ def MakeStateTable():
 
 
    print("Pass 1 foundSymbols")
-   print("  %s" % foundSymbols)
+   printDebug("  %s" % foundSymbols)
    for key in foundSymbols:
       if key == "mNONE":
          print("  %s is valid" % key)
