@@ -14,7 +14,7 @@ EXCELROWNUMOFFSET = 2 # so we can give error messages
 SYMBTABLE = {}
 SYMBTABLEROW = { "blockStart": -1, "blockEnd": -1 }
 STATETABLE = {}
-STATETABLEROW = { "blkFlags": 0, "soundAfterInput": 0, "lights": 0, "inputRBG": 0, "storeVal": 0, "storeAddr": 0, "gotoOnInput": 0, "gotoWithoutInput": 0 }
+STATETABLEROW = { "blkFlags": "", "soundAfterInput": "", "lights": "", "inputRBG": "", "storeVal": "", "storeAddr": "", "gotoOnInput": "", "gotoWithoutInput": "", "index": "" }
 FOUNDINCOLUMN = {
    "index": [],
    "soundAfterInput": [],
@@ -176,8 +176,10 @@ def MakeStateTable():
    # mark block start/end in STATETABLE
    for symb in SYMBTABLE:
       STATETABLE[SYMBTABLE[symb]['blockStart']]['blkFlags'] = "mBlockStart"
-      STATETABLE[SYMBTABLE[symb]['blockEnd']]['blkFlags'] = "mBlockEnd"
-      # mBlockEnd only can be both start and end
+      separator = ""
+      if 0 != len(STATETABLE[SYMBTABLE[symb]['blockEnd']]['blkFlags']):
+         separator = "|"
+      STATETABLE[SYMBTABLE[symb]['blockEnd']]['blkFlags'] += separator + "mBlockEnd"
 
    print("Pass 1 SYMBTABLE")
    printDebug("  %s" % SYMBTABLE)
@@ -189,12 +191,43 @@ def MakeStateTable():
    for idx in STATETABLE:
       print("  %s %s" % (idx, str(STATETABLE[idx])))
 
+   # collect sounds and light patterns
+   foundDirectPatterns = {'lights': {}, 'soundAfterInput': {}}
+   foundIndirectPatterns = {'lights': {}, 'soundAfterInput': {}}
+   for col in foundDirectPatterns.keys():
+      countDirect = 1
+      countIndirect = 1
+      for idx in STATETABLE:
+         if 0 != len(STATETABLE[idx][col]):
+            if -1 == STATETABLE[idx][col].find("["):
+               if STATETABLE[idx][col] not in foundDirectPatterns[col]:
+                  foundDirectPatterns[col][STATETABLE[idx][col]] = countDirect
+                  countDirect += 1
+            else: # indirect
+               if STATETABLE[idx][col] not in foundIndirectPatterns[col]:
+                  foundIndirectPatterns[col][STATETABLE[idx][col]] = countIndirect
+                  countIndirect += 1
+
+   print("Pass 1 foundDirectPatterns: lights, soundAfterInput")
+   for col in foundDirectPatterns.keys():
+      printDebug("  %s %s" % (col, foundDirectPatterns[col]))
+      print("  %s" % col)
+      for key in foundDirectPatterns[col].keys():
+         print("     %03d\t%s" % (foundDirectPatterns[col][key], key))
+   print("Pass 1 foundIndirectPatterns: lights, soundAfterInput")
+   for col in foundIndirectPatterns.keys():
+      printDebug("  %s %s" % (col, foundIndirectPatterns[col]))
+      print("  %s" % col)
+      for key in foundIndirectPatterns[col].keys():
+         print("     %03d\t%s" % (foundIndirectPatterns[col][key], key))
+
+
+   # collect found symbols from either goto column
    foundSymbols = []
    for col in ("gotoOnInput", "gotoWithoutInput"):
       for symb in FOUNDINCOLUMN[col]:
          if symb not in foundSymbols:
             foundSymbols.append(symb)
-
 
    print("Pass 1 foundSymbols")
    printDebug("  %s" % foundSymbols)
@@ -205,6 +238,7 @@ def MakeStateTable():
          print("  %s in SYMBTABLE" % key)
       else:
          print("  ERROR - %s not in SYMBTABLE" % key)
+
 
    # Pass 2
    """
