@@ -4,74 +4,11 @@
 # RBG - A high-tech imagining of the rubber band gun
 #
 # This program will read a spreadsheet with info to be encoded into the state table for RBG_SciFi.ino
-#
 
 import pandas as pd
 import copy
 
-# GLOBALS
-EXCELROWNUMOFFSET = 2  # so we can give error messages
-SYMBTABLE = {}
-SYMBTABLEROW = {"blockStart": -1, "blockEnd": -1}
-STATETABLE = {}
-STATETABLEROW = {"blkFlags": "", "soundAfterInput": "", "lights": "", "inputRBG": "", "storeVal": "", "storeAddr": "",
-                 "gotoOnInput": "", "gotoWithoutInput": "", "index": ""}
-FOUNDINCOLUMN = {
-    "index": [],
-    "soundAfterInput": [],
-    "lights": [],
-    "inputRBG": [],
-    "storeVal": [],
-    "storeAddr": [],
-    "gotoOnInput": [],
-    "gotoWithoutInput": []
-}
-
-DEBUGflag = False  # global debug flag
-
-# INPUT:
-COLTOINDEX = {"index": -1, "soundAfterInput": -1, "lights": -1, "inputRBG": -1, "storeVal": -1, "storeAddr": -1,
-              "gotoOnInput": -1, "gotoWithoutInput": -1}
-
-# OUTPUT:
-# uint8_t soundAfterInput;  // index for sound to make after input match
-# uint8_t lights;           // index for light pattern while waiting
-# uint8_t inputRBG;         // mask for input expected
-# uint8_t storeVal;         // value to store, 8 bit uint
-# uint8_t storeAddr;        // address to store; includes mask for mFUNC, mVAL,
-#                                 eeSoundSave|mFUNC: idx= 1 WindUp, 2 Shoot, 4 Open, 7 Load
-# uint8_t gotoOnInput;      // index within table to go with matching input
-# uint8_t gotoWithoutInput; // index within table to go without waiting for input
-
-translateToMasks = {
-    "blkFlags": {},
-    "soundAfterInput": {},
-    "lights": {},
-    "inputRBG": {
-        "trigPlus": "mTRIG|mBANY",
-        "trig00": "mTRIG|mBNONE",
-        "trig01": "mTRIG|mB01",
-        "trig02": "mTRIG|mB02",
-        "trig03": "mTRIG|mB03",
-        "trig04": "mTRIG|mB04",
-        "trig05": "mTRIG|mB05",
-        "trig06": "mTRIG|mB06",
-        "trig07": "mTRIG|mB07",
-        "open": "mOPEN",
-        "lock": "mLOCK",
-        "": "mNONE",
-        "trigOnly": "mTRIG|mBNONE",
-        "trigYellow": "mTRIG|mB01",
-        "trigGreen": "mTRIG|mB02",
-        "trigBlack": "mTRIG|mB03",
-        "trigAll": "mTRIG|mB07",
-    },
-    "storeVal": {},
-    "storeAddr": {},
-    "gotoOnInput": {},
-    "gotoWithoutInput": {}
-}
-
+from makeStateTable_dict import *
 
 def print_debug(the_str):
     if DEBUGflag:
@@ -81,7 +18,7 @@ def print_debug(the_str):
 def mark_end_block(curr_symb, curr_state_table_idx):
     global SYMBTABLE
     print_debug("DEBUG CALL mark_end_block on curr_symb |%s| with curr_state_table_idx %s"
-                 % (curr_symb, curr_state_table_idx))
+                % (curr_symb, curr_state_table_idx))
     print_debug("  DEBUG BEFORE %s" % SYMBTABLE)
     if 0 == len(curr_symb):
         print_debug("  DEBUG AFTER  %s" % SYMBTABLE)
@@ -101,6 +38,7 @@ def mark_end_block(curr_symb, curr_state_table_idx):
 def make_new_block(curr_symb, curr_state_table_idx, debug_string="debugUNKNOWN") -> object:
     global SYMBTABLE
     global STATETABLE
+    curr_symb = curr_symb.lower()[0] + curr_symb.upper()[1:] # enforce capitalization rules
     if curr_symb in SYMBTABLE.keys():
         print_debug("DEBUG NEW %s BEFORE: curr_state_table_idx %d SYMBTABLE[%s] %s" % (
             debug_string, curr_state_table_idx, curr_symb, SYMBTABLE[curr_symb]))
@@ -130,6 +68,8 @@ def fill_state_table_pass1(row, state_idx):
         row_text = str(row[key]).strip()
         if "nan" == row_text:
             row_text = "mNONE"
+        elif key in ["index", "gotoOnInput", "gotoWithoutInput"]:
+            row_text = row_text.lower()[0] + row_text.upper()[1:] # enforce capitalization
         if row_text not in FOUNDINCOLUMN[key]:
             FOUNDINCOLUMN[key].append(row_text)
         if key in translateToMasks.keys():
@@ -237,32 +177,27 @@ def make_state_table():
     # collect found symbols from either goto column
     found_symbols = []
     for col in ("gotoOnInput", "gotoWithoutInput"):
-        for symb in FOUNDINCOLUMN[col]:
+        for row, symb in enumerate(FOUNDINCOLUMN[col]):
             if symb not in found_symbols:
                 found_symbols.append(symb)
 
-    print("Pass 1 found_symbols")
-    print_debug("  %s" % found_symbols)
+    print("Pass 2 found_symbols")
+    print("\n// define the symbols\n#define mUNDEFINED -2\n#define mNONE -1")
     for key in found_symbols:
         if key == "mNONE":
-            print("  %s is valid" % key)
+            print_debug("  %s is valid" % key)
         elif key in SYMBTABLE.keys():
-            print("  %s in SYMBTABLE" % key)
+            print_debug("  %s in SYMBTABLE" % key)
+            print("#define %s %d" % (key, SYMBTABLE[key]["blockStart"]))
         else:
-            print("  ERROR - %s not in SYMBTABLE" % key)
+            print_debug("  ERROR - %s not in SYMBTABLE" % key)
+            print("#define %s mUNDEFINED" % key)
+
+    print("\n// define the effect number ranges")
+    for key in EFFECT_MAP:
+        print("#define %s %d" %(key, EFFECT_MAP[key]))
 
     # Pass 2
-    """
-   for col in ("gotoOnInput", "gotoWithoutInput"):
-       for idx in
-      for symb in FOUNDINCOLUMN[col]:
-         if symb not in found_symbols:
-   for key in found_symbols:
-      if key == "mNONE":
-         print("  %s is valid" % key)
-      elif key in SYMBTABLE.keys():
-         print("  %s in SYMBTABLE" % key)
-   """
 
 
 if __name__ == "__main__":
