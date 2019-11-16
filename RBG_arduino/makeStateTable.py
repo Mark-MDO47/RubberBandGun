@@ -10,12 +10,22 @@ import copy
 
 from makeStateTable_dict import *
 
+DEBUGflag = False  # global debug flag
+
 def print_debug(the_str):
+    """only prints if DEBUGflag is true
+    :param the_str: string to print
+    """
     if DEBUGflag:
         print("%s" % the_str)
 
 
 def mark_end_block(curr_symb, curr_state_table_idx):
+    """mark_end_block on curr_symb with curr_state_table_idx
+    :param curr_symb: string for current symbol
+    :param curr_state_table_idx: corresponding index into STATETABLE
+    :return:
+    """
     global SYMBTABLE
     print_debug("DEBUG CALL mark_end_block on curr_symb |%s| with curr_state_table_idx %s"
                 % (curr_symb, curr_state_table_idx))
@@ -35,7 +45,13 @@ def mark_end_block(curr_symb, curr_state_table_idx):
             curr_symb, curr_state_table_idx, curr_symb)
 
 
-def make_new_block(curr_symb, curr_state_table_idx, debug_string="debugUNKNOWN") -> object:
+def make_new_block(curr_state_table_idx,curr_symb,  debug_string="debugUNKNOWN"):
+    """make_new_block starting on curr_symb
+    :param curr_symb: string for current symbol found in "index" column. Will be coerced to single lower-case then all upper
+    :param curr_state_table_idx: index to state table where curr_symb was found
+    :param debug_string: call-identifying string to append to debug messages
+    :return: curr_state_table_idx, curr_symb
+    """
     global SYMBTABLE
     global STATETABLE
     curr_symb = curr_symb.lower()[0] + curr_symb.upper()[1:] # enforce capitalization rules
@@ -60,6 +76,10 @@ def make_new_block(curr_symb, curr_state_table_idx, debug_string="debugUNKNOWN")
 # STATETABLEROW = { "blkFlags": 0, "soundAfterInput": 0, "lights": 0, "inputRBG": 0,
 #               "storeVal": 0, "storeAddr": 0, "gotoOnInput": 0, "gotoWithoutInput": 0 }
 def fill_state_table_pass1(row, state_idx):
+    """fill_state_table_pass1 on current row
+    :param row: row from spreadsheet input file; access via COLTOINDEX
+    :param state_idx: corresponding index into STATETABLE
+    """
     global FOUNDINCOLUMN
     global STATETABLE
 
@@ -82,6 +102,7 @@ def fill_state_table_pass1(row, state_idx):
 
 
 def make_state_table():
+    """make_state_table then print info"""
     global SYMBTABLE
     global STATETABLE
     global COLTOINDEX
@@ -113,7 +134,7 @@ def make_state_table():
         if 0 == len(symbtable_current):  # this is a new symbol, possibly the first symbol
             if statetable_idx >= 0:  # mark end of previous block if there is one
                 err = mark_end_block(symbtable_current, statetable_idx)
-            statetable_idx, symbtable_current = make_new_block(row_index_symb, statetable_idx)
+            statetable_idx, symbtable_current = make_new_block(statetable_idx, row_index_symb)
             fill_state_table_pass1(row, statetable_idx)
         else:  # we were processing a symbol before
             if row_index_symb == symbtable_current:  # continuing on with this state decision block
@@ -122,7 +143,7 @@ def make_state_table():
             else:  # new state decision block
                 if statetable_idx >= 0:  # mark end of previous block if there is one
                     err = mark_end_block(symbtable_current, statetable_idx)
-                statetable_idx, symbtable_current = make_new_block(row_index_symb, statetable_idx)
+                statetable_idx, symbtable_current = make_new_block(statetable_idx, row_index_symb)
                 fill_state_table_pass1(row, statetable_idx)
     if statetable_idx >= 0:  # mark end of previous block if there is one
         err = mark_end_block(symbtable_current, statetable_idx)

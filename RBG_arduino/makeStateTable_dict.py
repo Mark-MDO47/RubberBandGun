@@ -23,8 +23,6 @@ FOUNDINCOLUMN = {
     "gotoWithoutInput": []
 }
 
-DEBUGflag = False  # global debug flag
-
 # INPUT:
 COLTOINDEX = {"index": -1, "soundAfterInput": -1, "lights": -1, "inputRBG": -1, "storeVal": -1, "storeAddr": -1,
               "gotoOnInput": -1, "gotoWithoutInput": -1}
