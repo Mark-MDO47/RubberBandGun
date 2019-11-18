@@ -71,10 +71,17 @@ def make_new_block(curr_state_table_idx,curr_symb,  debug_string="debugUNKNOWN")
     return curr_state_table_idx, curr_symb
 
 
-# COLTOINDEX = {"index": "", "soundAfterInput", "lights", "input", "storeVal", "storeAddr",
-#               "gotoOnInput", "gotoWithoutInput": "" }
-# STATETABLEROW = { "blkFlags": 0, "soundAfterInput": 0, "lights": 0, "inputRBG": 0,
-#               "storeVal": 0, "storeAddr": 0, "gotoOnInput": 0, "gotoWithoutInput": 0 }
+def complete_block_field():
+    """Complete the block fields; fill in with mNONE if empty"""
+    global STATETABLE
+    for idx in range(len(STATETABLE)):
+        if 0 == len(STATETABLE[idx]["blkFlags"]):
+            STATETABLE[idx]["blkFlags"] = "mNONE"
+
+# COLTOINDEX = {"index": -1, "SPECIAL": -1, "soundAfterInput": -1, "lights": -1, "inputRBG": -1, "storeVal": -1,
+#               "storeAddr": -1, "gotoOnInput": -1, "gotoWithoutInput": -1}
+# STATETABLEROW = {"blkFlags": "", "SPECIAL": "", "soundAfterInput": "", "lights": "", "inputRBG": "",
+#                  "storeVal": "", "storeAddr": "", "gotoOnInput": "", "gotoWithoutInput": "", "index": ""}
 def fill_state_table_pass1(row, state_idx):
     """fill_state_table_pass1 on current row
     :param row: row from spreadsheet input file; access via COLTOINDEX
@@ -149,11 +156,11 @@ def make_state_table():
         err = mark_end_block(symbtable_current, statetable_idx)
     # mark block start/end in STATETABLE
     for symb in SYMBTABLE:
-        STATETABLE[SYMBTABLE[symb]['blockStart']]['blkFlags'] = "mBlockStart"
+        STATETABLE[SYMBTABLE[symb]['blockStart']]['blkFlags'] = "mBLOCKSTART"
         separator = ""
         if 0 != len(STATETABLE[SYMBTABLE[symb]['blockEnd']]['blkFlags']):
             separator = "|"
-        STATETABLE[SYMBTABLE[symb]['blockEnd']]['blkFlags'] += separator + "mBlockEnd"
+        STATETABLE[SYMBTABLE[symb]['blockEnd']]['blkFlags'] += separator + "mBLOCKEND"
 
     print("Pass 1 SYMBTABLE")
     print_debug("  %s" % SYMBTABLE)
@@ -166,34 +173,31 @@ def make_state_table():
         print("  %s %s" % (idx, str(STATETABLE[idx])))
 
     # collect sounds and light patterns
-    found_directpatterns = {'lights': {}, 'soundAfterInput': {}}
-    found_indirectpatterns = {'lights': {}, 'soundAfterInput': {}}
-    for col in found_directpatterns.keys():
+    effectkeys = {'lights': {}, 'soundAfterInput': {}}
+    found_directeffects = {}
+    found_indirecteffects = {}
+    for col in effectkeys.keys():
         count_direct = 1
         count_indirect = 1
         for idx in STATETABLE:
             if 0 != len(STATETABLE[idx][col]):
                 if -1 == STATETABLE[idx][col].find("["):
-                    if STATETABLE[idx][col] not in found_directpatterns[col]:
-                        found_directpatterns[col][STATETABLE[idx][col]] = count_direct
+                    if STATETABLE[idx][col] == "mNONE":
+                        found_directeffects[STATETABLE[idx][col]] = -1
+                    if STATETABLE[idx][col] not in found_directeffects.keys():
+                        found_directeffects[STATETABLE[idx][col]] = count_direct
                         count_direct += 1
                 else:  # indirect
-                    if STATETABLE[idx][col] not in found_indirectpatterns[col]:
-                        found_indirectpatterns[col][STATETABLE[idx][col]] = count_indirect
+                    if STATETABLE[idx][col] not in found_indirecteffects.keys():
+                        found_indirecteffects[STATETABLE[idx][col]] = count_indirect
                         count_indirect += 1
 
-    print("Pass 1 found_directpatterns: lights, soundAfterInput")
-    for col in found_directpatterns.keys():
-        print_debug("  %s %s" % (col, found_directpatterns[col]))
-        print("  %s" % col)
-        for key in found_directpatterns[col].keys():
-            print("     %03d\t%s" % (found_directpatterns[col][key], key))
-    print("Pass 1 found_indirectpatterns: lights, soundAfterInput")
-    for col in found_indirectpatterns.keys():
-        print_debug("  %s %s" % (col, found_indirectpatterns[col]))
-        print("  %s" % col)
-        for key in found_indirectpatterns[col].keys():
-            print("     %03d\t%s" % (found_indirectpatterns[col][key], key))
+    print("Pass 1 found_directeffects: lights, soundAfterInput")
+    for efct in found_directeffects.keys():
+        print("  %s %d" % (efct, found_directeffects[efct]))
+    print("Pass 1 found_indirecteffects: lights, soundAfterInput")
+    for efct in found_indirecteffects.keys():
+        print("  %s %d" % (efct, found_indirecteffects[efct]))
 
     # collect found symbols from either goto column
     found_symbols = []
@@ -217,8 +221,33 @@ def make_state_table():
     print("\n// define the effect number ranges")
     for key in EFFECT_MAP:
         print("#define %s %d" %(key, EFFECT_MAP[key]))
+    print("\n")
 
     # Pass 2
+
+    complete_block_field()
+
+    print("typedef struct struct_statetable {")
+    for key in COLTOSTRUCT:
+        print("%s" % COLTOSTRUCT[key])
+    print("} STATETABLE;\n\n")
+
+    len_statetable = len(STATETABLE)
+    len_statetablekeys = len(STATETABLE[0])
+    print("STATETABLE myState[%d] = {" % len_statetable)
+
+    for idx in range(len_statetable):
+        print("    { // row %d" % idx)
+        for count, key in enumerate(STATETABLE[idx]):
+            if (count+1) != len_statetablekeys:
+                print("        uint8_t %s, // %s" % (STATETABLE[idx][key], key))
+            else:
+                print("        uint8_t %s  // %s" % (STATETABLE[idx][key], key))
+        if (idx+1) != len_statetable: # C is picky about the last comma
+            print("    },")
+        else:
+            print("    }")
+
 
 
 if __name__ == "__main__":
