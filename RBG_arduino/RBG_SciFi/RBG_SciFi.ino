@@ -97,9 +97,73 @@ typedef struct _RBGStateTable {
     uint8_t gotoWithoutInput; // index within table to go without waiting for input
     uint8_t index;            // input column unused in this table
 } RBGStateTable;
+
 SoftwareSerial mySoftwareSerial(DPIN_SWSRL_RX, DPIN_SWSRL_TX); // to talk to YX5200 audio player
 DFRobotDFPlayerMini myDFPlayer;                                // to talk to YX5200 audio player
 
+#define mUNDEFINED -2
+#define mNONE -1
+#define mMENU 1
+
+// define the effect number ranges
+#define mEFCT_WIND_UP 0
+#define mEFCT_SHOOT 10
+#define mEFCT_OPEN_BARREL 20
+#define mEFCT_LOCK_LOAD 30
+#define mEFCT_INIT_PWR_UP 40
+#define mEFCT_CONFIGURE 80
+
+
+RBGSTATETABLE myState[4] = {
+    { // row 0
+        uint8_t mBLOCKSTART|mBLOCKEND; // blkFlags
+        uint8_t mNONE; // SPECIAL
+        uint8_t mFOOF; // soundAfterInput
+        uint8_t mSPARKLE; // lights
+        uint8_t mNONE; // inputRBG
+        uint8_t mNONE; // storeVal
+        uint8_t mNONE; // storeAddr
+        uint8_t mNONE; // gotoOnInput
+        uint8_t mMENU; // gotoWithoutInput
+        uint8_t mPOWERON; // index
+    },
+    { // row 1
+        uint8_t mBLOCKSTART; // blkFlags
+        uint8_t mSPCL_ONETIME | mSPCL_SHOOT; // SPECIAL
+        uint8_t mEFCT_SPCL|mEFCT_SHOOT; // soundAfterInput
+        uint8_t mEFCT_SPCL|mEFCT_SHOOT; // lights
+        uint8_t mINP_TRIG|mINP_BNONE; // inputRBG
+        uint8_t mNONE; // storeVal
+        uint8_t mNONE; // storeAddr
+        uint8_t mMENU; // gotoOnInput
+        uint8_t mNONE; // gotoWithoutInput
+        uint8_t mMENU; // index
+    },
+    { // row 2
+        uint8_t mNONE; // blkFlags
+        uint8_t mSPCL_ONETIME; // SPECIAL
+        uint8_t mEFCT_SPCL|mEFCT_OPEN_BARREL; // soundAfterInput
+        uint8_t mEFCT_SPCL|mEFCT_OPEN_BARREL; // lights
+        uint8_t mINP_OPEN; // inputRBG
+        uint8_t mNONE; // storeVal
+        uint8_t mNONE; // storeAddr
+        uint8_t mMENU; // gotoOnInput
+        uint8_t mNONE; // gotoWithoutInput
+        uint8_t mMENU; // index
+    },
+    { // row 3
+        uint8_t mBLOCKEND; // blkFlags
+        uint8_t mSPCL_ONETIME; // SPECIAL
+        uint8_t mEFCT_SPCL|mEFCT_LOCK_LOAD; // soundAfterInput
+        uint8_t mEFCT_SPCL|mEFCT_LOCK_LOAD; // lights
+        uint8_t mINP_LOCK; // inputRBG
+        uint8_t mNONE; // storeVal
+        uint8_t mNONE; // storeAddr
+        uint8_t mMENU; // gotoOnInput
+        uint8_t mNONE; // gotoWithoutInput
+        uint8_t mMENU; // index
+    }
+}
 
 void setup() {
   // put your setup code here, to run once:

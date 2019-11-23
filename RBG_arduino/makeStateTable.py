@@ -115,7 +115,7 @@ def make_state_table():
     global COLTOINDEX
 
     # Import the excel file
-    xls_file = pd.ExcelFile('./StateTable.xlsx')
+    xls_file = pd.ExcelFile('./StateTable_minimal.xlsx')
     df = xls_file.parse(xls_file.sheet_names[0])
 
     # map the column names to numbers; will barf if there is a problem
@@ -231,19 +231,17 @@ def make_state_table():
 
     len_statetable = len(STATETABLE)
     len_statetablekeys = len(STATETABLE[0])
-    print("STATETABLE myState[%d] = {" % len_statetable)
+    print("RBGSTATETABLE myState[%d] = {" % len_statetable)
 
     for idx in range(len_statetable):
         print("    { // row %d" % idx)
         for count, key in enumerate(STATETABLE[idx]):
-            if (count+1) != len_statetablekeys:
-                print("        uint8_t %s, // %s" % (STATETABLE[idx][key], key))
-            else:
-                print("        uint8_t %s  // %s" % (STATETABLE[idx][key], key))
+            print("        uint8_t %s; // %s" % (STATETABLE[idx][key], key))
         if (idx+1) != len_statetable: # C is picky about the last comma
             print("    },")
         else:
             print("    }")
+    print("}")
 
 
 
