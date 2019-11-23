@@ -113,57 +113,67 @@ DFRobotDFPlayerMini myDFPlayer;                                // to talk to YX5
 #define mEFCT_INIT_PWR_UP 40
 #define mEFCT_CONFIGURE 80
 
+// by hand; need to autogenerate
+#define mSPARKLE 1
+#define mPOWERON 2
+#define mSPCL_ONETIME 0x80
+#define mSPCL_SHOOT   0x40
+#define mEFCT_SPCL    0x80
+#define mFOOF 1 // This is the FOOF Science Fiction Rubber Band Gun version 1.0.Press any button plus trigger to configure, // soundAfterInput
+#define mBLOCKSTART 0x80
+#define mBLOCKEND   0x40
 
-RBGSTATETABLE myState[4] = {
+
+RBGStateTable myState[4] = {
     { // row 0
-        uint8_t mBLOCKSTART|mBLOCKEND; // blkFlags
-        uint8_t mNONE; // SPECIAL
-        uint8_t mFOOF; // soundAfterInput
-        uint8_t mSPARKLE; // lights
-        uint8_t mNONE; // inputRBG
-        uint8_t mNONE; // storeVal
-        uint8_t mNONE; // storeAddr
-        uint8_t mNONE; // gotoOnInput
-        uint8_t mMENU; // gotoWithoutInput
-        uint8_t mPOWERON; // index
+         mBLOCKSTART|mBLOCKEND, // blkFlags
+         mNONE, // SPECIAL
+         mFOOF, // soundAfterInput
+         mSPARKLE, // lights
+         mNONE, // inputRBG
+         mNONE, // storeVal
+         mNONE, // storeAddr
+         mNONE, // gotoOnInput
+         mMENU, // gotoWithoutInput
+         mPOWERON, // index
     },
     { // row 1
-        uint8_t mBLOCKSTART; // blkFlags
-        uint8_t mSPCL_ONETIME | mSPCL_SHOOT; // SPECIAL
-        uint8_t mEFCT_SPCL|mEFCT_SHOOT; // soundAfterInput
-        uint8_t mEFCT_SPCL|mEFCT_SHOOT; // lights
-        uint8_t mINP_TRIG|mINP_BNONE; // inputRBG
-        uint8_t mNONE; // storeVal
-        uint8_t mNONE; // storeAddr
-        uint8_t mMENU; // gotoOnInput
-        uint8_t mNONE; // gotoWithoutInput
-        uint8_t mMENU; // index
+         mBLOCKSTART, // blkFlags
+         mSPCL_ONETIME | mSPCL_SHOOT, // SPECIAL
+         mEFCT_SPCL|mEFCT_SHOOT, // soundAfterInput
+         mEFCT_SPCL|mEFCT_SHOOT, // lights
+         mINP_TRIG|mINP_BNONE, // inputRBG
+         mNONE, // storeVal
+         mNONE, // storeAddr
+         mMENU, // gotoOnInput
+         mNONE, // gotoWithoutInput
+         mMENU, // index
     },
     { // row 2
-        uint8_t mNONE; // blkFlags
-        uint8_t mSPCL_ONETIME; // SPECIAL
-        uint8_t mEFCT_SPCL|mEFCT_OPEN_BARREL; // soundAfterInput
-        uint8_t mEFCT_SPCL|mEFCT_OPEN_BARREL; // lights
-        uint8_t mINP_OPEN; // inputRBG
-        uint8_t mNONE; // storeVal
-        uint8_t mNONE; // storeAddr
-        uint8_t mMENU; // gotoOnInput
-        uint8_t mNONE; // gotoWithoutInput
-        uint8_t mMENU; // index
+         mNONE, // blkFlags
+         mSPCL_ONETIME, // SPECIAL
+         mEFCT_SPCL|mEFCT_OPEN_BARREL, // soundAfterInput
+         mEFCT_SPCL|mEFCT_OPEN_BARREL, // lights
+         mINP_OPEN, // inputRBG
+         mNONE, // storeVal
+         mNONE, // storeAddr
+         mMENU, // gotoOnInput
+         mNONE, // gotoWithoutInput
+         mMENU, // index
     },
     { // row 3
-        uint8_t mBLOCKEND; // blkFlags
-        uint8_t mSPCL_ONETIME; // SPECIAL
-        uint8_t mEFCT_SPCL|mEFCT_LOCK_LOAD; // soundAfterInput
-        uint8_t mEFCT_SPCL|mEFCT_LOCK_LOAD; // lights
-        uint8_t mINP_LOCK; // inputRBG
-        uint8_t mNONE; // storeVal
-        uint8_t mNONE; // storeAddr
-        uint8_t mMENU; // gotoOnInput
-        uint8_t mNONE; // gotoWithoutInput
-        uint8_t mMENU; // index
-    }
-}
+         mBLOCKEND, // blkFlags
+         mSPCL_ONETIME, // SPECIAL
+         mEFCT_SPCL|mEFCT_LOCK_LOAD, // soundAfterInput
+         mEFCT_SPCL|mEFCT_LOCK_LOAD, // lights
+         mINP_LOCK, // inputRBG
+         mNONE, // storeVal
+         mNONE, // storeAddr
+         mMENU, // gotoOnInput
+         mNONE, // gotoWithoutInput
+         mMENU, // index
+    },
+};
 
 void setup() {
   // put your setup code here, to run once:

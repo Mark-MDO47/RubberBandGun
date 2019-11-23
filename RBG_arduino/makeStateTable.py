@@ -224,24 +224,21 @@ def make_state_table():
 
     complete_block_field()
 
-    print("typedef struct _RBGStateTable {")
+    print("typedef struct RBGStateTable_t {")
     for key in COLTOSTRUCT:
         print("%s" % COLTOSTRUCT[key])
     print("} RBGStateTable;\n\n")
 
     len_statetable = len(STATETABLE)
     len_statetablekeys = len(STATETABLE[0])
-    print("RBGSTATETABLE myState[%d] = {" % len_statetable)
+    print("RBGStateTable myState[%d] = {" % len_statetable)
 
     for idx in range(len_statetable):
         print("    { // row %d" % idx)
         for count, key in enumerate(STATETABLE[idx]):
-            print("        uint8_t %s; // %s" % (STATETABLE[idx][key], key))
-        if (idx+1) != len_statetable: # C is picky about the last comma
-            print("    },")
-        else:
-            print("    }")
-    print("}")
+            print("         %s, // %s" % (STATETABLE[idx][key], key))
+        print("    },")  # C is no longer picky about the last comma
+    print("};")
 
 
 
