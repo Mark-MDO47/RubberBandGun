@@ -102,7 +102,7 @@ SoftwareSerial mySoftwareSerial(DPIN_SWSRL_RX, DPIN_SWSRL_TX); // to talk to YX5
 DFRobotDFPlayerMini myDFPlayer;                                // to talk to YX5200 audio player
 
 #define mUNDEFINED -2
-#define mNONE -1
+#define mNONE 0xFF
 #define mMENU 1
 
 // define the effect number ranges
@@ -222,13 +222,14 @@ void DFsetup() {
   myDFPlayer.volume(10);  //Set volume value. From 0 to 30
 } // end DFsetup()
 
-void stateTable_store(stateTable_ROW * theRow, stateTable_STATE * theStates) {
-  uint_8  val  = 0;
-  uint_32 addr = 0;
+/* need to re-think this one
+void stateTable_store(RBGStateTable * theRow, uint8_t * theStates) {
+  uint8_t  val  = 0;
+  uint32_t addr = 0;
   if (VYBG == theRow->storeVal) {
-    val = stateTable_STATE->VYBG;
+    val = theStates->VYBG;
   } else {
-    val = stateTable_ROW->storeVal;
+    val = theStates->storeVal;
   }
   addr = (stateTable_ROW->storeAddr & mADDRLOW) + ((stateTable_ROW->storeAddr & mADDRHI) >> mADDRHIrshift)
   if (stateTable_ROW->storeAddr & mIDX) {
@@ -237,6 +238,7 @@ void stateTable_store(stateTable_ROW * theRow, stateTable_STATE * theStates) {
   EEPROM[stateTable_ROW->storeAddr] = addr
   EEPROM[stateTable_ROW->storeVal] = val
 } // end stateTable_store()
+*/
 
 #if DFPRINTDETAIL
 void DFprintDetail(uint8_t type, int value){
