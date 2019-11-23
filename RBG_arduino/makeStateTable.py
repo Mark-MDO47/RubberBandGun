@@ -173,31 +173,25 @@ def make_state_table():
         print("  %s %s" % (idx, str(STATETABLE[idx])))
 
     # collect sounds and light patterns
-    effectkeys = {'lights': {}, 'soundAfterInput': {}}
-    found_directeffects = {}
-    found_indirecteffects = {}
-    for col in effectkeys.keys():
-        count_direct = 1
-        count_indirect = 1
+    known_effects = {"mNONE": 0xFF, "mEFCT_SPCL": 0x40, "mEFCT_SHOOT": 1, "mEFCT_OPEN_BARREL": 2, "mEFCT_LOCK_LOAD": 3}
+    count_effects = {'lights': 1, 'soundAfterInput': 1}
+    found_effects = {'lights': {}, 'soundAfterInput': {}}
+    for efct in count_effects.keys():
         for idx in STATETABLE:
-            if 0 != len(STATETABLE[idx][col]):
-                if -1 == STATETABLE[idx][col].find("["):
-                    if STATETABLE[idx][col] == "mNONE":
-                        found_directeffects[STATETABLE[idx][col]] = -1
-                    if STATETABLE[idx][col] not in found_directeffects.keys():
-                        found_directeffects[STATETABLE[idx][col]] = count_direct
-                        count_direct += 1
-                else:  # indirect
-                    if STATETABLE[idx][col] not in found_indirecteffects.keys():
-                        found_indirecteffects[STATETABLE[idx][col]] = count_indirect
-                        count_indirect += 1
+            if 0 != len(STATETABLE[idx][efct]):
+                txt = STATETABLE[idx][efct]
+                if txt.split('|')[0] in known_effects.keys():
+                    pass
+                elif txt not in found_effects[efct].keys():
+                    found_effects[efct][txt] = count_effects[efct]
+                    count_effects[efct] += 1
 
-    print("Pass 1 found_directeffects: lights, soundAfterInput")
-    for efct in found_directeffects.keys():
-        print("  %s %d" % (efct, found_directeffects[efct]))
-    print("Pass 1 found_indirecteffects: lights, soundAfterInput")
-    for efct in found_indirecteffects.keys():
-        print("  %s %d" % (efct, found_indirecteffects[efct]))
+    print("Pass 1 found_effects: lights, soundAfterInput")
+    for efct in found_effects.keys():
+        for symb in found_effects[efct]:
+            print("  %s %s %d" % (efct, symb, found_effects[efct][symb]))
+
+    # Pass 2
 
     # collect found symbols from either goto column
     found_symbols = []
@@ -223,14 +217,17 @@ def make_state_table():
         print("#define %s %d" %(key, EFFECT_MAP[key]))
     print("\n")
 
-    # Pass 2
+
+    known_effects = {"mNONE": 0xFF, "mEFCT_SPCL": 0x40, "mEFCT_SHOOT": 1, "mEFCT_OPEN_BARREL": 2, "mEFCT_LOCK_LOAD": 3}
+    count_effects = {'lights': 1, 'soundAfterInput': 1}
+    found_effects = {'lights': {}, 'soundAfterInput': {}}
 
     complete_block_field()
 
-    print("typedef struct struct_statetable {")
+    print("typedef struct _RBGStateTable {")
     for key in COLTOSTRUCT:
         print("%s" % COLTOSTRUCT[key])
-    print("} STATETABLE;\n\n")
+    print("} RBGStateTable;\n\n")
 
     len_statetable = len(STATETABLE)
     len_statetablekeys = len(STATETABLE[0])

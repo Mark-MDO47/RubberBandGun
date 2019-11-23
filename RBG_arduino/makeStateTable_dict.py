@@ -20,8 +20,8 @@ COLTOSTRUCT = {
                "lights":           "    uint8_t lights;           // index for light pattern while waiting",
                "inputRBG":         "    uint8_t inputRBG;         // mask for input expected",
                "storeVal":         "    uint8_t storeVal;         // value to store, 8 bit uint",
-               "storeAddr":        "    uint8_t storeAddr;        // address to store; includes mask for mFUNC, mVAL," \
-                                 + "                               eeSoundSave|mFUNC: idx= 3 WindUp, 2 Shoot, 4 Open, 7 Load",
+               "storeAddr":        "    uint8_t storeAddr;        // address to store; includes mask for mFUNC, mVAL,\n" \
+                                 + "                              //   eeSoundSave|mFUNC: idx= 3 WindUp, 2 Shoot, 4 Open, 7 Load",
                "gotoOnInput":      "    uint8_t gotoOnInput;      // index within table to go with matching input",
                "gotoWithoutInput": "    uint8_t gotoWithoutInput; // index within table to go without waiting for input",
                "index":            "    uint8_t index;            // input column unused in this table"
@@ -91,18 +91,18 @@ translateToMasks = {
 # Map of effects: sounds, LED patterns
 #   note: could use folders for the files and repeat numbers, but this also refers to lights
 #   Files will be in the MP3 folder: for instance, file 4 is SD:/MP3/0004.mp3
-EFCT_WIND_UP = 00  # 000 to 009 - wind-up effects
-EFCT_SHOOT = 10  # 010 to 019 - shoot effects
-EFCT_OPEN_BARREL = 20  # 020 to 029 - open barrel effects
-EFCT_LOCK_LOAD = 30  # 030 to 039 - lock and load barrel effects
-EFCT_INIT_PWR_UP = 40  # 040 to 049 - after initial power-up effects
-EFCT_CONFIGURE = 80  # 080 to 099 - effects used to navigate menus
+mEFCT_WIND_UP = 00  # 000 to 009 - wind-up effects
+mEFCT_SHOOT = 10  # 010 to 019 - shoot effects
+mEFCT_OPEN_BARREL = 20  # 020 to 029 - open barrel effects
+mEFCT_LOCK_LOAD = 30  # 030 to 039 - lock and load barrel effects
+mEFCT_INIT_PWR_UP = 40  # 040 to 049 - after initial power-up effects
+mEFCT_CONFIGURE = 80  # 080 to 099 - effects used to navigate menus
 #
 EFFECT_MAP = {
-    "EFCT_WIND_UP": EFCT_WIND_UP,  # 000 to 009 - wind-up effects
-    "EFCT_SHOOT": EFCT_SHOOT,  # 010 to 019 - shoot effects
-    "EFCT_OPEN_BARREL": EFCT_OPEN_BARREL,  # 020 to 029 - open barrel effects
-    "EFCT_LOCK_LOAD": EFCT_LOCK_LOAD,  # 030 to 039 - lock and load barrel effects
-    "EFCT_INIT_PWR_UP": EFCT_INIT_PWR_UP,  # 040 to 049 - after initial power-up effects
-    "EFCT_CONFIGURE": EFCT_CONFIGURE  # 080 to 099 - effects used to navigate menus
+    "mEFCT_WIND_UP": mEFCT_WIND_UP,  # 000 to 009 - wind-up effects
+    "mEFCT_SHOOT": mEFCT_SHOOT,  # 010 to 019 - shoot effects
+    "mEFCT_OPEN_BARREL": mEFCT_OPEN_BARREL,  # 020 to 029 - open barrel effects
+    "mEFCT_LOCK_LOAD": mEFCT_LOCK_LOAD,  # 030 to 039 - lock and load barrel effects
+    "mEFCT_INIT_PWR_UP": mEFCT_INIT_PWR_UP,  # 040 to 049 - after initial power-up effects
+    "mEFCT_CONFIGURE": mEFCT_CONFIGURE  # 080 to 099 - effects used to navigate menus
 }

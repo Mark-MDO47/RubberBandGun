@@ -50,19 +50,20 @@ void DFsetup();                              // initialize myDFPlayer
 #define DPIN_AUDIO_BUSY  12
 #define DPIN_SOLENOID    13  // often has internal LED and resistor soldered to board, can make INPUT not work
 
-// masks for button, trigger and barrel states and state changes
-#define mB01   0x01  // mask for DPIN_BTN_YELLOW only
-#define mB02   0x02  // mask for DPIN_BTN_GREEN  only
-#define mB03   0x03  // mask for DPIN_BTN_YELLOW and DPIN_BTN_GREEN
-#define mB04   0x04  // mask for DPIN_BTN_BLACK  only
-#define mB05   0x05  // mask for DPIN_BTN_YELLOW and DPIN_BTN_BLACK
-#define mB06   0x06  // mask for DPIN_BTN_GREEN  and DPIN_BTN_BLACK
-#define mB07   0x07  // mask for DPIN_BTN_YELLOW and DPIN_BTN_GREEN and DPIN_BTN_BLACK
-#define mBANY  0x08  // mask for any DPIN_BTN_ combination but at least one of them
-#define mBNONE 0x10  // mask for no DPIN_BTN_ depressed
-#define mTRIG  0x20  // mask for just depressed the trigger
-#define mLOCK  0x40  // mask for just connected the barrel
-#define mOPEN  0x80  // mask for just disconnected the barrel
+// masks for inputs: button, trigger and barrel states and state changes
+#define mINP_B01   0x01  // mask for DPIN_BTN_YELLOW only
+#define mINP_B02   0x02  // mask for DPIN_BTN_GREEN  only
+#define mINP_B03   0x03  // mask for DPIN_BTN_YELLOW and DPIN_BTN_GREEN
+#define mINP_B04   0x04  // mask for DPIN_BTN_BLACK  only
+#define mINP_B05   0x05  // mask for DPIN_BTN_YELLOW and DPIN_BTN_BLACK
+#define mINP_B06   0x06  // mask for DPIN_BTN_GREEN  and DPIN_BTN_BLACK
+#define mINP_B07   0x07  // mask for DPIN_BTN_YELLOW and DPIN_BTN_GREEN and DPIN_BTN_BLACK
+#define mINP_BANY  0x08  // mask for any DPIN_BTN_ combination but at least one of them
+#define mINP_BNONE 0x10  // mask for no DPIN_BTN_ depressed
+#define mINP_TRIG  0x20  // mask for just depressed the trigger
+#define mINP_LOCK  0x40  // mask for just connected the barrel
+#define mINP_OPEN  0x80  // mask for just disconnected the barrel
+
 
 // values that can be stored
 #define VYBG 0x10    // whatever is in DPIN_BTN_YELLOW and DPIN_BTN_GREEN and DPIN_BTN_BLACK (0 thru 7)
@@ -84,15 +85,18 @@ void DFsetup();                              // initialize myDFPlayer
 //  EEPROM[stateTable_ROW->storeAddr] = addr
 //  EEPROM[stateTable_ROW->storeVal] = val
 typedef struct _RBGStateTable {
-  uint8_t soundAfterInput;  // index for sound to make after input match
-  uint8_t lights;           // index for light pattern while waiting
-  uint8_t inputRBG;         // mask for input expected
-  uint8_t storeVal;         // value to store, 8 bit uint
-  uint8_t storeAddr;        // address to store; includes mask for mFUNC, mVAL, eeSoundSave|mFUNC: idx= 1 WindUp, 2 Shoot, 4 Open, 7 Load
-  uint8_t gotoOnInput;      // index within table to go with matching input    
-  uint8_t gotoWithoutInput; // index within table to go without waiting for input
+    uint8_t blkFlags;         // mBLOCKSTART, mBLOCKEND or mNONE
+    uint8_t SPECIAL;          // special row-handling flags: mSPCL_*
+    uint8_t soundAfterInput;  // index for sound to make after input match
+    uint8_t lights;           // index for light pattern while waiting
+    uint8_t inputRBG;         // mask for input expected
+    uint8_t storeVal;         // value to store, 8 bit uint
+    uint8_t storeAddr;        // address to store; includes mask for mFUNC, mVAL,
+                              //   eeSoundSave|mFUNC: idx= 3 WindUp, 2 Shoot, 4 Open, 7 Load
+    uint8_t gotoOnInput;      // index within table to go with matching input
+    uint8_t gotoWithoutInput; // index within table to go without waiting for input
+    uint8_t index;            // input column unused in this table
 } RBGStateTable;
-
 SoftwareSerial mySoftwareSerial(DPIN_SWSRL_RX, DPIN_SWSRL_TX); // to talk to YX5200 audio player
 DFRobotDFPlayerMini myDFPlayer;                                // to talk to YX5200 audio player
 
