@@ -105,7 +105,7 @@ DFRobotDFPlayerMini myDFPlayer;                                // to talk to YX5
 #define mFOOF 1 // This is the FOOF Science Fiction Rubber Band Gun version 1.0.
 #define mBLOCKSTART 0x80
 #define mBLOCKEND   0x40
-#define mPOWERON 0  // address in myState[]
+#define mPOWERON 0  // address in myStateTable[]
 #define mMENU 1
 
 // define the effect number ranges
@@ -134,7 +134,7 @@ typedef struct _RBGStateTable {
     uint8_t index;            // input column unused in this table
 } RBGStateTable;
 
-RBGStateTable myState[4] = {
+static RBGStateTable myStateTable[4] = {
     { // row 0
          mBLOCKSTART|mBLOCKEND, // blkFlags
          mNONE, // SPECIAL
@@ -185,10 +185,18 @@ RBGStateTable myState[4] = {
     },
 };
 
-static uint8_t myStateRow = 0;       // points to state that we will process
-static uint8_t myStateRowInProc = 0; // what we are waiting on to process this state
-#define mWAITFORSOUND ((uint8_t) 0x80)  // wait for sound to finish
-#define mWAITFORINPUT ((uint8_t) 0x40)  // wait for user input (trigger with perhaps others)
+static struct myState_t {
+  uint8_t tableRow;            // points to state that we will process
+  uint8_t tableRowInProcFlags; // what we are waiting on to process this state
+  uint8_t inputRBG;            // bits for input buttons and sound finish
+  unsigned long prevTimer;     // timer from previous time through loop
+  unsigned long nowTimer;      // timer from this time through loop
+  unsigned long ledTimer;      // timer for next LED activity
+  unsigned long debounceTimer; // timer for debounce of buttons
+} myState;
+  
+#define mINPROCFLG_WAITFORSOUND ((uint8_t) 0x80)  // wait for sound to finish
+#define mINPROCFLG_WAITFORINPUT ((uint8_t) 0x40)  // wait for user input (trigger with perhaps others)
 
 void setup() {
   // put your setup code here, to run once:
@@ -218,56 +226,58 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  static unsigned long prevTimer = millis();
-  unsigned long nowTimer;
-  uint8_t myInput;
 
-  nowTimer = millis();
-  myInput = RBG_debounceInputs(prevTimer, nowTimer);
-  prevTimer = nowTimer;
-
-  if (0 == myStateRowInProc) {
-    myStateRowInProc = RBG_startRow(); // just do what the row says
-  } else if (mWAITFORSOUND == myStateRowInProc) {
-    myStateRowInProc = RBG_waitForSound(); // wait for sound to complete
-  } else if (mWAITFORINPUT == myStateRowInProc) {
-    myStateRowInProc = RBG_waitForInput(); // wait for user input, trigger and maybe other buttons
+  myState.nowTimer = millis();
+  myState.inputRBG = RBG_debounceInputs();
+  
+  if (0 == myState.tableRowInProcFlags) {
+    myState.tableRowInProcFlags = RBG_startRow(); // just do what the row says
+  } else if (mINPROCFLG_WAITFORSOUND == myState.tableRowInProcFlags) {
+    myState.tableRowInProcFlags = RBG_waitForSound(); // wait for sound to complete
+  } else if (mINPROCFLG_WAITFORINPUT == myState.tableRowInProcFlags) {
+    myState.tableRowInProcFlags = RBG_waitForInput(); // wait for user input, trigger and maybe other buttons
   } else {
     Serial.print(F("ERROR - unknown input "));
-    Serial.println((uint16_t) myStateRowInProc);
-    myStateRowInProc = 0;
+    Serial.println((uint16_t) myState.tableRowInProcFlags);
+    myState.tableRowInProcFlags = 0;
   } // end process state table
- 
+
+  myState.prevTimer = myState.nowTimer;
 }  // end loop()
 
 void DFsetup() {
   Serial.println(F("Initializing DFPlayer ... (May take 3~5 seconds)"));
   
-  if (!myDFPlayer.begin(mySoftwareSerial)) {  // Use softwareSerial to communicate with mp3.
+  if (!myDFPlayer.begin(mySoftwareSerial)) {  // Use softwareSerial to communicate with mp3 player
     Serial.println(F("Unable to begin DFPlayer:"));
     Serial.println(F("1.Please recheck the connection!"));
     Serial.println(F("2.Please insert the SD card!"));
     while(true){
-      delay(0); // Code to compatible with ESP8266 watch dog.
+      delay(1);
     }
   }
   Serial.println(F("DFPlayer Mini online."));
-  myDFPlayer.volume(10);  //Set volume value. From 0 to 30
+  myDFPlayer.volume(24);  //Set volume value. From 0 to 30
 } // end DFsetup()
 
-uint8_t RBG_debounceInputs(unsigned long prevTimer, unsigned long nowTimer) {
-  return 0;
+uint8_t RBG_debounceInputs() {
+  if (mNONE == myState.inputRBG) {
+    play soundAfterInput
+    LEDS to lights
+  }
+  return 0; // go ahead and start on the row
 } // end RBG_debounceInputs(...)
+
 uint8_t RBG_startRow() {
-  return 0;
+  return 0; // go ahead and start on the row
 } // end RBG_startRow()
 
 uint8_t RBG_waitForSound() {
-  return 0;
+  return 0; // go ahead and start on the row
 } // end RBG_waitForSound()
 
 uint8_t RBG_waitForInput() {
-  return 0;
+  return 0; // go ahead and start on the row
 } // end RBG_waitForInput()
 
 /* need to re-think this one
