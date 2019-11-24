@@ -81,6 +81,42 @@ void DFsetup();                              // initialize myDFPlayer
 #define eeSoundSave 0x00 // EEPROM starting address for sound configuration
 #define eeLEDSave   0x10 // EEPROM starting address for LED pattern configuration
 
+SoftwareSerial mySoftwareSerial(DPIN_SWSRL_RX, DPIN_SWSRL_TX); // to talk to YX5200 audio player
+DFRobotDFPlayerMini myDFPlayer;                                // to talk to YX5200 audio player
+
+
+// define the effect number ranges
+#define mEFCT_WIND_UP 0
+#define mEFCT_SHOOT 10
+#define mEFCT_OPEN_BARREL 20
+#define mEFCT_LOCK_LOAD 30
+#define mEFCT_INIT_PWR_UP 40
+#define mEFCT_CONFIGURE 80
+
+// define the symbols
+#define mUNDEFINED 254
+#define mNONE 255
+
+#define mEFCT_SPCLFUNC    0x80
+#define mSPCL_ONETIME 0x80
+#define mSPCL_SHOOT   0x40
+#define mSPARKLE 1  // LED Effect
+
+#define mFOOF 1 // This is the FOOF Science Fiction Rubber Band Gun version 1.0.
+#define mBLOCKSTART 0x80
+#define mBLOCKEND   0x40
+#define mPOWERON 0  // address in myState[]
+#define mMENU 1
+
+// define the effect number ranges
+#define mEFCT_WIND_UP 0
+#define mEFCT_SHOOT 10
+#define mEFCT_OPEN_BARREL 20
+#define mEFCT_LOCK_LOAD 30
+#define mEFCT_INIT_PWR_UP 40
+#define mEFCT_CONFIGURE 80
+
+
 // STATE TABLE
 //  EEPROM[stateTable_ROW->storeAddr] = addr
 //  EEPROM[stateTable_ROW->storeVal] = val
@@ -98,32 +134,6 @@ typedef struct _RBGStateTable {
     uint8_t index;            // input column unused in this table
 } RBGStateTable;
 
-SoftwareSerial mySoftwareSerial(DPIN_SWSRL_RX, DPIN_SWSRL_TX); // to talk to YX5200 audio player
-DFRobotDFPlayerMini myDFPlayer;                                // to talk to YX5200 audio player
-
-#define mUNDEFINED -2
-#define mNONE 0xFF
-#define mMENU 1
-
-// define the effect number ranges
-#define mEFCT_WIND_UP 0
-#define mEFCT_SHOOT 10
-#define mEFCT_OPEN_BARREL 20
-#define mEFCT_LOCK_LOAD 30
-#define mEFCT_INIT_PWR_UP 40
-#define mEFCT_CONFIGURE 80
-
-// by hand; need to autogenerate
-#define mSPARKLE 1
-#define mPOWERON 2
-#define mSPCL_ONETIME 0x80
-#define mSPCL_SHOOT   0x40
-#define mEFCT_SPCL    0x80
-#define mFOOF 1 // This is the FOOF Science Fiction Rubber Band Gun version 1.0.Press any button plus trigger to configure, // soundAfterInput
-#define mBLOCKSTART 0x80
-#define mBLOCKEND   0x40
-
-
 RBGStateTable myState[4] = {
     { // row 0
          mBLOCKSTART|mBLOCKEND, // blkFlags
@@ -140,8 +150,8 @@ RBGStateTable myState[4] = {
     { // row 1
          mBLOCKSTART, // blkFlags
          mSPCL_ONETIME | mSPCL_SHOOT, // SPECIAL
-         mEFCT_SPCL|mEFCT_SHOOT, // soundAfterInput
-         mEFCT_SPCL|mEFCT_SHOOT, // lights
+         mEFCT_SPCLFUNC|mEFCT_SHOOT, // soundAfterInput
+         mEFCT_SPCLFUNC|mEFCT_SHOOT, // lights
          mINP_TRIG|mINP_BNONE, // inputRBG
          mNONE, // storeVal
          mNONE, // storeAddr
@@ -152,8 +162,8 @@ RBGStateTable myState[4] = {
     { // row 2
          mNONE, // blkFlags
          mSPCL_ONETIME, // SPECIAL
-         mEFCT_SPCL|mEFCT_OPEN_BARREL, // soundAfterInput
-         mEFCT_SPCL|mEFCT_OPEN_BARREL, // lights
+         mEFCT_SPCLFUNC|mEFCT_SHOOT, // soundAfterInput
+         mEFCT_SPCLFUNC|mEFCT_SHOOT, // lights
          mINP_OPEN, // inputRBG
          mNONE, // storeVal
          mNONE, // storeAddr
@@ -164,8 +174,8 @@ RBGStateTable myState[4] = {
     { // row 3
          mBLOCKEND, // blkFlags
          mSPCL_ONETIME, // SPECIAL
-         mEFCT_SPCL|mEFCT_LOCK_LOAD, // soundAfterInput
-         mEFCT_SPCL|mEFCT_LOCK_LOAD, // lights
+         mEFCT_SPCLFUNC|mEFCT_SHOOT, // soundAfterInput
+         mEFCT_SPCLFUNC|mEFCT_SHOOT, // lights
          mINP_LOCK, // inputRBG
          mNONE, // storeVal
          mNONE, // storeAddr
@@ -174,6 +184,11 @@ RBGStateTable myState[4] = {
          mMENU, // index
     },
 };
+
+static uint8_t myStateRow = 0;       // points to state that we will process
+static uint8_t myStateRowInProc = 0; // what we are waiting on to process this state
+#define mWAITFORSOUND ((uint8_t) 0x80)  // wait for sound to finish
+#define mWAITFORINPUT ((uint8_t) 0x40)  // wait for user input (trigger with perhaps others)
 
 void setup() {
   // put your setup code here, to run once:
@@ -198,13 +213,31 @@ void setup() {
   FastLED.addLeds<NEOPIXEL,DPIN_FASTLED>(led_display, NUM_LEDS_PER_DISK);
   FastLED.setBrightness(BRIGHTMAX); // we will do our own power management
 
+  Serial.println(F("FOOF SciFi RBG init COMPLETE"));
 } // end setup()
 
 void loop() {
   // put your main code here, to run repeatedly:
+  static unsigned long prevTimer = millis();
+  unsigned long nowTimer;
+  uint8_t myInput;
 
-  static unsigned long timer = millis();
+  nowTimer = millis();
+  myInput = RBG_debounceInputs(prevTimer, nowTimer);
+  prevTimer = nowTimer;
 
+  if (0 == myStateRowInProc) {
+    myStateRowInProc = RBG_startRow(); // just do what the row says
+  } else if (mWAITFORSOUND == myStateRowInProc) {
+    myStateRowInProc = RBG_waitForSound(); // wait for sound to complete
+  } else if (mWAITFORINPUT == myStateRowInProc) {
+    myStateRowInProc = RBG_waitForInput(); // wait for user input, trigger and maybe other buttons
+  } else {
+    Serial.print(F("ERROR - unknown input "));
+    Serial.println((uint16_t) myStateRowInProc);
+    myStateRowInProc = 0;
+  } // end process state table
+ 
 }  // end loop()
 
 void DFsetup() {
@@ -221,6 +254,21 @@ void DFsetup() {
   Serial.println(F("DFPlayer Mini online."));
   myDFPlayer.volume(10);  //Set volume value. From 0 to 30
 } // end DFsetup()
+
+uint8_t RBG_debounceInputs(unsigned long prevTimer, unsigned long nowTimer) {
+  return 0;
+} // end RBG_debounceInputs(...)
+uint8_t RBG_startRow() {
+  return 0;
+} // end RBG_startRow()
+
+uint8_t RBG_waitForSound() {
+  return 0;
+} // end RBG_waitForSound()
+
+uint8_t RBG_waitForInput() {
+  return 0;
+} // end RBG_waitForInput()
 
 /* need to re-think this one
 void stateTable_store(RBGStateTable * theRow, uint8_t * theStates) {

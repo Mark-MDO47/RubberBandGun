@@ -201,7 +201,15 @@ def make_state_table():
                 found_symbols.append(symb)
 
     print("Pass 2 found_symbols")
-    print("\n// define the symbols\n#define mUNDEFINED -2\n#define mNONE -1")
+    print("\n// define the symbols\n#define mUNDEFINED 254\n#define mNONE 255\n"
+            + "\n#define mEFCT_SPCLFUNC    0x80"
+            + "\n#define mSPCL_ONETIME 0x80\n#define mSPCL_SHOOT   0x40"
+            + "\n#define mSPARKLE 1  // LED Effect\n"
+            + "\n#define mFOOF 1 // This is the FOOF Science Fiction Rubber Band Gun version 1.0. Press any button plus trigger to configure"
+            + "\n#define mBLOCKSTART 0x80"
+            + "\n#define mBLOCKEND   0x40"
+            + "\n#define mPOWERON 0  // address in myState[]\n")
+
     for key in found_symbols:
         if key == "mNONE":
             print_debug("  %s is valid" % key)
@@ -228,7 +236,6 @@ def make_state_table():
     for key in COLTOSTRUCT:
         print("%s" % COLTOSTRUCT[key])
     print("} RBGStateTable;\n\n")
-
     len_statetable = len(STATETABLE)
     len_statetablekeys = len(STATETABLE[0])
     print("RBGStateTable myState[%d] = {" % len_statetable)
