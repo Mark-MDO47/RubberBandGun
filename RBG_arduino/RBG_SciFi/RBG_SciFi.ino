@@ -33,6 +33,8 @@
 #include "RBG_SciFi_LEDs.h"                  // 
 #include "DFRobotDFPlayerMini.h"             // to communicate with the YX5200 audio player
 
+#define NUMOF(x) (sizeof(x) / sizeof(*x))
+
 #define SERIALDEBUG 1                        // serial debugging
 
 #define DPIN_FASTLED      3  // talk to FASTLED library
@@ -46,18 +48,19 @@
 #define DPIN_SOLENOID    13  // often has internal LED and resistor soldered to board, can make INPUT not work
 
 // masks for inputs: button, trigger and barrel states and state changes
-#define mINP_B01   0x01  // mask for DPIN_BTN_YELLOW only
-#define mINP_B02   0x02  // mask for DPIN_BTN_GREEN  only
-#define mINP_B03   0x03  // mask for DPIN_BTN_YELLOW and DPIN_BTN_GREEN
-#define mINP_B04   0x04  // mask for DPIN_BTN_BLACK  only
-#define mINP_B05   0x05  // mask for DPIN_BTN_YELLOW and DPIN_BTN_BLACK
-#define mINP_B06   0x06  // mask for DPIN_BTN_GREEN  and DPIN_BTN_BLACK
-#define mINP_B07   0x07  // mask for DPIN_BTN_YELLOW and DPIN_BTN_GREEN and DPIN_BTN_BLACK
-#define mINP_BANY  0x08  // mask for any DPIN_BTN_ combination but at least one of them
-#define mINP_BNONE 0x10  // mask for no DPIN_BTN_ depressed
-#define mINP_TRIG  0x20  // mask for just depressed the trigger
-#define mINP_LOCK  0x40  // mask for just connected the barrel
-#define mINP_OPEN  0x80  // mask for just disconnected the barrel
+#define mINP_B01   0x0001      // mask for DPIN_BTN_YELLOW only
+#define mINP_B02   0x0002      // mask for DPIN_BTN_GREEN  only
+#define mINP_B03   0x0003      // mask for DPIN_BTN_YELLOW and DPIN_BTN_GREEN
+#define mINP_B04   0x0004      // mask for DPIN_BTN_BLACK  only
+#define mINP_B05   0x0005      // mask for DPIN_BTN_YELLOW and DPIN_BTN_BLACK
+#define mINP_B06   0x0006      // mask for DPIN_BTN_GREEN  and DPIN_BTN_BLACK
+#define mINP_B07   0x0007      // mask for DPIN_BTN_YELLOW and DPIN_BTN_GREEN and DPIN_BTN_BLACK
+#define mINP_BANY  0x0008      // mask for any DPIN_BTN_ combination but at least one of them
+#define mINP_BNONE 0x0010      // mask for no DPIN_BTN_ depressed
+#define mINP_TRIG  0x0020      // mask for just depressed the trigger
+#define mINP_LOCK  0x0040      // mask for just connected the barrel
+#define mINP_OPEN  0x0080      // mask for just disconnected the barrel
+#define mINP_ENDSOUND 0x0100   // mask for sound just ended
 
 
 // values that can be stored
@@ -124,12 +127,19 @@ void DFprintDetail(uint8_t type, int value); // definition of call
 // STATE TABLE
 //  EEPROM[stateTable_ROW->storeAddr] = addr
 //  EEPROM[stateTable_ROW->storeVal] = val
+// basically there are two possibilities:
+//   gotoWithoutInput: play the sound & blink the lights then goto when sound done
+//   gotoOnInput: wait for input then play the sound & blink the lights then goto when sound done
+// There can be a "block" of wait for inputs; check each one from mBLOCKSTART to mBLOCKEND
+// If the sound includes mEFCT_SPCLFUNC then we call our RBGSpecialFunc to do the task
+// 
+// 
 typedef struct _RBGStateTable {
     uint8_t blkFlags;         // mBLOCKSTART, mBLOCKEND or mNONE
     uint8_t SPECIAL;          // special row-handling flags: mSPCL_*
     uint8_t soundAfterInput;  // index for sound to make after input match
     uint8_t lights;           // index for light pattern while waiting
-    uint8_t inputRBG;         // mask for input expected
+    uint16_t inputRBG;        // mask for input expected
     uint8_t storeVal;         // value to store, 8 bit uint
     uint8_t storeAddr;        // address to store; includes mask for mFUNC, mVAL,
                               //   eeSoundSave|mFUNC: idx= 3 WindUp, 2 Shoot, 4 Open, 7 Load
@@ -268,7 +278,11 @@ void DFsetup() {
 
 uint8_t RBG_debounceInputs() {
   return 0; // RBG_debounceInputs
-} // end RBG_debounceInputs(...)
+} // end RBG_debounceInputs()
+
+uint16_t RBGMatchInput (uint16_t inpMask) {
+  return 0; // no match
+} // end RBGMatchInput(...)
 
 uint8_t RBG_waitForSound() {
   return 0; // RBG_waitForSound to end
@@ -284,21 +298,36 @@ uint8_t RBG_startRow() {
   RBGStateTable * thisRowPtr = &myStateTable[myState.tableRow];
   uint8_t thisSound = 0;
   uint8_t thisLED = 0;
+  uint8_t thisReturn = mNONE;
   if (mNONE == thisRowPtr->gotoOnInput) {
     // not waiting for input
     thisSound = thisRowPtr->soundAfterInput;
     if (mNONE != thisSound) {
-      myDFPlayer.playMp3Folder(thisSound+mEFCT_CONFIGURE); //play specific mp3 in SD:/MP3/0004.mp3; File Name(0~65535)
-      myState.tableRowInProcFlags |= mINPROCFLG_WAITFORSOUND;
+      myDFPlayer.playMp3Folder(thisSound+mEFCT_CONFIGURE); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999)
+      thisReturn |= mINPROCFLG_WAITFORSOUND;
     } // end if should start a sound and wait for it
     thisLED = thisRowPtr->lights;
     if (mNONE != thisLED) {
        // FIXME LEDS to lights
        myState.ledTimer = millis() + deltaMsLED;
     }  // end if should switch to other LED pattern
-  // FIXME if more } else if () {
-  }
-  return 0; // go ahead and start on the row
+    if (mNONE == thisReturn) { // if we still don't have anything to do, just jump
+      myState.tableRow = thisRowPtr->gotoWithoutInput; // we will go next time.
+      // thisReturn is already mNONE
+    } // end if do the jump next time
+  } else { // there is input to wait for, perhaps a block
+    for (int idx = myState.tableRow; idx < NUMOF(myStateTable); idx++) {
+      if (RBGMatchInput(mINP_TRIG&myStateTable[idx].inputRBG)){ // match the inputs!
+        myState.tableRow = myStateTable[idx].gotoOnInput;
+        thisReturn = mNONE; // start the new state
+        break;
+      } else if (mBLOCKEND&myStateTable[idx].blkFlags) { // no more in this block to check
+        thisReturn = mNONE; // start this block again next time
+        break; // end of block; break the loop
+      } // end of checking for this idx
+    } // end for idx, potentially for a block
+  } // end if there is input to wait for
+  return thisReturn;
 } // end RBG_startRow()
 
 
