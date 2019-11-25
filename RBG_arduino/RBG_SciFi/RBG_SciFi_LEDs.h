@@ -66,6 +66,7 @@ const uint8_t  start_per_ring[NUM_RINGS_PER_DISK] = {  0, 32, 56 };
 #define COLOR_ORDER  GRB
 #define FRAMES_PER_SECOND  120
 
+#define deltaMsLED ((unsigned long) (1000 / FRAMES_PER_SECOND))
 
 // Creates an array with the length set by NUM_LEDS_PER_DISK above
 // This is the array the library will read to determine how each LED in the strand should be set

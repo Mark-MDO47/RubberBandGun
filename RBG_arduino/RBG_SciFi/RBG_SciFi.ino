@@ -35,11 +35,6 @@
 
 #define SERIALDEBUG 1                        // serial debugging
 
-// #define DFPRINTDETAIL (1&SERIALDEBUG)     // if need detailed status from myDFPlayer
-#define DFPRINTDETAIL 0                      // will not print detailed status from myDFPlayer
-void DFprintDetail(uint8_t type, int value); // definition of call doesn't hurt
-void DFsetup();                              // initialize myDFPlayer
-
 #define DPIN_FASTLED      3  // talk to FASTLED library
 #define DPIN_BTN_TRIGGER  4
 #define DPIN_BTN_YELLOW   5
@@ -83,6 +78,15 @@ void DFsetup();                              // initialize myDFPlayer
 
 SoftwareSerial mySoftwareSerial(DPIN_SWSRL_RX, DPIN_SWSRL_TX); // to talk to YX5200 audio player
 DFRobotDFPlayerMini myDFPlayer;                                // to talk to YX5200 audio player
+void DFsetup();                                                // how to initialize myDFPlayer
+
+// #define DFPRINTDETAIL (1&SERIALDEBUG)     // if need detailed status from myDFPlayer
+#define DFPRINTDETAIL 0                      // will not print detailed status from myDFPlayer
+#if DFPRINTDETAIL // routine to do detailed debugging
+void DFprintDetail(uint8_t type, int value); // definition of call
+#else  // no DFPRINTDETAIL
+#define DFprintDetail(type, value) // nothing at all
+#endif // #if DFPRINTDETAIL
 
 
 // define the effect number ranges
@@ -256,47 +260,47 @@ void DFsetup() {
       delay(1);
     }
   }
+  myDFPlayer.EQ(DFPLAYER_EQ_NORMAL);
+  myDFPlayer.outputDevice(DFPLAYER_DEVICE_SD); // device is SD card
+  myDFPlayer.volume(25);  // Set volume value. From 0 to 30
   Serial.println(F("DFPlayer Mini online."));
-  myDFPlayer.volume(24);  //Set volume value. From 0 to 30
 } // end DFsetup()
 
 uint8_t RBG_debounceInputs() {
-  if (mNONE == myState.inputRBG) {
-    play soundAfterInput
-    LEDS to lights
-  }
-  return 0; // go ahead and start on the row
+  return 0; // RBG_debounceInputs
 } // end RBG_debounceInputs(...)
 
-uint8_t RBG_startRow() {
-  return 0; // go ahead and start on the row
-} // end RBG_startRow()
-
 uint8_t RBG_waitForSound() {
-  return 0; // go ahead and start on the row
+  return 0; // RBG_waitForSound to end
 } // end RBG_waitForSound()
 
 uint8_t RBG_waitForInput() {
-  return 0; // go ahead and start on the row
+  return 0; // RBG_waitForInput
 } // end RBG_waitForInput()
 
-/* need to re-think this one
-void stateTable_store(RBGStateTable * theRow, uint8_t * theStates) {
-  uint8_t  val  = 0;
-  uint32_t addr = 0;
-  if (VYBG == theRow->storeVal) {
-    val = theStates->VYBG;
-  } else {
-    val = theStates->storeVal;
+// RBG_startRow() - start processing a row in myStateTable
+//    myState.tableRowInProcFlags should be zero to call this
+uint8_t RBG_startRow() {
+  RBGStateTable * thisRowPtr = &myStateTable[myState.tableRow];
+  uint8_t thisSound = 0;
+  uint8_t thisLED = 0;
+  if (mNONE == thisRowPtr->gotoOnInput) {
+    // not waiting for input
+    thisSound = thisRowPtr->soundAfterInput;
+    if (mNONE != thisSound) {
+      myDFPlayer.playMp3Folder(thisSound+mEFCT_CONFIGURE); //play specific mp3 in SD:/MP3/0004.mp3; File Name(0~65535)
+      myState.tableRowInProcFlags |= mINPROCFLG_WAITFORSOUND;
+    } // end if should start a sound and wait for it
+    thisLED = thisRowPtr->lights;
+    if (mNONE != thisLED) {
+       // FIXME LEDS to lights
+       myState.ledTimer = millis() + deltaMsLED;
+    }  // end if should switch to other LED pattern
+  // FIXME if more } else if () {
   }
-  addr = (stateTable_ROW->storeAddr & mADDRLOW) + ((stateTable_ROW->storeAddr & mADDRHI) >> mADDRHIrshift)
-  if (stateTable_ROW->storeAddr & mIDX) {
-    addr += theStates->ramVals[(stateTable_ROW->storeAddr & mIDX) >> mIDXrshift]
-  }
-  EEPROM[stateTable_ROW->storeAddr] = addr
-  EEPROM[stateTable_ROW->storeVal] = val
-} // end stateTable_store()
-*/
+  return 0; // go ahead and start on the row
+} // end RBG_startRow()
+
 
 #if DFPRINTDETAIL
 void DFprintDetail(uint8_t type, int value){
@@ -353,12 +357,28 @@ void DFprintDetail(uint8_t type, int value){
           break;
         default:
           break;
-      }
+      } // end switch (value)
       break;
     default:
       break;
-  }
+  }  // end switch (type)
 } // end DFprintDetail()
-#else  // no DFPRINTDETAIL
-void DFprintDetail(uint8_t type, int value) {} // just return
 #endif // DFPRINTDETAIL
+
+/* need to re-think this one
+void stateTable_store(RBGStateTable * theRow, uint8_t * theStates) {
+  uint8_t  val  = 0;
+  uint32_t addr = 0;
+  if (VYBG == theRow->storeVal) {
+    val = theStates->VYBG;
+  } else {
+    val = theStates->storeVal;
+  }
+  addr = (stateTable_ROW->storeAddr & mADDRLOW) + ((stateTable_ROW->storeAddr & mADDRHI) >> mADDRHIrshift)
+  if (stateTable_ROW->storeAddr & mIDX) {
+    addr += theStates->ramVals[(stateTable_ROW->storeAddr & mIDX) >> mIDXrshift]
+  }
+  EEPROM[stateTable_ROW->storeAddr] = addr
+  EEPROM[stateTable_ROW->storeVal] = val
+} // end stateTable_store()
+*/
