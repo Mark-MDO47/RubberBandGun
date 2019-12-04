@@ -7,6 +7,7 @@
 
 import pandas as pd
 import copy
+import sys
 
 from makeStateTable_dict import *
 
@@ -237,13 +238,14 @@ def make_state_table():
     print("} RBGStateTable;\n\n")
     len_statetable = len(STATETABLE)
     len_statetablekeys = len(STATETABLE[0])
-    print("RBGStateTable myState[%d] = {" % len_statetable)
+    print("static RBGStateTable myStateTable[%d] = {" % len_statetable)
 
     for idx in range(len_statetable):
-        print("    { // row %d" % idx)
+        sys.stdout.write("    { /* row %d */ " % idx)
         for count, key in enumerate(STATETABLE[idx]):
-            print("         %s, // %s" % (STATETABLE[idx][key], key))
-        print("    },")  # C is no longer picky about the last comma
+            sys.stdout.write(" .%s=%s," % (key, STATETABLE[idx][key]))
+            # print("         %s, // %s" % (STATETABLE[idx][key], key))
+        print(" },")  # C is no longer picky about the last comma
     print("};")
 
 
