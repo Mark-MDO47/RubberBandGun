@@ -10,14 +10,14 @@ EXCELROWNUMOFFSET = 2  # so we can give error messages
 SYMBTABLE = {}
 SYMBTABLEROW = {"blockStart": -1, "blockEnd": -1}
 STATETABLE = {}
-STATETABLEROW = {"blkFlags": "", "SPECIAL": "", "soundAfterInput": "", "lights": "", "inputRBG": "",
+STATETABLEROW = {"blkFlags": "", "SPECIAL": "", "efctSound": "", "efctLED": "", "inputRBG": "",
                  "storeVal": "", "storeAddr": "", "gotoOnInput": "", "gotoWithoutInput": "", "index": ""}
 
 COLTOSTRUCT = {
                "blkFlags":         "    uint8_t blkFlags;         // mBLOCKSTART, mBLOCKEND or mNONE",
                "SPECIAL":          "    uint8_t SPECIAL;          // special row-handling flags: mSPCL_*",
-               "soundAfterInput":  "    uint8_t soundAfterInput;  // index for sound to make after input match",
-               "lights":           "    uint8_t lights;           // index for light pattern while waiting",
+               "efctSound":  "    uint8_t efctSound;  // index for sound to make after input match",
+               "efctLED":           "    uint8_t efctLED;           // index for light pattern while waiting",
                "inputRBG":         "    uint8_t inputRBG;         // mask for input expected",
                "storeVal":         "    uint8_t storeVal;         // value to store, 8 bit uint",
                "storeAddr":        "    uint8_t storeAddr;        // address to store; includes mask for mFUNC, mVAL,\n" \
@@ -30,8 +30,8 @@ COLTOSTRUCT = {
 FOUNDINCOLUMN = {
     "SPECIAL": [],
     "index": [],
-    "soundAfterInput": [],
-    "lights": [],
+    "efctSound": [],
+    "efctLED": [],
     "inputRBG": [],
     "storeVal": [],
     "storeAddr": [],
@@ -40,13 +40,13 @@ FOUNDINCOLUMN = {
 }
 
 # INPUT:
-COLTOINDEX = {"index": -1, "SPECIAL": -1, "soundAfterInput": -1, "lights": -1, "inputRBG": -1, "storeVal": -1,
+COLTOINDEX = {"index": -1, "SPECIAL": -1, "efctSound": -1, "efctLED": -1, "inputRBG": -1, "storeVal": -1,
               "storeAddr": -1, "gotoOnInput": -1, "gotoWithoutInput": -1}
 
 STRUCTSTRING = "    typedef struct struct_statetable { \
     uint8_t SPECIAL;          // special row-handling flags: mSPCL_* \
-    uint8_t soundAfterInput;  // index for sound to make after input match \
-    uint8_t lights;           // index for light pattern while waiting \
+    uint8_t efctSound;  // index for sound to make after input match \
+    uint8_t efctLED;           // index for light pattern while waiting \
     uint8_t inputRBG;         // mask for input expected \
     uint8_t storeVal;         // value to store, 8 bit uint \
     uint8_t storeAddr;        // address to store; includes mask for mFUNC, mVAL, \
@@ -59,8 +59,8 @@ STRUCTSTRING = "    typedef struct struct_statetable { \
 translateToMasks = {
     "blkFlags": {},
     "SPECIAL": {},
-    "soundAfterInput": {},
-    "lights": {},
+    "efctSound": {},
+    "efctLED": {},
     "inputRBG": {
         "trigPlus": "mINP_TRIG|mINP_BANY",
         "trig00": "mINP_TRIG|mINP_BNONE",
@@ -89,7 +89,7 @@ translateToMasks = {
 
 #
 # Map of effects: sounds, LED patterns
-#   note: could use folders for the files and repeat numbers, but this also refers to lights
+#   note: could use folders for the files and repeat numbers, but this also refers to efctLED
 #   Files will be in the MP3 folder: for instance, file 4 is SD:/MP3/0004.mp3
 mEFCT_WIND_UP = 00  # 000 to 009 - wind-up effects
 mEFCT_SHOOT = 10  # 010 to 019 - shoot effects

@@ -78,9 +78,9 @@ def complete_block_field():
         if 0 == len(STATETABLE[idx]["blkFlags"]):
             STATETABLE[idx]["blkFlags"] = "mNONE"
 
-# COLTOINDEX = {"index": -1, "SPECIAL": -1, "soundAfterInput": -1, "lights": -1, "inputRBG": -1, "storeVal": -1,
+# COLTOINDEX = {"index": -1, "SPECIAL": -1, "efctSound": -1, "efctLED": -1, "inputRBG": -1, "storeVal": -1,
 #               "storeAddr": -1, "gotoOnInput": -1, "gotoWithoutInput": -1}
-# STATETABLEROW = {"blkFlags": "", "SPECIAL": "", "soundAfterInput": "", "lights": "", "inputRBG": "",
+# STATETABLEROW = {"blkFlags": "", "SPECIAL": "", "efctSound": "", "efctLED": "", "inputRBG": "",
 #                  "storeVal": "", "storeAddr": "", "gotoOnInput": "", "gotoWithoutInput": "", "index": ""}
 def fill_state_table_pass1(row, state_idx):
     """fill_state_table_pass1 on current row
@@ -174,8 +174,8 @@ def make_state_table():
 
     # collect sounds and light patterns
     known_effects = {"mNONE": 0xFF, "mEFCT_SPCL": 0x40, "mEFCT_SHOOT": 1, "mEFCT_OPEN_BARREL": 2, "mEFCT_LOCK_LOAD": 3}
-    count_effects = {'lights': 1, 'soundAfterInput': 1}
-    found_effects = {'lights': {}, 'soundAfterInput': {}}
+    count_effects = {'efctLED': 1, 'efctSound': 1}
+    found_effects = {'efctLED': {}, 'efctSound': {}}
     for efct in count_effects.keys():
         for idx in STATETABLE:
             if 0 != len(STATETABLE[idx][efct]):
@@ -186,7 +186,7 @@ def make_state_table():
                     found_effects[efct][txt] = count_effects[efct]
                     count_effects[efct] += 1
 
-    print("Pass 1 found_effects: lights, soundAfterInput")
+    print("Pass 1 found_effects: efctLED, efctSound")
     for efct in found_effects.keys():
         for symb in found_effects[efct]:
             print("  %s %s %d" % (efct, symb, found_effects[efct][symb]))
@@ -219,7 +219,6 @@ def make_state_table():
         else:
             print_debug("  ERROR - %s not in SYMBTABLE" % key)
             print("#define %s mUNDEFINED" % key)
-
     print("\n// define the effect number ranges")
     for key in EFFECT_MAP:
         print("#define %s %d" %(key, EFFECT_MAP[key]))
@@ -227,8 +226,8 @@ def make_state_table():
 
 
     known_effects = {"mNONE": 0xFF, "mEFCT_SPCL": 0x40, "mEFCT_SHOOT": 1, "mEFCT_OPEN_BARREL": 2, "mEFCT_LOCK_LOAD": 3}
-    count_effects = {'lights': 1, 'soundAfterInput': 1}
-    found_effects = {'lights': {}, 'soundAfterInput': {}}
+    count_effects = {'efctLED': 1, 'efctSound': 1}
+    found_effects = {'efctLED': {}, 'efctSound': {}}
 
     complete_block_field()
 
