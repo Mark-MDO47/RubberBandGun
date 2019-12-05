@@ -32,23 +32,13 @@
 #include "FastLED.h"                         // to manipulate WS2812b 5050 RGB LED Rings
 #include "DFRobotDFPlayerMini.h"             // to communicate with the YX5200 audio player
 
+#define NUMOF(x) (sizeof(x) / sizeof(*x))
+
 #include "RBG_SciFi_LEDs.h"                  // LED structural and pattern definitions
 #include "RBG_SciFi_StatesAndInputs.h"       // state tables and input definitions
 
-#define NUMOF(x) (sizeof(x) / sizeof(*x))
-
 #define SERIALDEBUG 1                        // serial debugging
-
-#define DPIN_FASTLED      3  // serial out - talk to LED rings
-#define DPIN_BTN_TRIGGER  4  // digital input - the trigger
-#define DPIN_BTN_YELLOW   5  // digital input - yellow configuration button
-#define DPIN_BTN_GREEN    6  // digital input - green configuration button
-#define DPIN_BTN_BLACK    7  // digital input - black configuration button
-#define DPIN_LOCK_LOAD    8  // digital input - grounded when in lock and load position
-#define DPIN_SWSRL_RX    10  // serial in  - talk to DFPlayer audio player (YX5200)
-#define DPIN_SWSRL_TX    11  // serial out - talk to DFPlayer audio player (YX5200)
-#define DPIN_AUDIO_BUSY  12  // digital input - signals when audio finishes
-#define DPIN_SOLENOID    13  // often has internal LED and resistor soldered to board, can make INPUT not work
+#define REAL_BUTTONS 1                       // use actual buttons
 
 
 // EEPROM addresses
@@ -236,22 +226,36 @@ int16_t doDwell(int16_t dwell, uint8_t must_be_diff_pattern) {
 
 // nextInputFromButtons() - store nextPattern if button pressed
 //     nextPattern will get used when we get back to the main loop
-int16_t nextInputFromButtons() {
-  int16_t myButton = getButtonPress();
+uint16_t nextInputFromButtons() {
+  uint16_t myButton = getButtonInput();
   if (myButton != NO_BUTTON_PRESS) {
     myState.nextPattern = myButton;
   }
   return (myState.nextPattern);
 } // end nextInputFromButtons()
 
-// getButtonPress() - get next button press, true button or debugging
-int16_t getButtonPress() {
+// getButtonInput() - get next button or other input, true inputs or debugging
+//
+// All the buttons are 0 when pressed and active when turning zero
+// The lock/load input is 0 when connected and 1 when not lock/load
+// The sound complete is 0 when sound is complete (FIXME TBR)
+//
+// NOTE: DPIN_LOCK_LOAD handled in code
+// lock/load has priority - if not lock/load then no button or sound input matters
+// when lock/load:
+//    trigger means collect the state of the buttons
+//    sound input is always sensed. If sound is playing and it finishes then we set input.
+//
+// #define mVINP_LOCK  0x0040     // mask for just connected the barrel
+// #define mVINP_OPEN  0x0080     // mask for just disconnected the barrel
+
+uint16_t getButtonInput() {
 #if REAL_BUTTONS
   return(checkButtons());
 #else // end if REAL_BUTTONS; now NOT REAL_BUTTONS
   return(checkKeyboard());
 #endif // not REAL_BUTTONS
-} // end getButtonPress()
+} // end getButtonInput()
 
 #if REAL_BUTTONS
 
@@ -264,54 +268,38 @@ int16_t getButtonPress() {
   // 
   // use button_time to determine when to do things
   //
-  int16_t checkButtons() {
-    uint8_t  val;
-    int16_t thePin;
-    static uint32_t button_timestamp = 0;
-    static uint8_t button_mask = 0; // 1=btn1, 2=btn2, 4=btn3
-    static uint8_t button_count = 0;
-    uint8_t button_mask_thistime, button_count_thistime;
-    int16_t returnPtrn = 1; // 1 is display nothing
-//    static int16_t prevReturn = NO_BUTTON_PRESS; // for debugging only
+  // 
+  uint16_t checkButtons() {
+    uint8_t idx;
+    uint16_t thePin;
+    uint16_t theVal;
+    uint16_t returnInpMask = 0;
 
-    button_mask_thistime = button_count_thistime = 0;
-    for (thePin = PSHBTN1; thePin <= PSHBTN6; thePin ++) {
-      val = digitalRead(thePin);
-      if (LOW == val) {
-        button_mask_thistime += (1 << (thePin - PSHBTN1));
-        button_count_thistime += 1;
-      }
-    } // end for all pushbuttons
-    if (0 != button_mask_thistime) {
-      if (0 != button_mask) {
-        returnPtrn = NO_BUTTON_PRESS; // already said we have button down
-      } else {
-        returnPtrn = 1; // always return 1 whenever a button is being pushed
-      }
-      if (button_count_thistime >= button_count) {
-        CAPTURE_BUTTONS_THISTIME
-      } else {
-        // they may be letting up on the buttons; they get 1000 millisec or we reset to current buttons
-        if ((button_time - button_timestamp) > 1000) {
-          // reset to thistime buttons
-          CAPTURE_BUTTONS_THISTIME
+    // do lock/load separately in code
+    theVal = digitalRead(DPIN_LOCK_LOAD);
+    if (LOW == theVal) { // we are locked and loaded; sensitive to trigger and other events
+      returnInpMask = mVINP_LOCK;
+      // set/clear the input bits for the standard inputs
+      for (idx = 0; idx < NUMOF(myPinsToVals); idx++) {
+        if (LOW == myPinsToVals[idx].pin) {
+          returnInpMask &= ~((uint16_t) myPinsToVals[idx].val); // overkill but can solve lots of issues
+        } else {
+          returnInpMask |= ~((uint16_t) myPinsToVals[idx].val); // less overkill but still solves if .val is not uintx_t
         }
-      } // button count decreased but not zero
-    } else { // button count is zero
-      returnPtrn = ButtonsToPatternNumber[button_mask];
-      button_timestamp = button_mask = button_count = 0;
+      } // end for entries in myPinsToVals[]
+    } else { // we are not locked and loaded; abort everything else
+      returnInpMask = mVINP_OPEN;
     }
-//    if (prevReturn != returnPtrn) { // DEBUG
-//      Serial.print("prevReturn="); Serial.print(prevReturn); Serial.print("returnPtrn="); Serial.println(returnPtrn); 
-//    }
-//    prevReturn = returnPtrn;
-    return(returnPtrn);
+
+    return(returnInpMask);
   } // end checkButtons()
-#else // end if REAL_BUTTONS; now NOT REAL_BUTTONS
+
+#else // end if REAL_BUTTONS; now NOT REAL_BUTTONS - FIMXE TBS THIS CODE IS OLD FROM GradCap NOT ADJUSTED TO RBG
+
   // checkKeyboard() - for debugging - serial port buttons
-  int16_t checkKeyboard() { // not REAL_BUTTONS
-    int8_t received_serial_input;
-    int16_t myButton = NO_BUTTON_PRESS;
+  uint16_t checkKeyboard() { // not REAL_BUTTONS
+    uint8_t received_serial_input;
+    uint16_t myButton = NO_BUTTON_PRESS;
     if (Serial.available() > 0) {
       received_serial_input = Serial.read();
       switch ((int16_t) received_serial_input) {
@@ -333,7 +321,7 @@ int16_t getButtonPress() {
 // could have seen button pressed earlier and just now handling it - do that
 // otherwise keep same pattern - no change
 int16_t patternFromButtons() {
-  int16_t myButton = getButtonPress(); // no change unless we see a change
+  int16_t myButton = getButtonInput(); // no change unless we see a change
   if (myButton == NO_BUTTON_PRESS) {
     if (NO_BUTTON_CHANGE != myState.nextPattern) {
       myButton = myState.nextPattern;
@@ -387,6 +375,17 @@ uint8_t RBG_startRow() {
 } // end RBG_startRow()
 
 // ******************************** DEBUG UTILITIES ********************************
+
+// checkDataGuard()
+void checkDataGuard() {
+  if ((0x55555555 != data_guard_before) || (0x55555555 != data_guard_after)) {
+    Serial.print(F("checkDataGuard should be 1431655765; before="));
+    Serial.print(data_guard_before);
+    Serial.print(F(" after="));
+    Serial.println(data_guard_after);
+    delay(2000); // for debugging & show
+  }
+} // end checkDataGuard()
 
 #if DFPRINTDETAIL
 void DFprintDetail(uint8_t type, int value){

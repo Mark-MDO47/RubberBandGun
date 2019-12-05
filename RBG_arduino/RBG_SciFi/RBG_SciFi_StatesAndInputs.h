@@ -23,6 +23,17 @@
 // This file has definitions for state tables and input processing (mostly buttons)
 //
 
+#define DPIN_FASTLED      3  // serial out - talk to LED rings
+#define DPIN_BTN_TRIGGER  4  // digital input - the trigger
+#define DPIN_BTN_YELLOW   5  // digital input - yellow configuration button
+#define DPIN_BTN_GREEN    6  // digital input - green configuration button
+#define DPIN_BTN_BLACK    7  // digital input - black configuration button
+#define DPIN_LOCK_LOAD    8  // digital input - grounded when in lock and load position
+#define DPIN_SWSRL_RX    10  // serial in  - talk to DFPlayer audio player (YX5200)
+#define DPIN_SWSRL_TX    11  // serial out - talk to DFPlayer audio player (YX5200)
+#define DPIN_AUDIO_BUSY  12  // digital input - signals when audio finishes
+#define DPIN_SOLENOID    13  // often has internal LED and resistor soldered to board, can make INPUT not work
+
 
 
 // values that can be stored
@@ -80,6 +91,33 @@
 #define mINP_OPEN  0x0080      // mask for just disconnected the barrel
 #define mINP_ENDSOUND 0x0100   // mask for sound just ended
 
+// masks for input values: button, trigger, sound module, and barrel states and state changes
+//   used (only) in .VinputRBG in myState
+#define mVINP_B01   0x0001     // mask for DPIN_BTN_YELLOW (currently depressed)
+#define mVINP_B02   0x0002     // mask for DPIN_BTN_GREEN (currently depressed)
+#define mVINP_B04   0x0004     // mask for DPIN_BTN_BLACK (currently depressed)
+#define mVINP_TRIG  0x0020     // mask for just depressed the trigger
+#define mVINP_LOCK  0x0040     // mask for just connected the barrel
+#define mVINP_OPEN  0x0080     // mask for just disconnected the barrel
+#define mVINP_PREVLOCK  0x0100 // mask for the barrel was lock/load last time we checked
+#define mVINP_SOUNDEND  0x0200 // mask for sound just ended
+#define mVINP_SOUNDACTV 0x0400 // mask for sound was previously active
+
+
+// table to identify input pins and corresponding masks
+// DPIN_LOCK_LOAD handled separately in code
+// the masks are used (only) in .VinputRBG in myState
+typedef struct _pins_to_vals_t {
+  uint16_t pin; uint16_t val;
+} pins_to_vals_t;
+static pins_to_vals_t myPinsToVals[] = {
+  { DPIN_BTN_TRIGGER, mVINP_TRIG },
+  { DPIN_BTN_YELLOW,  mVINP_B01 },
+  { DPIN_BTN_GREEN,   mVINP_B02 },
+  { DPIN_BTN_BLACK,   mVINP_B04 },
+  { DPIN_AUDIO_BUSY,  mVINP_SOUNDEND },
+};
+
 
 // STATE TABLE
 //  EEPROM[stateTable_ROW->storeAddr] = addr
@@ -104,17 +142,6 @@ typedef struct _RBGStateTable {
     uint8_t gotoWithoutInput; // index within table to go without waiting for input
     uint8_t index;            // input column unused in this table
 } RBGStateTable;
-
-
-// masks for input values: button, trigger, sound module, and barrel states and state changes
-//   used (only) in .VinputRBG in myState
-#define mVINP_B01   0x0001     // mask for DPIN_BTN_YELLOW (currently depressed)
-#define mVINP_B02   0x0002     // mask for DPIN_BTN_GREEN (currently depressed)
-#define mVINP_B04   0x0004     // mask for DPIN_BTN_BLACK (currently depressed)
-#define mVINP_TRIG  0x0020     // mask for just depressed the trigger
-#define mVINP_LOCK  0x0040     // mask for just connected the barrel
-#define mVINP_OPEN  0x0080     // mask for just disconnected the barrel
-#define mVINP_ENDSOUND 0x0100  // mask for sound just ended
 
 
 static struct myState_t {
