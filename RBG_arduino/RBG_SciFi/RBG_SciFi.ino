@@ -239,9 +239,9 @@ int16_t doDwell(int16_t dwell, uint8_t must_be_diff_pattern) {
 int16_t nextInputFromButtons() {
   int16_t myButton = getButtonPress();
   if (myButton != NO_BUTTON_PRESS) {
-    nextPattern = myButton;
+    myState.nextPattern = myButton;
   }
-  return (nextPattern);
+  return (myState.nextPattern);
 } // end nextInputFromButtons()
 
 // getButtonPress() - get next button press, true button or debugging
@@ -335,13 +335,13 @@ int16_t getButtonPress() {
 int16_t patternFromButtons() {
   int16_t myButton = getButtonPress(); // no change unless we see a change
   if (myButton == NO_BUTTON_PRESS) {
-    if (NO_BUTTON_CHANGE != nextPattern) {
-      myButton = nextPattern;
+    if (NO_BUTTON_CHANGE != myState.nextPattern) {
+      myButton = myState.nextPattern;
     } else {
-      myButton = pattern;
+      myButton = myState.pattern;
     }
   } // end if no button pressed now so process earlier button press
-  nextPattern = NO_BUTTON_CHANGE;
+  myState.nextPattern = NO_BUTTON_CHANGE;
   return(myButton);
 } // end patternFromButtons()
 
