@@ -218,21 +218,132 @@ int16_t doDwell(int16_t dwell, uint8_t must_be_diff_pattern) {
   Serial.println(F("FIXME doDwell(...) - needs adaptation for Rubber Band Gun - handle LED pattern, sound and solenoid"));
 
   for (i = 0; i < numloops; i++) {
-    nextPatternFromButtons();
-    if ((0 != must_be_diff_pattern) && (nextPattern == pattern)) nextPattern = NO_BUTTON_CHANGE;
-    if (nextPattern != NO_BUTTON_CHANGE) return(nextPattern != NO_BUTTON_CHANGE);
+    nextInputFromButtons();
+    if ((0 != must_be_diff_pattern) && (myState.nextPattern == myState.pattern)) myState.nextPattern = NO_BUTTON_CHANGE;
+    if (myState.nextPattern != NO_BUTTON_CHANGE) return(myState.nextPattern != NO_BUTTON_CHANGE);
     delay(SMALL_DWELL);
     button_time += SMALL_DWELL;
   }
   if ((dwell % SMALL_DWELL) != 0) {
-    nextPatternFromButtons();
-    if ((0 != must_be_diff_pattern) && (nextPattern == pattern)) nextPattern = NO_BUTTON_CHANGE;
-    if (nextPattern != NO_BUTTON_CHANGE) return(nextPattern != NO_BUTTON_CHANGE);
+    nextInputFromButtons();
+    if ((0 != must_be_diff_pattern) && (myState.nextPattern == myState.pattern)) myState.nextPattern = NO_BUTTON_CHANGE;
+    if (myState.nextPattern != NO_BUTTON_CHANGE) return(myState.nextPattern != NO_BUTTON_CHANGE);
     delay(dwell % SMALL_DWELL);
     button_time += (dwell % SMALL_DWELL);
   }
-  return(nextPattern != NO_BUTTON_CHANGE);
+  return(myState.nextPattern != NO_BUTTON_CHANGE);
 } // end doDwell()
+
+// nextInputFromButtons() - store nextPattern if button pressed
+//     nextPattern will get used when we get back to the main loop
+int16_t nextInputFromButtons() {
+  int16_t myButton = getButtonPress();
+  if (myButton != NO_BUTTON_PRESS) {
+    nextPattern = myButton;
+  }
+  return (nextPattern);
+} // end nextInputFromButtons()
+
+// getButtonPress() - get next button press, true button or debugging
+int16_t getButtonPress() {
+#if REAL_BUTTONS
+  return(checkButtons());
+#else // end if REAL_BUTTONS; now NOT REAL_BUTTONS
+  return(checkKeyboard());
+#endif // not REAL_BUTTONS
+} // end getButtonPress()
+
+#if REAL_BUTTONS
+
+  #define CAPTURE_BUTTONS_THISTIME button_count = button_count_thistime; button_mask = button_mask_thistime; button_timestamp = button_time;
+  // checkButtons() - returns number of button pressed (1 through 6) or NO_BUTTON_PRESS
+  //    news flash - not enough time to do all 6 buttons; just did 3
+  // 
+  // with REAL_BUTTONS, holding button down gives pattern 1 which is OFF
+  // pressing button 1 gives pattern 2, etc.
+  // 
+  // use button_time to determine when to do things
+  //
+  int16_t checkButtons() {
+    uint8_t  val;
+    int16_t thePin;
+    static uint32_t button_timestamp = 0;
+    static uint8_t button_mask = 0; // 1=btn1, 2=btn2, 4=btn3
+    static uint8_t button_count = 0;
+    uint8_t button_mask_thistime, button_count_thistime;
+    int16_t returnPtrn = 1; // 1 is display nothing
+//    static int16_t prevReturn = NO_BUTTON_PRESS; // for debugging only
+
+    button_mask_thistime = button_count_thistime = 0;
+    for (thePin = PSHBTN1; thePin <= PSHBTN6; thePin ++) {
+      val = digitalRead(thePin);
+      if (LOW == val) {
+        button_mask_thistime += (1 << (thePin - PSHBTN1));
+        button_count_thistime += 1;
+      }
+    } // end for all pushbuttons
+    if (0 != button_mask_thistime) {
+      if (0 != button_mask) {
+        returnPtrn = NO_BUTTON_PRESS; // already said we have button down
+      } else {
+        returnPtrn = 1; // always return 1 whenever a button is being pushed
+      }
+      if (button_count_thistime >= button_count) {
+        CAPTURE_BUTTONS_THISTIME
+      } else {
+        // they may be letting up on the buttons; they get 1000 millisec or we reset to current buttons
+        if ((button_time - button_timestamp) > 1000) {
+          // reset to thistime buttons
+          CAPTURE_BUTTONS_THISTIME
+        }
+      } // button count decreased but not zero
+    } else { // button count is zero
+      returnPtrn = ButtonsToPatternNumber[button_mask];
+      button_timestamp = button_mask = button_count = 0;
+    }
+//    if (prevReturn != returnPtrn) { // DEBUG
+//      Serial.print("prevReturn="); Serial.print(prevReturn); Serial.print("returnPtrn="); Serial.println(returnPtrn); 
+//    }
+//    prevReturn = returnPtrn;
+    return(returnPtrn);
+  } // end checkButtons()
+#else // end if REAL_BUTTONS; now NOT REAL_BUTTONS
+  // checkKeyboard() - for debugging - serial port buttons
+  int16_t checkKeyboard() { // not REAL_BUTTONS
+    int8_t received_serial_input;
+    int16_t myButton = NO_BUTTON_PRESS;
+    if (Serial.available() > 0) {
+      received_serial_input = Serial.read();
+      switch ((int16_t) received_serial_input) {
+        case (int16_t) '1': myButton = 1; break;
+        case (int16_t) '2': myButton = 2; break;
+        case (int16_t) '3': myButton = 3; break;
+        case (int16_t) '4': myButton = 4; break;
+        case (int16_t) '5': myButton = 5; break;
+        case (int16_t) '6': myButton = 6; break;
+        default: myButton = NO_BUTTON_PRESS; break;
+      } // end switch on received serial "button"
+    } // end if there was serial input ready to read
+    return(myButton);
+  } // end checkKeyboard()
+#endif // not REAL_BUTTONS
+
+// patternFromButtons() - get pattern to use (called from main loop)
+// could have button pressed now - do that ignore any earlier press
+// could have seen button pressed earlier and just now handling it - do that
+// otherwise keep same pattern - no change
+int16_t patternFromButtons() {
+  int16_t myButton = getButtonPress(); // no change unless we see a change
+  if (myButton == NO_BUTTON_PRESS) {
+    if (NO_BUTTON_CHANGE != nextPattern) {
+      myButton = nextPattern;
+    } else {
+      myButton = pattern;
+    }
+  } // end if no button pressed now so process earlier button press
+  nextPattern = NO_BUTTON_CHANGE;
+  return(myButton);
+} // end patternFromButtons()
 
 
 // ******************************** STATE TABLE UTILITIES ********************************
