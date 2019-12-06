@@ -59,13 +59,16 @@ void DFprintDetail(uint8_t type, int value); // definition of call
 #endif // #if DFPRINTDETAIL
 
 
-uint8_t gHue = 0; // rotating "base color" used by Demo Reel 100
+static uint8_t gHue = 0; // rotating "base color" used by Demo Reel 100
 CRGBPalette16 gPal; // palette for Fire2012WithPalette()
-uint16_t gSeed = ((uint16_t) 42); // my favorite is 47 but the whole world loves 42 and HHG2TG
+static uint16_t gSeed = ((uint16_t) 42); // my favorite is 47 but the whole world loves 42 and HHG2TG
 #if FASTLED_FIRE_PATTERN // only used for Fire pattern
 CRGB dark_color_palette[NUM_ARDUINOS]  = { CRGB::DarkGreen, CRGB::Red,    CRGB::Blue, CRGB::DarkOrange };
 CRGB light_color_palette[NUM_ARDUINOS] = { CRGB::LimeGreen, CRGB::Yellow, CRGB::Aqua, CRGB::Gold };
 #endif // FASTLED_FIRE_PATTERN
+static uint16_t nowVinputRBG; // latest button inputs, to compare with previous in myState
+
+
 
 #define mINPROCFLG_WAITFORSOUND ((uint8_t) 0x80)  // wait for sound to finish
 #define mINPROCFLG_WAITFORINPUT ((uint8_t) 0x40)  // wait for user input (trigger with perhaps others)
@@ -120,8 +123,8 @@ void loop() {
   
   gHue += 3; // rotating "base color" used by Demo Reel 100 patterns
 
-  myState.nowTimer = millis();
-  myState.VinputRBG = RBG_debounceInputs();
+  myState.timerNow = millis();
+  nowVinputRBG = getButtonInput();
   
   if (0 == myState.tableRowInProcFlags) {
     myState.tableRowInProcFlags = RBG_startRow(); // just do what the row says
@@ -135,18 +138,10 @@ void loop() {
     myState.tableRowInProcFlags = 0;
   } // end process state table
 
-  if ((NO_BUTTON_CHANGE != myState.nextPattern) && (myState.nextPattern != myState.pattern)) {
-    myState.pattern = myState.nextPattern;
-  }
-  myState.nextPattern = NO_BUTTON_CHANGE;
-  if (myState.oldPattern != myState.pattern) {
-    Serial.print(F("switch to pattern ")); Serial.println((int16_t) myState.pattern);
-  }
   checkDataGuard();
-  doPattern();
+  // doPattern(); // FIXME TBS WILL DO LEDs LATER
   checkDataGuard();
   FastLED.show();
-  myState.oldPattern = myState.pattern;
 
   if (myState.pattern < MIN_FASTLED_PATTERN) { // Mark's patterns
     doDwell(myState.ptrn_delay, 1);
@@ -154,7 +149,8 @@ void loop() {
     doDwell(myState.ptrn_delay_fastled, 1);
   }
 
-  myState.prevTimer = myState.nowTimer;
+  myState.VinputRBG = nowVinputRBG;
+  myState.timerPrev = myState.timerNow;
 }  // end loop()
 
 void DFsetup() {
@@ -176,10 +172,6 @@ void DFsetup() {
 
 // ******************************** BUTTON AND TIMING UTILITIES ********************************
 
-uint8_t RBG_debounceInputs() {
-  return 0; // RBG_debounceInputs
-} // end RBG_debounceInputs()
-
 uint16_t RBGMatchInput (uint16_t inpMask) {
   return 0; // no match
 } // end RBGMatchInput(...)
@@ -193,10 +185,10 @@ uint8_t RBG_waitForInput() {
 } // end RBG_waitForInput()
 
 // doDwell(int16_t dwell, uint8_t must_be_diff_pattern) - dwell or break out if button press
-//   returns TRUE if should switch to different pattern
+//   returns TRUE if got a change in inputs
 //   else returns false
 //
-// keeps track of button_time
+// FIXME TBD MAYBE DO NOT NEED - LEFT IT OUT keeps track of button_time
 //
 // FIXME - needs adaptation for Rubber Band Gun - handle LED pattern, sound and solenoid
 //
@@ -205,34 +197,28 @@ int16_t doDwell(int16_t dwell, uint8_t must_be_diff_pattern) {
   int16_t numloops = dwell / SMALL_DWELL;
   int16_t i;
 
-  Serial.println(F("FIXME doDwell(...) - needs adaptation for Rubber Band Gun - handle LED pattern, sound and solenoid"));
+  Serial.println(F("FIXME doDwell(...) - may need improvement for Rubber Band Gun for solenoid timer"));
 
   for (i = 0; i < numloops; i++) {
-    nextInputFromButtons();
-    if ((0 != must_be_diff_pattern) && (myState.nextPattern == myState.pattern)) myState.nextPattern = NO_BUTTON_CHANGE;
-    if (myState.nextPattern != NO_BUTTON_CHANGE) return(myState.nextPattern != NO_BUTTON_CHANGE);
-    delay(SMALL_DWELL);
-    button_time += SMALL_DWELL;
-  }
+    nowVinputRBG = getButtonInput();
+    if ((0 != must_be_diff_pattern) && (nowVinputRBG == myState.pattern)) {
+      delay(SMALL_DWELL);
+    } else {
+      return(nowVinputRBG);
+    }
+    // button_time += SMALL_DWELL; // FIXME TBD MAYBE DO NOT NEED - LEFT IT OUT
+  } // end for most of the delay
   if ((dwell % SMALL_DWELL) != 0) {
-    nextInputFromButtons();
-    if ((0 != must_be_diff_pattern) && (myState.nextPattern == myState.pattern)) myState.nextPattern = NO_BUTTON_CHANGE;
-    if (myState.nextPattern != NO_BUTTON_CHANGE) return(myState.nextPattern != NO_BUTTON_CHANGE);
-    delay(dwell % SMALL_DWELL);
-    button_time += (dwell % SMALL_DWELL);
-  }
-  return(myState.nextPattern != NO_BUTTON_CHANGE);
+    nowVinputRBG = getButtonInput();
+    if ((0 != must_be_diff_pattern) && (nowVinputRBG == myState.pattern)) {
+      delay(dwell % SMALL_DWELL);
+    } else {
+      return(nowVinputRBG);
+    }
+    // button_time += (dwell % SMALL_DWELL); // FIXME TBD MAYBE DO NOT NEED - LEFT IT OUT
+  } // end handle the remainder
+  return(0); // never saw input change
 } // end doDwell()
-
-// nextInputFromButtons() - store nextPattern if button pressed
-//     nextPattern will get used when we get back to the main loop
-uint16_t nextInputFromButtons() {
-  uint16_t myButton = getButtonInput();
-  if (myButton != NO_BUTTON_PRESS) {
-    myState.nextPattern = myButton;
-  }
-  return (myState.nextPattern);
-} // end nextInputFromButtons()
 
 // getButtonInput() - get next button or other input, true inputs or debugging
 //
@@ -257,82 +243,33 @@ uint16_t getButtonInput() {
 #endif // not REAL_BUTTONS
 } // end getButtonInput()
 
-#if REAL_BUTTONS
+// #define CAPTURE_BUTTONS_THISTIME button_count = button_count_thistime; button_mask = button_mask_thistime; button_timestamp = button_time;  // FIXME TBD MAYBE DO NOT NEED - LEFT IT OUT
+// checkButtons() - returns mVINP_ mask for buttons to process
+// 
+uint16_t checkButtons() {
+  uint8_t idx;
+  uint16_t thePin;
+  uint16_t theVal;
+  uint16_t returnInpMask = 0;
 
-  #define CAPTURE_BUTTONS_THISTIME button_count = button_count_thistime; button_mask = button_mask_thistime; button_timestamp = button_time;
-  // checkButtons() - returns number of button pressed (1 through 6) or NO_BUTTON_PRESS
-  //    news flash - not enough time to do all 6 buttons; just did 3
-  // 
-  // with REAL_BUTTONS, holding button down gives pattern 1 which is OFF
-  // pressing button 1 gives pattern 2, etc.
-  // 
-  // use button_time to determine when to do things
-  //
-  // 
-  uint16_t checkButtons() {
-    uint8_t idx;
-    uint16_t thePin;
-    uint16_t theVal;
-    uint16_t returnInpMask = 0;
+  // do lock/load separately in code
+  theVal = digitalRead(DPIN_LOCK_LOAD);
+  if (LOW == theVal) { // we are locked and loaded; sensitive to trigger and other events
+    returnInpMask = mVINP_LOCK;
+    // set/clear the input bits for the standard inputs
+    for (idx = 0; idx < NUMOF(myPinsToVals); idx++) {
+      if (LOW == myPinsToVals[idx].pin) {
+        returnInpMask &= ~((uint16_t) myPinsToVals[idx].val); // overkill but can solve lots of issues
+      } else {
+        returnInpMask |= ~((uint16_t) myPinsToVals[idx].val); // less overkill but still solves if .val is not uintx_t
+      }
+    } // end for entries in myPinsToVals[]
+  } else { // we are not locked and loaded; abort everything else
+    returnInpMask = mVINP_OPEN;
+  }
 
-    // do lock/load separately in code
-    theVal = digitalRead(DPIN_LOCK_LOAD);
-    if (LOW == theVal) { // we are locked and loaded; sensitive to trigger and other events
-      returnInpMask = mVINP_LOCK;
-      // set/clear the input bits for the standard inputs
-      for (idx = 0; idx < NUMOF(myPinsToVals); idx++) {
-        if (LOW == myPinsToVals[idx].pin) {
-          returnInpMask &= ~((uint16_t) myPinsToVals[idx].val); // overkill but can solve lots of issues
-        } else {
-          returnInpMask |= ~((uint16_t) myPinsToVals[idx].val); // less overkill but still solves if .val is not uintx_t
-        }
-      } // end for entries in myPinsToVals[]
-    } else { // we are not locked and loaded; abort everything else
-      returnInpMask = mVINP_OPEN;
-    }
-
-    return(returnInpMask);
-  } // end checkButtons()
-
-#else // end if REAL_BUTTONS; now NOT REAL_BUTTONS - FIMXE TBS THIS CODE IS OLD FROM GradCap NOT ADJUSTED TO RBG
-
-  // checkKeyboard() - for debugging - serial port buttons
-  uint16_t checkKeyboard() { // not REAL_BUTTONS
-    uint8_t received_serial_input;
-    uint16_t myButton = NO_BUTTON_PRESS;
-    if (Serial.available() > 0) {
-      received_serial_input = Serial.read();
-      switch ((int16_t) received_serial_input) {
-        case (int16_t) '1': myButton = 1; break;
-        case (int16_t) '2': myButton = 2; break;
-        case (int16_t) '3': myButton = 3; break;
-        case (int16_t) '4': myButton = 4; break;
-        case (int16_t) '5': myButton = 5; break;
-        case (int16_t) '6': myButton = 6; break;
-        default: myButton = NO_BUTTON_PRESS; break;
-      } // end switch on received serial "button"
-    } // end if there was serial input ready to read
-    return(myButton);
-  } // end checkKeyboard()
-#endif // not REAL_BUTTONS
-
-// patternFromButtons() - get pattern to use (called from main loop)
-// could have button pressed now - do that ignore any earlier press
-// could have seen button pressed earlier and just now handling it - do that
-// otherwise keep same pattern - no change
-int16_t patternFromButtons() {
-  int16_t myButton = getButtonInput(); // no change unless we see a change
-  if (myButton == NO_BUTTON_PRESS) {
-    if (NO_BUTTON_CHANGE != myState.nextPattern) {
-      myButton = myState.nextPattern;
-    } else {
-      myButton = myState.pattern;
-    }
-  } // end if no button pressed now so process earlier button press
-  myState.nextPattern = NO_BUTTON_CHANGE;
-  return(myButton);
-} // end patternFromButtons()
-
+  return(returnInpMask);
+} // end checkButtons()
 
 // ******************************** STATE TABLE UTILITIES ********************************
 
@@ -353,7 +290,7 @@ uint8_t RBG_startRow() {
     thisLED = thisRowPtr->efctLED;
     if (mNONE != thisLED) {
        // FIXME LEDS to efctLED
-       myState.ledTimer = millis() + deltaMsLED;
+       myState.timerLed = millis() + deltaMsLED;
     }  // end if should switch to other LED pattern
     if (mNONE == thisReturn) { // if we still don't have anything to do, just jump
       myState.tableRow = thisRowPtr->gotoWithoutInput; // we will go next time.

@@ -148,9 +148,10 @@ static struct myState_t {
   uint8_t tableRow = 0;            // points to state that we will process or are processing
   uint8_t tableRowInProcFlags = 0; // what we are waiting on to process this state
   uint16_t VinputRBG = 0;          // bits for input buttons and sound finish: mVINP_* - NOTE: 16 bits
-  uint32_t prevTimer = 0;          // timer from previous time through loop
-  uint32_t nowTimer = 0;           // timer from this time through loop
-  uint32_t ledTimer = 0;           // timer for next LED activity
+  uint32_t timerPrev = 0;          // timer from previous time through loop
+  uint32_t timerNow = 0;           // timer from this time through loop
+  uint32_t timerLed = 0;           // timer for next LED activity
+  uint32_t timerSolenoid = 0;      // timer for next solenoid OFF
   uint32_t debounceTimer = 0;      // timer for debounce of buttons
   // LED state info
   int8_t   pattern = 1;            // keep track of patterns - this is what we are doing now
