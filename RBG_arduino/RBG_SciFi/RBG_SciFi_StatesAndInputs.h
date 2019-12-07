@@ -101,8 +101,8 @@
 #define mVINP_LOCK  0x0040     // mask for just connected the barrel
 #define mVINP_OPEN  0x0080     // mask for just disconnected the barrel
 #define mVINP_PREVLOCK  0x0100 // mask for the barrel was lock/load last time we checked
-#define mVINP_SOUNDEND  0x0200 // mask for sound just ended
-#define mVINP_SOUNDACTV 0x0400 // mask for sound was previously active
+#define mVINP_SOUNDINACTV  0x0200 // mask for sound was active last time we checked
+// #define mVINP_SOUNDEND 0x0400 // mask for sound was ended and previously active
 
 // masks for in-process events: wait-for-sound or wait-for-input
 //   used (only) in tableRowInProcFlags
@@ -120,7 +120,7 @@ static pins_to_vals_t myPinsToVals[] = {
   { DPIN_BTN_YELLOW,  mVINP_B01 },
   { DPIN_BTN_GREEN,   mVINP_B02 },
   { DPIN_BTN_BLACK,   mVINP_B04 },
-  { DPIN_AUDIO_BUSY,  mVINP_SOUNDEND },
+  { DPIN_AUDIO_BUSY,  mVINP_SOUNDINACTV },
 };
 
 

@@ -104,8 +104,10 @@ void setup() {
   FastLED.addLeds<NEOPIXEL,DPIN_FASTLED>(led_display, NUM_LEDS_PER_DISK);
   FastLED.setBrightness(BRIGHTMAX); // we will do our own power management
 
-  Serial.println(F("FOOF SciFi RBG init COMPLETE"));
   printAllMyState();
+  printAllMyInputs();
+  Serial.println(F("FOOF SciFi RBG init COMPLETE\n"));
+
 } // end setup()
 
 // ******************************** LOOP ********************************
@@ -116,8 +118,8 @@ void setup() {
 //     If needed, release the rubber band and set timer to stop the solenoid current later
 //
 void loop() {
-  static uint8_t countBadStatePrint = 3;
-  static uint8_t countGoodStatePrint = 3;
+  static uint8_t countBadStatePrint = 6;
+  static uint8_t countGoodStatePrint = 6;
 
   // put your main code here, to run repeatedly:
   
@@ -134,11 +136,16 @@ void loop() {
       countGoodStatePrint -= 1;
     }
   } else if (mINPROCFLG_WAITFORSOUND == myState.tableRowInProcFlags) {
-    myState.tableRowInProcFlags = RBG_waitForSound(); // wait for sound to complete
-    if (countGoodStatePrint > 0) {
-      Serial.println(F("DEBUG - after RBG_waitForSound() call"));
-      printAllMyState(); Serial.print(F("DEBUG - nowVinputRBG 0x")); Serial.println(nowVinputRBG, HEX);
-      countGoodStatePrint -= 1;
+    if ((0 != (nowVinputRBG&mVINP_SOUNDINACTV)) &&
+        (myStateTable[myState.tableRow].gotoWithoutInput != mNONE)) {
+      // sound completed and we have a place to go
+      myState.tableRowInProcFlags &= ~((uint16_t) mINPROCFLG_WAITFORINPUT);
+      myState.tableRow = myStateTable[myState.tableRow].gotoWithoutInput;
+      if (countGoodStatePrint > 0) {
+        Serial.println(F("DEBUG - after mINPROCFLG_WAITFORSOUND"));
+        printAllMyState(); Serial.print(F("DEBUG - nowVinputRBG 0x")); Serial.println(nowVinputRBG, HEX);
+        countGoodStatePrint -= 1;
+      }
     }
   } else if (mINPROCFLG_WAITFORINPUT == myState.tableRowInProcFlags) {
     myState.tableRowInProcFlags = RBG_waitForInput(); // wait for user input, trigger and maybe other buttons
@@ -173,32 +180,61 @@ void loop() {
   myState.timerPrev = myState.timerNow;
 }  // end loop()
 
-void DFsetup() {
-  Serial.println(F("Initializing DFPlayer ... (May take 3~5 seconds)"));
-  
-  if (!myDFPlayer.begin(mySoftwareSerial)) {  // Use softwareSerial to communicate with mp3 player
-    Serial.println(F("Unable to begin DFPlayer:"));
-    Serial.println(F("1.Please recheck the connection!"));
-    Serial.println(F("2.Please insert the SD card!"));
-    while(true){
-      delay(1);
-    }
-  }
-  myDFPlayer.EQ(DFPLAYER_EQ_NORMAL);
-  myDFPlayer.outputDevice(DFPLAYER_DEVICE_SD); // device is SD card
-  myDFPlayer.volume(10);  // Set volume value. From 0 to 30 - FIXME 25 is good
-  Serial.println(F("DFPlayer Mini online."));
-} // end DFsetup()
+// ******************************** STATE TABLE UTILITIES ********************************
+
+// RBG_startRow() - start processing a row in myStateTable
+//    myState.tableRowInProcFlags should be zero to call this
+uint8_t RBG_startRow() {
+  static uint8_t debugThisManyCalls = 3;
+  RBGStateTable * thisRowPtr = &myStateTable[myState.tableRow];
+  uint8_t thisSound = 0;
+  uint8_t thisLED = 0;
+  uint8_t thisReturn = 0;
+  if (mNONE == thisRowPtr->gotoOnInput) {
+    // not waiting for input
+    if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
+    thisSound = thisRowPtr->efctSound;
+    if (mNONE != thisSound) {
+      if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
+      myDFPlayer.playMp3Folder(thisSound /* FIXME +mEFCT_CONFIGURE */); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999)
+      thisReturn |= mINPROCFLG_WAITFORSOUND;
+    } // end if should start a sound and wait for it
+    thisLED = thisRowPtr->efctLED;
+    if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
+    if (mNONE != thisLED) {
+      if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
+      // FIXME LEDS to efctLED
+      myState.timerLed = millis() + deltaMsLED;
+    }  // end if should switch to other LED pattern
+    if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
+    if (mNONE == thisReturn) { // if we still don't have anything to do, just jump
+      if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
+      myState.tableRow = thisRowPtr->gotoWithoutInput; // we will go next time.
+      // thisReturn is already mNONE
+    } // end if do the jump next time
+  } else { // there is input to wait for, perhaps a block
+    if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
+    for (int idx = myState.tableRow; idx < NUMOF(myStateTable); idx++) {
+      if (RBGMatchInput(mINP_TRIG&myStateTable[idx].inputRBG)){ // match the inputs!
+        myState.tableRow = myStateTable[idx].gotoOnInput;
+        thisReturn = mNONE; // start the new state
+        break;
+      } else if (mBLOCKEND&myStateTable[idx].blkFlags) { // no more in this block to check
+        thisReturn = mNONE; // start this block again next time
+        break; // end of block; break the loop
+      } // end of checking for this idx
+    } // end for idx, potentially for a block
+  } // end if there is input to wait for
+  if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
+  if (debugThisManyCalls > 0) { debugThisManyCalls -= 1; }
+  return thisReturn;
+} // end RBG_startRow()
 
 // ******************************** BUTTON AND TIMING UTILITIES ********************************
 
 uint16_t RBGMatchInput (uint16_t inpMask) {
   return 0; // no match
 } // end RBGMatchInput(...)
-
-uint8_t RBG_waitForSound() {
-  return 0; // RBG_waitForSound to end
-} // end RBG_waitForSound()
 
 uint8_t RBG_waitForInput() {
   return 0; // RBG_waitForInput
@@ -256,9 +292,6 @@ int16_t doDwell(int16_t dwell, uint8_t must_be_diff_pattern) {
 //    trigger means collect the state of the buttons
 //    sound input is always sensed. If sound is playing and it finishes then we set input.
 //
-// #define mVINP_LOCK  0x0040     // mask for just connected the barrel
-// #define mVINP_OPEN  0x0080     // mask for just disconnected the barrel
-
 uint16_t getButtonInput() {
 #if REAL_BUTTONS
   return(checkButtons());
@@ -271,7 +304,7 @@ uint16_t getButtonInput() {
 // checkButtons() - returns mVINP_ mask for buttons to process
 // 
 uint16_t checkButtons() {
-  static uint8_t debugThisManyCalls = 7;
+  static uint8_t debugThisManyCalls = 10;
   uint8_t idx;
   uint16_t thePin;
   uint16_t theVal;
@@ -302,55 +335,24 @@ uint16_t checkButtons() {
   return(returnInpMask);
 } // end checkButtons()
 
-// ******************************** STATE TABLE UTILITIES ********************************
+// ******************************** INITIALIZATION UTILITIES ********************************
 
-// RBG_startRow() - start processing a row in myStateTable
-//    myState.tableRowInProcFlags should be zero to call this
-uint8_t RBG_startRow() {
-  static uint8_t debugThisManyCalls = 3;
-  RBGStateTable * thisRowPtr = &myStateTable[myState.tableRow];
-  uint8_t thisSound = 0;
-  uint8_t thisLED = 0;
-  uint8_t thisReturn = 0;
-  if (mNONE == thisRowPtr->gotoOnInput) {
-    // not waiting for input
-    if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
-    thisSound = thisRowPtr->efctSound;
-    if (mNONE != thisSound) {
-      if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
-      myDFPlayer.playMp3Folder(thisSound /* FIXME +mEFCT_CONFIGURE */); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999)
-      thisReturn |= mINPROCFLG_WAITFORSOUND;
-    } // end if should start a sound and wait for it
-    thisLED = thisRowPtr->efctLED;
-    if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
-    if (mNONE != thisLED) {
-      if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
-      // FIXME LEDS to efctLED
-      myState.timerLed = millis() + deltaMsLED;
-    }  // end if should switch to other LED pattern
-    if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
-    if (mNONE == thisReturn) { // if we still don't have anything to do, just jump
-      if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
-      myState.tableRow = thisRowPtr->gotoWithoutInput; // we will go next time.
-      // thisReturn is already mNONE
-    } // end if do the jump next time
-  } else { // there is input to wait for, perhaps a block
-    if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
-    for (int idx = myState.tableRow; idx < NUMOF(myStateTable); idx++) {
-      if (RBGMatchInput(mINP_TRIG&myStateTable[idx].inputRBG)){ // match the inputs!
-        myState.tableRow = myStateTable[idx].gotoOnInput;
-        thisReturn = mNONE; // start the new state
-        break;
-      } else if (mBLOCKEND&myStateTable[idx].blkFlags) { // no more in this block to check
-        thisReturn = mNONE; // start this block again next time
-        break; // end of block; break the loop
-      } // end of checking for this idx
-    } // end for idx, potentially for a block
-  } // end if there is input to wait for
-  if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
-  if (debugThisManyCalls > 0) { debugThisManyCalls -= 1; }
-  return thisReturn;
-} // end RBG_startRow()
+void DFsetup() {
+  Serial.println(F("Initializing DFPlayer ... (May take 3~5 seconds)"));
+  
+  if (!myDFPlayer.begin(mySoftwareSerial)) {  // Use softwareSerial to communicate with mp3 player
+    Serial.println(F("Unable to begin DFPlayer:"));
+    Serial.println(F("1.Please recheck the connection!"));
+    Serial.println(F("2.Please insert the SD card!"));
+    while(true){
+      delay(1);
+    }
+  }
+  myDFPlayer.EQ(DFPLAYER_EQ_NORMAL);
+  myDFPlayer.outputDevice(DFPLAYER_DEVICE_SD); // device is SD card
+  myDFPlayer.volume(10);  // Set volume value. From 0 to 30 - FIXME 25 is good
+  Serial.println(F("DFPlayer Mini online."));
+} // end DFsetup()
 
 // ******************************** DEBUG UTILITIES ********************************
 
