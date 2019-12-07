@@ -41,11 +41,6 @@
 #define REAL_BUTTONS 1                       // use actual buttons
 
 
-// EEPROM addresses
-// EEPROM[eeSoundSave+idx] idx: 1 WindUp, 2 Shoot, 4 Open, 7 Load
-#define eeSoundSave 0x00 // EEPROM starting address for sound configuration
-#define eeLEDSave   0x10 // EEPROM starting address for LED pattern configuration
-
 SoftwareSerial mySoftwareSerial(DPIN_SWSRL_RX, DPIN_SWSRL_TX); // to talk to YX5200 audio player
 DFRobotDFPlayerMini myDFPlayer;                                // to talk to YX5200 audio player
 void DFsetup();                                                // how to initialize myDFPlayer
@@ -78,13 +73,15 @@ static uint16_t nowVinputRBG; // latest button inputs, to compare with previous 
 void setup() {
   // put your setup code here, to run once:
 
-#if SERIALDEBUG
   Serial.begin(115200);         // this is for general debug
-#endif // SERIALDEBUG
-  mySoftwareSerial.begin(9600); // this is control to DFPlayer audio player
 
+  while (!Serial) {
+    ; // wait for serial port to connect. Needed for native USB port only
+  }
   Serial.println();
   Serial.println(F("FOOF SciFi RBG init..."));
+
+  mySoftwareSerial.begin(9600); // this is control to DFPlayer audio player
 
   // initialize the input pins. Not sure if my Nano actually has a pullup...
   //    fortunately the RBG controller board has a 10K pullup resistor
@@ -103,6 +100,9 @@ void setup() {
   // initialize the FastLED library for our setup
   FastLED.addLeds<NEOPIXEL,DPIN_FASTLED>(led_display, NUM_LEDS_PER_DISK);
   FastLED.setBrightness(BRIGHTMAX); // we will do our own power management
+
+  // if needed, initialize EEPROM variables
+  eeprom_check_init();
 
   printAllMyState();
   printAllMyInputs();
@@ -198,7 +198,11 @@ uint8_t RBG_startRow() {
     thisSound = thisRowPtr->efctSound;
     if (mNONE != thisSound) {
       if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
-      myDFPlayer.playMp3Folder(thisSound /* FIXME +mEFCT_CONFIGURE */); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999)
+      if (0 != myState.tableRow) {
+         myDFPlayer.playMp3Folder(thisSound+mEFCT_CONFIGURE); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999)
+      } else {
+         myDFPlayer.playMp3Folder(thisSound+mEFCT_INIT_PWR_UP); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999)
+      }
       thisReturn |= mINPROCFLG_WAITFORSOUND;
     } // end if should start a sound and wait for it
     thisLED = thisRowPtr->efctLED;
@@ -374,7 +378,7 @@ void DFsetup() {
   }
   myDFPlayer.EQ(DFPLAYER_EQ_NORMAL);
   myDFPlayer.outputDevice(DFPLAYER_DEVICE_SD); // device is SD card
-  myDFPlayer.volume(10);  // Set volume value. From 0 to 30 - FIXME 25 is good
+  myDFPlayer.volume(25);  // Set volume value. From 0 to 30 - FIXME 25 is good
   Serial.println(F("DFPlayer Mini online."));
 } // end DFsetup()
 
@@ -453,6 +457,66 @@ void DFprintDetail(uint8_t type, int value){
   }  // end switch (type)
 } // end DFprintDetail()
 #endif // DFPRINTDETAIL
+
+// eeprom_check_init() - check if EEPROM has our values; if not initialize it
+//    we use a very crude checksum approach
+void eeprom_check_init() {
+  // start reading from the first byte (address 0) of the EEPROM
+  int address;
+  uint8_t invChksumValue;
+  uint8_t byteValue;
+  uint8_t byte2Value;
+
+  // read RBG non-checksum bytes from EEPROM and calculate checksum; compare with stored checksum
+  invChksumValue = eeprom_calc_inverted_checksum();
+  byteValue = EEPROM.read(eeInvertedChksum);
+    // Serial.print("INIT EEP: stored inverted chksum 0x"); Serial.print(eeInvertedChksum,HEX); Serial.print(" value 0x"); Serial.print(byteValue,HEX); Serial.print(", calculated inverted chksum 0x"); Serial.println(((uint8_t) ~chksumValue),HEX);
+  if (byteValue != invChksumValue) {
+    // checksum does not match; zero out our EEPROM area
+    Serial.print("INIT: calc EEPROM inverted chksum 0x"); Serial.print(invChksumValue,HEX); Serial.print(" does not match 0x"); Serial.print(byteValue,HEX); Serial.println("; INITIALIZING");
+    byteValue = 0;
+    for (address = 0; address < eeLastNonChksum; address++) { // one less than entire data area
+      byte2Value = EEPROM.read(address);
+      if (byte2Value != byteValue) { // avoid EEPROM writes when possible
+        EEPROM.write(address, byteValue);
+      }
+    } // end zero out our EEPROM area except last value
+    eeprom_store_with_chksum(eeLastNonChksum, byteValue); // store last value and checksum
+  } // end if checksum does not match
+} // end eeprom_check_init()
+
+// eeprom_store_with_chksum() - store byteValue at EEPROM address and update checksum
+//    we use a very crude checksum approach
+void eeprom_store_with_chksum(int address, uint8_t byteValue) {
+  uint8_t byte2Value;
+  uint8_t invChksumValue;
+
+  byte2Value = EEPROM.read(address);
+  if (byte2Value != byteValue) { // avoid EEPROM writes when possible
+    EEPROM.write(address, byteValue);
+  }
+  invChksumValue = eeprom_calc_inverted_checksum();
+  byte2Value = EEPROM.read(eeInvertedChksum);
+  if (byte2Value != invChksumValue) { // avoid EEPROM writes when possible
+    EEPROM.write(eeInvertedChksum, invChksumValue);
+  }
+} // end eeprom_store_with_chksum()
+
+// eeprom_calc_inverted_checksum() - calculate the inverted checksum
+//    we use a very crude checksum approach
+uint8_t eeprom_calc_inverted_checksum() {
+  int address;
+  uint8_t chksumValue; // non-inverted checksum
+  uint8_t byteValue;
+
+  // read RBG non-checksum bytes from EEPROM and calculate checksum
+  for (address = chksumValue = 0; address <= eeLastNonChksum; address++) {
+    byteValue = EEPROM.read(address);
+    chksumValue += byteValue;
+    // Serial.print("INIT EEP: address 0x"); Serial.print(address,HEX); Serial.print(" value 0x"); Serial.print(byteValue,HEX); Serial.print(" calc chksum 0x"); Serial.println(chksumValue,HEX);
+  } // end caclulate checksum
+  return((uint8_t) (~chksumValue));
+} // end eeprom_calc_inverted_checksum()
 
 /* need to re-think this one
 void stateTable_store(RBGStateTable * theRow, uint8_t * theStates) {

@@ -68,13 +68,25 @@
 #define mPOWERON 0  // address in myStateTable[]
 #define mMENU 1
 
-// define the effect number ranges
-#define mEFCT_WIND_UP 0
-#define mEFCT_SHOOT 10
-#define mEFCT_OPEN_BARREL 20
-#define mEFCT_LOCK_LOAD 30
-#define mEFCT_INIT_PWR_UP 40
-#define mEFCT_CONFIGURE 80
+// define the effect number ranges - must be divisible by factors of 10
+#define mEFCT_WIND_UP        0
+#define mEFCT_SHOOT         10
+#define mEFCT_OPEN_BARREL   20
+#define mEFCT_LOCK_LOAD     30
+#define mEFCT_INIT_PWR_UP   40
+#define mEFCT_CONFIGURE     80
+#define mEFCT_CHKSUM       100
+
+
+// EEPROM addresses
+// EEPROM[eeSoundSave+idx] idx: 0 WindUp, 1 Shoot, 2 Open, 3 Load, 4 PowerUp 8 Configure
+#define eeSoundSave 0x0000 // EEPROM starting address for sound configuration
+#define eeLEDSave   0x0010 // EEPROM starting address for LED pattern configuration
+#define eeLastNonChksum  0x1E // EEPROM address of last non-checksum data
+#define eeInvertedChksum 0x1F // EEPROM address of last non-checksum data
+
+#define EEPOFFSET(parm) ((uint16_t) (parm / 10)) // example: EEPOFFSET(mEFCT_SHOOT) = 1
+
 
 
 // masks for input detections: button, trigger, sound module, and barrel states and state changes
@@ -140,12 +152,12 @@ static pins_to_vals_t myPinsToVals[] = {
 typedef struct _RBGStateTable {
     uint8_t blkFlags;         // mBLOCKSTART, mBLOCKEND or mZERO
     uint8_t SPECIAL;          // special row-handling flags: mSPCL_*
-    uint8_t efctSound;  // index for sound to make after input match
-    uint8_t efctLED;           // index for light pattern while waiting
+    uint8_t efctSound;        // index for sound to make after input match
+    uint8_t efctLED;          // index for light pattern while waiting
     uint16_t inputRBG;        // mask for input expected: mINP_* - NOTE: 16 bits
     uint8_t storeVal;         // value to store, 8 bit uint
     uint8_t storeAddr;        // address to store; includes mask for mFUNC, mVAL,
-                                 // eeSoundSave|mFUNC: idx= 3 WindUp, 2 Shoot, 4 Open, 7 Load
+                                 // eeSoundSave|mFUNC: idx= 0 WindUp, 1 Shoot, 2 Open, 3 Load, 4 PowerUp 8 Configure
     uint8_t gotoOnInput;      // index within table to go with matching input
     uint8_t gotoWithoutInput; // index within table to go without waiting for input
     uint8_t index;            // input column unused in this table
