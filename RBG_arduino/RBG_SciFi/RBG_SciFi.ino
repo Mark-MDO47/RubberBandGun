@@ -120,6 +120,7 @@ void setup() {
 void loop() {
   static uint8_t countBadStatePrint = 6;
   static uint8_t countGoodStatePrint = 6;
+  uint16_t foundInput = 0; // return from RBG_waitForInput
 
   // put your main code here, to run repeatedly:
   
@@ -136,19 +137,20 @@ void loop() {
       countGoodStatePrint -= 1;
     }
   } else if (mINPROCFLG_WAITFORSOUND == myState.tableRowInProcFlags) {
-    if ((0 != (nowVinputRBG&mVINP_SOUNDINACTV)) &&
+    if ((0 == (nowVinputRBG&mVINP_SOUNDACTV)) &&
         (myStateTable[myState.tableRow].gotoWithoutInput != mNONE)) {
       // sound completed and we have a place to go
-      myState.tableRowInProcFlags &= ~((uint16_t) mINPROCFLG_WAITFORINPUT);
+      myState.tableRowInProcFlags = 0; // can only have one WAITFOR or the other
       myState.tableRow = myStateTable[myState.tableRow].gotoWithoutInput;
       if (countGoodStatePrint > 0) {
         Serial.println(F("DEBUG - after mINPROCFLG_WAITFORSOUND"));
         printAllMyState(); Serial.print(F("DEBUG - nowVinputRBG 0x")); Serial.println(nowVinputRBG, HEX);
         countGoodStatePrint -= 1;
       }
-    }
+    } // else we the sound did not end with a place to go
   } else if (mINPROCFLG_WAITFORINPUT == myState.tableRowInProcFlags) {
-    myState.tableRowInProcFlags = RBG_waitForInput(); // wait for user input, trigger and maybe other buttons
+    // we need to check until we hit the mBLOCKEND
+    foundInput = RBG_waitForInput(nowVinputRBG); // wait for user input, trigger and maybe other buttons
     if (countGoodStatePrint > 0) {
       Serial.println(F("DEBUG - after RBG_waitForInput() call"));
       printAllMyState(); Serial.print(F("DEBUG - nowVinputRBG 0x")); Serial.println(nowVinputRBG, HEX);
@@ -185,7 +187,7 @@ void loop() {
 // RBG_startRow() - start processing a row in myStateTable
 //    myState.tableRowInProcFlags should be zero to call this
 uint8_t RBG_startRow() {
-  static uint8_t debugThisManyCalls = 3;
+  static uint8_t debugThisManyCalls = 10;
   RBGStateTable * thisRowPtr = &myStateTable[myState.tableRow];
   uint8_t thisSound = 0;
   uint8_t thisLED = 0;
@@ -214,31 +216,53 @@ uint8_t RBG_startRow() {
     } // end if do the jump next time
   } else { // there is input to wait for, perhaps a block
     if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
-    for (int idx = myState.tableRow; idx < NUMOF(myStateTable); idx++) {
-      if (RBGMatchInput(mINP_TRIG&myStateTable[idx].inputRBG)){ // match the inputs!
-        myState.tableRow = myStateTable[idx].gotoOnInput;
-        thisReturn = mNONE; // start the new state
-        break;
-      } else if (mBLOCKEND&myStateTable[idx].blkFlags) { // no more in this block to check
-        thisReturn = mNONE; // start this block again next time
-        break; // end of block; break the loop
-      } // end of checking for this idx
-    } // end for idx, potentially for a block
+    thisReturn = mINPROCFLG_WAITFORINPUT; // start the new state, RBG_waitForInput() will handle it
   } // end if there is input to wait for
   if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
   if (debugThisManyCalls > 0) { debugThisManyCalls -= 1; }
   return thisReturn;
 } // end RBG_startRow()
 
+// RBG_waitForInput(nowVinputRBG) - wait until desired input happens
+//   returns mNONE if did not happen, idx to row that matched if it did
+uint8_t RBG_waitForInput(uint16_t nowVinputRBG) {
+  uint8_t thisReturn = mNONE; // assume no input found
+  static uint8_t debugThisManyCalls = 3;
+  RBGStateTable * thisRowPtr = &myStateTable[myState.tableRow];
+
+  // we need to check until we hit the mBLOCKEND
+  for (uint16_t idx = myState.tableRow; (idx < NUMOF(myStateTable)) && (mNONE == thisReturn); idx++) {
+    // see if we match input condition for this row
+    if ((0 != thisRowPtr->inputRBG&mINP_TRIG) && (0 != nowVinputRBG&mVINP_TRIG)) {
+      // several cases for trigger
+      if (0 != thisRowPtr->inputRBG&mINP_BANY) {
+      } else if ((0 != thisRowPtr->inputRBG&mINP_BNONE) &&
+                 (0 == (nowVinputRBG & (mVINP_B01|mVINP_B02|mVINP_B04)))) {
+      }
+    } else if ((0 != thisRowPtr->inputRBG&mINP_OPEN) && (0 != nowVinputRBG&mVINP_OPEN)) {
+      thisReturn = idx;
+      break;
+    } else if ((0 != thisRowPtr->inputRBG&mINP_LOCK) && (0 != nowVinputRBG&mVINP_LOCK)) {
+      thisReturn = idx;
+      break;
+    }
+
+    if (0 != (thisRowPtr->inputRBG&mBLOCKEND)) {
+      // this is a normal way to end - found the mBLOCKEND but did not find input
+      break;
+    }
+    thisRowPtr += 1;
+  } // end while searching for mBLOCKEND
+    
+  return thisReturn; // input did not happen
+} // end RBG_waitForInput()
+
 // ******************************** BUTTON AND TIMING UTILITIES ********************************
+
 
 uint16_t RBGMatchInput (uint16_t inpMask) {
   return 0; // no match
 } // end RBGMatchInput(...)
-
-uint8_t RBG_waitForInput() {
-  return 0; // RBG_waitForInput
-} // end RBG_waitForInput()
 
 // doDwell(int16_t dwell, uint8_t must_be_diff_pattern) - dwell or break out if button press
 //   returns TRUE if got a change in inputs
@@ -319,9 +343,9 @@ uint16_t checkButtons() {
     // set/clear the input bits for the standard inputs
     for (idx = 0; idx < NUMOF(myPinsToVals); idx++) {
       if (LOW == digitalRead(myPinsToVals[idx].pin)) {
-        returnInpMask &= ~((uint16_t) myPinsToVals[idx].val); // overkill but can solve lots of issues
-      } else {
         returnInpMask |= ((uint16_t) myPinsToVals[idx].val); // less overkill but still solves if .val is not uintx_t
+      } else {
+        returnInpMask &= ~((uint16_t) myPinsToVals[idx].val); // overkill but can solve lots of issues
       }
     } // end for entries in myPinsToVals[]
   } else { // we are not locked and loaded; abort everything else

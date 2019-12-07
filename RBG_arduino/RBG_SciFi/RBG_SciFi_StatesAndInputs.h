@@ -52,6 +52,7 @@
 // define the symbols
 #define mUNDEFINED 254
 #define mNONE 255
+#define mZERO 0
 
 //
 // used in myStateTable[].efctSound and .efctLED
@@ -101,13 +102,15 @@
 #define mVINP_LOCK  0x0040     // mask for just connected the barrel
 #define mVINP_OPEN  0x0080     // mask for just disconnected the barrel
 #define mVINP_PREVLOCK  0x0100 // mask for the barrel was lock/load last time we checked
-#define mVINP_SOUNDINACTV  0x0200 // mask for sound was active last time we checked
+#define mVINP_SOUNDACTV  0x0200 // mask for sound was active last time we checked
 // #define mVINP_SOUNDEND 0x0400 // mask for sound was ended and previously active
 
 // masks for in-process events: wait-for-sound or wait-for-input
 //   used (only) in tableRowInProcFlags
-#define mINPROCFLG_WAITFORSOUND ((uint8_t) 0x80)  // wait for sound to finish
-#define mINPROCFLG_WAITFORINPUT ((uint8_t) 0x40)  // wait for user input (trigger with perhaps others)
+//   NOTE: maximum of one of these bits can be set at any time
+#define mINPROCFLG_WAITFORSOUND    ((uint8_t) 0x80)  // wait for sound to finish
+#define mINPROCFLG_WAITFORINPUT    ((uint8_t) 0x40)  // wait for user input (trigger with perhaps others)
+#define mINPROCFLG_WAITFORSOLENOID ((uint8_t) 0x20)  // wait for timeout on solenoid (special, not directly set in state table)
 
 // table to identify input pins and corresponding masks
 // DPIN_LOCK_LOAD handled separately in code
@@ -120,7 +123,7 @@ static pins_to_vals_t myPinsToVals[] = {
   { DPIN_BTN_YELLOW,  mVINP_B01 },
   { DPIN_BTN_GREEN,   mVINP_B02 },
   { DPIN_BTN_BLACK,   mVINP_B04 },
-  { DPIN_AUDIO_BUSY,  mVINP_SOUNDINACTV },
+  { DPIN_AUDIO_BUSY,  mVINP_SOUNDACTV },
 };
 
 
@@ -135,7 +138,7 @@ static pins_to_vals_t myPinsToVals[] = {
 // 
 // 
 typedef struct _RBGStateTable {
-    uint8_t blkFlags;         // mBLOCKSTART, mBLOCKEND or mNONE
+    uint8_t blkFlags;         // mBLOCKSTART, mBLOCKEND or mZERO
     uint8_t SPECIAL;          // special row-handling flags: mSPCL_*
     uint8_t efctSound;  // index for sound to make after input match
     uint8_t efctLED;           // index for light pattern while waiting
@@ -187,6 +190,6 @@ static struct myState_t {
 static RBGStateTable myStateTable[4] = {
     { /* row 0 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mNONE, .efctSound=mFOOF, .efctLED=mSPARKLE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mMENU, .index=mPOWERON, },
     { /* row 1 */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_ONETIME | mSPCL_SHOOT, .efctSound=mEFCT_SPCLFUNC|mEFCT_SHOOT, .efctLED=mEFCT_SPCLFUNC|mEFCT_SHOOT, .inputRBG=mINP_TRIG|mINP_BNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mMENU, .gotoWithoutInput=mNONE, .index=mMENU, },
-    { /* row 2 */  .blkFlags=mNONE, .SPECIAL=mSPCL_ONETIME, .efctSound=mEFCT_SPCLFUNC|mEFCT_OPEN_BARREL, .efctLED=mEFCT_SPCLFUNC|mEFCT_OPEN_BARREL, .inputRBG=mINP_OPEN, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mMENU, .gotoWithoutInput=mNONE, .index=mMENU, },
+    { /* row 2 */  .blkFlags=mZERO, .SPECIAL=mSPCL_ONETIME, .efctSound=mEFCT_SPCLFUNC|mEFCT_OPEN_BARREL, .efctLED=mEFCT_SPCLFUNC|mEFCT_OPEN_BARREL, .inputRBG=mINP_OPEN, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mMENU, .gotoWithoutInput=mNONE, .index=mMENU, },
     { /* row 3 */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_ONETIME, .efctSound=mEFCT_SPCLFUNC|mEFCT_LOCK_LOAD, .efctLED=mEFCT_SPCLFUNC|mEFCT_LOCK_LOAD, .inputRBG=mINP_LOCK, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mMENU, .gotoWithoutInput=mNONE, .index=mMENU, },
 };
