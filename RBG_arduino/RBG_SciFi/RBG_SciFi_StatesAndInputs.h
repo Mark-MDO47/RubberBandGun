@@ -1,3 +1,4 @@
+
 // Mark Olson 2019-11
 //
 // Major kudos to Daniel Garcia and Mark Kriegsman for the FANTASTIC FastLED library and examples!!!
@@ -103,6 +104,10 @@
 #define mVINP_SOUNDEND  0x0200 // mask for sound just ended
 #define mVINP_SOUNDACTV 0x0400 // mask for sound was previously active
 
+// masks for in-process events: wait-for-sound or wait-for-input
+//   used (only) in tableRowInProcFlags
+#define mINPROCFLG_WAITFORSOUND ((uint8_t) 0x80)  // wait for sound to finish
+#define mINPROCFLG_WAITFORINPUT ((uint8_t) 0x40)  // wait for user input (trigger with perhaps others)
 
 // table to identify input pins and corresponding masks
 // DPIN_LOCK_LOAD handled separately in code
