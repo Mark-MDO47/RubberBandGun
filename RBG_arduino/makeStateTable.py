@@ -239,7 +239,8 @@ def make_state_table():
 
     print("typedef struct RBGStateTable_t {")
     for key in COLTOSTRUCT:
-        print("%s" % COLTOSTRUCT[key])
+        print("%s" % COLTOSTRUCT[key]
+              )
     print("} RBGStateTable;\n\n")
     len_statetable = len(STATETABLE)
     len_statetablekeys = len(STATETABLE[0])

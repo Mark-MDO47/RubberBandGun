@@ -192,7 +192,16 @@ uint8_t RBG_startRow() {
   RBGStateTable * thisRowPtr = &myStateTable[myState.tableRow];
   uint16_t thisSound = 0;
   uint16_t thisLED = 0;
-  uint8_t thisReturn = 0;
+  uint16_t thisReturn = 0;
+  static uint8_t prev_row = 0;
+  static uint8_t prev_tableRowInProcFlags = 0;
+
+  if ((prev_row != myState.tableRow) || (prev_tableRowInProcFlags != myState.tableRowInProcFlags)) {
+    debugThisManyCalls = 10;
+    if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
+    prev_row = myState.tableRow;
+    prev_tableRowInProcFlags = myState.tableRowInProcFlags;
+  } // end if more debugging is useful
   if (mNONE == thisRowPtr->gotoOnInput) {
     // not waiting for input
     if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
@@ -217,7 +226,7 @@ uint8_t RBG_startRow() {
       if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
       if (mNONE != thisLED) {
         if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
-        if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow FIXME LEDS to efctLED")); }
+        if (debugThisManyCalls > 0) { Serial.println(F(" RBG_startRow FIXME LEDS to efctLED")); }
         myState.timerLed = millis() + deltaMsLED;
       }  // end if should switch to other LED pattern
     } else {
@@ -274,10 +283,6 @@ uint8_t RBG_waitForInput(uint16_t nowVinputRBG) {
 
 // ******************************** BUTTON AND TIMING UTILITIES ********************************
 
-
-uint16_t RBGMatchInput (uint16_t inpMask) {
-  return 0; // no match
-} // end RBGMatchInput(...)
 
 // doDwell(int16_t dwell, uint8_t must_be_diff_pattern) - dwell or break out if button press
 //   returns TRUE if got a change in inputs
@@ -387,10 +392,9 @@ void DFsetup() {
       delay(1);
     }
   }
-  myDFPlayer.EQ(DFPLAYER_EQ_NORMAL);
+  myDFPlayer.EQ(DFPLAYER_EQ_BASS); // our speaker is quite small
   myDFPlayer.outputDevice(DFPLAYER_DEVICE_SD); // device is SD card
   myDFPlayer.volume(25);  // Set volume value. From 0 to 30 - FIXME 25 is good
-  myDFPlayer.EQ(DFPLAYER_EQ_BASS); // our speaker is quite small
   Serial.println(F("DFPlayer Mini online."));
 } // end DFsetup()
 
@@ -398,12 +402,14 @@ void DFsetup() {
 
 // checkDataGuard()
 void checkDataGuard() {
-  if ((0x55555555 != data_guard_before) || (0x55555555 != data_guard_after)) {
-    Serial.print(F("checkDataGuard should be 1431655765; before="));
-    Serial.print(data_guard_before);
-    Serial.print(F(" after="));
-    Serial.println(data_guard_after);
+  static int8_t showOneTime = 1;
+  if ((showOneTime >= 1) && ((0x55555555 != data_guard_before) || (0x55555555 != data_guard_after))) {
+    Serial.print(F("checkDataGuard should be 0x55555555; before=0x"));
+    Serial.print(data_guard_before, HEX);
+    Serial.print(F(" after=0x"));
+    Serial.println(data_guard_after, HEX);
     delay(2000); // for debugging & show
+    showOneTime--;
   }
 } // end checkDataGuard()
 

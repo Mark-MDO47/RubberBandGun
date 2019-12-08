@@ -95,7 +95,7 @@ mEFCT_WIND_UP = 00  # 001 to 009 - wind-up effects
 mEFCT_SHOOT = 10  # 011 to 019 - shoot effects
 mEFCT_OPEN_BARREL = 20  # 021 to 029 - open barrel effects
 mEFCT_LOCK_LOAD = 30  # 031 to 039 - lock and load barrel effects
-mEFCT_INIT_PWR_UP = 40  # 041 to 049 - after initial power-up effects
+mEFCT_PWRON = 40  # 041 to 049 - after initial power-up effects
 mEFCT_CONFIGURE = 80  # 081 to 099 - effects used to navigate menus
 mEFCT_UNIQ = 100  # 101 to 109 - unique effects not included in configurations
 #
@@ -104,7 +104,7 @@ EFFECT_MAP = {
     "mEFCT_SHOOT": [mEFCT_SHOOT, " // 011 to 019 - shoot effects"],
     "mEFCT_OPEN_BARREL": [mEFCT_OPEN_BARREL, " // 021 to 029 - open barrel effects"],
     "mEFCT_LOCK_LOAD": [mEFCT_LOCK_LOAD, " // 031 to 039 - lock and load barrel effects"],
-    "mEFCT_INIT_PWR_UP": [mEFCT_INIT_PWR_UP, " // 041 to 049 - after initial power-up effects"],
+    "mEFCT_PWRON": [mEFCT_PWRON, " // 041 to 049 - after initial power-up effects"],
     "mEFCT_CONFIGURE": [mEFCT_CONFIGURE, " // 081 to 099 - effects used to navigate menus"],
     "mEFCT_UNIQ": [mEFCT_UNIQ,  " // 101 to 109 - unique effects not included in configurations"]
 }

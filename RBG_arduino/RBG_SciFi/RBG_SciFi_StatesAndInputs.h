@@ -23,7 +23,7 @@
 //
 // This file has definitions for state tables and input processing (mostly buttons)
 //
-#define mEFCT_UNIQ_WAITING 101  // waiting pattern: low level spooky sounds, blinky lights
+#define mEFCT_UNIQ_WAITING 87  // FIXME 101 not 87 - waiting pattern: low level spooky sounds, blinky lights
 
 //
 // define the UNIQUE effects (lights and sounds) here. These cannot be configured as the other effects can.
@@ -80,7 +80,7 @@
 #define mEFCT_SHOOT        10  // 011 to 019 - shoot effects
 #define mEFCT_OPEN_BARREL  20  // 021 to 029 - open barrel effects
 #define mEFCT_LOCK_LOAD    30  // 031 to 039 - lock and load barrel effects
-#define mEFCT_INIT_PWR_UP  40  // 041 to 049 - after initial power-up effects
+#define mEFCT_PWRON        40  // 041 to 049 - after initial power-up effects
 #define mEFCT_CONFIGURE    80  // 081 to 099 - effects used to navigate menus
 #define mEFCT_UNIQ        100  // 101 to 109 - unique effects not included in configurations
 
@@ -98,15 +98,6 @@
 #define mBLOCKEND   0x40
 #define mPOWERON 0  // address in myStateTable[]
 #define mMENU 1
-
-// define the effect number ranges - must be divisible by 10
-#define mEFCT_WIND_UP        0
-#define mEFCT_SHOOT         10
-#define mEFCT_OPEN_BARREL   20
-#define mEFCT_LOCK_LOAD     30
-#define mEFCT_PWRON         40
-#define mEFCT_CONFIGURE     80
-#define mEFCT_CHKSUM       100
 
 
 // EEPROM addresses
@@ -152,9 +143,9 @@
 // masks for in-process events: wait-for-sound or wait-for-input
 //   used (only) in tableRowInProcFlags
 //   NOTE: maximum of one of these bits can be set at any time
-#define mINPROCFLG_WAITFORSOUND    ((uint8_t) 0x80)  // wait for sound to finish
-#define mINPROCFLG_WAITFORINPUT    ((uint8_t) 0x40)  // wait for user input (trigger with perhaps others)
-#define mINPROCFLG_WAITFORSOLENOID ((uint8_t) 0x20)  // wait for timeout on solenoid (special, not directly set in state table)
+#define mINPROCFLG_WAITFORSOUND    ((uint16_t) 0x80)  // wait for sound to finish
+#define mINPROCFLG_WAITFORINPUT    ((uint16_t) 0x40)  // wait for user input (trigger with perhaps others)
+#define mINPROCFLG_WAITFORSOLENOID ((uint16_t) 0x20)  // wait for timeout on solenoid (special, not directly set in state table)
 
 // table to identify input pins and corresponding masks
 // DPIN_LOCK_LOAD handled separately in code
