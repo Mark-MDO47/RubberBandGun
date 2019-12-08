@@ -186,43 +186,53 @@ void loop() {
 
 // RBG_startRow() - start processing a row in myStateTable
 //    myState.tableRowInProcFlags should be zero to call this
+// returns a tableRowInProcFlags bitmask
 uint8_t RBG_startRow() {
   static uint8_t debugThisManyCalls = 10;
   RBGStateTable * thisRowPtr = &myStateTable[myState.tableRow];
-  uint8_t thisSound = 0;
-  uint8_t thisLED = 0;
+  uint16_t thisSound = 0;
+  uint16_t thisLED = 0;
   uint8_t thisReturn = 0;
   if (mNONE == thisRowPtr->gotoOnInput) {
     // not waiting for input
-    if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
+    if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
     thisSound = thisRowPtr->efctSound;
-    if (mNONE != thisSound) {
-      if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
-      if (0 != myState.tableRow) {
-         myDFPlayer.playMp3Folder(thisSound+mEFCT_CONFIGURE); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999)
-      } else {
-         myDFPlayer.playMp3Folder(thisSound+mEFCT_INIT_PWR_UP); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999)
-      }
-      thisReturn |= mINPROCFLG_WAITFORSOUND;
-    } // end if should start a sound and wait for it
-    thisLED = thisRowPtr->efctLED;
-    if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
-    if (mNONE != thisLED) {
-      if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
-      // FIXME LEDS to efctLED
-      myState.timerLed = millis() + deltaMsLED;
-    }  // end if should switch to other LED pattern
-    if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
+    if ((mNONE == thisRowPtr->SPECIAL) || (0 == (thisRowPtr->SPECIAL&mSPCL_ONETIME))) { // not a SPECIAL function row
+      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
+      if (mNONE != thisSound) {
+        if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
+        if (EFCT_IS_EEP(thisSound)) {
+          // configurable sound using EEPROM
+          if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
+          myDFPlayer.playMp3Folder(thisSound + EEPROM.read(EEPOFFSET(thisSound))); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999)
+        } else { // unique sound - includes any mEFCT_ stuff
+          if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
+          myDFPlayer.playMp3Folder(thisSound); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999)
+        }
+        if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
+        thisReturn |= mINPROCFLG_WAITFORSOUND;
+      } // end if should start a sound and wait for it
+      thisLED = thisRowPtr->efctLED;
+      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
+      if (mNONE != thisLED) {
+        if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
+        if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow FIXME LEDS to efctLED")); }
+        myState.timerLed = millis() + deltaMsLED;
+      }  // end if should switch to other LED pattern
+    } else {
+      // FIXME NEED CODE FOR SPECIALS
+    }
+    if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
     if (mNONE == thisReturn) { // if we still don't have anything to do, just jump
-      if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
+      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
       myState.tableRow = thisRowPtr->gotoWithoutInput; // we will go next time.
       // thisReturn is already mNONE
     } // end if do the jump next time
   } else { // there is input to wait for, perhaps a block
-    if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
+    if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
     thisReturn = mINPROCFLG_WAITFORINPUT; // start the new state, RBG_waitForInput() will handle it
   } // end if there is input to wait for
-  if (debugThisManyCalls > 0) { Serial.print(" RBG_startRow "); Serial.println((uint16_t) __LINE__); }
+  if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
   if (debugThisManyCalls > 0) { debugThisManyCalls -= 1; }
   return thisReturn;
 } // end RBG_startRow()
@@ -342,7 +352,7 @@ uint16_t checkButtons() {
   // do lock/load separately in code
   theVal = digitalRead(DPIN_LOCK_LOAD);
   if (LOW == theVal) { // we are locked and loaded; sensitive to trigger and other events
-    if (debugThisManyCalls > 0) { Serial.print(" checkButtons "); Serial.println((uint16_t) __LINE__); }
+    if (debugThisManyCalls > 0) { Serial.print(F(" checkButtons ")); Serial.println((uint16_t) __LINE__); }
     returnInpMask = mVINP_LOCK;
     // set/clear the input bits for the standard inputs
     for (idx = 0; idx < NUMOF(myPinsToVals); idx++) {
@@ -353,11 +363,11 @@ uint16_t checkButtons() {
       }
     } // end for entries in myPinsToVals[]
   } else { // we are not locked and loaded; abort everything else
-    if (debugThisManyCalls > 0) { Serial.print(" checkButtons "); Serial.println((uint16_t) __LINE__); }
+    if (debugThisManyCalls > 0) { Serial.print(F(" checkButtons ")); Serial.println((uint16_t) __LINE__); }
     returnInpMask = mVINP_OPEN;
   }
 
-  if (debugThisManyCalls > 0) { Serial.print(" checkButtons found inputs: 0x"); Serial.println((uint16_t) returnInpMask, HEX); }
+  if (debugThisManyCalls > 0) { Serial.print(F(" checkButtons found inputs: 0x")); Serial.println((uint16_t) returnInpMask, HEX); }
   if (debugThisManyCalls > 0) { debugThisManyCalls -= 1; }
 
   return(returnInpMask);
@@ -470,11 +480,12 @@ void eeprom_check_init() {
   // read RBG non-checksum bytes from EEPROM and calculate checksum; compare with stored checksum
   invChksumValue = eeprom_calc_inverted_checksum();
   byteValue = EEPROM.read(eeInvertedChksum);
-    // Serial.print("INIT EEP: stored inverted chksum 0x"); Serial.print(eeInvertedChksum,HEX); Serial.print(" value 0x"); Serial.print(byteValue,HEX); Serial.print(", calculated inverted chksum 0x"); Serial.println(((uint8_t) ~chksumValue),HEX);
+  // byteValue = invChksumValue+1; // FIXME force a checksum error
+  // Serial.print(F("INIT EEP: stored inverted chksum 0x"); Serial.print(eeInvertedChksum,HEX); Serial.print(F(" value 0x")); Serial.print(byteValue,HEX); Serial.print(F(", calculated inverted chksum 0x")); Serial.println(((uint8_t) ~chksumValue),HEX);
   if (byteValue != invChksumValue) {
     // checksum does not match; zero out our EEPROM area
-    Serial.print("INIT: calc EEPROM inverted chksum 0x"); Serial.print(invChksumValue,HEX); Serial.print(" does not match 0x"); Serial.print(byteValue,HEX); Serial.println("; INITIALIZING");
-    byteValue = 0;
+    Serial.print(F("INIT: calc EEPROM inverted chksum 0x")); Serial.print(invChksumValue,HEX); Serial.print(F(" does not match 0x")); Serial.print(byteValue,HEX); Serial.println(F("; INITIALIZING"));
+    byteValue = 1;
     for (address = 0; address < eeLastNonChksum; address++) { // one less than entire data area
       byte2Value = EEPROM.read(address);
       if (byte2Value != byteValue) { // avoid EEPROM writes when possible
@@ -513,7 +524,7 @@ uint8_t eeprom_calc_inverted_checksum() {
   for (address = chksumValue = 0; address <= eeLastNonChksum; address++) {
     byteValue = EEPROM.read(address);
     chksumValue += byteValue;
-    // Serial.print("INIT EEP: address 0x"); Serial.print(address,HEX); Serial.print(" value 0x"); Serial.print(byteValue,HEX); Serial.print(" calc chksum 0x"); Serial.println(chksumValue,HEX);
+    // Serial.print(F("INIT EEP: address 0x")); Serial.print(address,HEX); Serial.print(F(" value 0x")); Serial.print(byteValue,HEX); Serial.print(F(" calc chksum 0x")); Serial.println(chksumValue,HEX);
   } // end caclulate checksum
   return((uint8_t) (~chksumValue));
 } // end eeprom_calc_inverted_checksum()

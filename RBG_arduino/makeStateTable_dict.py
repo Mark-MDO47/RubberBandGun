@@ -14,7 +14,7 @@ STATETABLEROW = {"blkFlags": "", "SPECIAL": "", "efctSound": "", "efctLED": "", 
                  "storeVal": "", "storeAddr": "", "gotoOnInput": "", "gotoWithoutInput": "", "index": ""}
 
 COLTOSTRUCT = {
-               "blkFlags":         "    uint8_t blkFlags;         // mBLOCKSTART, mBLOCKEND or mNONE",
+               "blkFlags":         "    uint8_t blkFlags;         // mBLOCKSTART, mBLOCKEND or mZERO",
                "SPECIAL":          "    uint8_t SPECIAL;          // special row-handling flags: mSPCL_*",
                "efctSound":  "    uint8_t efctSound;  // index for sound to make after input match",
                "efctLED":           "    uint8_t efctLED;           // index for light pattern while waiting",

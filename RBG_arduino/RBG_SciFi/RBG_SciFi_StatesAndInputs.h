@@ -60,9 +60,10 @@
 #define mEFCT_SPCLFUNC    0x80
 #define mSPCL_ONETIME 0x80
 #define mSPCL_SHOOT   0x40
-#define mSPARKLE 1  // LED Effect
 
-#define mFOOF 1 // This is the FOOF Science Fiction Rubber Band Gun version 1.0.
+// #define mSPARKLE 1  // power-on LED Effect
+// #define mEFCT_FOOF 1 // This is the FOOF Science Fiction Rubber Band Gun version 1.0.
+
 #define mBLOCKSTART 0x80
 #define mBLOCKEND   0x40
 #define mPOWERON 0  // address in myStateTable[]
@@ -73,7 +74,7 @@
 #define mEFCT_SHOOT         10
 #define mEFCT_OPEN_BARREL   20
 #define mEFCT_LOCK_LOAD     30
-#define mEFCT_INIT_PWR_UP   40
+#define mEFCT_PWRON         40
 #define mEFCT_CONFIGURE     80
 #define mEFCT_CHKSUM       100
 
@@ -85,7 +86,8 @@
 #define eeLastNonChksum  0x1E // EEPROM address of last non-checksum data
 #define eeInvertedChksum 0x1F // EEPROM address of last non-checksum data
 
-#define EEPOFFSET(parm) ((uint16_t) (parm / 10)) // example: EEPOFFSET(mEFCT_SHOOT) = 1
+#define EEPOFFSET(parm)   ((uint16_t) (parm / 10)) // example: EEPOFFSET(mEFCT_SHOOT) = 1
+#define EFCT_IS_EEP(parm) (0 == ((uint16_t) parm) % 10) // if (EFCT_IS_EEP(mEFCT_PWRON)) will be true
 
 
 
@@ -152,8 +154,8 @@ static pins_to_vals_t myPinsToVals[] = {
 typedef struct _RBGStateTable {
     uint8_t blkFlags;         // mBLOCKSTART, mBLOCKEND or mZERO
     uint8_t SPECIAL;          // special row-handling flags: mSPCL_*
-    uint8_t efctSound;        // index for sound to make after input match
-    uint8_t efctLED;          // index for light pattern while waiting
+    uint16_t efctSound;       // index for sound to make after input match
+    uint16_t efctLED;         // index for light pattern while waiting
     uint16_t inputRBG;        // mask for input expected: mINP_* - NOTE: 16 bits
     uint8_t storeVal;         // value to store, 8 bit uint
     uint8_t storeAddr;        // address to store; includes mask for mFUNC, mVAL,
@@ -200,7 +202,7 @@ static struct myState_t {
 // the state table itself - automatically generated from makeStateTable.py
 //
 static RBGStateTable myStateTable[4] = {
-    { /* row 0 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mNONE, .efctSound=mFOOF, .efctLED=mSPARKLE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mMENU, .index=mPOWERON, },
+    { /* row 0 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mNONE, .efctSound=mEFCT_PWRON, .efctLED=mEFCT_PWRON, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mMENU, .index=mPOWERON, },
     { /* row 1 */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_ONETIME | mSPCL_SHOOT, .efctSound=mEFCT_SPCLFUNC|mEFCT_SHOOT, .efctLED=mEFCT_SPCLFUNC|mEFCT_SHOOT, .inputRBG=mINP_TRIG|mINP_BNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mMENU, .gotoWithoutInput=mNONE, .index=mMENU, },
     { /* row 2 */  .blkFlags=mZERO, .SPECIAL=mSPCL_ONETIME, .efctSound=mEFCT_SPCLFUNC|mEFCT_OPEN_BARREL, .efctLED=mEFCT_SPCLFUNC|mEFCT_OPEN_BARREL, .inputRBG=mINP_OPEN, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mMENU, .gotoWithoutInput=mNONE, .index=mMENU, },
     { /* row 3 */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_ONETIME, .efctSound=mEFCT_SPCLFUNC|mEFCT_LOCK_LOAD, .efctLED=mEFCT_SPCLFUNC|mEFCT_LOCK_LOAD, .inputRBG=mINP_LOCK, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mMENU, .gotoWithoutInput=mNONE, .index=mMENU, },

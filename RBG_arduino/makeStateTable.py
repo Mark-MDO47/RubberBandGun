@@ -73,11 +73,11 @@ def make_new_block(curr_state_table_idx,curr_symb,  debug_string="debugUNKNOWN")
 
 
 def complete_block_field():
-    """Complete the block fields; fill in with mNONE if empty"""
+    """Complete the block fields; fill in with mZERO if empty"""
     global STATETABLE
     for idx in range(len(STATETABLE)):
         if 0 == len(STATETABLE[idx]["blkFlags"]):
-            STATETABLE[idx]["blkFlags"] = "mNONE"
+            STATETABLE[idx]["blkFlags"] = "mZERO"
 
 # COLTOINDEX = {"index": -1, "SPECIAL": -1, "efctSound": -1, "efctLED": -1, "inputRBG": -1, "storeVal": -1,
 #               "storeAddr": -1, "gotoOnInput": -1, "gotoWithoutInput": -1}
@@ -202,11 +202,9 @@ def make_state_table():
                 found_symbols.append(symb)
 
     print("Pass 2 found_symbols")
-    print("\n// define the symbols\n#define mUNDEFINED 254\n#define mNONE 255\n"
+    print("\n// define the symbols\n#define mUNDEFINED 254\n#define mNONE 255\n#define mZERO 0\n"
             + "\n#define mEFCT_SPCLFUNC    0x80"
-            + "\n#define mSPCL_ONETIME 0x80\n#define mSPCL_SHOOT   0x40"
-            + "\n#define mSPARKLE 1  // LED Effect\n"
-            + "\n#define mFOOF 1 // This is the FOOF Science Fiction Rubber Band Gun version 1.0. Press any button plus trigger to configure"
+            + "\n#define mSPCL_ONETIME 0x80\n\n#define mSPCL_SHOOT   0x40"
             + "\n#define mBLOCKSTART 0x80"
             + "\n#define mBLOCKEND   0x40"
             + "\n#define mPOWERON 0  // address in myState[]\n")
