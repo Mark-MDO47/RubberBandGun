@@ -14,17 +14,17 @@ STATETABLEROW = {"blkFlags": "", "SPECIAL": "", "efctSound": "", "efctLED": "", 
                  "storeVal": "", "storeAddr": "", "gotoOnInput": "", "gotoWithoutInput": "", "index": ""}
 
 COLTOSTRUCT = {
-               "blkFlags":         "    uint8_t blkFlags;         // mBLOCKSTART, mBLOCKEND or mZERO",
-               "SPECIAL":          "    uint8_t SPECIAL;          // special row-handling flags: mSPCL_*",
-               "efctSound":  "    uint8_t efctSound;  // index for sound to make after input match",
-               "efctLED":           "    uint8_t efctLED;           // index for light pattern while waiting",
-               "inputRBG":         "    uint8_t inputRBG;         // mask for input expected",
-               "storeVal":         "    uint8_t storeVal;         // value to store, 8 bit uint",
-               "storeAddr":        "    uint8_t storeAddr;        // address to store; includes mask for mFUNC, mVAL,\n" \
+               "blkFlags":         "    uint16_t blkFlags;         // mBLOCKSTART, mBLOCKEND or mZERO",
+               "SPECIAL":          "    uint16_t SPECIAL;          // special row-handling flags: mSPCL_*",
+               "efctSound":  "    uint16_t efctSound;  // index for sound to makeh",
+               "efctLED":           "    uint16_t efctLED;           // index for light pattern",
+               "inputRBG":         "    uint16_t inputRBG;         // mask for input expected",
+               "storeVal":         "    uint16_t storeVal;         // value to store, 8 bit uint",
+               "storeAddr":        "    uint16_t storeAddr;        // address to store; includes mask for mFUNC, mVAL,\n" \
                                  + "                              //   eeSoundSave|mFUNC: idx= 3 WindUp, 2 Shoot, 4 Open, 7 Load",
-               "gotoOnInput":      "    uint8_t gotoOnInput;      // index within table to go with matching input",
-               "gotoWithoutInput": "    uint8_t gotoWithoutInput; // index within table to go without waiting for input",
-               "index":            "    uint8_t index;            // input column unused in this table"
+               "gotoOnInput":      "    uint16_t gotoOnInput;      // index within table to go with matching input",
+               "gotoWithoutInput": "    uint16_t gotoWithoutInput; // index within table to go without waiting for input",
+               "index":            "    uint16_t index;            // input column unused in this table"
               }
 
 FOUNDINCOLUMN = {
@@ -45,8 +45,8 @@ COLTOINDEX = {"index": -1, "SPECIAL": -1, "efctSound": -1, "efctLED": -1, "input
 
 STRUCTSTRING = "    typedef struct struct_statetable { \
     uint8_t SPECIAL;          // special row-handling flags: mSPCL_* \
-    uint8_t efctSound;  // index for sound to make after input match \
-    uint8_t efctLED;           // index for light pattern while waiting \
+    uint8_t efctSound;  // index for sound to make \
+    uint8_t efctLED;           // index for light pattern \
     uint8_t inputRBG;         // mask for input expected \
     uint8_t storeVal;         // value to store, 8 bit uint \
     uint8_t storeAddr;        // address to store; includes mask for mFUNC, mVAL, \
@@ -91,18 +91,20 @@ translateToMasks = {
 # Map of effects: sounds, LED patterns
 #   note: could use folders for the files and repeat numbers, but this also refers to efctLED
 #   Files will be in the MP3 folder: for instance, file 4 is SD:/MP3/0004.mp3
-mEFCT_WIND_UP = 00  # 000 to 009 - wind-up effects
-mEFCT_SHOOT = 10  # 010 to 019 - shoot effects
-mEFCT_OPEN_BARREL = 20  # 020 to 029 - open barrel effects
-mEFCT_LOCK_LOAD = 30  # 030 to 039 - lock and load barrel effects
-mEFCT_INIT_PWR_UP = 40  # 040 to 049 - after initial power-up effects
-mEFCT_CONFIGURE = 80  # 080 to 099 - effects used to navigate menus
+mEFCT_WIND_UP = 00  # 001 to 009 - wind-up effects
+mEFCT_SHOOT = 10  # 011 to 019 - shoot effects
+mEFCT_OPEN_BARREL = 20  # 021 to 029 - open barrel effects
+mEFCT_LOCK_LOAD = 30  # 031 to 039 - lock and load barrel effects
+mEFCT_INIT_PWR_UP = 40  # 041 to 049 - after initial power-up effects
+mEFCT_CONFIGURE = 80  # 081 to 099 - effects used to navigate menus
+mEFCT_UNIQ = 100  # 101 to 109 - unique effects not included in configurations
 #
 EFFECT_MAP = {
-    "mEFCT_WIND_UP": mEFCT_WIND_UP,  # 000 to 009 - wind-up effects
-    "mEFCT_SHOOT": mEFCT_SHOOT,  # 010 to 019 - shoot effects
-    "mEFCT_OPEN_BARREL": mEFCT_OPEN_BARREL,  # 020 to 029 - open barrel effects
-    "mEFCT_LOCK_LOAD": mEFCT_LOCK_LOAD,  # 030 to 039 - lock and load barrel effects
-    "mEFCT_INIT_PWR_UP": mEFCT_INIT_PWR_UP,  # 040 to 049 - after initial power-up effects
-    "mEFCT_CONFIGURE": mEFCT_CONFIGURE  # 080 to 099 - effects used to navigate menus
+    "mEFCT_WIND_UP": [mEFCT_WIND_UP, " // 001 to 009 - wind-up effects"],
+    "mEFCT_SHOOT": [mEFCT_SHOOT, " // 011 to 019 - shoot effects"],
+    "mEFCT_OPEN_BARREL": [mEFCT_OPEN_BARREL, " // 021 to 029 - open barrel effects"],
+    "mEFCT_LOCK_LOAD": [mEFCT_LOCK_LOAD, " // 031 to 039 - lock and load barrel effects"],
+    "mEFCT_INIT_PWR_UP": [mEFCT_INIT_PWR_UP, " // 041 to 049 - after initial power-up effects"],
+    "mEFCT_CONFIGURE": [mEFCT_CONFIGURE, " // 081 to 099 - effects used to navigate menus"],
+    "mEFCT_UNIQ": [mEFCT_UNIQ,  " // 101 to 109 - unique effects not included in configurations"]
 }

@@ -205,6 +205,7 @@ uint8_t RBG_startRow() {
           // configurable sound using EEPROM
           if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
           myDFPlayer.playMp3Folder(thisSound + EEPROM.read(EEPOFFSET(thisSound))); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999)
+          // myDFPlayer.enableLoop(); this does not actually make the playMp3Folder call loop
         } else { // unique sound - includes any mEFCT_ stuff
           if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
           myDFPlayer.playMp3Folder(thisSound); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999)
@@ -389,6 +390,7 @@ void DFsetup() {
   myDFPlayer.EQ(DFPLAYER_EQ_NORMAL);
   myDFPlayer.outputDevice(DFPLAYER_DEVICE_SD); // device is SD card
   myDFPlayer.volume(25);  // Set volume value. From 0 to 30 - FIXME 25 is good
+  myDFPlayer.EQ(DFPLAYER_EQ_BASS); // our speaker is quite small
   Serial.println(F("DFPlayer Mini online."));
 } // end DFsetup()
 
@@ -568,7 +570,7 @@ void printAllMyInputs() {
   printOneInput(DPIN_AUDIO_BUSY, "DPIN_AUDIO_BUSY  ");
 } // end printAllMyInputs()
 
-void printOneInput(uint8_t dpin, char * dtext) {
+void printOneInput(uint8_t dpin, const char * dtext) {
   Serial.print(dtext);
   if (LOW == digitalRead(dpin)) {
     Serial.println("LOW");

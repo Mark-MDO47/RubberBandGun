@@ -202,12 +202,19 @@ def make_state_table():
                 found_symbols.append(symb)
 
     print("Pass 2 found_symbols")
-    print("\n// define the symbols\n#define mUNDEFINED 254\n#define mNONE 255\n#define mZERO 0\n"
-            + "\n#define mEFCT_SPCLFUNC    0x80"
-            + "\n#define mSPCL_ONETIME 0x80\n\n#define mSPCL_SHOOT   0x40"
+    print("\n// define the symbols - general use symbols:"
+            + "\n#define mUNDEFINED 254"
+            + "\n#define mNONE 255"
+            + "\n#define mZERO 0"
+            + "\n\n// define the symbols - .SPECIAL:"
+            + "\n#define mSPCL_EFCT_CONTINUOUS 0x1000"
+            + "\n#define mSPCL_HANDLER         0x0100"
+            + "\n#define mSPCL_HANDLER_SHOOT        1 // a special handler function"
+            + "\n\n// define the symbols - .blkFlags:"
             + "\n#define mBLOCKSTART 0x80"
             + "\n#define mBLOCKEND   0x40"
-            + "\n#define mPOWERON 0  // address in myState[]\n")
+            + "\n\n// define the symbols - .index: first the single constant mPOWERON one, then the others:"
+            + "\n#define mPOWERON 0  // first address in myState[]")
 
     for key in found_symbols:
         if key == "mNONE":
@@ -218,13 +225,13 @@ def make_state_table():
         else:
             print_debug("  ERROR - %s not in SYMBTABLE" % key)
             print("#define %s mUNDEFINED" % key)
-    print("\n// define the effect number ranges")
+    print("\n// define the effect number ranges - must be divisible by 10")
     for key in EFFECT_MAP:
-        print("#define %s %d" %(key, EFFECT_MAP[key]))
+        print("#define %s %*d %s" %(key, 20-len(key), EFFECT_MAP[key][0], EFFECT_MAP[key][1]))
     print("\n")
 
 
-    known_effects = {"mNONE": 0xFF, "mEFCT_SPCL": 0x40, "mEFCT_SHOOT": 1, "mEFCT_OPEN_BARREL": 2, "mEFCT_LOCK_LOAD": 3}
+    known_effects = {"mNONE": 0xFF, "mEFCT_UNIQ_WAITING": 91}
     count_effects = {'efctLED': 1, 'efctSound': 1}
     found_effects = {'efctLED': {}, 'efctSound': {}}
 
