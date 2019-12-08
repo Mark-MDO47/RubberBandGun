@@ -163,15 +163,15 @@ def make_state_table():
             separator = "|"
         STATETABLE[SYMBTABLE[symb]['blockEnd']]['blkFlags'] += separator + "mBLOCKEND"
 
-    print("Pass 1 SYMBTABLE")
+    print_debug("Pass 1 SYMBTABLE")
     print_debug("  %s" % SYMBTABLE)
     for symb in SYMBTABLE:
-        print("  %s %s" % (symb, SYMBTABLE[symb]))
+        print_debug("  %s %s" % (symb, SYMBTABLE[symb]))
 
-    print("Pass 1 STATETABLE")
+    print_debug("Pass 1 STATETABLE")
     print_debug("  %s" % STATETABLE)
     for idx in STATETABLE:
-        print("  %s %s" % (idx, str(STATETABLE[idx])))
+        print_debug("  %s %s" % (idx, str(STATETABLE[idx])))
 
     # collect sounds and light patterns
     known_effects = {"mNONE": 0xFF, "mEFCT_SPCL": 0x40, "mEFCT_SHOOT": 1, "mEFCT_OPEN_BARREL": 2, "mEFCT_LOCK_LOAD": 3}
@@ -187,10 +187,10 @@ def make_state_table():
                     found_effects[efct][txt] = count_effects[efct]
                     count_effects[efct] += 1
 
-    print("Pass 1 found_effects: efctLED, efctSound")
+    print_debug("Pass 1 found_effects: efctLED, efctSound")
     for efct in found_effects.keys():
         for symb in found_effects[efct]:
-            print("  %s %s %d" % (efct, symb, found_effects[efct][symb]))
+            print_debug("  %s %s %d" % (efct, symb, found_effects[efct][symb]))
 
     # Pass 2
 
@@ -201,7 +201,6 @@ def make_state_table():
             if symb not in found_symbols:
                 found_symbols.append(symb)
 
-    print("Pass 2 found_symbols")
     print("\n// define the symbols - general use symbols:"
             + "\n#define mUNDEFINED 254"
             + "\n#define mNONE 255"
@@ -216,6 +215,7 @@ def make_state_table():
             + "\n\n// define the symbols - .index: first the single constant mPOWERON one, then the others:"
             + "\n#define mPOWERON 0  // first address in myState[]")
 
+    print_debug("Pass 2 found_symbols")
     for key in found_symbols:
         if key == "mNONE":
             print_debug("  %s is valid" % key)
