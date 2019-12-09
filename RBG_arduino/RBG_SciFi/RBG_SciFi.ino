@@ -120,6 +120,7 @@ void setup() {
 void loop() {
   static uint8_t countBadStatePrint = 6;
   static uint8_t countGoodStatePrint = 6;
+  static uint8_t countGoodInputPrint = 6;
   uint16_t foundInput = 0; // return from RBG_waitForInput
 
   // put your main code here, to run repeatedly:
@@ -151,10 +152,10 @@ void loop() {
   } else if (mINPROCFLG_WAITFORINPUT == myState.tableRowInProcFlags) {
     // we need to check until we hit the mBLOCKEND
     foundInput = RBG_waitForInput(nowVinputRBG); // wait for user input, trigger and maybe other buttons
-    if (countGoodStatePrint > 0) {
+    if (countGoodInputPrint > 0) {
       Serial.println(F("DEBUG - after RBG_waitForInput() call"));
-      printAllMyState(); Serial.print(F("DEBUG - nowVinputRBG 0x")); Serial.println(nowVinputRBG, HEX);
-      countGoodStatePrint -= 1;
+      printAllMyState(); Serial.print(F("DEBUG - nowVinputRBG 0x")); Serial.print(nowVinputRBG, HEX); Serial.print(F(" foundInput 0x")); Serial.println(foundInput, HEX);
+      countGoodInputPrint -= 1;
     }
   } else {
     if (countBadStatePrint > 0) {
@@ -247,37 +248,55 @@ uint8_t RBG_startRow() {
   return thisReturn;
 } // end RBG_startRow()
 
-// RBG_waitForInput(nowVinputRBG) - wait until desired input happens
+// RBG_waitForInput(tmpVinputRBG) - wait until desired input happens
 //   returns mNONE if did not happen, idx to row that matched if it did
-uint8_t RBG_waitForInput(uint16_t nowVinputRBG) {
+uint8_t RBG_waitForInput(uint16_t tmpVinputRBG) {
+  static uint8_t debugThisManyCalls = 8;
   uint8_t thisReturn = mNONE; // assume no input found
-  static uint8_t debugThisManyCalls = 3;
   RBGStateTable * thisRowPtr = &myStateTable[myState.tableRow];
+
+  if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput entry ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" tmpVinputRBG 0x")); Serial.println(tmpVinputRBG, HEX); }
 
   // we need to check until we hit the mBLOCKEND
   for (uint16_t idx = myState.tableRow; (idx < NUMOF(myStateTable)) && (mNONE == thisReturn); idx++) {
     // see if we match input condition for this row
-    if ((0 != thisRowPtr->inputRBG&mINP_TRIG) && (0 != nowVinputRBG&mVINP_TRIG)) {
+    if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.print(idx); Serial.print(F(" thisRowPtr->inputRBG 0x")); Serial.println(thisRowPtr->inputRBG, HEX); }
+    if (debugThisManyCalls > 0) { Serial.print(F("    thisRowPtr->inputRBG&mINP_TRIG 0x")); Serial.print(thisRowPtr->inputRBG&mINP_TRIG, HEX); Serial.print(F(" tmpVinputRBG&mVINP_TRIG 0x")); Serial.println(tmpVinputRBG&mVINP_TRIG, HEX); }
+    if (debugThisManyCalls > 0) { Serial.print(F("    thisRowPtr->inputRBG&mINP_OPEN 0x")); Serial.print(thisRowPtr->inputRBG&mINP_OPEN, HEX); Serial.print(F(" tmpVinputRBG&mVINP_OPEN 0x")); Serial.println(tmpVinputRBG&mVINP_OPEN, HEX); }
+    if (debugThisManyCalls > 0) { Serial.print(F("    thisRowPtr->inputRBG&mINP_LOCK 0x")); Serial.print(thisRowPtr->inputRBG&mINP_LOCK, HEX); Serial.print(F(" tmpVinputRBG&mVINP_LOCK 0x")); Serial.println(tmpVinputRBG&mVINP_LOCK, HEX); }
+    // if (debugThisManyCalls > 0) { Serial.print(F("    0 != (thisRowPtr->inputRBG&mINP_LOCK) 0x")); Serial.print(0 != (thisRowPtr->inputRBG&mINP_LOCK), HEX); Serial.print(F(" 0 != (tmpVinputRBG&mVINP_LOCK) 0x")); Serial.println(0 != (tmpVinputRBG&mVINP_LOCK), HEX); }
+    // if (debugThisManyCalls > 0) { Serial.print(F("    (0 != (thisRowPtr->inputRBG&mINP_LOCK)) && (0 != (tmpVinputRBG&mVINP_LOCK)) 0x")); Serial.println((0 != (thisRowPtr->inputRBG&mINP_LOCK)) && (0 != (tmpVinputRBG&mVINP_LOCK)), HEX); }
+    if ((0 != (thisRowPtr->inputRBG&mINP_TRIG)) && (0 != (tmpVinputRBG&mVINP_TRIG))) {
       // several cases for trigger
-      if (0 != thisRowPtr->inputRBG&mINP_BANY) {
-      } else if ((0 != thisRowPtr->inputRBG&mINP_BNONE) &&
-                 (0 == (nowVinputRBG & (mVINP_B01|mVINP_B02|mVINP_B04)))) {
+      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.println(idx); }
+      if (0 != (thisRowPtr->inputRBG&mINP_BANY)) {
+        if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.println(idx); }
+        thisReturn = idx;
+      } else if ((0 != (thisRowPtr->inputRBG&mINP_BNONE)) &&
+                 (0 == (tmpVinputRBG & (mVINP_B01|mVINP_B02|mVINP_B04)))) {
+        if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.println(idx); }
+        thisReturn = idx;
       }
-    } else if ((0 != thisRowPtr->inputRBG&mINP_OPEN) && (0 != nowVinputRBG&mVINP_OPEN)) {
+    } else if ((0 != (thisRowPtr->inputRBG&mINP_OPEN)) && (0 != tmpVinputRBG&mVINP_OPEN)) {
+      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.println(idx); }
       thisReturn = idx;
       break;
-    } else if ((0 != thisRowPtr->inputRBG&mINP_LOCK) && (0 != nowVinputRBG&mVINP_LOCK)) {
+    } else if ((0 != (thisRowPtr->inputRBG&mINP_LOCK)) && (0 != (tmpVinputRBG&mVINP_LOCK))) {
+      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.println(idx); }
       thisReturn = idx;
       break;
     }
 
     if (0 != (thisRowPtr->inputRBG&mBLOCKEND)) {
       // this is a normal way to end - found the mBLOCKEND but did not find input
+      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.println(idx); }
       break;
     }
     thisRowPtr += 1;
   } // end while searching for mBLOCKEND
     
+  if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" thisReturn ")); Serial.println(thisReturn); }
+  if (debugThisManyCalls > 0) { debugThisManyCalls -= 1; }
   return thisReturn; // input did not happen
 } // end RBG_waitForInput()
 
