@@ -32,8 +32,6 @@
 #include "FastLED.h"                         // to manipulate WS2812b 5050 RGB LED Rings
 #include "DFRobotDFPlayerMini.h"             // to communicate with the YX5200 audio player
 
-#define NUMOF(x) (sizeof(x) / sizeof(*x))
-
 #include "RBG_SciFi_LEDs.h"                  // LED structural and pattern definitions
 #include "RBG_SciFi_StatesAndInputs.h"       // state tables and input definitions
 
@@ -64,7 +62,7 @@ CRGB light_color_palette[NUM_ARDUINOS] = { CRGB::LimeGreen, CRGB::Yellow, CRGB::
 static uint16_t nowVinputRBG; // latest button inputs, to compare with previous in myState
 
 
-// ******************************** SETUP ********************************
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 // setup()
 //   initializes hardware serial port for general debug
 //   initializes SoftwareSerial for DFPlayer audio player YX5200 control
@@ -110,7 +108,7 @@ void setup() {
 
 } // end setup()
 
-// ******************************** LOOP ********************************
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 //  loop()
 //     Get the inputs - buttons, barrel, sound ended
 //     Use our state table and state and inputs to calculate next state
@@ -128,6 +126,15 @@ void loop() {
   gHue += 3; // rotating "base color" used by Demo Reel 100 patterns
 
   myState.timerNow = millis();
+  if (myState.VinputRBG&mVINP_LOCK) {
+    //Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); Serial.print(F(" myState.VinputRBG 0x")); Serial.print(myState.VinputRBG, HEX);
+    myState.VinputRBG |= mVINP_PREVLOCK; // set the bit
+    //Serial.print(F(" AFTER myState.VinputRBG 0x")); Serial.println(myState.VinputRBG, HEX);
+  } else {
+    //Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); Serial.print(F(" myState.VinputRBG 0x")); Serial.print(myState.VinputRBG, HEX);
+    myState.VinputRBG &= ((uint16_t) ~(mVINP_PREVLOCK)); // clear the bit
+    //Serial.print(F(" AFTER myState.VinputRBG 0x")); Serial.println(myState.VinputRBG, HEX);
+  }
   nowVinputRBG = getButtonInput();
   
   if (0 == myState.tableRowInProcFlags) {
@@ -152,11 +159,15 @@ void loop() {
   } else if (mINPROCFLG_WAITFORINPUT == myState.tableRowInProcFlags) {
     // we need to check until we hit the mBLOCKEND
     foundInput = RBG_waitForInput(nowVinputRBG); // wait for user input, trigger and maybe other buttons
-    if (countGoodInputPrint > 0) {
-      Serial.println(F("DEBUG - after RBG_waitForInput() call"));
-      printAllMyState(); Serial.print(F("DEBUG - nowVinputRBG 0x")); Serial.print(nowVinputRBG, HEX); Serial.print(F(" foundInput 0x")); Serial.println(foundInput, HEX);
-      countGoodInputPrint -= 1;
-    }
+    if (mNONE != foundInput) {
+      myState.tableRowInProcFlags = 0; // can only have one WAITFOR or the other
+      myState.tableRow = foundInput;
+      if (countGoodInputPrint > 0) {
+        Serial.println(F("DEBUG - after RBG_waitForInput() call"));
+        printAllMyState(); Serial.print(F("DEBUG - nowVinputRBG 0x")); Serial.print(nowVinputRBG, HEX); Serial.print(F(" foundInput 0x")); Serial.println(foundInput, HEX);
+        countGoodInputPrint -= 1;
+      }
+    } // end if found input
   } else {
     if (countBadStatePrint > 0) {
       Serial.println(F("ERROR - unknown tableRowInProcFlags value"));
@@ -185,6 +196,7 @@ void loop() {
 
 // ******************************** STATE TABLE UTILITIES ********************************
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RBG_startRow() - start processing a row in myStateTable
 //    myState.tableRowInProcFlags should be zero to call this
 // returns a tableRowInProcFlags bitmask
@@ -248,6 +260,7 @@ uint8_t RBG_startRow() {
   return thisReturn;
 } // end RBG_startRow()
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RBG_waitForInput(tmpVinputRBG) - wait until desired input happens
 //   returns mNONE if did not happen, idx to row that matched if it did
 uint8_t RBG_waitForInput(uint16_t tmpVinputRBG) {
@@ -255,6 +268,7 @@ uint8_t RBG_waitForInput(uint16_t tmpVinputRBG) {
   uint8_t thisReturn = mNONE; // assume no input found
   RBGStateTable * thisRowPtr = &myStateTable[myState.tableRow];
 
+  if (tmpVinputRBG != (myState.VinputRBG & ((uint16_t) (~mVINP_PREVLOCK)))) { debugThisManyCalls = 8; }
   if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput entry ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" tmpVinputRBG 0x")); Serial.println(tmpVinputRBG, HEX); }
 
   // we need to check until we hit the mBLOCKEND
@@ -262,6 +276,7 @@ uint8_t RBG_waitForInput(uint16_t tmpVinputRBG) {
     // see if we match input condition for this row
     if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.print(idx); Serial.print(F(" thisRowPtr->inputRBG 0x")); Serial.println(thisRowPtr->inputRBG, HEX); }
     if (debugThisManyCalls > 0) { Serial.print(F("    thisRowPtr->inputRBG&mINP_TRIG 0x")); Serial.print(thisRowPtr->inputRBG&mINP_TRIG, HEX); Serial.print(F(" tmpVinputRBG&mVINP_TRIG 0x")); Serial.println(tmpVinputRBG&mVINP_TRIG, HEX); }
+    if (debugThisManyCalls > 0) { Serial.print(F("    myState.VinputRBG&mVINP_PREVLOCK 0x")); Serial.println(myState.VinputRBG&mVINP_PREVLOCK, HEX); }
     if (debugThisManyCalls > 0) { Serial.print(F("    thisRowPtr->inputRBG&mINP_OPEN 0x")); Serial.print(thisRowPtr->inputRBG&mINP_OPEN, HEX); Serial.print(F(" tmpVinputRBG&mVINP_OPEN 0x")); Serial.println(tmpVinputRBG&mVINP_OPEN, HEX); }
     if (debugThisManyCalls > 0) { Serial.print(F("    thisRowPtr->inputRBG&mINP_LOCK 0x")); Serial.print(thisRowPtr->inputRBG&mINP_LOCK, HEX); Serial.print(F(" tmpVinputRBG&mVINP_LOCK 0x")); Serial.println(tmpVinputRBG&mVINP_LOCK, HEX); }
     // if (debugThisManyCalls > 0) { Serial.print(F("    0 != (thisRowPtr->inputRBG&mINP_LOCK) 0x")); Serial.print(0 != (thisRowPtr->inputRBG&mINP_LOCK), HEX); Serial.print(F(" 0 != (tmpVinputRBG&mVINP_LOCK) 0x")); Serial.println(0 != (tmpVinputRBG&mVINP_LOCK), HEX); }
@@ -271,25 +286,25 @@ uint8_t RBG_waitForInput(uint16_t tmpVinputRBG) {
       if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.println(idx); }
       if (0 != (thisRowPtr->inputRBG&mINP_BANY)) {
         if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.println(idx); }
-        thisReturn = idx;
+        thisReturn = thisRowPtr->gotoOnInput;
       } else if ((0 != (thisRowPtr->inputRBG&mINP_BNONE)) &&
                  (0 == (tmpVinputRBG & (mVINP_B01|mVINP_B02|mVINP_B04)))) {
         if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.println(idx); }
-        thisReturn = idx;
+        thisReturn = thisRowPtr->gotoOnInput;
       }
-    } else if ((0 != (thisRowPtr->inputRBG&mINP_OPEN)) && (0 != tmpVinputRBG&mVINP_OPEN)) {
-      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.println(idx); }
-      thisReturn = idx;
+    } else if ((0 != (thisRowPtr->inputRBG&mINP_OPEN)) && (0 != (tmpVinputRBG&mVINP_OPEN)) && (0 != (myState.VinputRBG&mVINP_PREVLOCK))) {
+      /* if (debugThisManyCalls > 0) */ { Serial.print(F(" RBG_waitForInput ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.println(idx); }
+      thisReturn = thisRowPtr->gotoOnInput;
       break;
-    } else if ((0 != (thisRowPtr->inputRBG&mINP_LOCK)) && (0 != (tmpVinputRBG&mVINP_LOCK))) {
-      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.println(idx); }
-      thisReturn = idx;
+    } else if ((0 != (thisRowPtr->inputRBG&mINP_LOCK)) && (0 != (tmpVinputRBG&mVINP_LOCK)) && (0 == (myState.VinputRBG&mVINP_PREVLOCK))) {
+      /* if (debugThisManyCalls > 0) */ { Serial.print(F(" RBG_waitForInput ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.println(idx); }
+      thisReturn = thisRowPtr->gotoOnInput;
       break;
     }
 
     if (0 != (thisRowPtr->inputRBG&mBLOCKEND)) {
       // this is a normal way to end - found the mBLOCKEND but did not find input
-      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.println(idx); }
+      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ")); Serial.print((uint16_t) __LINE__); }
       break;
     }
     thisRowPtr += 1;
@@ -303,6 +318,7 @@ uint8_t RBG_waitForInput(uint16_t tmpVinputRBG) {
 // ******************************** BUTTON AND TIMING UTILITIES ********************************
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 // doDwell(int16_t dwell, uint8_t must_be_diff_pattern) - dwell or break out if button press
 //   returns TRUE if got a change in inputs
 //   else returns false
@@ -343,11 +359,14 @@ int16_t doDwell(int16_t dwell, uint8_t must_be_diff_pattern) {
   return(0); // never saw input change
 } // end doDwell()
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 // getButtonInput() - get next button or other input, true inputs or debugging
 //
-// All the buttons are 0 when pressed and active when turning zero
+// checkButtons() - returns mVINP_ mask for buttons to process
+// 
+// All the buttons are 0 when pressed
 // The lock/load input is 0 when connected and 1 when not lock/load
-// The sound complete is 0 when sound is complete (FIXME TBR)
+// The sound complete is 0 when sound is complete
 //
 // NOTE: DPIN_LOCK_LOAD handled in code
 // lock/load has priority - if not lock/load then no button or sound input matters
@@ -356,17 +375,6 @@ int16_t doDwell(int16_t dwell, uint8_t must_be_diff_pattern) {
 //    sound input is always sensed. If sound is playing and it finishes then we set input.
 //
 uint16_t getButtonInput() {
-#if REAL_BUTTONS
-  return(checkButtons());
-#else // end if REAL_BUTTONS; now NOT REAL_BUTTONS
-  return(checkKeyboard());
-#endif // not REAL_BUTTONS
-} // end getButtonInput()
-
-// #define CAPTURE_BUTTONS_THISTIME button_count = button_count_thistime; button_mask = button_mask_thistime; button_timestamp = button_time;  // FIXME TBD MAYBE DO NOT NEED - LEFT IT OUT
-// checkButtons() - returns mVINP_ mask for buttons to process
-// 
-uint16_t checkButtons() {
   static uint8_t debugThisManyCalls = 10;
   uint8_t idx;
   uint16_t thePin;
@@ -400,6 +408,7 @@ uint16_t checkButtons() {
 
 // ******************************** INITIALIZATION UTILITIES ********************************
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 void DFsetup() {
   Serial.println(F("Initializing DFPlayer ... (May take 3~5 seconds)"));
   
@@ -419,6 +428,7 @@ void DFsetup() {
 
 // ******************************** DEBUG UTILITIES ********************************
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 // checkDataGuard()
 void checkDataGuard() {
   static int8_t showOneTime = 1;
@@ -432,6 +442,7 @@ void checkDataGuard() {
   }
 } // end checkDataGuard()
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 #if DFPRINTDETAIL
 void DFprintDetail(uint8_t type, int value){
   switch (type) {
@@ -495,6 +506,7 @@ void DFprintDetail(uint8_t type, int value){
 } // end DFprintDetail()
 #endif // DFPRINTDETAIL
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 // eeprom_check_init() - check if EEPROM has our values; if not initialize it
 //    we use a very crude checksum approach
 void eeprom_check_init() {
@@ -523,6 +535,7 @@ void eeprom_check_init() {
   } // end if checksum does not match
 } // end eeprom_check_init()
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 // eeprom_store_with_chksum() - store byteValue at EEPROM address and update checksum
 //    we use a very crude checksum approach
 void eeprom_store_with_chksum(int address, uint8_t byteValue) {
@@ -540,6 +553,7 @@ void eeprom_store_with_chksum(int address, uint8_t byteValue) {
   }
 } // end eeprom_store_with_chksum()
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 // eeprom_calc_inverted_checksum() - calculate the inverted checksum
 //    we use a very crude checksum approach
 uint8_t eeprom_calc_inverted_checksum() {
@@ -574,6 +588,7 @@ void stateTable_store(RBGStateTable * theRow, uint8_t * theStates) {
 } // end stateTable_store()
 */
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 void printAllMyState() {
   Serial.println(F("DEBUG - myState:"));
   Serial.print(F("  - tableRow: "));
@@ -584,6 +599,7 @@ void printAllMyState() {
   Serial.println((uint16_t) myState.VinputRBG, HEX);
 } // end printAllMyState()
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 void printAllMyInputs() {
   Serial.println(F("DEBUG - printAllMyInputs:"));
   printOneInput(DPIN_BTN_TRIGGER, "DPIN_BTN_TRIGGER ");
@@ -595,6 +611,7 @@ void printAllMyInputs() {
   printOneInput(DPIN_AUDIO_BUSY, "DPIN_AUDIO_BUSY  ");
 } // end printAllMyInputs()
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 void printOneInput(uint8_t dpin, const char * dtext) {
   Serial.print(dtext);
   if (LOW == digitalRead(dpin)) {

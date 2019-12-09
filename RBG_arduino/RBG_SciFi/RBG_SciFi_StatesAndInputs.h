@@ -23,12 +23,13 @@
 //
 // This file has definitions for state tables and input processing (mostly buttons)
 //
-#define mEFCT_UNIQ_WAITING 87  // FIXME 101 not 87 - waiting pattern: low level spooky sounds, blinky lights
 
 //
 // define the UNIQUE effects (lights and sounds) here. These cannot be configured as the other effects can.
 //
+#define mEFCT_UNIQ_WAITING 87  // FIXME 101 not 87 - waiting pattern: low level spooky sounds, blinky lights
 
+#define NUMOF(x) (sizeof(x) / sizeof(*x))
 
 #define DPIN_FASTLED      3  // serial out - talk to LED rings
 #define DPIN_BTN_TRIGGER  4  // digital input - the trigger
@@ -190,7 +191,7 @@ typedef struct RBGStateTable_t {
 static struct myState_t {
   uint8_t tableRow = 0;            // points to state that we will process or are processing
   uint16_t tableRowInProcFlags = 0; // what we are waiting on to process this state
-  uint16_t VinputRBG = 0;          // bits for input buttons and sound finish: mVINP_* - NOTE: 16 bits
+  uint16_t VinputRBG = mVINP_PREVLOCK; // bits for input buttons and sound finish: mVINP_*
   uint32_t timerPrev = 0;          // timer from previous time through loop
   uint32_t timerNow = 0;           // timer from this time through loop
   uint32_t timerLed = 0;           // timer for next LED activity
