@@ -208,11 +208,12 @@ def make_state_table():
             + "\n\n// define the symbols - .SPECIAL:"
             + "\n#define mSPCL_HANDLER         0x0100"
             + "\n#define mSPCL_HANDLER_SHOOT        1 // a special handler function"
+            + "\n#define mSPCL_HANDLER_SOLENOID     2 // a special handler function"
             + "\n\n// define the symbols - .blkFlags:"
             + "\n#define mBLOCKSTART 0x80"
             + "\n#define mBLOCKEND   0x40"
-            + "\n\n// define the symbols - .index: first the single constant mPOWERON one, then the others:"
-            + "\n#define mPOWERON 0  // first address in myState[]")
+            + "\n\n// define the symbols - .index: first the single constant mROW_POWERON one, then the others:"
+            + "\n#define mROW_POWERON 0  // first address in myState[]")
 
     print_debug("Pass 2 found_symbols")
     for key in found_symbols:

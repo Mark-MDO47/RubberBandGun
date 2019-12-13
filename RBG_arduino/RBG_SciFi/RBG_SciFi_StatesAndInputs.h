@@ -24,11 +24,6 @@
 // This file has definitions for state tables and input processing (mostly buttons)
 //
 
-//
-// define the UNIQUE effects (lights and sounds) here. These cannot be configured as the other effects can.
-//
-#define mEFCT_UNIQ_WAITING 87  // FIXME 101 not 87 - waiting pattern: low level spooky sounds, blinky lights
-
 #define NUMOF(x) (sizeof(x) / sizeof(*x))
 
 #define DPIN_FASTLED      3  // serial out - talk to LED rings
@@ -64,16 +59,21 @@
 // define the symbols - .SPECIAL:
 #define mSPCL_HANDLER         0x0100
 #define mSPCL_HANDLER_SHOOT        1 // a special handler function
+#define mSPCL_HANDLER_SOLENOID     2 // a special handler function
 
 // define the symbols - .blkFlags:
 #define mBLOCKSTART 0x80
 #define mBLOCKEND   0x40
 
 // define the symbols - .index: first the single constant mPOWERON one, then the others:
+// define the symbols - .index: first the single constant mROW_POWERON one, then the others:
 #define mROW_POWERON 0  // first address in myState[]
-#define mROW_MENU 1
+#define mROW_SHOOT_WINDUP 6
 #define mROW_OPNBRL 4
 #define mROW_LOKLOD 5
+#define mROW_MENU 1
+#define mROW_SHOOT 7
+#define mROW_SOLENOID 8
 
 // define the effect number ranges - must be divisible by 10
 #define mEFCT_WIND_UP       0  // 001 to 009 - wind-up effects
@@ -85,13 +85,18 @@
 #define mEFCT_UNIQ        100  // 101 to 109 - unique effects not included in configurations
 
 //
+// define the UNIQUE effects (lights and sounds) here. These cannot be configured as the other effects can.
+//
+#define mEFCT_UNIQ_WAITING 87  // FIXME 101 not 87 - waiting pattern: low level spooky sounds, blinky lights
+#define mEFCT_UNIQ_SILENCE 86  // FIXME 102 not 86
+
+
+//
 // used in myStateTable[].efctSound and .efctLED
 //
 // #define mSPCL_EFCT_ONETIME 0xxxx - this is the standard
 #define mSPCL_EFCT_CONTINUOUS 0x1000
 
-// #define mSPARKLE 1  // power-on LED Effect
-// #define mEFCT_FOOF 1 // This is the FOOF Science Fiction Rubber Band Gun version 1.0.
 
 #define mBLOCKSTART 0x80
 #define mBLOCKEND   0x40
@@ -221,11 +226,14 @@ static struct myState_t {
 //
 // the state table itself - automatically generated from makeStateTable.py
 //
-static RBGStateTable myStateTable[6] = {
+static RBGStateTable myStateTable[9] = {
     { /* row 0 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mNONE, .efctSound=mEFCT_PWRON, .efctLED=mEFCT_PWRON, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_MENU, .index=mROW_POWERON, },
-    { /* row 1 */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_SHOOT, .efctSound=mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, .efctLED=mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, .inputRBG=mINP_TRIG|mINP_BNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_MENU, .gotoWithoutInput=mNONE, .index=mROW_MENU, },
+    { /* row 1 */  .blkFlags=mBLOCKSTART, .SPECIAL=mNONE, .efctSound=mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, .efctLED=mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, .inputRBG=mINP_TRIG|mINP_BNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_SHOOT_WINDUP, .gotoWithoutInput=mNONE, .index=mROW_MENU, },
     { /* row 2 */  .blkFlags=mZERO, .SPECIAL=mNONE, .efctSound=mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, .efctLED=mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, .inputRBG=mINP_OPEN, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_OPNBRL, .gotoWithoutInput=mNONE, .index=mROW_MENU, },
     { /* row 3 */  .blkFlags=mBLOCKEND, .SPECIAL=mNONE, .efctSound=mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, .efctLED=mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, .inputRBG=mINP_LOCK, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_LOKLOD, .gotoWithoutInput=mNONE, .index=mROW_MENU, },
     { /* row 4 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mNONE, .efctSound=mEFCT_OPEN_BARREL, .efctLED=mEFCT_OPEN_BARREL, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_MENU, .index=mROW_OPNBRL, },
     { /* row 5 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mNONE, .efctSound=mEFCT_LOCK_LOAD, .efctLED=mEFCT_LOCK_LOAD, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_MENU, .index=mROW_LOKLOD, },
+    { /* row 6 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mNONE, .efctSound=mEFCT_WIND_UP, .efctLED=mEFCT_WIND_UP, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_SHOOT, .index=mROW_SHOOT_WINDUP, },
+    { /* row 7 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_SHOOT, .efctSound=mEFCT_SHOOT, .efctLED=mEFCT_SHOOT, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_SOLENOID, .index=mROW_SHOOT, },
+    { /* row 8 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_SOLENOID, .efctSound=mEFCT_UNIQ_SILENCE, .efctLED=mEFCT_UNIQ_SILENCE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_MENU, .index=mROW_SOLENOID, },
 };
