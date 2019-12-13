@@ -174,14 +174,14 @@ def make_state_table():
         print_debug("  %s %s" % (idx, str(STATETABLE[idx])))
 
     # collect sounds and light patterns
-    known_effects = {"mNONE": 0xFF, "mEFCT_SPCL": 0x40, "mEFCT_SHOOT": 1, "mEFCT_OPEN_BARREL": 2, "mEFCT_LOCK_LOAD": 3}
+    known_effects = {"mNONE": 0xFF, "mEFCT_SPCL": 0x40, "mEFCT_SHOOT": 1, "mEFCT_OPEN_BARREL": 2, "mEFCT_LOCK_LOAD": 3} ### FIXME is this a good list ???
     count_effects = {'efctLED': 1, 'efctSound': 1}
     found_effects = {'efctLED': {}, 'efctSound': {}}
-    for efct in count_effects.keys():
+    for efct in count_effects.keys(): ### FIXME this needs work. What are we looking for here? does not find mSPCL_EFCT_CONTINUOUS
         for idx in STATETABLE:
             if 0 != len(STATETABLE[idx][efct]):
                 txt = STATETABLE[idx][efct]
-                if txt.split('|')[0] in known_effects.keys():
+                if txt.split('|')[0] in known_effects.keys(): ### FIXME only looks at first one
                     pass
                 elif txt not in found_effects[efct].keys():
                     found_effects[efct][txt] = count_effects[efct]
@@ -206,7 +206,6 @@ def make_state_table():
             + "\n#define mNONE 255"
             + "\n#define mZERO 0"
             + "\n\n// define the symbols - .SPECIAL:"
-            + "\n#define mSPCL_EFCT_CONTINUOUS 0x1000"
             + "\n#define mSPCL_HANDLER         0x0100"
             + "\n#define mSPCL_HANDLER_SHOOT        1 // a special handler function"
             + "\n\n// define the symbols - .blkFlags:"
@@ -245,7 +244,6 @@ def make_state_table():
     len_statetable = len(STATETABLE)
     len_statetablekeys = len(STATETABLE[0])
     print("static RBGStateTable myStateTable[%d] = {" % len_statetable)
-
     for idx in range(len_statetable):
         sys.stdout.write("    { /* row %d */ " % idx)
         for count, key in enumerate(STATETABLE[idx]):
@@ -254,6 +252,15 @@ def make_state_table():
         print(" },")  # C is no longer picky about the last comma
     print("};")
 
+    ### also the old way
+    print("\n// now the old way\n")
+    print("static RBGStateTable myStateTable[%d] = {" % len_statetable)
+    for idx in range(len_statetable):
+        sys.stdout.write("    { /* row %d */ " % idx)
+        for count, key in enumerate(STATETABLE[idx]):
+            sys.stdout.write(" %s," % (STATETABLE[idx][key]))
+        print(" },")  # C is no longer picky about the last comma
+    print("};")
 
 
 if __name__ == "__main__":
