@@ -150,7 +150,7 @@
 #define mINPROCFLG_WAITFORSOUND     ((uint16_t)   0x80)  // wait for sound to finish
 #define mINPROCFLG_WAITFORINPUT     ((uint16_t)   0x40)  // wait for user input (trigger with perhaps others)
 #define mINPROCFLG_WAITFORSOLENOID  ((uint16_t)   0x20)  // wait for timeout on solenoid (special, not directly set in state table)
-#define mINPROCFLG_SPCL_IN_PROC     ((uint16_t)  0x100)  // Special is in process; don't process this row
+#define mINPROCFLG_SPCL_IN_PROC     ((uint16_t)  0x100)  // Special is in process; don't process this row at this time
 
 // table to identify input pins and corresponding masks
 // DPIN_LOCK_LOAD handled separately in code
