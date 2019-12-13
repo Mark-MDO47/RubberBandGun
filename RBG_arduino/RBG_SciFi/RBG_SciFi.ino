@@ -211,7 +211,7 @@ uint8_t RBG_startRow() {
 
   if ((prev_row != myState.tableRow) || (prev_tableRowInProcFlags != myState.tableRowInProcFlags)) {
     debugThisManyCalls = 10;
-    if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
+    if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" from row ")); Serial.print((uint16_t) prev_row); Serial.print(F(" to row ")); Serial.println((uint16_t) myState.tableRow); }
     prev_row = myState.tableRow;
     prev_tableRowInProcFlags = myState.tableRowInProcFlags;
   } // end if more debugging is useful
@@ -219,7 +219,7 @@ uint8_t RBG_startRow() {
     // not waiting for input
     if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
     thisSound = thisRowPtr->efctSound;
-    if ((mNONE == thisRowPtr->SPECIAL) || (0 == (thisRowPtr->SPECIAL&mSPCL_ONETIME))) { // not a SPECIAL function row
+    if (mNONE == thisRowPtr->SPECIAL) { // not a SPECIAL function row
       if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
       if (mNONE != thisSound) {
         if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }

@@ -44,7 +44,7 @@
 
 
 
-// values that can be stored
+// values that can be stored in EEPROM (FIXME THIS MAY CHANGE)
 #define VYBG 0x10    // whatever is in DPIN_BTN_YELLOW and DPIN_BTN_GREEN and DPIN_BTN_BLACK (0 thru 7)
 #define V00  0x00    // the value 0
 #define V01  0x01    // the value 1
@@ -62,7 +62,6 @@
 #define mZERO 0
 
 // define the symbols - .SPECIAL:
-#define mSPCL_EFCT_CONTINUOUS 0x1000
 #define mSPCL_HANDLER         0x0100
 #define mSPCL_HANDLER_SHOOT        1 // a special handler function
 
@@ -88,9 +87,8 @@
 //
 // used in myStateTable[].efctSound and .efctLED
 //
-#define mEFCT_SPCLFUNC    0x80
-#define mSPCL_ONETIME 0x80
-#define mSPCL_SHOOT   0x40
+// #define mSPCL_EFCT_ONETIME 0xxxx - this is the standard
+#define mSPCL_EFCT_CONTINUOUS 0x1000
 
 // #define mSPARKLE 1  // power-on LED Effect
 // #define mEFCT_FOOF 1 // This is the FOOF Science Fiction Rubber Band Gun version 1.0.
@@ -225,9 +223,9 @@ static struct myState_t {
 //
 static RBGStateTable myStateTable[6] = {
     { /* row 0 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mNONE, .efctSound=mEFCT_PWRON, .efctLED=mEFCT_PWRON, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mMENU, .index=mPOWERON, },
-    { /* row 1 */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_CONTINUOUS|mSPCL_HANDLER | mSPCL_HANDLER_SHOOT, .efctSound=mEFCT_UNIQ_WAITING, .efctLED=mEFCT_UNIQ_WAITING, .inputRBG=mINP_TRIG|mINP_BNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mMENU, .gotoWithoutInput=mNONE, .index=mMENU, },
-    { /* row 2 */  .blkFlags=mZERO, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_WAITING, .efctLED=mEFCT_UNIQ_WAITING, .inputRBG=mINP_OPEN, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mOPNBRL, .gotoWithoutInput=mNONE, .index=mMENU, },
-    { /* row 3 */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_WAITING, .efctLED=mEFCT_UNIQ_WAITING, .inputRBG=mINP_LOCK, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mLOKLOD, .gotoWithoutInput=mNONE, .index=mMENU, },
+    { /* row 1 */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_SHOOT, .efctSound=mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, .efctLED=mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, .inputRBG=mINP_TRIG|mINP_BNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mMENU, .gotoWithoutInput=mNONE, .index=mMENU, },
+    { /* row 2 */  .blkFlags=mZERO, .SPECIAL=mNONE, .efctSound=mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, .efctLED=mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, .inputRBG=mINP_OPEN, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mOPNBRL, .gotoWithoutInput=mNONE, .index=mMENU, },
+    { /* row 3 */  .blkFlags=mBLOCKEND, .SPECIAL=mNONE, .efctSound=mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, .efctLED=mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, .inputRBG=mINP_LOCK, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mLOKLOD, .gotoWithoutInput=mNONE, .index=mMENU, },
     { /* row 4 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mNONE, .efctSound=mEFCT_OPEN_BARREL, .efctLED=mEFCT_OPEN_BARREL, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mMENU, .index=mOPNBRL, },
     { /* row 5 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mNONE, .efctSound=mEFCT_LOCK_LOAD, .efctLED=mEFCT_LOCK_LOAD, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mMENU, .index=mLOKLOD, },
 };
