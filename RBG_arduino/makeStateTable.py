@@ -240,25 +240,25 @@ def make_state_table():
     for key in COLTOSTRUCT:
         print("%s" % COLTOSTRUCT[key]
               )
-    print("} RBGStateTable;\n\n")
+    ### also the old way
+    print("\n// now the old way")
     len_statetable = len(STATETABLE)
     len_statetablekeys = len(STATETABLE[0])
     print("static RBGStateTable myStateTable[%d] = {" % len_statetable)
     for idx in range(len_statetable):
         sys.stdout.write("    { /* row %d */ " % idx)
         for count, key in enumerate(STATETABLE[idx]):
-            sys.stdout.write(" .%s=%s," % (key, STATETABLE[idx][key]))
-            # print("         %s, // %s" % (STATETABLE[idx][key], key))
+            sys.stdout.write(" %s," % (STATETABLE[idx][key]))
         print(" },")  # C is no longer picky about the last comma
     print("};")
 
-    ### also the old way
-    print("\n// now the old way\n")
+    print("\n// now the new way")
     print("static RBGStateTable myStateTable[%d] = {" % len_statetable)
     for idx in range(len_statetable):
         sys.stdout.write("    { /* row %d */ " % idx)
         for count, key in enumerate(STATETABLE[idx]):
-            sys.stdout.write(" %s," % (STATETABLE[idx][key]))
+            sys.stdout.write(" .%s=%s," % (key, STATETABLE[idx][key]))
+            # print("         %s, // %s" % (STATETABLE[idx][key], key))
         print(" },")  # C is no longer picky about the last comma
     print("};")
 

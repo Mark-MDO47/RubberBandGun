@@ -222,10 +222,10 @@ static struct myState_t {
 // the state table itself - automatically generated from makeStateTable.py
 //
 static RBGStateTable myStateTable[6] = {
-    { /* row 0 */  mBLOCKSTART|mBLOCKEND, mNONE, mEFCT_PWRON, mEFCT_PWRON, mNONE, mNONE, mNONE, mNONE, mROW_MENU, mROW_POWERON, },
-    { /* row 1 */  mBLOCKSTART, mSPCL_HANDLER | mSPCL_HANDLER_SHOOT, mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, mINP_TRIG|mINP_BNONE, mNONE, mNONE, mROW_MENU, mNONE, mROW_MENU, },
-    { /* row 2 */  mZERO, mNONE, mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, mINP_OPEN, mNONE, mNONE, mROW_OPNBRL, mNONE, mROW_MENU, },
-    { /* row 3 */  mBLOCKEND, mNONE, mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, mINP_LOCK, mNONE, mNONE, mROW_LOKLOD, mNONE, mROW_MENU, },
-    { /* row 4 */  mBLOCKSTART|mBLOCKEND, mNONE, mEFCT_OPEN_BARREL, mEFCT_OPEN_BARREL, mNONE, mNONE, mNONE, mNONE, mROW_MENU, mROW_OPNBRL, },
-    { /* row 5 */  mBLOCKSTART|mBLOCKEND, mNONE, mEFCT_LOCK_LOAD, mEFCT_LOCK_LOAD, mNONE, mNONE, mNONE, mNONE, mROW_MENU, mROW_LOKLOD, },
+    { /* row 0 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mNONE, .efctSound=mEFCT_PWRON, .efctLED=mEFCT_PWRON, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_MENU, .index=mROW_POWERON, },
+    { /* row 1 */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_SHOOT, .efctSound=mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, .efctLED=mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, .inputRBG=mINP_TRIG|mINP_BNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_MENU, .gotoWithoutInput=mNONE, .index=mROW_MENU, },
+    { /* row 2 */  .blkFlags=mZERO, .SPECIAL=mNONE, .efctSound=mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, .efctLED=mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, .inputRBG=mINP_OPEN, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_OPNBRL, .gotoWithoutInput=mNONE, .index=mROW_MENU, },
+    { /* row 3 */  .blkFlags=mBLOCKEND, .SPECIAL=mNONE, .efctSound=mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, .efctLED=mSPCL_EFCT_CONTINUOUS|mEFCT_UNIQ_WAITING, .inputRBG=mINP_LOCK, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_LOKLOD, .gotoWithoutInput=mNONE, .index=mROW_MENU, },
+    { /* row 4 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mNONE, .efctSound=mEFCT_OPEN_BARREL, .efctLED=mEFCT_OPEN_BARREL, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_MENU, .index=mROW_OPNBRL, },
+    { /* row 5 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mNONE, .efctSound=mEFCT_LOCK_LOAD, .efctLED=mEFCT_LOCK_LOAD, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_MENU, .index=mROW_LOKLOD, },
 };
