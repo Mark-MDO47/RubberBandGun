@@ -147,9 +147,10 @@
 // masks for in-process events: wait-for-sound or wait-for-input
 //   used (only) in tableRowInProcFlags
 //   NOTE: maximum of one of these bits can be set at any time
-#define mINPROCFLG_WAITFORSOUND    ((uint16_t) 0x80)  // wait for sound to finish
-#define mINPROCFLG_WAITFORINPUT    ((uint16_t) 0x40)  // wait for user input (trigger with perhaps others)
-#define mINPROCFLG_WAITFORSOLENOID ((uint16_t) 0x20)  // wait for timeout on solenoid (special, not directly set in state table)
+#define mINPROCFLG_WAITFORSOUND     ((uint16_t)   0x80)  // wait for sound to finish
+#define mINPROCFLG_WAITFORINPUT     ((uint16_t)   0x40)  // wait for user input (trigger with perhaps others)
+#define mINPROCFLG_WAITFORSOLENOID  ((uint16_t)   0x20)  // wait for timeout on solenoid (special, not directly set in state table)
+#define mINPROCFLG_SPCL_IN_PROC     ((uint16_t)  0x100)  // Special is in process; don't process this row
 
 // table to identify input pins and corresponding masks
 // DPIN_LOCK_LOAD handled separately in code
@@ -198,7 +199,8 @@ static struct myState_t {
   uint32_t timerPrev = 0;          // timer from previous time through loop
   uint32_t timerNow = 0;           // timer from this time through loop
   uint32_t timerLed = 0;           // timer for next LED activity
-  uint32_t timerSolenoid = 0;      // timer for next solenoid OFF
+  uint32_t timerSolenoidStart = 0;      // timer for next solenoid OFF
+  uint32_t timerSolenoidEnd   = 0;      // timer for next solenoid OFF
   uint32_t debounceTimer = 0;      // timer for debounce of buttons
   // LED state info
   int8_t   pattern = 1;            // keep track of patterns - this is what we are doing now

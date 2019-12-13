@@ -116,10 +116,6 @@ void setup() {
 //     If needed, release the rubber band and set timer to stop the solenoid current later
 //
 void loop() {
-  static uint8_t countBadStatePrint = 6;
-  static uint8_t countGoodStatePrint = 6;
-  static uint8_t countGoodInputPrint = 6;
-  uint16_t foundInput = 0; // return from RBG_waitForInput
 
   // put your main code here, to run repeatedly:
   
@@ -135,49 +131,9 @@ void loop() {
     myState.VinputRBG &= ((uint16_t) ~(mVINP_PREVLOCK)); // clear the bit
     //Serial.print(F(" AFTER myState.VinputRBG 0x")); Serial.println(myState.VinputRBG, HEX);
   }
+
   nowVinputRBG = getButtonInput();
-  
-  if (0 == myState.tableRowInProcFlags) {
-    myState.tableRowInProcFlags = RBG_startRow(); // just do what the row says
-    if (countGoodStatePrint > 0) {
-      Serial.println(F("DEBUG - after RBG_startRow() call"));
-      printAllMyState(); Serial.print(F("DEBUG - nowVinputRBG 0x")); Serial.println(nowVinputRBG, HEX);
-      countGoodStatePrint -= 1;
-    }
-  } else if (mINPROCFLG_WAITFORSOUND == myState.tableRowInProcFlags) {
-    if ((0 == (nowVinputRBG&mVINP_SOUNDACTV)) &&
-        (myStateTable[myState.tableRow].gotoWithoutInput != mNONE)) {
-      // sound completed and we have a place to go
-      myState.tableRowInProcFlags = 0; // can only have one WAITFOR or the other
-      myState.tableRow = myStateTable[myState.tableRow].gotoWithoutInput;
-      if (countGoodStatePrint > 0) {
-        Serial.println(F("DEBUG - after mINPROCFLG_WAITFORSOUND"));
-        printAllMyState(); Serial.print(F("DEBUG - nowVinputRBG 0x")); Serial.println(nowVinputRBG, HEX);
-        countGoodStatePrint -= 1;
-      }
-    } // else we the sound did not end with a place to go
-  } else if (mINPROCFLG_WAITFORINPUT == myState.tableRowInProcFlags) {
-    // we need to check until we hit the mBLOCKEND
-    foundInput = RBG_waitForInput(nowVinputRBG); // wait for user input, trigger and maybe other buttons
-    if (mNONE != foundInput) {
-      myState.tableRowInProcFlags = 0; // can only have one WAITFOR or the other
-      myState.tableRow = foundInput;
-      if (countGoodInputPrint > 0) {
-        Serial.println(F("DEBUG - after RBG_waitForInput() call"));
-        printAllMyState(); Serial.print(F("DEBUG - nowVinputRBG 0x")); Serial.print(nowVinputRBG, HEX); Serial.print(F(" foundInput 0x")); Serial.println(foundInput, HEX);
-        countGoodInputPrint -= 1;
-      }
-    } // end if found input
-  } else {
-    if (countBadStatePrint > 0) {
-      Serial.println(F("ERROR - unknown tableRowInProcFlags value"));
-      printAllMyState(); Serial.print(F("DEBUG - nowVinputRBG 0x")); Serial.println(nowVinputRBG, HEX);
-      myState.tableRowInProcFlags = 0;
-      countBadStatePrint -= 1;
-    } else {
-      myState.tableRowInProcFlags = 0;
-    }
-  } // end process state table
+  nowVinputRBG = processStateTable(nowVinputRBG);
 
   checkDataGuard();
   // doPattern(); // FIXME TBS WILL DO LEDs LATER
@@ -195,6 +151,62 @@ void loop() {
 }  // end loop()
 
 // ******************************** STATE TABLE UTILITIES ********************************
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// processStateTable(...) - called from main loop to do state table processing
+//     Use our state table and state and inputs to calculate next state
+//     Determine if we need to change LED pattern and/or sound
+//     If needed, release the rubber band and set timer to stop the solenoid current later
+//
+uint16_t processStateTable(uint16_t tmpVinputRBG) {
+  static uint8_t countBadStatePrint = 6;
+  static uint8_t countGoodStatePrint = 6;
+  static uint8_t countGoodInputPrint = 6;
+  uint16_t foundInput = 0; // return from RBG_waitForInput
+
+
+  if (0 == myState.tableRowInProcFlags) {
+    myState.tableRowInProcFlags = RBG_startRow(); // just do what the row says
+    if (countGoodStatePrint > 0) {
+      Serial.println(F("DEBUG - after RBG_startRow() call"));
+      printAllMyState(); Serial.print(F("DEBUG processStateTable() - tmpVinputRBG 0x")); Serial.println(tmpVinputRBG, HEX);
+      countGoodStatePrint -= 1;
+    }
+  } else if (mINPROCFLG_WAITFORSOUND == myState.tableRowInProcFlags) {
+    if ((0 == (tmpVinputRBG&mVINP_SOUNDACTV)) &&
+        (myStateTable[myState.tableRow].gotoWithoutInput != mNONE)) {
+      // sound completed and we have a place to go
+      myState.tableRowInProcFlags = 0; // can only have one WAITFOR or the other
+      myState.tableRow = myStateTable[myState.tableRow].gotoWithoutInput;
+      if (countGoodStatePrint > 0) {
+        Serial.println(F("DEBUG processStateTable() - after mINPROCFLG_WAITFORSOUND"));
+        printAllMyState(); Serial.print(F("DEBUG processStateTable() - tmpVinputRBG 0x")); Serial.println(tmpVinputRBG, HEX);
+        countGoodStatePrint -= 1;
+      }
+    } // else we the sound did not end with a place to go
+  } else if (mINPROCFLG_WAITFORINPUT == myState.tableRowInProcFlags) {
+    // we need to check until we hit the mBLOCKEND
+    foundInput = RBG_waitForInput(tmpVinputRBG); // wait for user input, trigger and maybe other buttons
+    if (mNONE != foundInput) {
+      myState.tableRowInProcFlags = 0; // can only have one WAITFOR or the other
+      myState.tableRow = foundInput;
+      if (countGoodInputPrint > 0) {
+        Serial.println(F("DEBUG processStateTable() - after RBG_waitForInput() call"));
+        printAllMyState(); Serial.print(F("DEBUG - tmpVinputRBG 0x")); Serial.print(tmpVinputRBG, HEX); Serial.print(F(" foundInput 0x")); Serial.println(foundInput, HEX);
+        countGoodInputPrint -= 1;
+      }
+    } // end if found input
+  } else {
+    if (countBadStatePrint > 0) {
+      Serial.println(F("ERROR processStateTable() - unknown tableRowInProcFlags value"));
+      printAllMyState(); Serial.print(F("DEBUG - tmpVinputRBG 0x")); Serial.println(tmpVinputRBG, HEX);
+      myState.tableRowInProcFlags = 0;
+      countBadStatePrint -= 1;
+    } else {
+      myState.tableRowInProcFlags = 0;
+    }
+  }
+} // end process state table
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RBG_startRow() - start processing a row in myStateTable
