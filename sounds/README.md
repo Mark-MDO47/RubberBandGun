@@ -27,7 +27,7 @@ Here are the Creative Commons licenses in the files I used:
 Here are the files I used, modified, and combined for the prototype sound (other than GW170817-template.wav)
 
 | Tag | File Name | URL | Who |
-| --- | --- | --- |
+| --- | --- | --- | --- |
 | zero/1.0/ | 407052__sojan__power-charge.flac | https://freesound.org/s/193610/ | crashoverride61088 |
 | zero/1.0/ |	397254__screamstudio__loading.wav |	https://freesound.org/s/397254/ | ScreamStudio |
 | zero/1.0/	| 145209__lensflare8642__shotgun-sounds.mp3	| https://freesound.org/s/145209/ | lensflare8642 |
