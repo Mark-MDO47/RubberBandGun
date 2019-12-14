@@ -24,7 +24,7 @@ Here are the Creative Commons licenses in the files I used:
 | by/3.0/	| Creative Commons Attribution License | https://creativecommons.org/licenses/by/3.0/ |
 | by-nc/3.0/ | Creative Commons Attribution Noncommercial License | https://creativecommons.org/licenses/by-nc/3.0/ |
 
-Here are the files I used, modified, and combined for the prototype sound (other than GW170817-template.wav)
+Here are the files I used, modified, and combined for the prototype sounds (other than GW170817-template.wav)
 
 | Tag | File Name | URL | Who |
 | --- | --- | --- | --- |
