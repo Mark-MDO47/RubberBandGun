@@ -92,6 +92,9 @@ void setup() {
   // and the output pin
   pinMode(DPIN_SOLENOID,   OUTPUT);        // fires the rubber band
 
+  // make sure solenoid is not drawing power
+  digitalWrite(DPIN_SOLENOID, LOW);
+
   // initialize the DFPlayer audio player
   DFsetup();
 
@@ -357,14 +360,22 @@ uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpFlags) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RBG_specialProcShoot() - do the solenoid for shooting
+//
 void RBG_specialProcShoot() {
-  
+  uint16_t nextRow = myStateTable[myState.tableRow].gotoWithoutInput;
+  digitalWrite(DPIN_SOLENOID, HIGH);
+  if (mNONE == nextRow) { nextRow = mROW_POWERON; digitalWrite(DPIN_SOLENOID, LOW); Serial.print(F(" RBG_specialProcShoot ")); Serial.print((uint16_t) __LINE__); Serial.println(F(" gotoWithoutInput is mNONE; going to mROW_POWERON")); }
+  myState.tableRow = nextRow;
 } // end RBG_specialProcShoot()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RBG_specialProcSolenoid() - release the solenoid after shooting
+//
 void RBG_specialProcSolenoid() {
-  
+  uint16_t nextRow = myStateTable[myState.tableRow].gotoWithoutInput;
+  digitalWrite(DPIN_SOLENOID, LOW);
+  if (mNONE == nextRow) { nextRow = mROW_POWERON; Serial.print(F(" RBG_specialProcSolenoid ")); Serial.print((uint16_t) __LINE__); Serial.println(F(" gotoWithoutInput is mNONE; going to mROW_POWERON")); }
+  myState.tableRow = nextRow;
 } // end RBG_specialProcSolenoid()
 
 
