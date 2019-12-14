@@ -206,14 +206,16 @@ def make_state_table():
             + "\n#define mNONE 255"
             + "\n#define mZERO 0"
             + "\n\n// define the symbols - .SPECIAL:"
-            + "\n#define mSPCL_HANDLER         0x0100"
+            + "\n// #define mSPCL_EFCT_ONETIME 0xxxx - this is the standard, no bit needed"
+            + "\n#define mSPCL_EFCT_CONTINUOUS 0x1000 // set this bit for continuous play while waiting for input"
+            + "\n#define mSPCL_HANDLER         0x0010 // mask for functions is ((uint16_t) (mSPCL_HANDLER-1))"
             + "\n#define mSPCL_HANDLER_SHOOT        1 // a special handler function"
             + "\n#define mSPCL_HANDLER_SOLENOID     2 // a special handler function"
             + "\n\n// define the symbols - .blkFlags:"
             + "\n#define mBLOCKSTART 0x80"
             + "\n#define mBLOCKEND   0x40"
             + "\n\n// define the symbols - .index: first the single constant mROW_POWERON one, then the others:"
-            + "\n#define mROW_POWERON 0  // first address in myState[]")
+            + "\n#define mROW_POWERON 0  // first address in myState[]") # no \n; there are more lines on the way
 
     print_debug("Pass 2 found_symbols")
     for key in found_symbols:
@@ -241,8 +243,8 @@ def make_state_table():
     for key in COLTOSTRUCT:
         print("%s" % COLTOSTRUCT[key]
               )
-    ### also the old way
-    print("\n// now the old way")
+    ### first the old way; curiously, Microsoft Visual Studio Community Edition 2019 in Console App wants the old way
+    print("\n// now the old way so can debug in Microsoft Visual Studio Community Edition 2019 in Console App")
     len_statetable = len(STATETABLE)
     len_statetablekeys = len(STATETABLE[0])
     print("static RBGStateTable myStateTable[%d] = {" % len_statetable)

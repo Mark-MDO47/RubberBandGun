@@ -42,13 +42,12 @@
 // | by/3.0/    | 145209__lensflare8642__shotgun-sounds.mp3      | https://freesound.org/s/383205/ | SpiceProgram  |
 // | by-nc/3.0/ | 179281__timbre__boingy-sweep.flac              | https://freesound.org/s/179281/ | Timbre |
 //
-| Tag | Name | URL |
-| --- | --- | --- |
-| zero/1.0/  | Creative Commons 0 License | https://creativecommons.org/publicdomain/zero/1.0/ |
-| by/3.0/ | Creative Commons Attribution License | https://creativecommons.org/licenses/by/3.0/ |
-| by-nc/3.0/ | Creative Commons Attribution Noncommercial License | https://creativecommons.org/licenses/by-nc/3.0/ |
-
-
+// | Tag        | Name                                               | URL |
+// | ---        | ---                                                | --- |
+// | zero/1.0/  | Creative Commons 0 License                         | https://creativecommons.org/publicdomain/zero/1.0/ |
+// | by/3.0/    | Creative Commons Attribution License               | https://creativecommons.org/licenses/by/3.0/ |
+// | by-nc/3.0/ | Creative Commons Attribution Noncommercial License | https://creativecommons.org/licenses/by-nc/3.0/ |
+//
 
 #include "Arduino.h"
 #include "SoftwareSerial.h"                  // to talk to myDFPlayer without using up debug serial port
@@ -249,8 +248,8 @@ uint8_t RBG_startRow() {
   uint16_t thisSound = 0;
   uint16_t thisLED = 0;
   uint16_t thisReturn = 0;
-  static uint8_t prev_row = 0;
-  static uint8_t prev_tableRowInProcFlags = 0;
+  static uint16_t prev_row = 0;
+  static uint16_t prev_tableRowInProcFlags = 0;
 
   if ((prev_row != myState.tableRow) || (prev_tableRowInProcFlags != myState.tableRowInProcFlags)) {
     debugThisManyCalls = 10;
@@ -264,20 +263,7 @@ uint8_t RBG_startRow() {
     thisSound = thisRowPtr->efctSound;
     if (mNONE == thisRowPtr->SPECIAL) { // not a SPECIAL function row
       if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
-      if (mNONE != thisSound) {
-        if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
-        if (EFCT_IS_EEP(thisSound)) {
-          // configurable sound using EEPROM
-          if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
-          myDFPlayer.playMp3Folder(thisSound + EEPROM.read(EEPOFFSET(thisSound))); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999)
-          // myDFPlayer.enableLoop(); this does not actually make the playMp3Folder call loop
-        } else { // unique sound - includes any mEFCT_ stuff
-          if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
-          myDFPlayer.playMp3Folder(thisSound); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999)
-        }
-        if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
-        thisReturn |= mINPROCFLG_WAITFORSOUND;
-      } // end if should start a sound and wait for it
+      thisReturn |= RBG_startEffectSound((uint16_t) (thisSound));
       thisLED = thisRowPtr->efctLED;
       if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
       if (mNONE != thisLED) {
@@ -306,12 +292,15 @@ uint8_t RBG_startRow() {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RBG_waitForInput(tmpVinputRBG) - wait until desired input happens
 //   returns mNONE if did not happen, idx to row that matched if it did
-uint8_t RBG_waitForInput(uint16_t tmpVinputRBG) {
+uint16_t RBG_waitForInput(uint16_t tmpVinputRBG) {
   static uint8_t debugThisManyCalls = 8;
-  uint8_t thisReturn = mNONE; // assume no input found
+  uint16_t thisReturn = mNONE; // assume no input found
   RBGStateTable * thisRowPtr = &myStateTable[myState.tableRow];
 
+  // restart the debug prints when something interesting happens
   if (tmpVinputRBG != (myState.VinputRBG & ((uint16_t) (~mVINP_PREVLOCK)))) { debugThisManyCalls = 8; }
+
+  // this is what a debug print looks like
   if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput entry ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" tmpVinputRBG 0x")); Serial.println(tmpVinputRBG, HEX); }
 
   // we need to check until we hit the mBLOCKEND
@@ -341,13 +330,19 @@ uint8_t RBG_waitForInput(uint16_t tmpVinputRBG) {
       break;
     } else if ((0 != (thisRowPtr->inputRBG&mINP_LOCK)) && (0 != (tmpVinputRBG&mVINP_LOCK)) && (0 == (myState.VinputRBG&mVINP_PREVLOCK))) {
       /* if (debugThisManyCalls > 0) */ { Serial.print(F(" RBG_waitForInput ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.println(idx); }
-      thisReturn = thisRowPtr->gotoOnInput;
+      thisReturn = thisRowPtr->gotoOnInput; // found an input we were waiting for
       break;
     }
 
     if (0 != (thisRowPtr->inputRBG&mBLOCKEND)) {
       // this is a normal way to end - found the mBLOCKEND but did not find input
       if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ")); Serial.print((uint16_t) __LINE__); }
+      // now we just check if we are doing a special effect like mSPCL_EFCT_CONTINUOUS
+      thisRowPtr = &myStateTable[myState.tableRow]; // set this back to start of block
+      if ((0 != (mSPCL_EFCT_CONTINUOUS & thisRowPtr->SPECIAL)) && (0 == (mVINP_SOUNDACTV & tmpVinputRBG))) {
+        // want continuous sound and sound is not active so restart it
+        RBG_startEffectSound((uint16_t) (thisRowPtr->efctSound));
+      }
       break;
     }
     thisRowPtr += 1;
@@ -404,6 +399,26 @@ void RBG_specialProcSolenoid() {
   myState.tableRow = nextRow;
 } // end RBG_specialProcSolenoid()
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// RBG_startEffectSound(tmpEfctSound) - start tmpEfctSound if it is valid
+// returns a tableRowInProcFlags bitmask - zero or mINPROCFLG_WAITFORSOUND
+//   caller will determine if this flag should go into tableRowInProcFlags
+uint16_t  RBG_startEffectSound(uint16_t tmpEfctSound) {
+  uint16_t thisReturn = 0;
+
+  if (mNONE != tmpEfctSound) {
+    if (EFCT_IS_EEP(tmpEfctSound)) {
+      // configurable sound using EEPROM
+      myDFPlayer.playMp3Folder(tmpEfctSound + EEPROM.read(EEPOFFSET(tmpEfctSound))); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999)
+      // myDFPlayer.enableLoop(); this does not actually make the playMp3Folder call loop
+    } else { // unique sound - includes any mEFCT_ stuff
+      myDFPlayer.playMp3Folder(tmpEfctSound); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999)
+    }
+    thisReturn |= mINPROCFLG_WAITFORSOUND;
+  } // end if should start a sound
+
+  return(thisReturn); // this is a flag that could go into tableRowInProcFlags, depending on context of caller
+} // end RBG_startEffectSound
 
 // ******************************** BUTTON AND TIMING UTILITIES ********************************
 
@@ -466,7 +481,7 @@ int16_t doDwell(int16_t dwell, uint8_t must_be_diff_pattern) {
 //
 uint16_t getButtonInput() {
   static uint8_t debugThisManyCalls = 10;
-  uint8_t idx;
+  uint16_t idx;
   uint16_t thePin;
   uint16_t theVal;
   uint16_t returnInpMask = 0;
@@ -660,23 +675,6 @@ uint8_t eeprom_calc_inverted_checksum() {
   return((uint8_t) (~chksumValue));
 } // end eeprom_calc_inverted_checksum()
 
-/* need to re-think this one
-void stateTable_store(RBGStateTable * theRow, uint8_t * theStates) {
-  uint8_t  val  = 0;
-  uint32_t addr = 0;
-  if (VYBG == theRow->storeVal) {
-    val = theStates->VYBG;
-  } else {
-    val = theStates->storeVal;
-  }
-  addr = (stateTable_ROW->storeAddr & mADDRLOW) + ((stateTable_ROW->storeAddr & mADDRHI) >> mADDRHIrshift)
-  if (stateTable_ROW->storeAddr & mIDX) {
-    addr += theStates->ramVals[(stateTable_ROW->storeAddr & mIDX) >> mIDXrshift]
-  }
-  EEPROM[stateTable_ROW->storeAddr] = addr
-  EEPROM[stateTable_ROW->storeVal] = val
-} // end stateTable_store()
-*/
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 void printAllMyState() {
