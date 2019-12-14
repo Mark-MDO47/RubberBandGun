@@ -26,14 +26,14 @@ Here are the Creative Commons licenses in the files I used:
 
 Here are the files I used, modified, and combined for the prototype sound (other than GW170817-template.wav)
 
-| Tag | File Name | URL |
+| Tag | File Name | URL | Who |
 | --- | --- | --- |
-| zero/1.0/ | 407052__sojan__power-charge.flac | https://freesound.org/people/crashoverride61088/sounds/193610/ |
-| zero/1.0/ |	397254__screamstudio__loading.wav |	https://freesound.org/s/397254/ |
-| zero/1.0/	| 145209__lensflare8642__shotgun-sounds.mp3	| https://freesound.org/s/145209/ |
-| by/3.0/ | 216096__richerlandtv__u-f-o.mp3 | https://freesound.org/people/RICHERlandTV/sounds/216096/ |
-| by/3.0/ | 88635__uair01__bicycle-picture-in-spectrum.wav | https://freesound.org/people/uair01/sounds/88635/ |
-| by/3.0/ | 7967__cfork__boing-raw.aiff | https://freesound.org/people/cfork/sounds/7967/ |
-| by/3.0/	| 145209__lensflare8642__shotgun-sounds.mp3	| https://freesound.org/s/383205/ |
-| by-nc/3.0/ | 179281__timbre__boingy-sweep.flac | https://freesound.org/people/Timbre/sounds/179281/ |
+| zero/1.0/ | 407052__sojan__power-charge.flac | https://freesound.org/s/193610/ | crashoverride61088 |
+| zero/1.0/ |	397254__screamstudio__loading.wav |	https://freesound.org/s/397254/ | ScreamStudio |
+| zero/1.0/	| 145209__lensflare8642__shotgun-sounds.mp3	| https://freesound.org/s/145209/ | lensflare8642 |
+| by/3.0/ | 216096__richerlandtv__u-f-o.mp3 | https://freesound.org/s/216096/ | RICHERlandTV |
+| by/3.0/ | 88635__uair01__bicycle-picture-in-spectrum.wav | https://freesound.org/s/88635/ | uair01 |
+| by/3.0/ | 7967__cfork__boing-raw.aiff | https://freesound.org/s/7967/ | cfork |
+| by/3.0/	| 145209__lensflare8642__shotgun-sounds.mp3	| https://freesound.org/s/383205/ | SpiceProgram  |
+| by-nc/3.0/ | 179281__timbre__boingy-sweep.flac | https://freesound.org/s/179281/ | Timbre |
 
