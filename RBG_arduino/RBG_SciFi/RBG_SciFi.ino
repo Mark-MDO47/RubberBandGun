@@ -24,6 +24,31 @@
 // The YX5200 interface code is based on the "FullFunction.ino" DFPlayer.
 //   this uses the GNU Lesser General Public License.
 //
+// Thank you LIGO folks for making the fun sounds available to non-researchers!
+// https://www.ligo.org/index.php
+// https://www.ligo.org/detections/O1O2catalog.php
+// https://www.gw-openscience.org/audiogwtc1/
+// I particularly like GW170817-template.wav; it has the ramp-up and then the kick at the end.
+//
+// Here are the files I used, modified, and combined for the prototype sounds (other than GW170817-template.wav)
+// | Tag        | File Name                                      | URL                             | Who |
+// | ---        | ---                                            | ---                             | --- |
+// | zero/1.0/  | 407052__sojan__power-charge.flac               | https://freesound.org/s/193610/ | crashoverride61088 |
+// | zero/1.0/  |  397254__screamstudio__loading.wav             | https://freesound.org/s/397254/ | ScreamStudio |
+// | zero/1.0/  | 145209__lensflare8642__shotgun-sounds.mp3      | https://freesound.org/s/145209/ | lensflare8642 |
+// | by/3.0/    | 216096__richerlandtv__u-f-o.mp3                | https://freesound.org/s/216096/ | RICHERlandTV |
+// | by/3.0/    | 88635__uair01__bicycle-picture-in-spectrum.wav | https://freesound.org/s/88635/  | uair01 |
+// | by/3.0/    | 7967__cfork__boing-raw.aiff                    | https://freesound.org/s/7967/   | cfork |
+// | by/3.0/    | 145209__lensflare8642__shotgun-sounds.mp3      | https://freesound.org/s/383205/ | SpiceProgram  |
+// | by-nc/3.0/ | 179281__timbre__boingy-sweep.flac              | https://freesound.org/s/179281/ | Timbre |
+//
+| Tag | Name | URL |
+| --- | --- | --- |
+| zero/1.0/  | Creative Commons 0 License | https://creativecommons.org/publicdomain/zero/1.0/ |
+| by/3.0/ | Creative Commons Attribution License | https://creativecommons.org/licenses/by/3.0/ |
+| by-nc/3.0/ | Creative Commons Attribution Noncommercial License | https://creativecommons.org/licenses/by-nc/3.0/ |
+
+
 
 #include "Arduino.h"
 #include "SoftwareSerial.h"                  // to talk to myDFPlayer without using up debug serial port
