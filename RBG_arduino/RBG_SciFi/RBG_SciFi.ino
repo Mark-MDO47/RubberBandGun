@@ -198,7 +198,7 @@ uint16_t processStateTable(uint16_t tmpVinputRBG) {
     } // end if found input
   } else if (mINPROCFLG_SPCL_IN_PROC == myState.tableRowInProcFlags) {
     // special processing happening now; just call that until this flag clears
-    tmpVinputRBG = specialRBGprocessing(tmpVinputRBG, mINPROCFLG_SPCL_IN_PROC);
+    tmpVinputRBG = RBG_specialProcessing(tmpVinputRBG, mINPROCFLG_SPCL_IN_PROC);
   } else {
     if (countBadStatePrint > 0) {
       Serial.println(F("ERROR processStateTable() - unknown tableRowInProcFlags value"));
@@ -331,16 +331,42 @@ uint8_t RBG_waitForInput(uint16_t tmpVinputRBG) {
 } // end RBG_waitForInput()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// specialRBGprocessing(int16_t tmpVinputRBG, uint16_t tmpFlags)
+// RBG_specialProcessing(int16_t tmpVinputRBG, uint16_t tmpFlags)
 //   do the SPECIAL processing - mostly the solenoid stuff
 //
-uint16_t specialRBGprocessing(uint16_t tmpVinputRBG, uint16_t tmpFlags) {
+uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpFlags) {
   uint16_t myVinputRBG = tmpVinputRBG;
+  RBGStateTable * thisRowPtr = &myStateTable[myState.tableRow];
+
   if (0 == tmpFlags) { // first time on this row
+    switch ((thisRowPtr->SPECIAL & (mSPCL_HANDLER-1))) {
+      case mSPCL_HANDLER_SHOOT:
+        RBG_specialProcShoot();
+        break;
+      case mSPCL_HANDLER_SOLENOID:
+        RBG_specialProcSolenoid();
+        break;
+      default:
+        Serial.print(F(" RBG_specialProcessing ")); Serial.print((uint16_t) __LINE__);
+        break;
+    } // end switch on type of special
   } else { // read tmpFlags and state to see what is going on
   }
   return(myVinputRBG);
-} // end specialRBGprocessing(uint16_t tmpVinputRBG, uint16_t tmpFlags)
+} // end RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpFlags)
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// RBG_specialProcShoot() - do the solenoid for shooting
+void RBG_specialProcShoot() {
+  
+} // end RBG_specialProcShoot()
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// RBG_specialProcSolenoid() - release the solenoid after shooting
+void RBG_specialProcSolenoid() {
+  
+} // end RBG_specialProcSolenoid()
+
 
 // ******************************** BUTTON AND TIMING UTILITIES ********************************
 
