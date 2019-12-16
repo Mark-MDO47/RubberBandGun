@@ -110,7 +110,7 @@ def debuggable():
                         elif -1 != theLine.find("Serial.print("):
                             theLine = rplc_normal(theLine, "Serial.print(")
                         elif -1 != theLine.find("myDFPlayer.playMp3Folder"):
-                            theLine = theLine.replace("myDFPlayer.playMp3Folder", "// myDFPlayer.playMp3Folder")
+                            theLine = theLine.replace("myDFPlayer.playMp3Folder", "// myMdoDFPlayer.playMp3Folder")
                         else:
                             keep_checking = False
                     if ("}" == theLine[0]) and (-1 != theLine.find("end " + copying)):
@@ -126,23 +126,35 @@ def rplc_F(theLine, theRplc): # to handle weird Serial.printx(F("")); replaces
     tmp = theLine.find(theRplc) # where it starts
     str1 = theLine[:tmp]
     str2 = theLine[tmp:]
+    str3 = str2[:str2.find(";")] # limit println search to this call
     str2 = str2.replace(theRplc, "printf(", 1)
     str2 = str2.replace("));", ");", 1)
+    if -1 != str3.find("println"):
+        str2 = str2.replace(");", "); printf(\"\\n\");", 1)
     return str1 + str2
 
 def rplc_no_F(theLine, theRplc): # to handle weird Serial.printx(""); replaces
     tmp = theLine.find(theRplc) # where it starts
     str1 = theLine[:tmp]
     str2 = theLine[tmp:]
+    str3 = str2[:str2.find(";")] # limit println search to this call
     str2 = str2.replace(theRplc, "printf(\"", 1)
+    if -1 != str3.find("println"):
+        str2 = str2.replace(");", "); printf(\"\\n\");", 1)
     return str1 + str2
 
 def rplc_normal(theLine, theRplc): # to handle normal Serial.printx(); replaces
     tmp = theLine.find(theRplc) # where it starts
     str1 = theLine[:tmp]
     str2 = theLine[tmp:]
-    str2 = str2.replace(theRplc, "printf(\"%04X\", ")
-    str2 = str2.replace(", HEX", "", 1)
+    str3 = str2[:str2.find(";")] # limit println and HEX search to this call
+    if (-1 != str3.find(", HEX")):
+        str2 = str2.replace(theRplc, "printf(\"%04X\", ")
+        str2 = str2.replace(", HEX", "", 1)
+    else:
+        str2 = str2.replace(theRplc, "printf(\"%d\", ")
+    if -1 != str3.find("println"):
+        str2 = str2.replace(");", "); printf(\"\\n\");", 1)
     return str1 + str2
 
 
