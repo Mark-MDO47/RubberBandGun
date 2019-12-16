@@ -80,8 +80,8 @@ static uint8_t gHue = 0; // rotating "base color" used by Demo Reel 100
 CRGBPalette16 gPal; // palette for Fire2012WithPalette()
 static uint16_t gSeed = ((uint16_t) 42); // my favorite is 47 but the whole world loves 42 and HHG2TG
 #if FASTLED_FIRE_PATTERN // only used for Fire pattern
-CRGB dark_color_palette[NUM_ARDUINOS]  = { CRGB::DarkGreen, CRGB::Red,    CRGB::Blue, CRGB::DarkOrange };
-CRGB light_color_palette[NUM_ARDUINOS] = { CRGB::LimeGreen, CRGB::Yellow, CRGB::Aqua, CRGB::Gold };
+CRGB dark_color_palette[1]  = { CRGB::DarkGreen, CRGB::Red,    CRGB::Blue, CRGB::DarkOrange };
+CRGB light_color_palette[1] = { CRGB::LimeGreen, CRGB::Yellow, CRGB::Aqua, CRGB::Gold };
 #endif // FASTLED_FIRE_PATTERN
 static uint16_t nowVinputRBG; // latest button inputs, to compare with previous in myState
 
@@ -101,7 +101,7 @@ void setup() {
     ; // wait for serial port to connect. Needed for native USB port only
   }
   Serial.println();
-  Serial.println(F("FOOF SciFi RBG init..."));
+  Serial.println(F("FOOF SciFi RBG init...")); 
 
   mySoftwareSerial.begin(9600); // this is control to DFPlayer audio player
 
@@ -236,13 +236,14 @@ uint16_t processStateTable(uint16_t tmpVinputRBG) {
       myState.tableRowInProcFlags = 0;
     }
   }
-} // end process state table
+  return(tmpVinputRBG);
+} // end processStateTable()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RBG_startRow() - start processing a row in myStateTable
 //    myState.tableRowInProcFlags should be zero to call this
 // returns a tableRowInProcFlags bitmask
-uint8_t RBG_startRow() {
+uint16_t RBG_startRow() {
   static uint8_t debugThisManyCalls = 10;
   RBGStateTable * thisRowPtr = &myStateTable[myState.tableRow];
   uint16_t thisSound = 0;
@@ -262,17 +263,16 @@ uint8_t RBG_startRow() {
     if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
     thisSound = thisRowPtr->efctSound;
     if (mNONE == thisRowPtr->SPECIAL) { // not a SPECIAL function row
-      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
+      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" play sound ")); Serial.println((uint16_t) thisSound); }
       thisReturn |= RBG_startEffectSound((uint16_t) (thisSound));
       thisLED = thisRowPtr->efctLED;
-      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
       if (mNONE != thisLED) {
-        if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
+        if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" LED ptrn ")); Serial.println((uint16_t) thisLED); }
         if (debugThisManyCalls > 0) { Serial.println(F(" RBG_startRow FIXME LEDS to efctLED")); }
         myState.timerLed = millis() + deltaMsLED;
       }  // end if should switch to other LED pattern
     } else {
-      // FIXME NEED CODE FOR SPECIALS
+      // FIXME NEED CODE FOR SPECIALS - maybe don't need it
     }
     if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); }
     if (mNONE == thisReturn) { // if we still don't have anything to do, just jump
@@ -336,11 +336,12 @@ uint16_t RBG_waitForInput(uint16_t tmpVinputRBG) {
 
     if (0 != (thisRowPtr->inputRBG&mBLOCKEND)) {
       // this is a normal way to end - found the mBLOCKEND but did not find input
-      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ")); Serial.print((uint16_t) __LINE__); }
+      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ")); Serial.println((uint16_t) __LINE__); }
       // now we just check if we are doing a special effect like mSPCL_EFCT_CONTINUOUS
       thisRowPtr = &myStateTable[myState.tableRow]; // set this back to start of block
       if ((0 != (mSPCL_EFCT_CONTINUOUS & thisRowPtr->SPECIAL)) && (0 == (mVINP_SOUNDACTV & tmpVinputRBG))) {
         // want continuous sound and sound is not active so restart it
+        Serial.print(F(" RBG_waitForInput ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" play sound ")); Serial.println((uint16_t) thisRowPtr->efctSound);
         RBG_startEffectSound((uint16_t) (thisRowPtr->efctSound));
       }
       break;
@@ -349,7 +350,7 @@ uint16_t RBG_waitForInput(uint16_t tmpVinputRBG) {
   } // end while searching for mBLOCKEND
     
   if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" thisReturn ")); Serial.println(thisReturn); }
-  if (debugThisManyCalls > 0) { debugThisManyCalls -= 1; }
+  if (/* FIXME debugThisManyCalls */ 0 > 0) { debugThisManyCalls -= 1; }
   return thisReturn; // input did not happen
 } // end RBG_waitForInput()
 
@@ -677,6 +678,7 @@ uint8_t eeprom_calc_inverted_checksum() {
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
+// printAllMyState() - print the important states
 void printAllMyState() {
   Serial.println(F("DEBUG - myState:"));
   Serial.print(F("  - tableRow: "));
@@ -688,6 +690,7 @@ void printAllMyState() {
 } // end printAllMyState()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
+// printAllMyInputs() - interpret the input bits
 void printAllMyInputs() {
   Serial.println(F("DEBUG - printAllMyInputs:"));
   printOneInput(DPIN_BTN_TRIGGER, "DPIN_BTN_TRIGGER ");
@@ -700,6 +703,7 @@ void printAllMyInputs() {
 } // end printAllMyInputs()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
+// printOneInput() - interpret one input bit
 void printOneInput(uint8_t dpin, const char * dtext) {
   Serial.print(dtext);
   if (LOW == digitalRead(dpin)) {
@@ -707,4 +711,4 @@ void printOneInput(uint8_t dpin, const char * dtext) {
   } else {
     Serial.println("HIGH");
   }
-}
+} // end printOneInput()
