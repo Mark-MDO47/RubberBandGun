@@ -189,6 +189,7 @@ uint16_t processStateTable(uint16_t tmpVinputRBG) {
   static uint8_t countBadStatePrint = 6;
   static uint8_t countGoodStatePrint = 6;
   static uint8_t countGoodInputPrint = 6;
+  uint16_t myGoTo = 0;
   uint16_t foundInput = 0; // return from RBG_waitForInput
 
 
@@ -204,7 +205,20 @@ uint16_t processStateTable(uint16_t tmpVinputRBG) {
         (myStateTable[myState.tableRow].gotoWithoutInput != mNONE)) {
       // sound completed and we have a place to go
       myState.tableRowInProcFlags = 0; // can only have one WAITFOR or the other
-      myState.tableRow = myStateTable[myState.tableRow].gotoWithoutInput;
+      myGoTo = myStateTable[myState.tableRow].gotoWithoutInput;
+      if ((0 == (mSPCL_EFCT_CONTINUOUS & myStateTable[myState.tableRow].SPECIAL)) && (mNONE != myGoTo)) {
+        myState.tableRow = myGoTo; // gotoWithoutInput
+        if (countGoodStatePrint > 0) {
+          Serial.print(F("DEBUG processStateTable() - after mINPROCFLG_WAITFORSOUND - gotoWithoutInput row "));
+          Serial.println(myGoTo);
+        }
+      } else {
+        if (countGoodStatePrint > 0) {
+          myStateTable[myState.tableRow].SPECIAL |= RBG_startEffectSound(myStateTable[myState.tableRow].efctSound);
+          Serial.print(F("DEBUG processStateTable() - after mINPROCFLG_WAITFORSOUND - restart sound "));
+          Serial.println(myGoTo);
+        }
+      }
       if (countGoodStatePrint > 0) {
         Serial.println(F("DEBUG processStateTable() - after mINPROCFLG_WAITFORSOUND"));
         printAllMyState(); Serial.print(F("DEBUG processStateTable() - tmpVinputRBG 0x")); Serial.println(tmpVinputRBG, HEX);
@@ -408,6 +422,7 @@ uint16_t  RBG_startEffectSound(uint16_t tmpEfctSound) {
   uint16_t thisReturn = 0;
 
   if (mNONE != tmpEfctSound) {
+    Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__);  Serial.print(F(" EFCT num ")); Serial.println(tmpEfctSound); 
     if (EFCT_IS_EEP(tmpEfctSound)) {
       // configurable sound using EEPROM
       myDFPlayer.playMp3Folder(tmpEfctSound + EEPROM.read(EEPOFFSET(tmpEfctSound))); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999)
@@ -704,6 +719,7 @@ void printAllMyInputs() {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // printOneInput() - interpret one input bit
+//   dtext will line up the LOW and HIGH
 void printOneInput(uint8_t dpin, const char * dtext) {
   Serial.print(dtext);
   if (LOW == digitalRead(dpin)) {
