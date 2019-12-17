@@ -276,7 +276,7 @@ uint16_t RBG_startRow() {
     // not waiting for input
     if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.println((uint16_t) __LINE__); }
     thisSound = thisRowPtr->efctSound;
-    if (mNONE == thisRowPtr->SPECIAL) { // not a SPECIAL function row
+    if ((mNONE == thisRowPtr->SPECIAL) || (0 != (thisRowPtr->SPECIAL & mSPCL_EFCT_CONTINUOUS))) { // not a SPECIAL function row or CONTINOUS sound
       if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" play sound ")); Serial.println((uint16_t) thisSound); }
       thisReturn |= RBG_startEffectSound((uint16_t) (thisSound));
       thisLED = thisRowPtr->efctLED;
@@ -285,8 +285,7 @@ uint16_t RBG_startRow() {
         if (debugThisManyCalls > 0) { Serial.println(F(" RBG_startRow FIXME LEDS to efctLED")); }
         myState.timerLed = millis() + deltaMsLED;
       }  // end if should switch to other LED pattern
-    } else {
-      // FIXME NEED CODE FOR SPECIALS - maybe don't need it
+      // FIXME MAYBE NEED MORE CODE FOR SPECIALS - maybe don't need it
     }
     if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.println((uint16_t) __LINE__); }
     if (mNONE == thisReturn) { // if we still don't have anything to do, just jump
