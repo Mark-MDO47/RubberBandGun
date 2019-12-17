@@ -295,6 +295,18 @@ uint16_t RBG_startRow() {
     } // end if do the jump next time
   } else { // there is input to wait for, perhaps a block
     if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.println((uint16_t) __LINE__); }
+    if (0 != (thisRowPtr->SPECIAL & mSPCL_EFCT_CONTINUOUS)) { // CONTINOUS sound
+      thisSound = thisRowPtr->efctSound;
+      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" play sound ")); Serial.println((uint16_t) thisSound); }
+      thisReturn |= RBG_startEffectSound((uint16_t) (thisSound));
+      thisLED = thisRowPtr->efctLED;
+      if (mNONE != thisLED) {
+        if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" LED ptrn ")); Serial.println((uint16_t) thisLED); }
+        if (debugThisManyCalls > 0) { Serial.println(F(" RBG_startRow FIXME LEDS to efctLED")); }
+        myState.timerLed = millis() + deltaMsLED;
+      }  // end if should switch to other LED pattern
+    } // end if CONTINOUS sound
+      // FIXME MAYBE NEED MORE CODE FOR SPECIALS - maybe don't need it
     thisReturn = mINPROCFLG_WAITFORINPUT; // start the new state, RBG_waitForInput() will handle it
   } // end if there is input to wait for
   if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.println((uint16_t) __LINE__); }
