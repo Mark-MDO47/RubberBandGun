@@ -9,7 +9,72 @@
 import copy
 import sys
 
-# README these just make it easier on Microsoft Visual Studio Community Edition 2019
+myFirstInclude = """
+// DebugRBG01.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
+
+#include <iostream>
+
+"""
+# this is the main routine in Microsoft Visual Studio Community Edition 2019
+myMain = """
+int main()
+{
+    uint16_t nowVinputRBG;
+    static struct {
+        uint16_t input;
+        const char* str;
+    } myInputs[] = { 
+        mVINP_LOCK,                " // mVINP_LOCK row 0 start",
+        mVINP_LOCK|mVINP_SOUNDACTV, " // mVINP_LOCK|mVINP_SOUNDACTV row 0 FOOF RBG Gun 1.0",
+        mVINP_LOCK,                " // mVINP_LOCK row 0 end of FOOF, go to row 1",
+        mVINP_LOCK | mVINP_SOUNDACTV, " // mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " // mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK,                  " // mVINP_LOCK row 1 restart sound",
+        mVINP_LOCK | mVINP_SOUNDACTV, " // mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_OPEN | mVINP_SOUNDACTV, " // mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active but barrel opens",
+        mVINP_OPEN, " // mVINP_OPEN barrel open sound no longer active",
+        mVINP_OPEN | mVINP_SOUNDACTV, " // mVINP_OPEN|mVINP_SOUNDACTV barrel open sound active again " };
+
+    std::cout << "Hello World!\n";
+    myState.tableRow = 0;
+    myState.VinputRBG = 0x0;
+    for (int idx = 0; idx < NUMOF(myInputs); idx++) {
+        printf("\n$$$$ VS DEBUGGING idx %d value 0x%04X %s $$$$\n", idx, myInputs[idx].input, myInputs[idx].str);
+        myState.timerNow = millis();
+        if (myState.VinputRBG & mVINP_LOCK) {
+            //Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); Serial.print(F(" myState.VinputRBG 0x")); Serial.print(myState.VinputRBG, HEX);
+            myState.VinputRBG |= mVINP_PREVLOCK; // set the bit
+            //Serial.print(F(" AFTER myState.VinputRBG 0x")); Serial.println(myState.VinputRBG, HEX);
+        }
+        else {
+            //Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); Serial.print(F(" myState.VinputRBG 0x")); Serial.print(myState.VinputRBG, HEX);
+            myState.VinputRBG &= ((uint16_t)~(mVINP_PREVLOCK)); // clear the bit
+            //Serial.print(F(" AFTER myState.VinputRBG 0x")); Serial.println(myState.VinputRBG, HEX);
+        }
+
+        nowVinputRBG = myInputs[idx].input; // nowVinputRBG = getButtonInput();
+        nowVinputRBG = processStateTable(nowVinputRBG);
+
+        myState.VinputRBG = nowVinputRBG;
+        myState.timerPrev = myState.timerNow;
+    } // end for next input
+    printf("DONE");
+}
+
+// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
+// Debug program: F5 or Debug > Start Debugging menu
+
+// Tips for Getting Started: 
+//   1. Use the Solution Explorer window to add/manage files
+//   2. Use the Team Explorer window to connect to source control
+//   3. Use the Output window to see build output and other messages
+//   4. Use the Error List window to view errors
+//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
+//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+"""
+
+# README these just make it easier to use Microsoft Visual Studio Community Edition 2019
 myStringStandardStart = """//
 // some helpful standard definitions
 //
@@ -54,23 +119,28 @@ h_stopread_and_insert = "static RBGStateTable myStateTable"
 
 ino_routines_to_copy = ["processStateTable", "RBG_startRow", "RBG_waitForInput", "RBG_specialProcessing", "RBG_specialProcShoot", "RBG_specialProcSolenoid", "RBG_startEffectSound", "printAllMyState", "printAllMyInputs", "printOneInput"]
 
+# transmogrify the Arduino code to something that can be debugged using Microsoft Visual Studio Community Edition 2019
 def debuggable():
 
+    # this is the include of iostream
+    print(myFirstInclude)
+
+    myDebugLines = []
     # standard defs at start
-    print("%s" % myStringStandardStart)
+    myDebugLines.append("%s" % myStringStandardStart)
 
     # the *.h file is easy to process
     for fn in files_to_read_h:
         fobj = open(file_location_no_trail_slash+"\\"+fn, 'rt')
-        print("\n// following lines from %s\n" % fn)
+        myDebugLines.append("\n// following lines from %s\n" % fn)
         theLine = fobj.readline()
         while "" != theLine: # null string means EOF
             theLine = theLine.rstrip()
             if -1 != theLine.find(h_stopread_and_insert):
-                print("%s" % myStringForStateTable)
+                myDebugLines.append("%s" % myStringForStateTable)
                 break
             if (0 != len(theLine)) and (0 != theLine.find("//")): # don't copy the fluff
-                print("%s" % theLine)
+                myDebugLines.append("%s" % theLine)
             theLine = fobj.readline()
         fobj.close()
 
@@ -79,7 +149,7 @@ def debuggable():
     prototypes = []
     for fn in files_to_read_ino:
         fobj = open(file_location_no_trail_slash+"\\"+fn, 'rt')
-        print("\n// following lines from %s\n" % fn)
+        myDebugLines.append("\n// following lines from %s\n" % fn)
         theLine = fobj.readline()
         while "" != theLine: # null string means EOF
             theLine = theLine.rstrip()
@@ -89,8 +159,8 @@ def debuggable():
                         for routine in ino_routines_to_copy:
                             if 3 == theLine.find(routine):
                                 copying = routine
-                                print("\n/////////////////////////////////////////////////////////////////////////////////////////////////////////")
-                                print("%s" % theLine)
+                                myDebugLines.append("\n/////////////////////////////////////////////////////////////////////////////////////////////////////////")
+                                myDebugLines.append("%s" % theLine)
                                 break
                 else:
                     if (-1 != theLine.find(copying)) and ("{" == theLine[-1]):
@@ -115,12 +185,15 @@ def debuggable():
                             keep_checking = False
                     if ("}" == theLine[0]) and (-1 != theLine.find("end " + copying)):
                         copying = ""
-                    print("%s" % theLine)
+                    myDebugLines.append("%s" % theLine)
             theLine = fobj.readline()
     if 0 != len(prototypes):
         print("\n\n//\n// Prototypes: place at the front\n//")
         for proto in prototypes:
             print("%s" % proto)
+    for line in myDebugLines:
+        print("%s" % line)
+    print(myMain)
 
 def rplc_F(theLine, theRplc): # to handle weird Serial.printx(F("")); replaces
     tmp = theLine.find(theRplc) # where it starts
