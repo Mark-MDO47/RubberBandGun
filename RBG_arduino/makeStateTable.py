@@ -116,7 +116,7 @@ def make_state_table():
     global COLTOINDEX
 
     # Import the excel file
-    xls_file = pd.ExcelFile('./StateTable_minimal.xlsx')
+    xls_file = pd.ExcelFile(r'D:\GitHub-Mark-MDO47\RubberBandGun\RBG_arduino\StateTable_minimal.xlsx')
     df = xls_file.parse(xls_file.sheet_names[0])
 
     # map the column names to numbers; will barf if there is a problem
@@ -239,15 +239,16 @@ def make_state_table():
 
     complete_block_field()
 
-    print("typedef struct RBGStateTable_t {")
+    print("typedef struct _RBGStateTable_t {")
     for key in COLTOSTRUCT:
-        print("%s" % COLTOSTRUCT[key]
-              )
+        print("%s" % COLTOSTRUCT[key])
+    print("} RBGStateTable_t;")
+
     ### first the old way; curiously, Microsoft Visual Studio Community Edition 2019 in Console App wants the old way
     print("\n// now the old way so can debug in Microsoft Visual Studio Community Edition 2019 in Console App")
     len_statetable = len(STATETABLE)
     len_statetablekeys = len(STATETABLE[0])
-    print("static RBGStateTable myStateTable[%d] = {" % len_statetable)
+    print("static RBGStateTable_t myStateTable[%d] = {" % len_statetable)
     for idx in range(len_statetable):
         sys.stdout.write("    { /* row %d */ " % idx)
         for count, key in enumerate(STATETABLE[idx]):
@@ -256,7 +257,7 @@ def make_state_table():
     print("};")
 
     print("\n// now the new way")
-    print("static RBGStateTable myStateTable[%d] = {" % len_statetable)
+    print("static RBGStateTable_t myStateTable[%d] = {" % len_statetable)
     for idx in range(len_statetable):
         sys.stdout.write("    { /* row %d */ " % idx)
         for count, key in enumerate(STATETABLE[idx]):

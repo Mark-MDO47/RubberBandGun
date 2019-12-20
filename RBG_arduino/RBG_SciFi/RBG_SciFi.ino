@@ -62,6 +62,8 @@
 #define SERIALDEBUG 1                        // serial debugging
 #define REAL_BUTTONS 1                       // use actual buttons
 
+#define DONOTEXPLAINBITS 1                   // don't explain the bits - existing routine uses too much RAM
+
 
 SoftwareSerial mySoftwareSerial(DPIN_SWSRL_RX, DPIN_SWSRL_TX); // to talk to YX5200 audio player
 DFRobotDFPlayerMini myDFPlayer;                                // to talk to YX5200 audio player
@@ -259,7 +261,7 @@ uint16_t processStateTable(uint16_t tmpVinputRBG) {
 // returns a tableRowInProcFlags bitmask
 uint16_t RBG_startRow() {
   static uint8_t debugThisManyCalls = 10;
-  RBGStateTable * thisRowPtr = &myStateTable[myState.tableRow];
+  RBGStateTable_t * thisRowPtr = &myStateTable[myState.tableRow];
   uint16_t thisSound = 0;
   uint16_t thisLED = 0;
   uint16_t thisReturn = 0;
@@ -320,7 +322,7 @@ uint16_t RBG_startRow() {
 uint16_t RBG_waitForInput(uint16_t tmpVinputRBG) {
   static uint8_t debugThisManyCalls = 8;
   uint16_t thisReturn = mNONE; // assume no input found
-  RBGStateTable * thisRowPtr = &myStateTable[myState.tableRow];
+  RBGStateTable_t * thisRowPtr = &myStateTable[myState.tableRow];
 
   // restart the debug prints when something interesting happens
   if (tmpVinputRBG != (myState.VinputRBG & ((uint16_t) (~mVINP_PREVLOCK)))) { debugThisManyCalls = 8; }
@@ -385,7 +387,7 @@ uint16_t RBG_waitForInput(uint16_t tmpVinputRBG) {
 //
 uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpFlags) {
   uint16_t myVinputRBG = tmpVinputRBG;
-  RBGStateTable * thisRowPtr = &myStateTable[myState.tableRow];
+  RBGStateTable_t * thisRowPtr = &myStateTable[myState.tableRow];
 
   if (0 == tmpFlags) { // first time on this row
     switch ((thisRowPtr->SPECIAL & (mSPCL_HANDLER-1))) {
@@ -705,15 +707,37 @@ uint8_t eeprom_calc_inverted_checksum() {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // printAllMyState() - print the important states
+//
 void printAllMyState() {
   Serial.println(F("DEBUG - myState:"));
   Serial.print(F("  - tableRow: "));
   Serial.println((uint16_t) myState.tableRow);
   Serial.print(F("  - tableRowInProcFlags: 0x"));
   Serial.println((uint16_t) myState.tableRowInProcFlags, HEX);
+  printExplainBits(myState.tableRowInProcFlags, decodeBits_inProc, NUMOF(decodeBits_inProc));
   Serial.print(F("  - VinputRBG: 0x"));
   Serial.println((uint16_t) myState.VinputRBG, HEX);
+  printExplainBits(myState.VinputRBG, decodeBits_VinputRBG, NUMOF(decodeBits_VinputRBG));
 } // end printAllMyState()
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// printExplainBits(...) - print string explaining bits
+void printExplainBits(uint16_t myBits, decodeBits_t theDecodeTable[], uint16_t numof_Table) {
+#ifndef DONOTEXPLAINBITS // this coding takes too much space - needs re-write
+  char printAsText[260]; // more than enough for now
+  uint16_t idx;
+
+  strcpy(printAsText, "    ");
+  for (idx = 0; idx < numof_Table; idx++) {
+    if (0 != (myBits & theDecodeTable[idx].theBit)) {
+      strcat(printAsText, theDecodeTable[idx].theText);
+    }
+  } // end for
+  if (strlen(printAsText) > 5) {
+    Serial.println(printAsText);
+  }
+#endif DONOTEXPLAINBITS // this coding takes too much space - needs re-write
+} // end printExplainBits()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // printAllMyInputs() - interpret the input bits
@@ -729,10 +753,10 @@ void printAllMyInputs() {
 } // end printAllMyInputs()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// printOneInput() - interpret one input bit
+// printOneInput(...) - interpret one input bit
 //   dtext will line up the LOW and HIGH
-void printOneInput(uint8_t dpin, const char * dtext) {
-  Serial.print(dtext);
+void printOneInput(uint8_t dpin, const char * printAsText) {
+  Serial.print(printAsText);
   if (LOW == digitalRead(dpin)) {
     Serial.println("LOW");
   } else {

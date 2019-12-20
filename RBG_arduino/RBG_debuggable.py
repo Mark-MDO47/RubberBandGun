@@ -36,11 +36,11 @@ int main()
         mVINP_OPEN, " // mVINP_OPEN barrel open sound no longer active",
         mVINP_OPEN | mVINP_SOUNDACTV, " // mVINP_OPEN|mVINP_SOUNDACTV barrel open sound active again " };
 
-    std::cout << "Hello World!\n";
+    std::cout << "Hello World!\\n";
     myState.tableRow = 0;
     myState.VinputRBG = 0x0;
     for (int idx = 0; idx < NUMOF(myInputs); idx++) {
-        printf("\n$$$$ VS DEBUGGING idx %d value 0x%04X %s $$$$\n", idx, myInputs[idx].input, myInputs[idx].str);
+        printf("\\n$$$$ VS DEBUGGING idx %d value 0x%04X %s $$$$\\n", idx, myInputs[idx].input, myInputs[idx].str);
         myState.timerNow = millis();
         if (myState.VinputRBG & mVINP_LOCK) {
             //Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); Serial.print(F(" myState.VinputRBG 0x")); Serial.print(myState.VinputRBG, HEX);
@@ -96,16 +96,18 @@ void delay(uint16_t msec) {
 myStringForStateTable ="""//
 // now the old way so can debug in Microsoft Visual Studio Community Edition 2019 in Console App
 //
-static RBGStateTable myStateTable[9] = {
+static RBGStateTable_t myStateTable[11] = {
     { /* row 0 */  mBLOCKSTART|mBLOCKEND, mNONE, mEFCT_PWRON, mEFCT_PWRON, mNONE, mNONE, mNONE, mNONE, mROW_MENU, mROW_POWERON, },
-    { /* row 1 */  mBLOCKSTART|mBLOCKEND, mSPCL_EFCT_CONTINUOUS|mSPCL_HANDLER | mSPCL_HANDLER_SHOOT, mEFCT_UNIQ_WAITING, mEFCT_UNIQ_WAITING, mINP_TRIG|mINP_BNONE, mNONE, mNONE, mROW_WINDUP, mNONE, mROW_MENU, },
-    { /* row 2 */  mBLOCKSTART|mBLOCKEND, mNONE, mEFCT_OPEN_BARREL, mEFCT_OPEN_BARREL, mNONE, mNONE, mNONE, mNONE, mROW_MENU, mROW_OPNBRL, },
-    { /* row 3 */  mBLOCKSTART|mBLOCKEND, mNONE, mEFCT_LOCK_LOAD, mEFCT_LOCK_LOAD, mNONE, mNONE, mNONE, mNONE, mROW_MENU, mROW_LOKLOD, },
+    { /* row 1 */  mBLOCKSTART, mSPCL_EFCT_CONTINUOUS, mEFCT_UNIQ_WAITING, mEFCT_UNIQ_WAITING, mINP_TRIG|mINP_BNONE, mNONE, mNONE, mROW_WINDUP, mNONE, mROW_MENU, },
+    { /* row 2 */  mZERO, mSPCL_EFCT_CONTINUOUS, mEFCT_UNIQ_WAITING, mEFCT_UNIQ_WAITING, mINP_OPEN, mNONE, mNONE, mROW_OPNBRL, mNONE, mROW_MENU, },
+    { /* row 3 */  mBLOCKEND, mSPCL_EFCT_CONTINUOUS, mEFCT_UNIQ_WAITING, mEFCT_UNIQ_WAITING, mINP_LOCK, mNONE, mNONE, mROW_LOKLOD, mNONE, mROW_MENU, },
     { /* row 4 */  mBLOCKSTART|mBLOCKEND, mNONE, mNONE, mNONE, mNONE, mNONE, mNONE, mNONE, mROW_WINDUP_SOUND, mROW_WINDUP, },
     { /* row 5 */  mBLOCKSTART|mBLOCKEND, mNONE, mEFCT_WIND_UP, mEFCT_WIND_UP, mNONE, mNONE, mNONE, mNONE, mROW_SHOOT, mROW_WINDUP_SOUND, },
-    { /* row 6 */  mBLOCKSTART|mBLOCKEND, mSPCL_HANDLER | mSPCL_HANDLER_SHOOT, mNONE, mNONE, mNONE, mNONE, mNONE, mNONE, mROW_SHOOT_SOUND, mROW_SHOOT, },
-    { /* row 7 */  mBLOCKSTART|mBLOCKEND, mNONE, mEFCT_SHOOT, mEFCT_SHOOT, mNONE, mNONE, mNONE, mNONE, mROW_SOLENOID, mROW_SHOOT_SOUND, },
-    { /* row 8 */  mBLOCKSTART|mBLOCKEND, mSPCL_HANDLER | mSPCL_HANDLER_SOLENOID, mNONE, mNONE, mNONE, mNONE, mNONE, mNONE, mROW_MENU, mROW_SOLENOID, },
+    { /* row 6 */  mBLOCKSTART|mBLOCKEND, mNONE, mEFCT_OPEN_BARREL, mEFCT_OPEN_BARREL, mNONE, mNONE, mNONE, mNONE, mROW_MENU, mROW_OPNBRL, },
+    { /* row 7 */  mBLOCKSTART|mBLOCKEND, mNONE, mEFCT_LOCK_LOAD, mEFCT_LOCK_LOAD, mNONE, mNONE, mNONE, mNONE, mROW_MENU, mROW_LOKLOD, },
+    { /* row 8 */  mBLOCKSTART|mBLOCKEND, mSPCL_HANDLER | mSPCL_HANDLER_SHOOT, mNONE, mNONE, mNONE, mNONE, mNONE, mNONE, mROW_SHOOT_SOUND, mROW_SHOOT, },
+    { /* row 9 */  mBLOCKSTART|mBLOCKEND, mNONE, mEFCT_SHOOT, mEFCT_SHOOT, mNONE, mNONE, mNONE, mNONE, mROW_SOLENOID, mROW_SHOOT_SOUND, },
+    { /* row 10 */  mBLOCKSTART|mBLOCKEND, mSPCL_HANDLER | mSPCL_HANDLER_SOLENOID, mNONE, mNONE, mNONE, mNONE, mNONE, mNONE, mROW_MENU, mROW_SOLENOID, },
 };
 """
 
@@ -115,9 +117,9 @@ file_location_no_trail_slash = r'D:\GitHub-Mark-MDO47\RubberBandGun\RBG_arduino\
 files_to_read_h = ["RBG_SciFi_StatesAndInputs.h"]
 files_to_read_ino = ["RBG_SciFi.ino"]
 
-h_stopread_and_insert = "static RBGStateTable myStateTable"
+h_stopread_and_insert = "static RBGStateTable_t myStateTable"
 
-ino_routines_to_copy = ["processStateTable", "RBG_startRow", "RBG_waitForInput", "RBG_specialProcessing", "RBG_specialProcShoot", "RBG_specialProcSolenoid", "RBG_startEffectSound", "printAllMyState", "printAllMyInputs", "printOneInput"]
+ino_routines_to_copy = ["processStateTable", "RBG_startRow", "RBG_waitForInput", "RBG_specialProcessing", "RBG_specialProcShoot", "RBG_specialProcSolenoid", "RBG_startEffectSound", "printAllMyState", "printExplainBits", "printAllMyInputs", "printOneInput"]
 
 # transmogrify the Arduino code to something that can be debugged using Microsoft Visual Studio Community Edition 2019
 def debuggable():
@@ -152,7 +154,9 @@ def debuggable():
         myDebugLines.append("\n// following lines from %s\n" % fn)
         theLine = fobj.readline()
         while "" != theLine: # null string means EOF
-            theLine = theLine.rstrip()
+            theLine = prepare(theLine)
+            theLine = theLine.replace("strcpy(printAsText,", "strcpy_s(printAsText, NUMOF(printAsText),")
+            theLine = theLine.replace("strcat(printAsText,", "strcat_s(printAsText, NUMOF(printAsText),")
             if (0 != len(theLine)): # don't copy the fluff
                 if 0 == len(copying): # need to look for copying start
                     if ("// " == theLine[0:3]):
@@ -171,6 +175,10 @@ def debuggable():
                             theLine = rplc_F(theLine, "Serial.println(F(")
                         elif -1 != theLine.find("Serial.print(F("):
                             theLine = rplc_F(theLine, "Serial.print(F(")
+                        elif (-1 != theLine.find("Serial.println(printAsText")):
+                            theLine = theLine.replace("Serial.println(printAsText", "printf(\"%s\\n\", printAsText")
+                        elif (-1 != theLine.find("Serial.print(printAsText")):
+                            theLine = theLine.replace("Serial.print(printAsText", "printf(\"%s\", printAsText")
                         elif -1 != theLine.find("Serial.println(\""):
                             theLine = rplc_no_F(theLine, "Serial.println(\"")
                         elif -1 != theLine.find("Serial.print(\""):
@@ -230,6 +238,18 @@ def rplc_normal(theLine, theRplc): # to handle normal Serial.printx(); replaces
         str2 = str2.replace(");", "); printf(\"\\n\");", 1)
     return str1 + str2
 
+def prepare(theLine):
+    myLine = theLine # what's my line :^)
+    myLine = myLine.rstrip()
+    """
+    theSplit = myLine.split("\n")
+    myLine = ""
+    for idx, mySplit in enumerate(theSplit):
+        myLine += mySplit
+        if (idx+1) != len(theSplit):
+            myLine += "\\n"
+    """
+    return myLine
 
 if __name__ == "__main__":
     debuggable()
