@@ -16,6 +16,23 @@ myFirstInclude = """
 #include <iostream>
 
 """
+
+# some other inputs for testing
+"""
+} myInputs[] = { // for open barrel
+mVINP_LOCK, " // mVINP_LOCK row 0 start",
+mVINP_LOCK | mVINP_SOUNDACTV, " // mVINP_LOCK|mVINP_SOUNDACTV row 0 FOOF RBG Gun 1.0",
+mVINP_LOCK, " // mVINP_LOCK row 0 end of FOOF, go to row 1",
+mVINP_LOCK | mVINP_SOUNDACTV, " // mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+mVINP_LOCK | mVINP_SOUNDACTV, " // mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+mVINP_LOCK, " // mVINP_LOCK row 1 restart sound",
+mVINP_LOCK | mVINP_SOUNDACTV, " // mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+mVINP_OPEN | mVINP_SOUNDACTV, " // mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active but barrel opens",
+mVINP_OPEN, " // mVINP_OPEN barrel open sound no longer active",
+mVINP_OPEN | mVINP_SOUNDACTV, " // mVINP_OPEN|mVINP_SOUNDACTV barrel open sound active again "
+}; // myInputs for open barrel
+"""
+
 # this is the main routine in Microsoft Visual Studio Community Edition 2019
 myMain = """
 int main()
@@ -24,17 +41,22 @@ int main()
     static struct {
         uint16_t input;
         const char* str;
-    } myInputs[] = { 
-        mVINP_LOCK,                " // mVINP_LOCK row 0 start",
-        mVINP_LOCK|mVINP_SOUNDACTV, " // mVINP_LOCK|mVINP_SOUNDACTV row 0 FOOF RBG Gun 1.0",
-        mVINP_LOCK,                " // mVINP_LOCK row 0 end of FOOF, go to row 1",
-        mVINP_LOCK | mVINP_SOUNDACTV, " // mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
-        mVINP_LOCK | mVINP_SOUNDACTV, " // mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
-        mVINP_LOCK,                  " // mVINP_LOCK row 1 restart sound",
-        mVINP_LOCK | mVINP_SOUNDACTV, " // mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
-        mVINP_OPEN | mVINP_SOUNDACTV, " // mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active but barrel opens",
-        mVINP_OPEN, " // mVINP_OPEN barrel open sound no longer active",
-        mVINP_OPEN | mVINP_SOUNDACTV, " // mVINP_OPEN|mVINP_SOUNDACTV barrel open sound active again " };
+    } myInputs[] = { // for Trigger
+        mVINP_LOCK,                " mVINP_LOCK row 0 start",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 0 FOOF RBG Gun 1.0",
+        mVINP_LOCK,                " mVINP_LOCK row 0 end of FOOF, go to row 1",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK,                  " mVINP_LOCK row 1 restart sound",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK | mINP_TRIG | mVINP_SOUNDACTV, " mVINP_LOCK|mINP_TRIG|mVINP_SOUNDACTV row 1 waiting sound active but TRIGGER",
+        mVINP_LOCK | mINP_TRIG | mVINP_SOUNDACTV, " mVINP_LOCK|mINP_TRIG|mVINP_SOUNDACTV sound no longer active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV windup sound active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV windup sound still active",
+        mVINP_LOCK, " mVINP_LOCK should switch to SHOOT",
+        mVINP_LOCK, " mVINP_LOCK should switch to SHOOT",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV should switch to SHOOT"
+    }; // myInputs for Trigger
 
     std::cout << "Hello World!\\n";
     myState.tableRow = 0;
@@ -96,18 +118,17 @@ void delay(uint16_t msec) {
 myStringForStateTable ="""//
 // now the old way so can debug in Microsoft Visual Studio Community Edition 2019 in Console App
 //
-static RBGStateTable_t myStateTable[11] = {
+static RBGStateTable_t myStateTable[10] = {
     { /* row 0 */  mBLOCKSTART|mBLOCKEND, mNONE, mEFCT_PWRON, mEFCT_PWRON, mNONE, mNONE, mNONE, mNONE, mROW_MENU, mROW_POWERON, },
-    { /* row 1 */  mBLOCKSTART, mSPCL_EFCT_CONTINUOUS, mEFCT_UNIQ_WAITING, mEFCT_UNIQ_WAITING, mINP_TRIG|mINP_BNONE, mNONE, mNONE, mROW_WINDUP, mNONE, mROW_MENU, },
+    { /* row 1 */  mBLOCKSTART, mSPCL_EFCT_CONTINUOUS, mEFCT_UNIQ_WAITING, mEFCT_UNIQ_WAITING, mINP_TRIG|mINP_BNONE, mNONE, mNONE, mROW_WINDUP_SOUND, mNONE, mROW_MENU, },
     { /* row 2 */  mZERO, mSPCL_EFCT_CONTINUOUS, mEFCT_UNIQ_WAITING, mEFCT_UNIQ_WAITING, mINP_OPEN, mNONE, mNONE, mROW_OPNBRL, mNONE, mROW_MENU, },
     { /* row 3 */  mBLOCKEND, mSPCL_EFCT_CONTINUOUS, mEFCT_UNIQ_WAITING, mEFCT_UNIQ_WAITING, mINP_LOCK, mNONE, mNONE, mROW_LOKLOD, mNONE, mROW_MENU, },
-    { /* row 4 */  mBLOCKSTART|mBLOCKEND, mNONE, mNONE, mNONE, mNONE, mNONE, mNONE, mNONE, mROW_WINDUP_SOUND, mROW_WINDUP, },
-    { /* row 5 */  mBLOCKSTART|mBLOCKEND, mNONE, mEFCT_WIND_UP, mEFCT_WIND_UP, mNONE, mNONE, mNONE, mNONE, mROW_SHOOT, mROW_WINDUP_SOUND, },
-    { /* row 6 */  mBLOCKSTART|mBLOCKEND, mNONE, mEFCT_OPEN_BARREL, mEFCT_OPEN_BARREL, mNONE, mNONE, mNONE, mNONE, mROW_MENU, mROW_OPNBRL, },
-    { /* row 7 */  mBLOCKSTART|mBLOCKEND, mNONE, mEFCT_LOCK_LOAD, mEFCT_LOCK_LOAD, mNONE, mNONE, mNONE, mNONE, mROW_MENU, mROW_LOKLOD, },
-    { /* row 8 */  mBLOCKSTART|mBLOCKEND, mSPCL_HANDLER | mSPCL_HANDLER_SHOOT, mNONE, mNONE, mNONE, mNONE, mNONE, mNONE, mROW_SHOOT_SOUND, mROW_SHOOT, },
-    { /* row 9 */  mBLOCKSTART|mBLOCKEND, mNONE, mEFCT_SHOOT, mEFCT_SHOOT, mNONE, mNONE, mNONE, mNONE, mROW_SOLENOID, mROW_SHOOT_SOUND, },
-    { /* row 10 */  mBLOCKSTART|mBLOCKEND, mSPCL_HANDLER | mSPCL_HANDLER_SOLENOID, mNONE, mNONE, mNONE, mNONE, mNONE, mNONE, mROW_MENU, mROW_SOLENOID, },
+    { /* row 4 */  mBLOCKSTART|mBLOCKEND, mNONE, mEFCT_WIND_UP, mEFCT_WIND_UP, mNONE, mNONE, mNONE, mNONE, mROW_SHOOT, mROW_WINDUP_SOUND, },
+    { /* row 5 */  mBLOCKSTART|mBLOCKEND, mNONE, mEFCT_OPEN_BARREL, mEFCT_OPEN_BARREL, mNONE, mNONE, mNONE, mNONE, mROW_MENU, mROW_OPNBRL, },
+    { /* row 6 */  mBLOCKSTART|mBLOCKEND, mNONE, mEFCT_LOCK_LOAD, mEFCT_LOCK_LOAD, mNONE, mNONE, mNONE, mNONE, mROW_MENU, mROW_LOKLOD, },
+    { /* row 7 */  mBLOCKSTART|mBLOCKEND, mSPCL_HANDLER | mSPCL_HANDLER_SHOOT, mNONE, mNONE, mNONE, mNONE, mNONE, mNONE, mROW_SHOOT_SOUND, mROW_SHOOT, },
+    { /* row 8 */  mBLOCKSTART|mBLOCKEND, mNONE, mEFCT_SHOOT, mEFCT_SHOOT, mNONE, mNONE, mNONE, mNONE, mROW_SOLENOID, mROW_SHOOT_SOUND, },
+    { /* row 9 */  mBLOCKSTART|mBLOCKEND, mSPCL_HANDLER | mSPCL_HANDLER_SOLENOID, mNONE, mNONE, mNONE, mNONE, mNONE, mNONE, mROW_MENU, mROW_SOLENOID, },
 };
 """
 

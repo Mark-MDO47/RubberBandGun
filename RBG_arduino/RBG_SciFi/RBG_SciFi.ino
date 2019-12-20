@@ -274,7 +274,17 @@ uint16_t RBG_startRow() {
     prev_row = myState.tableRow;
     prev_tableRowInProcFlags = myState.tableRowInProcFlags;
   } // end if more debugging is useful
-  if (mNONE == thisRowPtr->gotoOnInput) {
+  if ((mNONE != thisRowPtr->SPECIAL) && (0 != (thisRowPtr->SPECIAL & mSPCL_HANDLER))) { // special handler
+      thisSound = thisRowPtr->efctSound;
+      RBG_startEffectSound((uint16_t) (thisSound));
+      thisReturn = mINPROCFLG_SPCL_IN_PROC;
+      thisLED = thisRowPtr->efctLED;
+      if (mNONE != thisLED) {
+        if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" LED ptrn ")); Serial.println((uint16_t) thisLED); }
+        if (debugThisManyCalls > 0) { Serial.println(F(" RBG_startRow FIXME LEDS to efctLED")); }
+        myState.timerLed = millis() + deltaMsLED;
+      }  // end if should switch to other LED pattern
+  } else if (mNONE == thisRowPtr->gotoOnInput) { // no inputs to wait for
     // not waiting for input
     if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.println((uint16_t) __LINE__); }
     thisSound = thisRowPtr->efctSound;
