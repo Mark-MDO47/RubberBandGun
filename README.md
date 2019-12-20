@@ -1,7 +1,9 @@
 # RubberBandGun
 A high-tech imagining of the rubber band gun
 
-![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/RubberBandGun_small.png "Crude model of Science Fiction Rubber Band Gun")
+![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/mockup.png "Mockup of Science Fiction Rubber Band Gun without LED rings")
+![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/Handle_640_646.png "Handle of Science Fiction Rubber Band Gun")
+
 
 Jim and I are working on a Science-Fiction Rubber Band Gun!
 
