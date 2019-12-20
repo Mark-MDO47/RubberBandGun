@@ -113,9 +113,7 @@
 #define EFCT_IS_EEP(parm) (0 == ((uint16_t) parm) % 10) // if (EFCT_IS_EEP(mEFCT_PWRON)) will be true
 
 
-typedef struct _decodeBits_t {
-  uint16_t theBit; const char * theText;
-} decodeBits_t;
+typedef struct _decodeBits_t { uint16_t theBit; const char * theText; } decodeBits_t;
 
 // masks for input detections: button, trigger, sound module, and barrel states and state changes
 //   used (only) in .inputRBG in myStateTable and in code to examine that

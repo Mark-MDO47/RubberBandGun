@@ -118,6 +118,8 @@ files_to_read_h = ["RBG_SciFi_StatesAndInputs.h"]
 files_to_read_ino = ["RBG_SciFi.ino"]
 
 h_stopread_and_insert = "static RBGStateTable_t myStateTable"
+h_typedefs_for_prototypes = ["typedef struct _decodeBits_t"] # we expect these typedefs to be all on one line
+print_typedefs_for_prototypes = []
 
 ino_routines_to_copy = ["processStateTable", "RBG_startRow", "RBG_waitForInput", "RBG_specialProcessing", "RBG_specialProcShoot", "RBG_specialProcSolenoid", "RBG_startEffectSound", "printAllMyState", "printExplainBits", "printAllMyInputs", "printOneInput"]
 
@@ -141,6 +143,10 @@ def debuggable():
             if -1 != theLine.find(h_stopread_and_insert):
                 myDebugLines.append("%s" % myStringForStateTable)
                 break
+            for myTypedef in h_typedefs_for_prototypes: # save the single-line typedefs needed for the function prototypes
+                if -1 != theLine.find(myTypedef):
+                    print_typedefs_for_prototypes.append(theLine)
+                    theLine = ""
             if (0 != len(theLine)) and (0 != theLine.find("//")): # don't copy the fluff
                 myDebugLines.append("%s" % theLine)
             theLine = fobj.readline()
@@ -195,6 +201,16 @@ def debuggable():
                         copying = ""
                     myDebugLines.append("%s" % theLine)
             theLine = fobj.readline()
+
+    #
+    # Now we do all the prints
+    #   1) typedef(s) needed by prototypes
+    #   2) prototypes (Arduino auto generates these but needed for Visual Studio)
+    #   3) all the other lines collected from the Arduino *.h and *.ino files
+    #   4) our VS main() routine including the inputs to test
+    #
+    for myTypedef in print_typedefs_for_prototypes:
+        print("%s" % myTypedef)
     if 0 != len(prototypes):
         print("\n\n//\n// Prototypes: place at the front\n//")
         for proto in prototypes:
