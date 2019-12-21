@@ -263,8 +263,8 @@ def debuggable():
                             theLine = rplc_normal(theLine, "Serial.println(")
                         elif -1 != theLine.find("Serial.print("):
                             theLine = rplc_normal(theLine, "Serial.print(")
-                        elif -1 != theLine.find("myDFPlayer.playMp3Folder"):
-                            theLine = theLine.replace("myDFPlayer.playMp3Folder", "// myMdoDFPlayer.playMp3Folder")
+                        elif -1 != theLine.find("myDFPlayer."):
+                            theLine = theLine.replace("myDFPlayer.", "// myMdoDFPlayer.") # don't let this repeat forever
                         else:
                             keep_checking = False
                     if ("}" == theLine[0]) and (-1 != theLine.find("end " + copying)):

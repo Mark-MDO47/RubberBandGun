@@ -164,7 +164,7 @@ void loop() {
   if (preVinputRBG != nowVinputRBG) {
     Serial.print(F("DEBUG loop() - nowVinputRBG 0x")); Serial.print(nowVinputRBG, HEX); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
   }
-  preVinputRBG = nowVinputRBG
+  preVinputRBG = nowVinputRBG;
   nowVinputRBG = processStateTable(nowVinputRBG);
 
   checkDataGuard();
@@ -443,20 +443,37 @@ void RBG_specialProcSolenoid() {
 // RBG_startEffectSound(tmpEfctSound) - start tmpEfctSound if it is valid
 // returns a tableRowInProcFlags bitmask - zero or mINPROCFLG_WAITFORSOUND
 //   caller will determine if this flag should go into tableRowInProcFlags
+// tmpEfctSound is two fields: 0x00vv00nn where nn is sound and vv is volume
+//
 uint16_t  RBG_startEffectSound(uint16_t tmpEfctSound) {
   uint16_t thisReturn = 0;
-  uint16_t mySound = tmpEfctSound;
+  uint16_t mySound = tmpEfctSound & mMASK_EFCT_SND_NUM;
+  // uint16_t myVolume = (tmpEfctSound >> mSHIFT_EFCT_SND_VOL) & mMASK_EFCT_SND_VOL; // USE BELOW to convince MS VS 2019 we don't lose data
+  uint16_t myVolume = ((tmpEfctSound & (mMASK_EFCT_SND_VOL << mSHIFT_EFCT_SND_VOL)) >> mSHIFT_EFCT_SND_VOL) & mMASK_EFCT_SND_VOL;
 
-  if (mNONE != tmpEfctSound) {
-    if (EFCT_IS_EEP(tmpEfctSound)) {
+  // myVolume is [0-31]. 0 means not specified; else subtract one to make [0-30]
+  if (0 == myVolume) {
+    myVolume = mDEFAULT_EFCT_SND_VOL;
+  } else {
+    myVolume -= 1;
+  }
+  if (mNONE != mySound) {
+    // configurable sounds are zero mod 10; we get config from EEPROM
+    if (EFCT_IS_EEP(mySound)) {
       // configurable sound using EEPROM
       mySound += EEPROM.read(EEPOFFSET(tmpEfctSound));
     }
-    Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" EFCT num ")); Serial.print(tmpEfctSound); Serial.print(F(" final num ")); Serial.print(mySound); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
+    // if continuous sound, switch between specified num and (num+128)
+    if ((mySound & ~(mMASK_EFCT_SND_CONTINSWITCH)) == (myState.currSound & ~(mMASK_EFCT_SND_CONTINSWITCH))) {
+      mySound = myState.currSound ^ mMASK_EFCT_SND_CONTINSWITCH;
+    }
+    Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" EFCT num 0x")); Serial.print(tmpEfctSound, HEX); Serial.print(F(" final num ")); Serial.print(mySound); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
+    myDFPlayer.volume(myVolume);  // Set volume value. From 0 to 30
     myDFPlayer.playMp3Folder(mySound); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999)
+    myState.currSound = mySound; // used for continuous sound
     thisReturn |= mINPROCFLG_WAITFORSOUND;
+    delay(50); // make sure the sound starts
   } // end if should start a sound
-  delay(50); // make sure the sound starts
 
   return(thisReturn); // this is a flag that could go into tableRowInProcFlags, depending on context of caller
 } // end RBG_startEffectSound
@@ -568,7 +585,7 @@ void DFsetup() {
   }
   myDFPlayer.EQ(DFPLAYER_EQ_BASS); // our speaker is quite small
   myDFPlayer.outputDevice(DFPLAYER_DEVICE_SD); // device is SD card
-  myDFPlayer.volume(25);  // Set volume value. From 0 to 30 - FIXME 25 is good
+  myDFPlayer.volume(mDEFAULT_EFCT_SND_VOL);  // Set volume value. From 0 to 30 - FIXME 25 is good
   Serial.println(F("DFPlayer Mini online."));
 } // end DFsetup()
 

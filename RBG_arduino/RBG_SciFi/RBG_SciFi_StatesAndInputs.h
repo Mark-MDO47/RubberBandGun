@@ -70,10 +70,10 @@
 
 // define the symbols - .index: first the single constant mROW_POWERON one, then the others:
 #define mROW_POWERON 0  // first address in myState[]
-#define mROW_MENU 1
 #define mROW_WINDUP_SOUND 4
 #define mROW_OPNBRL 5
 #define mROW_LOKLOD 6
+#define mROW_MENU 1
 #define mROW_SHOOT 7
 #define mROW_SHOOT_SOUND 8
 #define mROW_SOLENOID 9
@@ -85,7 +85,13 @@
 #define mEFCT_LOCK_LOAD    30  // 031 to 039 - lock and load barrel effects
 #define mEFCT_PWRON        40  // 041 to 049 - after initial power-up effects
 #define mEFCT_CONFIGURE    80  // 081 to 099 - effects used to navigate menus
-#define mEFCT_UNIQ        100  // 101 to 109 - unique effects not included in configurations
+#define mEFCT_UNIQ        100  // 101 to 127 - unique effects not included in configurations
+
+#define mMASK_EFCT_SND_NUM 255  // mask for sound number
+#define mSHIFT_EFCT_SND_VOL 16  // shift for volume
+#define mMASK_EFCT_SND_VOL 31   // mask for volume once shifted in place
+#define mDEFAULT_EFCT_SND_VOL 25  // default volume
+#define mMASK_EFCT_SND_CONTINSWITCH 256      // if continuous sound, switch between specified num and (num+128)
 
 /////////////////// end -> INPUTS 1 FROM makeStateTable.py <- //////////////////////////////////
 
@@ -157,7 +163,6 @@ static decodeBits_t decodeBits_VinputRBG[] = {
 //   used (only) in tableRowInProcFlags
 //   NOTE: maximum of one of these bits can be set at any time
 #define mINPROCFLG_SPCL_IN_PROC     ((uint16_t)  0x200)  // Special is in process; don't process this row at this time
-#define mINPROCFLG_WAITFORALTSOUND  ((uint16_t)  0x100)  // wait for alternate continuous sound to finish
 #define mINPROCFLG_WAITFORSOUND     ((uint16_t)   0x80)  // wait for sound to finish
 #define mINPROCFLG_WAITFORINPUT     ((uint16_t)   0x40)  // wait for user input (trigger with perhaps others)
 #define mINPROCFLG_WAITFORSOLENOID  ((uint16_t)   0x20)  // wait for timeout on solenoid (special, not directly set in state table)
@@ -196,12 +201,12 @@ static pins_to_vals_t myPinsToVals[] = {
 typedef struct _RBGStateTable_t {
     uint16_t blkFlags;         // mBLOCKSTART, mBLOCKEND or mZERO
     uint16_t SPECIAL;          // special row-handling flags: mSPCL_*
-    uint16_t efctSound;  // index for sound to makeh
-    uint16_t efctLED;           // index for light pattern
+    uint16_t efctSound;        // index for sound to make | (loud << mSHIFT_EFCT_SND_VOL)
+    uint16_t efctLED;          // index for light pattern
     uint16_t inputRBG;         // mask for input expected
     uint16_t storeVal;         // value to store, 8 bit uint
     uint16_t storeAddr;        // address to store; includes mask for mFUNC, mVAL,
-                              //   eeSoundSave|mFUNC: idx= 3 WindUp, 2 Shoot, 4 Open, 7 Load
+                               //   eeSoundSave|mFUNC: idx= 3 WindUp, 2 Shoot, 4 Open, 7 Load
     uint16_t gotoOnInput;      // index within table to go with matching input
     uint16_t gotoWithoutInput; // index within table to go without waiting for input
     uint16_t index;            // input column unused in this table
@@ -212,6 +217,7 @@ static struct myState_t {
   uint16_t tableRow = 0;            // points to state that we will process or are processing
   uint16_t tableRowInProcFlags = 0; // what we are waiting on to process this state
   uint16_t VinputRBG = mVINP_PREVLOCK; // bits for input buttons and sound finish: mVINP_*
+  uint16_t currSound = 0;          // needed for continuous sound effect due to YX5200 not playing same sound twice
   uint32_t timerPrev = 0;          // timer from previous time through loop
   uint32_t timerNow = 0;           // timer from this time through loop
   uint32_t timerLed = 0;           // timer for next LED activity
