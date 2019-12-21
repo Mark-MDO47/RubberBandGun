@@ -92,8 +92,9 @@
 //
 // define the UNIQUE effects (lights and sounds) here. These cannot be configured as the other effects can.
 //
-#define mEFCT_UNIQ_WAITING 84  // FIXME 101 not this - waiting pattern: low level spooky sounds, blinky lights
-#define mEFCT_UNIQ_SILENCE 85  // FIXME 102 not this
+#define mEFCT_UNIQ_WOOWOO  101  // woowoowoo sound
+#define mEFCT_UNIQ_WAITING 102  // waiting pattern: EEEEEOOOOO low level spooky sounds, blinky lights
+#define mEFCT_UNIQ_SILENCE 103  // silence
 
 #define mBLOCKSTART 0x80
 #define mBLOCKEND   0x40
@@ -155,10 +156,11 @@ static decodeBits_t decodeBits_VinputRBG[] = {
 // masks for in-process events: wait-for-sound or wait-for-input
 //   used (only) in tableRowInProcFlags
 //   NOTE: maximum of one of these bits can be set at any time
+#define mINPROCFLG_SPCL_IN_PROC     ((uint16_t)  0x200)  // Special is in process; don't process this row at this time
+#define mINPROCFLG_WAITFORALTSOUND  ((uint16_t)  0x100)  // wait for alternate continuous sound to finish
 #define mINPROCFLG_WAITFORSOUND     ((uint16_t)   0x80)  // wait for sound to finish
 #define mINPROCFLG_WAITFORINPUT     ((uint16_t)   0x40)  // wait for user input (trigger with perhaps others)
 #define mINPROCFLG_WAITFORSOLENOID  ((uint16_t)   0x20)  // wait for timeout on solenoid (special, not directly set in state table)
-#define mINPROCFLG_SPCL_IN_PROC     ((uint16_t)  0x100)  // Special is in process; don't process this row at this time
 static decodeBits_t decodeBits_inProc[] = {
     mINPROCFLG_WAITFORSOUND, " mINPROCFLG_WAITFORSOUND wait sound finish",
     mINPROCFLG_WAITFORINPUT, " mINPROCFLG_WAITFORINPUT wait input (trigger & perhaps others)",

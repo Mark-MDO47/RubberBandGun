@@ -77,6 +77,7 @@ void DFprintDetail(uint8_t type, int value); // definition of call
 #define DFprintDetail(type, value) // nothing at all
 #endif // #if DFPRINTDETAIL
 
+static uint32_t globalLoopCount = 0;
 
 static uint8_t gHue = 0; // rotating "base color" used by Demo Reel 100
 CRGBPalette16 gPal; // palette for Fire2012WithPalette()
@@ -147,21 +148,23 @@ void setup() {
 void loop() {
 
   // put your main code here, to run repeatedly:
+
+  uint16_t preVinputRBG = 65535;
   
   gHue += 3; // rotating "base color" used by Demo Reel 100 patterns
 
   myState.timerNow = millis();
   if (myState.VinputRBG&mVINP_LOCK) {
-    //Serial.print(F(" RBG_startRow ln ")); Serial.println((uint16_t) __LINE__); Serial.print(F(" myState.VinputRBG 0x")); Serial.print(myState.VinputRBG, HEX);
     myState.VinputRBG |= mVINP_PREVLOCK; // set the bit
-    //Serial.print(F(" AFTER myState.VinputRBG 0x")); Serial.println(myState.VinputRBG, HEX);
   } else {
-    //Serial.print(F(" RBG_startRow ln ")); Serial.println((uint16_t) __LINE__); Serial.print(F(" myState.VinputRBG 0x")); Serial.print(myState.VinputRBG, HEX);
     myState.VinputRBG &= ((uint16_t) ~(mVINP_PREVLOCK)); // clear the bit
-    //Serial.print(F(" AFTER myState.VinputRBG 0x")); Serial.println(myState.VinputRBG, HEX);
   }
 
   nowVinputRBG = getButtonInput();
+  if (preVinputRBG != nowVinputRBG) {
+    Serial.print(F("DEBUG loop() - nowVinputRBG 0x")); Serial.print(nowVinputRBG, HEX); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
+  }
+  preVinputRBG = nowVinputRBG
   nowVinputRBG = processStateTable(nowVinputRBG);
 
   checkDataGuard();
@@ -177,6 +180,7 @@ void loop() {
 
   myState.VinputRBG = nowVinputRBG;
   myState.timerPrev = myState.timerNow;
+  globalLoopCount += 1;
 }  // end loop()
 
 // ******************************** STATE TABLE UTILITIES ********************************
@@ -199,7 +203,7 @@ uint16_t processStateTable(uint16_t tmpVinputRBG) {
     myState.tableRowInProcFlags = RBG_startRow(); // just do what the row says
     if (countGoodStatePrint > 0) {
       Serial.println(F("DEBUG - after RBG_startRow() call"));
-      printAllMyState(); Serial.print(F("DEBUG processStateTable() - tmpVinputRBG 0x")); Serial.println(tmpVinputRBG, HEX);
+      printAllMyState(); Serial.print(F("DEBUG processStateTable() - tmpVinputRBG 0x")); Serial.print(tmpVinputRBG, HEX);  Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
       countGoodStatePrint -= 1;
     }
   } else if (mINPROCFLG_WAITFORSOUND == myState.tableRowInProcFlags) {
@@ -211,19 +215,17 @@ uint16_t processStateTable(uint16_t tmpVinputRBG) {
       if ((0 == (mSPCL_EFCT_CONTINUOUS & myStateTable[myState.tableRow].SPECIAL)) && (mNONE != myGoTo)) {
         myState.tableRow = myGoTo; // gotoWithoutInput
         if (countGoodStatePrint > 0) {
-          Serial.print(F("DEBUG processStateTable() - after mINPROCFLG_WAITFORSOUND - gotoWithoutInput row "));
-          Serial.println(myGoTo);
+          Serial.print(F("DEBUG processStateTable() - after mINPROCFLG_WAITFORSOUND - gotoWithoutInput row ")); Serial.print(myGoTo);  Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
         }
       } else {
         if (countGoodStatePrint > 0) {
           myStateTable[myState.tableRow].SPECIAL |= RBG_startEffectSound(myStateTable[myState.tableRow].efctSound);
-          Serial.print(F("DEBUG processStateTable() - after mINPROCFLG_WAITFORSOUND - restart sound "));
-          Serial.println(myGoTo);
+          Serial.print(F("DEBUG processStateTable() - after mINPROCFLG_WAITFORSOUND - restart sound ")); Serial.print(myGoTo);  Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
         }
       }
       if (countGoodStatePrint > 0) {
         Serial.println(F("DEBUG processStateTable() - after mINPROCFLG_WAITFORSOUND"));
-        printAllMyState(); Serial.print(F("DEBUG processStateTable() - tmpVinputRBG 0x")); Serial.println(tmpVinputRBG, HEX);
+        printAllMyState(); Serial.print(F("DEBUG processStateTable() - tmpVinputRBG 0x")); Serial.print(tmpVinputRBG, HEX);  Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
         countGoodStatePrint -= 1;
       }
     } // else we the sound did not end with a place to go
@@ -235,7 +237,7 @@ uint16_t processStateTable(uint16_t tmpVinputRBG) {
       myState.tableRow = foundInput;
       if (countGoodInputPrint > 0) {
         Serial.println(F("DEBUG processStateTable() - after RBG_waitForInput() call"));
-        printAllMyState(); Serial.print(F("DEBUG - tmpVinputRBG 0x")); Serial.print(tmpVinputRBG, HEX); Serial.print(F(" foundInput 0x")); Serial.println(foundInput, HEX);
+        printAllMyState(); Serial.print(F("DEBUG - tmpVinputRBG 0x")); Serial.print(tmpVinputRBG, HEX); Serial.print(F(" foundInput 0x")); Serial.print(foundInput, HEX);  Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
         countGoodInputPrint -= 1;
       }
     } // end if found input
@@ -245,7 +247,7 @@ uint16_t processStateTable(uint16_t tmpVinputRBG) {
   } else {
     if (countBadStatePrint > 0) {
       Serial.println(F("ERROR processStateTable() - unknown tableRowInProcFlags value"));
-      printAllMyState(); Serial.print(F("DEBUG - tmpVinputRBG 0x")); Serial.println(tmpVinputRBG, HEX);
+      printAllMyState(); Serial.print(F("DEBUG - tmpVinputRBG 0x")); Serial.print(tmpVinputRBG, HEX);  Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
       myState.tableRowInProcFlags = 0;
       countBadStatePrint -= 1;
     } else {
@@ -270,7 +272,7 @@ uint16_t RBG_startRow() {
 
   if ((prev_row != myState.tableRow) || (prev_tableRowInProcFlags != myState.tableRowInProcFlags)) {
     debugThisManyCalls = 10;
-    if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" from row ")); Serial.print((uint16_t) prev_row); Serial.print(F(" to row ")); Serial.println((uint16_t) myState.tableRow); }
+    if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" from row ")); Serial.print((uint16_t) prev_row); Serial.print(F(" to row ")); Serial.print((uint16_t) myState.tableRow); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
     prev_row = myState.tableRow;
     prev_tableRowInProcFlags = myState.tableRowInProcFlags;
   } // end if more debugging is useful
@@ -280,7 +282,7 @@ uint16_t RBG_startRow() {
       thisReturn = mINPROCFLG_SPCL_IN_PROC;
       thisLED = thisRowPtr->efctLED;
       if (mNONE != thisLED) {
-        if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" LED ptrn ")); Serial.println((uint16_t) thisLED); }
+        if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" LED ptrn ")); Serial.print((uint16_t) thisLED); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
         if (debugThisManyCalls > 0) { Serial.println(F(" RBG_startRow FIXME LEDS to efctLED")); }
         myState.timerLed = millis() + deltaMsLED;
       }  // end if should switch to other LED pattern
@@ -289,31 +291,31 @@ uint16_t RBG_startRow() {
     if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.println((uint16_t) __LINE__); }
     thisSound = thisRowPtr->efctSound;
     if ((mNONE == thisRowPtr->SPECIAL) || (0 != (thisRowPtr->SPECIAL & mSPCL_EFCT_CONTINUOUS))) { // not a SPECIAL function row or CONTINOUS sound
-      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" play sound ")); Serial.println((uint16_t) thisSound); }
+      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" play sound ")); Serial.print((uint16_t) thisSound); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
       thisReturn |= RBG_startEffectSound((uint16_t) (thisSound));
       thisLED = thisRowPtr->efctLED;
       if (mNONE != thisLED) {
-        if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" LED ptrn ")); Serial.println((uint16_t) thisLED); }
+        if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" LED ptrn ")); Serial.print((uint16_t) thisLED); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
         if (debugThisManyCalls > 0) { Serial.println(F(" RBG_startRow FIXME LEDS to efctLED")); }
         myState.timerLed = millis() + deltaMsLED;
       }  // end if should switch to other LED pattern
       // FIXME MAYBE NEED MORE CODE FOR SPECIALS - maybe don't need it
     }
-    if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.println((uint16_t) __LINE__); }
+    if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
     if (mNONE == thisReturn) { // if we still don't have anything to do, just jump
-      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.println((uint16_t) __LINE__); }
+      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
       myState.tableRow = thisRowPtr->gotoWithoutInput; // we will go next time.
       // thisReturn is already mNONE
     } // end if do the jump next time
   } else { // there is input to wait for, perhaps a block
-    if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.println((uint16_t) __LINE__); }
+    if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
     if (0 != (thisRowPtr->SPECIAL & mSPCL_EFCT_CONTINUOUS)) { // CONTINOUS sound
       thisSound = thisRowPtr->efctSound;
-      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" play sound ")); Serial.println((uint16_t) thisSound); }
+      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" play sound ")); Serial.print((uint16_t) thisSound); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
       thisReturn |= RBG_startEffectSound((uint16_t) (thisSound));
       thisLED = thisRowPtr->efctLED;
       if (mNONE != thisLED) {
-        if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" LED ptrn ")); Serial.println((uint16_t) thisLED); }
+        if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" LED ptrn ")); Serial.print((uint16_t) thisLED); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
         if (debugThisManyCalls > 0) { Serial.println(F(" RBG_startRow FIXME LEDS to efctLED")); }
         myState.timerLed = millis() + deltaMsLED;
       }  // end if should switch to other LED pattern
@@ -321,7 +323,7 @@ uint16_t RBG_startRow() {
       // FIXME MAYBE NEED MORE CODE FOR SPECIALS - maybe don't need it
     thisReturn = mINPROCFLG_WAITFORINPUT; // start the new state, RBG_waitForInput() will handle it
   } // end if there is input to wait for
-  if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.println((uint16_t) __LINE__); }
+  if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
   if (debugThisManyCalls > 0) { debugThisManyCalls -= 1; }
   return thisReturn;
 } // end RBG_startRow()
@@ -338,12 +340,12 @@ uint16_t RBG_waitForInput(uint16_t tmpVinputRBG) {
   if (tmpVinputRBG != (myState.VinputRBG & ((uint16_t) (~mVINP_PREVLOCK)))) { debugThisManyCalls = 8; }
 
   // this is what a debug print looks like
-  if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput entry ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" tmpVinputRBG 0x")); Serial.println(tmpVinputRBG, HEX); }
+  if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput entry ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" tmpVinputRBG 0x")); Serial.print(tmpVinputRBG, HEX); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
 
   // we need to check until we hit the mBLOCKEND
   for (uint16_t idx = myState.tableRow; (idx < NUMOF(myStateTable)) && (mNONE == thisReturn); idx++) {
     // see if we match input condition for this row
-    if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.print(idx); Serial.print(F(" thisRowPtr->inputRBG 0x")); Serial.println(thisRowPtr->inputRBG, HEX); }
+    if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.print(idx); Serial.print(F(" thisRowPtr->inputRBG 0x")); Serial.print(thisRowPtr->inputRBG, HEX); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
     if (debugThisManyCalls > 0) { Serial.print(F("    thisRowPtr->inputRBG&mINP_TRIG 0x")); Serial.print(thisRowPtr->inputRBG&mINP_TRIG, HEX); Serial.print(F(" tmpVinputRBG&mVINP_TRIG 0x")); Serial.println(tmpVinputRBG&mVINP_TRIG, HEX); }
     if (debugThisManyCalls > 0) { Serial.print(F("    myState.VinputRBG&mVINP_PREVLOCK 0x")); Serial.println(myState.VinputRBG&mVINP_PREVLOCK, HEX); }
     if (debugThisManyCalls > 0) { Serial.print(F("    thisRowPtr->inputRBG&mINP_OPEN 0x")); Serial.print(thisRowPtr->inputRBG&mINP_OPEN, HEX); Serial.print(F(" tmpVinputRBG&mVINP_OPEN 0x")); Serial.println(tmpVinputRBG&mVINP_OPEN, HEX); }
@@ -352,33 +354,33 @@ uint16_t RBG_waitForInput(uint16_t tmpVinputRBG) {
     // if (debugThisManyCalls > 0) { Serial.print(F("    (0 != (thisRowPtr->inputRBG&mINP_LOCK)) && (0 != (tmpVinputRBG&mVINP_LOCK)) 0x")); Serial.println((0 != (thisRowPtr->inputRBG&mINP_LOCK)) && (0 != (tmpVinputRBG&mVINP_LOCK)), HEX); }
     if ((0 != (thisRowPtr->inputRBG&mINP_TRIG)) && (0 != (tmpVinputRBG&mVINP_TRIG))) {
       // several cases for trigger
-      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.println(idx); }
+      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.print(idx); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
       if (0 != (thisRowPtr->inputRBG&mINP_BANY)) {
-        if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.println(idx); }
+        if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.print(idx); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
         thisReturn = thisRowPtr->gotoOnInput;
       } else if ((0 != (thisRowPtr->inputRBG&mINP_BNONE)) &&
                  (0 == (tmpVinputRBG & (mVINP_B01|mVINP_B02|mVINP_B04)))) {
-        if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.println(idx); }
+        if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.print(idx); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
         thisReturn = thisRowPtr->gotoOnInput;
       }
     } else if ((0 != (thisRowPtr->inputRBG&mINP_OPEN)) && (0 != (tmpVinputRBG&mVINP_OPEN)) && (0 != (myState.VinputRBG&mVINP_PREVLOCK))) {
-      /* if (debugThisManyCalls > 0) */ { Serial.print(F(" RBG_waitForInput ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.println(idx); }
+      /* if (debugThisManyCalls > 0) */ { Serial.print(F(" RBG_waitForInput ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.print(idx); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
       thisReturn = thisRowPtr->gotoOnInput;
       break;
     } else if ((0 != (thisRowPtr->inputRBG&mINP_LOCK)) && (0 != (tmpVinputRBG&mVINP_LOCK)) && (0 == (myState.VinputRBG&mVINP_PREVLOCK))) {
-      /* if (debugThisManyCalls > 0) */ { Serial.print(F(" RBG_waitForInput ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.println(idx); }
+      /* if (debugThisManyCalls > 0) */ { Serial.print(F(" RBG_waitForInput ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.print(idx); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
       thisReturn = thisRowPtr->gotoOnInput; // found an input we were waiting for
       break;
     }
 
     if (0 != (thisRowPtr->inputRBG&mBLOCKEND)) {
       // this is a normal way to end - found the mBLOCKEND but did not find input
-      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ln ")); Serial.println((uint16_t) __LINE__); }
+      if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
       // now we just check if we are doing a special effect like mSPCL_EFCT_CONTINUOUS
       thisRowPtr = &myStateTable[myState.tableRow]; // set this back to start of block
       if ((0 != (mSPCL_EFCT_CONTINUOUS & thisRowPtr->SPECIAL)) && (0 == (mVINP_SOUNDACTV & tmpVinputRBG))) {
         // want continuous sound and sound is not active so restart it
-        Serial.print(F(" RBG_waitForInput ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" play sound ")); Serial.println((uint16_t) thisRowPtr->efctSound);
+        Serial.print(F(" RBG_waitForInput ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" play sound ")); Serial.print((uint16_t) thisRowPtr->efctSound);  Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
         RBG_startEffectSound((uint16_t) (thisRowPtr->efctSound));
       }
       break;
@@ -386,7 +388,7 @@ uint16_t RBG_waitForInput(uint16_t tmpVinputRBG) {
     thisRowPtr += 1;
   } // end while searching for mBLOCKEND
     
-  if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" thisReturn ")); Serial.println(thisReturn); }
+  if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" thisReturn ")); Serial.print(thisReturn); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
   if (/* FIXME debugThisManyCalls */ 0 > 0) { debugThisManyCalls -= 1; }
   return thisReturn; // input did not happen
 } // end RBG_waitForInput()
@@ -408,7 +410,7 @@ uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpFlags) {
         RBG_specialProcSolenoid();
         break;
       default:
-        Serial.print(F(" RBG_specialProcessing ln ")); Serial.print((uint16_t) __LINE__);
+        Serial.print(F(" RBG_specialProcessing ln ")); Serial.print((uint16_t) __LINE__);  Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
         break;
     } // end switch on type of special
   } else { // read tmpFlags and state to see what is going on
@@ -423,7 +425,7 @@ void RBG_specialProcShoot() {
   uint16_t nextRow = myStateTable[myState.tableRow].gotoWithoutInput;
   digitalWrite(DPIN_SOLENOID, HIGH);
   delay(200); // let's try it the easy way
-  if (mNONE == nextRow) { nextRow = mROW_POWERON; digitalWrite(DPIN_SOLENOID, LOW); Serial.print(F(" RBG_specialProcShoot ln ")); Serial.print((uint16_t) __LINE__); Serial.println(F(" gotoWithoutInput is mNONE; going to mROW_POWERON")); }
+  if (mNONE == nextRow) { nextRow = mROW_POWERON; digitalWrite(DPIN_SOLENOID, LOW); Serial.print(F(" RBG_specialProcShoot ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" gotoWithoutInput is mNONE; going to mROW_POWERON")); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
   myState.tableRow = nextRow;
 } // end RBG_specialProcShoot()
 
@@ -433,7 +435,7 @@ void RBG_specialProcShoot() {
 void RBG_specialProcSolenoid() {
   uint16_t nextRow = myStateTable[myState.tableRow].gotoWithoutInput;
   digitalWrite(DPIN_SOLENOID, LOW);
-  if (mNONE == nextRow) { nextRow = mROW_POWERON; Serial.print(F(" RBG_specialProcSolenoid ln ")); Serial.print((uint16_t) __LINE__); Serial.println(F(" gotoWithoutInput is mNONE; going to mROW_POWERON")); }
+  if (mNONE == nextRow) { nextRow = mROW_POWERON; Serial.print(F(" RBG_specialProcSolenoid ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" gotoWithoutInput is mNONE; going to mROW_POWERON")); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
   myState.tableRow = nextRow;
 } // end RBG_specialProcSolenoid()
 
@@ -443,18 +445,18 @@ void RBG_specialProcSolenoid() {
 //   caller will determine if this flag should go into tableRowInProcFlags
 uint16_t  RBG_startEffectSound(uint16_t tmpEfctSound) {
   uint16_t thisReturn = 0;
+  uint16_t mySound = tmpEfctSound;
 
   if (mNONE != tmpEfctSound) {
-    Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__);  Serial.print(F(" EFCT num ")); Serial.println(tmpEfctSound); 
     if (EFCT_IS_EEP(tmpEfctSound)) {
       // configurable sound using EEPROM
-      myDFPlayer.playMp3Folder(tmpEfctSound + EEPROM.read(EEPOFFSET(tmpEfctSound))); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999)
-      // myDFPlayer.enableLoop(); this does not actually make the playMp3Folder call loop
-    } else { // unique sound - includes any mEFCT_ stuff
-      myDFPlayer.playMp3Folder(tmpEfctSound); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999)
+      mySound += EEPROM.read(EEPOFFSET(tmpEfctSound));
     }
+    Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" EFCT num ")); Serial.print(tmpEfctSound); Serial.print(F(" final num ")); Serial.print(mySound); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
+    myDFPlayer.playMp3Folder(mySound); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999)
     thisReturn |= mINPROCFLG_WAITFORSOUND;
   } // end if should start a sound
+  delay(50); // make sure the sound starts
 
   return(thisReturn); // this is a flag that could go into tableRowInProcFlags, depending on context of caller
 } // end RBG_startEffectSound

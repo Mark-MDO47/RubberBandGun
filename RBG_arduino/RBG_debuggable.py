@@ -15,32 +15,25 @@ myFirstInclude = """
 
 #include <iostream>
 
+static uint32_t globalLoopCount = 0;
+
 """
 
 # some other inputs for testing
 """
 } myInputs[] = { // for open barrel
-mVINP_LOCK, " // mVINP_LOCK row 0 start",
-mVINP_LOCK | mVINP_SOUNDACTV, " // mVINP_LOCK|mVINP_SOUNDACTV row 0 FOOF RBG Gun 1.0",
-mVINP_LOCK, " // mVINP_LOCK row 0 end of FOOF, go to row 1",
-mVINP_LOCK | mVINP_SOUNDACTV, " // mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
-mVINP_LOCK | mVINP_SOUNDACTV, " // mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
-mVINP_LOCK, " // mVINP_LOCK row 1 restart sound",
-mVINP_LOCK | mVINP_SOUNDACTV, " // mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
-mVINP_OPEN | mVINP_SOUNDACTV, " // mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active but barrel opens",
-mVINP_OPEN, " // mVINP_OPEN barrel open sound no longer active",
-mVINP_OPEN | mVINP_SOUNDACTV, " // mVINP_OPEN|mVINP_SOUNDACTV barrel open sound active again "
+        mVINP_LOCK, " // mVINP_LOCK row 0 start",
+        mVINP_LOCK | mVINP_SOUNDACTV, " // mVINP_LOCK|mVINP_SOUNDACTV row 0 FOOF RBG Gun 1.0",
+        mVINP_LOCK, " // mVINP_LOCK row 0 end of FOOF, go to row 1",
+        mVINP_LOCK | mVINP_SOUNDACTV, " // mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " // mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK, " // mVINP_LOCK row 1 restart sound",
+        mVINP_LOCK | mVINP_SOUNDACTV, " // mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_OPEN | mVINP_SOUNDACTV, " // mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active but barrel opens",
+        mVINP_OPEN, " // mVINP_OPEN barrel open sound no longer active",
+        mVINP_OPEN | mVINP_SOUNDACTV, " // mVINP_OPEN|mVINP_SOUNDACTV barrel open sound active again "
 }; // myInputs for open barrel
-"""
 
-# this is the main routine in Microsoft Visual Studio Community Edition 2019
-myMain = """
-int main()
-{
-    uint16_t nowVinputRBG;
-    static struct {
-        uint16_t input;
-        const char* str;
     } myInputs[] = { // for Trigger
         mVINP_LOCK,                " mVINP_LOCK row 0 start",
         mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 0 FOOF RBG Gun 1.0",
@@ -58,6 +51,63 @@ int main()
         mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV should switch to SHOOT"
     }; // myInputs for Trigger
 
+    } myInputs[] = { // for continuous
+        mVINP_LOCK,                " mVINP_LOCK row 0 start",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 0 FOOF RBG Gun 1.0",
+        mVINP_LOCK,                " mVINP_LOCK row 0 end of FOOF, go to row 1",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+    }; // myInputs for continuous
+
+    } myInputs[] = { // for continuous restart
+        mVINP_LOCK,                " mVINP_LOCK row 0 start",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 0 FOOF RBG Gun 1.0",
+        mVINP_LOCK,                " mVINP_LOCK row 0 end of FOOF, go to row 1",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK, " mVINP_LOCK row 1 waiting sound active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK, " mVINP_LOCK row 1 waiting sound active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK, " mVINP_LOCK row 1 waiting sound active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+    }; // myInputs for continuous restart
+"""
+
+# this is the main routine in Microsoft Visual Studio Community Edition 2019
+myMain = """
+int main()
+{
+    uint16_t nowVinputRBG;
+    static struct {
+        uint16_t input;
+        const char* str;
+    } myInputs[] = { // for continuous restart
+        mVINP_LOCK,                " mVINP_LOCK row 0 start",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 0 FOOF RBG Gun 1.0",
+        mVINP_LOCK,                " mVINP_LOCK row 0 end of FOOF, go to row 1",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK, " mVINP_LOCK row 1 waiting sound active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK, " mVINP_LOCK row 1 waiting sound active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK, " mVINP_LOCK row 1 waiting sound active",
+        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+    }; // myInputs for continuous restart
+
     std::cout << "Hello World!\\n";
     myState.tableRow = 0;
     myState.VinputRBG = 0x0;
@@ -65,21 +115,19 @@ int main()
         printf("\\n$$$$ VS DEBUGGING idx %d value 0x%04X %s $$$$\\n", idx, myInputs[idx].input, myInputs[idx].str);
         myState.timerNow = millis();
         if (myState.VinputRBG & mVINP_LOCK) {
-            //Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); Serial.print(F(" myState.VinputRBG 0x")); Serial.print(myState.VinputRBG, HEX);
             myState.VinputRBG |= mVINP_PREVLOCK; // set the bit
-            //Serial.print(F(" AFTER myState.VinputRBG 0x")); Serial.println(myState.VinputRBG, HEX);
         }
         else {
-            //Serial.print(F(" RBG_startRow ")); Serial.println((uint16_t) __LINE__); Serial.print(F(" myState.VinputRBG 0x")); Serial.print(myState.VinputRBG, HEX);
             myState.VinputRBG &= ((uint16_t)~(mVINP_PREVLOCK)); // clear the bit
-            //Serial.print(F(" AFTER myState.VinputRBG 0x")); Serial.println(myState.VinputRBG, HEX);
         }
 
         nowVinputRBG = myInputs[idx].input; // nowVinputRBG = getButtonInput();
+        if (myState.VinputRBG != nowVinputRBG) { printf("DEBUG loop() - nowVinputRBG 0x%04X loopCount %d\\n", nowVinputRBG, globalLoopCount); }
         nowVinputRBG = processStateTable(nowVinputRBG);
 
         myState.VinputRBG = nowVinputRBG;
         myState.timerPrev = myState.timerNow;
+        globalLoopCount += 1;
     } // end for next input
     printf("DONE");
 }
@@ -173,7 +221,7 @@ def debuggable():
             theLine = fobj.readline()
         fobj.close()
 
-    # this is the tricky one
+    # this is the tricky one - the *.ino code
     copying = ""
     prototypes = []
     for fn in files_to_read_ino:
@@ -184,6 +232,7 @@ def debuggable():
             theLine = prepare(theLine)
             theLine = theLine.replace("strcpy(printAsText,", "strcpy_s(printAsText, NUMOF(printAsText),")
             theLine = theLine.replace("strcat(printAsText,", "strcat_s(printAsText, NUMOF(printAsText),")
+            theLine = theLine.replace("mySound += EEPROM.read(EEPOFFSET(tmpEfctSound));", "mySound += 1; // assume it is one")
             if (0 != len(theLine)): # don't copy the fluff
                 if 0 == len(copying): # need to look for copying start
                     if ("// " == theLine[0:3]):
@@ -267,10 +316,10 @@ def rplc_normal(theLine, theRplc): # to handle normal Serial.printx(); replaces
     str2 = theLine[tmp:]
     str3 = str2[:str2.find(";")] # limit println and HEX search to this call
     if (-1 != str3.find(", HEX")):
-        str2 = str2.replace(theRplc, "printf(\"%04X\", ")
+        str2 = str2.replace(theRplc, "printf(\"%04X\", ", 1)
         str2 = str2.replace(", HEX", "", 1)
     else:
-        str2 = str2.replace(theRplc, "printf(\"%d\", ")
+        str2 = str2.replace(theRplc, "printf(\"%d\", ", 1)
     if -1 != str3.find("println"):
         str2 = str2.replace(");", "); printf(\"\\n\");", 1)
     return str1 + str2
