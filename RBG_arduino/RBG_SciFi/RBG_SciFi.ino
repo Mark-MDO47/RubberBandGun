@@ -278,7 +278,7 @@ uint16_t RBG_startRow() {
   } // end if more debugging is useful
   if ((mNONE != thisRowPtr->SPECIAL) && (0 != (thisRowPtr->SPECIAL & mSPCL_HANDLER))) { // special handler
       thisSound = thisRowPtr->efctSound;
-      RBG_startEffectSound((uint16_t) (thisSound));
+      RBG_startEffectSound((uint16_t) (thisSound)); // this routine will check for mNONE
       thisReturn = mINPROCFLG_SPCL_IN_PROC;
       thisLED = thisRowPtr->efctLED;
       if (mNONE != thisLED) {
@@ -397,24 +397,24 @@ uint16_t RBG_waitForInput(uint16_t tmpVinputRBG) {
 // RBG_specialProcessing(int16_t tmpVinputRBG, uint16_t tmpFlags)
 //   do the SPECIAL processing - mostly the solenoid stuff
 //
+// FIXME - I don't think I need tmpFlags
+//
 uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpFlags) {
   uint16_t myVinputRBG = tmpVinputRBG;
   RBGStateTable_t * thisRowPtr = &myStateTable[myState.tableRow];
+  uint16_t mySpec = thisRowPtr->SPECIAL & (mSPCL_HANDLER-1);
 
-  if (0 == tmpFlags) { // first time on this row
-    switch ((thisRowPtr->SPECIAL & (mSPCL_HANDLER-1))) {
-      case mSPCL_HANDLER_SHOOT:
-        RBG_specialProcShoot();
-        break;
-      case mSPCL_HANDLER_SOLENOID:
-        RBG_specialProcSolenoid();
-        break;
-      default:
-        Serial.print(F(" RBG_specialProcessing ln ")); Serial.print((uint16_t) __LINE__);  Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
-        break;
-    } // end switch on type of special
-  } else { // read tmpFlags and state to see what is going on
-  }
+  switch (mySpec) {
+    case mSPCL_HANDLER_SHOOT:
+      RBG_specialProcShoot();
+      break;
+    case mSPCL_HANDLER_SOLENOID:
+      RBG_specialProcSolenoid();
+      break;
+    default:
+      Serial.print(F(" RBG_specialProcessing ln ")); Serial.print((uint16_t) __LINE__);  Serial.print(F(" mySpec ")); Serial.print(mySpec);  Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
+      break;
+  } // end switch on type of special
   return(myVinputRBG);
 } // end RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpFlags)
 

@@ -79,6 +79,36 @@ static uint32_t globalLoopCount = 0;
         mVINP_LOCK, " mVINP_LOCK row 1 waiting sound active",
         mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
     }; // myInputs for continuous restart
+
+    } myInputs[] = { // for continuous restart and trigger
+        mVINP_LOCK,                " mVINP_LOCK row 0 start",
+        mVINP_LOCK|mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 0 FOOF RBG Gun 1.0",
+        mVINP_LOCK|mVINP_SOUNDACTV,  " mVINP_LOCK|mVINP_SOUNDACTV still at row 0 FOOF RBG Gun 1.0",
+        mVINP_LOCK,                " mVINP_LOCK row 0 end of FOOF, go to row 1",
+        mVINP_LOCK|mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK|mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK, " mVINP_LOCK row 1 waiting sound active",
+        mVINP_LOCK|mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",	
+        mVINP_LOCK|mVINP_SOUNDACTV	, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK, " mVINP_LOCK row 1 waiting sound active",
+        mVINP_LOCK|mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK|mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK, " mVINP_LOCK row 1 waiting sound active",
+        mVINP_LOCK|mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK|mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK, " mVINP_LOCK row 1 waiting sound active",
+        mVINP_LOCK|mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK|mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK|mVINP_SOUNDACTV|mVINP_TRIG,  "mVINP_LOCK|mVINP_SOUNDACTV|mVINP_TRIG go from 1 to 4",
+        mVINP_LOCK, " mVINP_LOCK shoot",
+        mVINP_LOCK|mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV after shoot",
+        mVINP_LOCK|mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV after shoot",	
+        mVINP_LOCK, " mVINP_LOCK go from 4 to 7",
+        mVINP_LOCK, " mVINP_LOCK ???",
+        mVINP_LOCK, " mVINP_LOCK ???",
+        mVINP_LOCK|mVINP_TRIG, " mVINP_LOCK|mVINP_TRIG go from 1 to 4"
+        mVINP_LOCK, " mVINP_LOCK shoot",	
+    }; // myInputs for continuous restart and trigger
 """
 
 # this is the main routine in Microsoft Visual Studio Community Edition 2019
@@ -89,24 +119,35 @@ int main()
     static struct {
         uint16_t input;
         const char* str;
-    } myInputs[] = { // for continuous restart
+    } myInputs[] = { // for continuous restart and trigger
         mVINP_LOCK,                " mVINP_LOCK row 0 start",
-        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 0 FOOF RBG Gun 1.0",
+        mVINP_LOCK|mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 0 FOOF RBG Gun 1.0",
+        mVINP_LOCK|mVINP_SOUNDACTV,  " mVINP_LOCK|mVINP_SOUNDACTV still at row 0 FOOF RBG Gun 1.0",
         mVINP_LOCK,                " mVINP_LOCK row 0 end of FOOF, go to row 1",
-        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
-        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
-        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK|mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK|mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
         mVINP_LOCK, " mVINP_LOCK row 1 waiting sound active",
-        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
-        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
-        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK|mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",	
+        mVINP_LOCK|mVINP_SOUNDACTV	, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
         mVINP_LOCK, " mVINP_LOCK row 1 waiting sound active",
-        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
-        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
-        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK|mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK|mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
         mVINP_LOCK, " mVINP_LOCK row 1 waiting sound active",
-        mVINP_LOCK | mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
-    }; // myInputs for continuous restart
+        mVINP_LOCK|mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK|mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK, " mVINP_LOCK row 1 waiting sound active",
+        mVINP_LOCK|mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK|mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV row 1 waiting sound active",
+        mVINP_LOCK|mVINP_SOUNDACTV|mVINP_TRIG,  "mVINP_LOCK|mVINP_SOUNDACTV|mVINP_TRIG go from 1 to 4",
+        mVINP_LOCK, " mVINP_LOCK shoot",
+        mVINP_LOCK|mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV after shoot",
+        mVINP_LOCK|mVINP_SOUNDACTV, " mVINP_LOCK|mVINP_SOUNDACTV after shoot",	
+        mVINP_LOCK, " mVINP_LOCK go from 4 to 7",
+        mVINP_LOCK, " mVINP_LOCK ???",
+        mVINP_LOCK, " mVINP_LOCK ???",
+        mVINP_LOCK|mVINP_TRIG, " mVINP_LOCK|mVINP_TRIG go from 1 to 4",
+        mVINP_LOCK, " mVINP_LOCK shoot",	
+    }; // myInputs for continuous restart and trigger
 
     std::cout << "Hello World!\\n";
     myState.tableRow = 0;
@@ -127,6 +168,7 @@ int main()
 
         myState.VinputRBG = nowVinputRBG;
         myState.timerPrev = myState.timerNow;
+        printAllMyState();
         globalLoopCount += 1;
     } // end for next input
     printf("DONE");
