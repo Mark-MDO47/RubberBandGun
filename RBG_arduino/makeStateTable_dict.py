@@ -105,7 +105,7 @@ mMASK_EFCT_SND_NUM = 0xFF # mask for sound number
 mSHIFT_EFCT_SND_VOL = 16 # shift for volume
 mMASK_EFCT_SND_VOL = 0x1F # mask for volume once shifted in place
 mDEFAULT_EFCT_SND_VOL = 25 # default volume
-mMASK_EFCT_SND_CONTINSWITCH = 0x100 # if continuous sound, switch between specified num and (num+128)
+#  mMASK_EFCT_SND_CONTINSWITCH = 0x100 # NOT NEEDED if continuous sound, switch between specified num and (num+128)
 #
 EFFECT_MAP = {
     "mEFCT_WIND_UP": [mEFCT_WIND_UP, " // 001 to 009 - wind-up effects"],
@@ -118,6 +118,6 @@ EFFECT_MAP = {
     "mMASK_EFCT_SND_NUM": [mMASK_EFCT_SND_NUM, " // mask for sound number"],
     "mSHIFT_EFCT_SND_VOL": [mSHIFT_EFCT_SND_VOL, " // shift for volume"],
     "mMASK_EFCT_SND_VOL": [mMASK_EFCT_SND_VOL, "  // mask for volume once shifted in place"],
-    "mDEFAULT_EFCT_SND_VOL": [mDEFAULT_EFCT_SND_VOL, " // default volume"],
-    "mMASK_EFCT_SND_CONTINSWITCH": [mMASK_EFCT_SND_CONTINSWITCH, " // if continuous sound, switch between specified num and (num+128)"]
+    "mDEFAULT_EFCT_SND_VOL": [mDEFAULT_EFCT_SND_VOL, " // default volume"]
+#        NOT NEEDED "mMASK_EFCT_SND_CONTINSWITCH": [mMASK_EFCT_SND_CONTINSWITCH, " // if continuous sound, switch between specified num and (num+128)"]
 }

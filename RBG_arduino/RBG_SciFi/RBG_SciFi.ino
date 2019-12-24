@@ -69,12 +69,12 @@ SoftwareSerial mySoftwareSerial(DPIN_SWSRL_RX, DPIN_SWSRL_TX); // to talk to YX5
 DFRobotDFPlayerMini myDFPlayer;                                // to talk to YX5200 audio player
 void DFsetup();                                                // how to initialize myDFPlayer
 
-// #define DFPRINTDETAIL (1&SERIALDEBUG)     // if need detailed status from myDFPlayer
-#define DFPRINTDETAIL 0                      // will not print detailed status from myDFPlayer
+#define DFPRINTDETAIL (1&SERIALDEBUG)     // if need detailed status from myDFPlayer
+// #define DFPRINTDETAIL 0                      // will not print detailed status from myDFPlayer
 #if DFPRINTDETAIL // routine to do detailed debugging
-void DFprintDetail(uint8_t type, int value); // definition of call
+  void DFprintDetail(uint8_t type, int value); // definition of call
 #else  // no DFPRINTDETAIL
-#define DFprintDetail(type, value) // nothing at all
+  #define DFprintDetail(type, value) // nothing at all
 #endif // #if DFPRINTDETAIL
 
 static uint32_t globalLoopCount = 0;
@@ -432,6 +432,8 @@ void RBG_specialProcShoot() {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RBG_specialProcSolenoid() - release the solenoid after shooting
 //
+// really just in case...
+//
 void RBG_specialProcSolenoid() {
   uint16_t nextRow = myStateTable[myState.tableRow].gotoWithoutInput;
   digitalWrite(DPIN_SOLENOID, LOW);
@@ -447,9 +449,26 @@ void RBG_specialProcSolenoid() {
 //
 uint16_t  RBG_startEffectSound(uint16_t tmpEfctSound) {
   uint16_t thisReturn = 0;
+  uint16_t idx;
+  bool prevHI;
   uint16_t mySound = tmpEfctSound & mMASK_EFCT_SND_NUM;
   // uint16_t myVolume = (tmpEfctSound >> mSHIFT_EFCT_SND_VOL) & mMASK_EFCT_SND_VOL; // USE BELOW to convince MS VS 2019 we don't lose data
   uint16_t myVolume = ((tmpEfctSound & (mMASK_EFCT_SND_VOL << mSHIFT_EFCT_SND_VOL)) >> mSHIFT_EFCT_SND_VOL) & mMASK_EFCT_SND_VOL;
+
+  // wait up to one second for two "LOW" indications in a row
+  prevHI = false;
+  for (idx = 0; idx < 3; idx++) {
+    delay(10);
+    if (LOW != digitalRead(DPIN_AUDIO_BUSY)) {
+      if (prevHI) break;
+      prevHI = true;
+    } else {
+      prevHI = false;
+    }
+  }
+  if (idx > 3) {
+    Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" wait msec ")); Serial.print(10*idx); printOneInput(DPIN_AUDIO_BUSY, " AUDIO_BUSY "); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
+  } 
 
   // myVolume is [0-31]. 0 means not specified; else subtract one to make [0-30]
   if (0 == myVolume) {
@@ -463,16 +482,45 @@ uint16_t  RBG_startEffectSound(uint16_t tmpEfctSound) {
       // configurable sound using EEPROM
       mySound += EEPROM.read(EEPOFFSET(tmpEfctSound));
     }
+    Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" EFCT num 0x")); Serial.print(tmpEfctSound, HEX); Serial.print(F(" final num ")); Serial.print(mySound); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
+    /*** DON'T DO THIS - WE JUST NEEDED TO TURN OFF YX5200 ACK
     // if continuous sound, switch between specified num and (num+128)
     if ((mySound & ~(mMASK_EFCT_SND_CONTINSWITCH)) == (myState.currSound & ~(mMASK_EFCT_SND_CONTINSWITCH))) {
       mySound = myState.currSound ^ mMASK_EFCT_SND_CONTINSWITCH;
     }
-    Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" EFCT num 0x")); Serial.print(tmpEfctSound, HEX); Serial.print(F(" final num ")); Serial.print(mySound); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
-    myDFPlayer.volume(myVolume);  // Set volume value. From 0 to 30
+    ***/
+    /*** PROBABLY ADD THIS IN LATER FIXME
+    if (false) { // (myState.currVolume != myVolume) { FIXME - add the volume after verifying it doesn't mess up communications
+      myDFPlayer.volume(myVolume);  // Set volume value. From 0 to 30
+      myState.currVolume = myVolume;
+      if (myDFPlayer.available()) {
+        Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__); Serial.println(F(" myDFPlayer problem after volume"));
+        DFprintDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
+      }
+    } // end if volume different this time
+    ***/
     myDFPlayer.playMp3Folder(mySound); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999)
+
+    /*** DON'T DO THIS - WE JUST NEEDED TO TURN OFF YX5200 ACK
+    if (false) { //  (0 != (myStateTable[myState.tableRow].SPECIAL & mSPCL_EFCT_CONTINUOUS)) {
+      // if continuous sound, start the loop NOTE: this just doesn't seem to work
+      delay(50); // make sure the sound starts
+      myDFPlayer.sendStack((uint8_t) 0x19, (uint16_t) 0x1);  // Turn on single repeat playback
+    }
+    ***/
+    if (myDFPlayer.available()) {
+      Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__); Serial.println(F(" myDFPlayer problem after play"));
+      DFprintDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
+    }
     myState.currSound = mySound; // used for continuous sound
     thisReturn |= mINPROCFLG_WAITFORSOUND;
-    delay(50); // make sure the sound starts
+    // delay(500); // make sure the sound starts
+    if (LOW != digitalRead(DPIN_AUDIO_BUSY)) {
+      Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__); Serial.println(F(" myDFPlayer problem after check busy"));
+      if (myDFPlayer.available()) {
+        DFprintDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
+      }
+    }
   } // end if should start a sound
 
   return(thisReturn); // this is a flag that could go into tableRowInProcFlags, depending on context of caller
@@ -575,7 +623,7 @@ uint16_t getButtonInput() {
 void DFsetup() {
   Serial.println(F("Initializing DFPlayer ... (May take 3~5 seconds)"));
   
-  if (!myDFPlayer.begin(mySoftwareSerial)) {  // Use softwareSerial to communicate with mp3 player
+  if (!myDFPlayer.begin(mySoftwareSerial, false, false)) {  // Use softwareSerial to communicate with mp3 player
     Serial.println(F("Unable to begin DFPlayer:"));
     Serial.println(F("1.Please recheck the connection!"));
     Serial.println(F("2.Please insert the SD card!"));
@@ -586,6 +634,7 @@ void DFsetup() {
   myDFPlayer.EQ(DFPLAYER_EQ_BASS); // our speaker is quite small
   myDFPlayer.outputDevice(DFPLAYER_DEVICE_SD); // device is SD card
   myDFPlayer.volume(mDEFAULT_EFCT_SND_VOL);  // Set volume value. From 0 to 30 - FIXME 25 is good
+  myState.currVolume = mDEFAULT_EFCT_SND_VOL;
   Serial.println(F("DFPlayer Mini online."));
 } // end DFsetup()
 
