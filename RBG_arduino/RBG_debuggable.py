@@ -193,15 +193,6 @@ myStringStandardStart = """//
 #define deltaMsLED 5
 #define HIGH 1
 #define LOW 0
-uint32_t millis() { return(0); }
-void digitalWrite(uint8_t pin, uint8_t val) {
-  printf("call digitalWrite(pin=%d, val=%d", pin, val);
-}
-uint16_t digitalRead(uint8_t pin) {
-  return(HIGH);
-}
-void delay(uint16_t msec) {
-}
 """
 
 # README put latest old way from makeStateTable.py so can debug in Microsoft Visual Studio Community Edition 2019 in Console App
@@ -231,6 +222,17 @@ files_to_read_ino = ["RBG_SciFi.ino"]
 h_stopread_and_insert = "static RBGStateTable_t myStateTable"
 h_typedefs_for_prototypes = ["typedef struct _decodeBits_t"] # we expect these typedefs to be all on one line
 print_typedefs_for_prototypes = []
+myStubs ="""void myMdoDFPlayer_playMp3Folder(uint16_t mySound) { printf("call playMp3Folder %04d\\n", mySound); }
+bool myMdoDFPlayer_available() { return(false); }
+uint16_t myMdoDFPlayer_readType()  { return(0); }
+uint16_t myMdoDFPlayer_read() { return(0); }
+uint16_t DFprintDetail(uint16_t parm1, uint16_t parm2) { return(0); }
+uint32_t millis() { return(0); }
+void digitalWrite(uint8_t pin, uint8_t val) { printf("call digitalWrite(pin=%d, val=%d", pin, val); }
+uint16_t digitalRead(uint8_t pin) { return(HIGH); }
+void delay(uint16_t msec) { }
+
+"""
 
 ino_routines_to_copy = ["processStateTable", "RBG_startRow", "RBG_waitForInput", "RBG_specialProcessing", "RBG_specialProcShoot", "RBG_specialProcSolenoid", "RBG_startEffectSound", "printAllMyState", "printExplainBits", "printAllMyInputs", "printOneInput"]
 
@@ -241,8 +243,6 @@ def debuggable():
     print(myFirstInclude)
 
     myDebugLines = []
-    # standard defs at start
-    myDebugLines.append("%s" % myStringStandardStart)
 
     # the *.h file is easy to process
     for fn in files_to_read_h:
@@ -306,7 +306,7 @@ def debuggable():
                         elif -1 != theLine.find("Serial.print("):
                             theLine = rplc_normal(theLine, "Serial.print(")
                         elif -1 != theLine.find("myDFPlayer."):
-                            theLine = theLine.replace("myDFPlayer.", "// myMdoDFPlayer.") # don't let this repeat forever
+                            theLine = theLine.replace("myDFPlayer.", "myMdoDFPlayer_") # don't let this repeat forever
                         else:
                             keep_checking = False
                     if ("}" == theLine[0]) and (-1 != theLine.find("end " + copying)):
@@ -318,8 +318,9 @@ def debuggable():
     # Now we do all the prints
     #   1) typedef(s) needed by prototypes
     #   2) prototypes (Arduino auto generates these but needed for Visual Studio)
-    #   3) all the other lines collected from the Arduino *.h and *.ino files
-    #   4) our VS main() routine including the inputs to test
+    #   3) standard defs and stubs
+    #   4) all the other lines collected from the Arduino *.h and *.ino files
+    #   5) our VS main() routine including the inputs to test
     #
     for myTypedef in print_typedefs_for_prototypes:
         print("%s" % myTypedef)
@@ -327,6 +328,10 @@ def debuggable():
         print("\n\n//\n// Prototypes: place at the front\n//")
         for proto in prototypes:
             print("%s" % proto)
+    print("\n\n//\n// Stub routines:\n//")
+    # standard defs at start
+    print("%s" % myStringStandardStart)
+    print("%s" % myStubs)
     for line in myDebugLines:
         print("%s" % line)
     print(myMain)
