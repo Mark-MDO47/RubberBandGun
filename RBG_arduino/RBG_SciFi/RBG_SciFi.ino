@@ -507,7 +507,7 @@ uint16_t  RBG_startEffectSound(uint16_t tmpEfctSound) {
     }
     myState.currSound = mySound; // used for continuous sound
     thisReturn |= mINPROCFLG_WAITFORSOUND;
-    // delay(500); // make sure the sound starts
+    // delay(50); // make sure the sound starts
     if (LOW != digitalRead(DPIN_AUDIO_BUSY)) {
       Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__); Serial.println(F(" myDFPlayer problem after check busy"));
       if (myDFPlayer.available()) {
@@ -613,10 +613,11 @@ uint16_t getButtonInput() {
 // ******************************** INITIALIZATION UTILITIES ********************************
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
+// DFsetup()
 void DFsetup() {
   Serial.println(F("Initializing DFPlayer ... (May take 3~5 seconds)"));
   
-  if (!myDFPlayer.begin(mySoftwareSerial, false, false)) {  // Use softwareSerial to communicate with mp3 player
+  if (!myDFPlayer.begin(mySoftwareSerial, false, true)) {  // Use softwareSerial to communicate with mp3 player
     Serial.println(F("Unable to begin DFPlayer:"));
     Serial.println(F("1.Please recheck the connection!"));
     Serial.println(F("2.Please insert the SD card!"));
