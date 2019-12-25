@@ -492,7 +492,8 @@ uint16_t  RBG_startEffectSound(uint16_t tmpEfctSound) {
       }
     } // end if volume different this time
     ***/
-    myDFPlayer.playMp3Folder(mySound); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999)
+    myDFPlayer.play(mySound+1); //play specific mp3 in SD: root directory ###.mp3; number played is physical copy order
+    // myDFPlayer.playMp3Folder(mySound); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999)
 
     /*** DON'T DO THIS - WE JUST NEEDED TO TURN OFF YX5200 ACK
     if (false) { //  (0 != (myStateTable[myState.tableRow].SPECIAL & mSPCL_EFCT_CONTINUOUS)) {
@@ -585,7 +586,7 @@ uint16_t getButtonInput() {
   uint16_t theVal;
   uint16_t returnInpMask = 0;
 
-  if (debugThisManyCalls > 0) { Serial.println("checkButtons() called:"); printAllMyInputs(); }
+  Serial.print("checkButtons() called: "); printAllMyInputs();
   // do lock/load separately in code
   theVal = digitalRead(DPIN_LOCK_LOAD);
   if (LOW == theVal) { // we are locked and loaded; sensitive to trigger and other events
@@ -814,14 +815,14 @@ void printExplainBits(uint16_t myBits, decodeBits_t theDecodeTable[], uint16_t n
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // printAllMyInputs() - interpret the input bits
 void printAllMyInputs() {
-  Serial.println(F("DEBUG - printAllMyInputs:"));
-  printOneInput(DPIN_BTN_TRIGGER, "DPIN_BTN_TRIGGER ");
-  printOneInput(DPIN_BTN_YELLOW, "DPIN_BTN_YELLOW   ");
-  printOneInput(DPIN_BTN_GREEN, "DPIN_BTN_GREEN    ");
-  printOneInput(DPIN_BTN_GREEN, "DPIN_BTN_GREEN    ");
-  printOneInput(DPIN_BTN_BLACK, "DPIN_BTN_BLACK    ");
-  printOneInput(DPIN_LOCK_LOAD, "DPIN_LOCK_LOAD    ");
-  printOneInput(DPIN_AUDIO_BUSY, "DPIN_AUDIO_BUSY  ");
+  Serial.print(F("DEBUG - printAllMyInputs:"));
+  printOneInput(DPIN_BTN_TRIGGER, " DPIN_BTN_TRIGGER ");
+  printOneInput(DPIN_BTN_YELLOW, " DPIN_BTN_YELLOW ");
+  printOneInput(DPIN_BTN_GREEN, " DPIN_BTN_GREEN ");
+  printOneInput(DPIN_BTN_BLACK, " DPIN_BTN_BLACK ");
+  printOneInput(DPIN_LOCK_LOAD, " DPIN_LOCK_LOAD ");
+  printOneInput(DPIN_AUDIO_BUSY, " DPIN_AUDIO_BUSY ");
+  Serial.println(" ");
 } // end printAllMyInputs()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -830,8 +831,8 @@ void printAllMyInputs() {
 void printOneInput(uint8_t dpin, const char * printAsText) {
   Serial.print(printAsText);
   if (LOW == digitalRead(dpin)) {
-    Serial.println("LOW");
+    Serial.print("LOW");
   } else {
-    Serial.println("HIGH");
+    Serial.print("HIGH");
   }
 } // end printOneInput()
