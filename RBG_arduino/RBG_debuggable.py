@@ -228,7 +228,7 @@ uint16_t myMdoDFPlayer_readType()  { return(0); }
 uint16_t myMdoDFPlayer_read() { return(0); }
 uint16_t DFprintDetail(uint16_t parm1, uint16_t parm2) { return(0); }
 uint32_t millis() { return(0); }
-void digitalWrite(uint8_t pin, uint8_t val) { printf("call digitalWrite(pin=%d, val=%d", pin, val); }
+void digitalWrite(uint8_t pin, uint8_t val) { printf("call digitalWrite(pin=%d, val=%d)\\n", pin, val); }
 uint16_t digitalRead(uint8_t pin) { return(HIGH); }
 void delay(uint16_t msec) { }
 

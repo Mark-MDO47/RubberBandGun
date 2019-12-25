@@ -244,6 +244,7 @@ uint16_t processStateTable(uint16_t tmpVinputRBG) {
   } else if (mINPROCFLG_SPCL_IN_PROC == myState.tableRowInProcFlags) {
     // special processing happening now; just call that until this flag clears
     tmpVinputRBG = RBG_specialProcessing(tmpVinputRBG, mINPROCFLG_SPCL_IN_PROC);
+    myState.tableRowInProcFlags = 0; // special processing is over
   } else {
     if (countBadStatePrint > 0) {
       Serial.println(F("ERROR processStateTable() - unknown tableRowInProcFlags value"));
@@ -277,15 +278,8 @@ uint16_t RBG_startRow() {
     prev_tableRowInProcFlags = myState.tableRowInProcFlags;
   } // end if more debugging is useful
   if ((mNONE != thisRowPtr->SPECIAL) && (0 != (thisRowPtr->SPECIAL & mSPCL_HANDLER))) { // special handler
-      thisSound = thisRowPtr->efctSound;
-      RBG_startEffectSound((uint16_t) (thisSound)); // this routine will check for mNONE
+      // no sounds no LEDs for mSPCL_HANDLER; it gets called exactly once
       thisReturn = mINPROCFLG_SPCL_IN_PROC;
-      thisLED = thisRowPtr->efctLED;
-      if (mNONE != thisLED) {
-        if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" LED ptrn ")); Serial.print((uint16_t) thisLED); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
-        if (debugThisManyCalls > 0) { Serial.println(F(" RBG_startRow FIXME LEDS to efctLED")); }
-        myState.timerLed = millis() + deltaMsLED;
-      }  // end if should switch to other LED pattern
   } else if (mNONE == thisRowPtr->gotoOnInput) { // no inputs to wait for
     // not waiting for input
     if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.println((uint16_t) __LINE__); }
@@ -299,7 +293,6 @@ uint16_t RBG_startRow() {
         if (debugThisManyCalls > 0) { Serial.println(F(" RBG_startRow FIXME LEDS to efctLED")); }
         myState.timerLed = millis() + deltaMsLED;
       }  // end if should switch to other LED pattern
-      // FIXME MAYBE NEED MORE CODE FOR SPECIALS - maybe don't need it
     }
     if (debugThisManyCalls > 0) { Serial.print(F(" RBG_startRow ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
     if (mNONE == thisReturn) { // if we still don't have anything to do, just jump
