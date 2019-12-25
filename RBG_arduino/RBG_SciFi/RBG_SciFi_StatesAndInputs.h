@@ -90,7 +90,7 @@
 #define mMASK_EFCT_SND_NUM 255  // mask for sound number
 #define mSHIFT_EFCT_SND_VOL 16  // shift for volume
 #define mMASK_EFCT_SND_VOL 31   // mask for volume once shifted in place
-#define mDEFAULT_EFCT_SND_VOL 25  // default volume - 25 is pretty good
+#define mDEFAULT_EFCT_SND_VOL 10  // default volume - 25 is pretty good
 // #define mMASK_EFCT_SND_CONTINSWITCH 256      // if continuous sound, switch between specified num and (num+128) NOT NEEDED
 
 /////////////////// end -> INPUTS 1 FROM makeStateTable.py <- //////////////////////////////////

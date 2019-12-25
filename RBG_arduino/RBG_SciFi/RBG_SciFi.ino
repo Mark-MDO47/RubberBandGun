@@ -574,10 +574,6 @@ int16_t doDwell(int16_t dwell, uint8_t must_be_diff_pattern) {
 // The sound complete is 0 when sound is complete
 //
 // NOTE: DPIN_LOCK_LOAD handled in code
-// lock/load has priority - if not lock/load then no button or sound input matters
-// when lock/load:
-//    trigger means collect the state of the buttons
-//    sound input is always sensed. If sound is playing and it finishes then we set input.
 //
 uint16_t getButtonInput() {
   static uint8_t debugThisManyCalls = 10;
@@ -592,18 +588,19 @@ uint16_t getButtonInput() {
   if (LOW == theVal) { // we are locked and loaded; sensitive to trigger and other events
     if (debugThisManyCalls > 0) { Serial.print(F(" checkButtons ln ")); Serial.println((uint16_t) __LINE__); }
     returnInpMask = mVINP_LOCK;
-    // set/clear the input bits for the standard inputs
-    for (idx = 0; idx < NUMOF(myPinsToVals); idx++) {
-      if (LOW == digitalRead(myPinsToVals[idx].pin)) {
-        returnInpMask |= ((uint16_t) myPinsToVals[idx].val); // less overkill but still solves if .val is not uintx_t
-      } else {
-        returnInpMask &= ~((uint16_t) myPinsToVals[idx].val); // overkill but can solve lots of issues
-      }
-    } // end for entries in myPinsToVals[]
   } else { // we are not locked and loaded; abort everything else
     if (debugThisManyCalls > 0) { Serial.print(F(" checkButtons ln ")); Serial.println((uint16_t) __LINE__); }
     returnInpMask = mVINP_OPEN;
   }
+
+  // set/clear the input bits for the standard inputs
+  for (idx = 0; idx < NUMOF(myPinsToVals); idx++) {
+    if (LOW == digitalRead(myPinsToVals[idx].pin)) {
+      returnInpMask |= ((uint16_t) myPinsToVals[idx].val); // less overkill but still solves if .val is not uintx_t
+    } else {
+      returnInpMask &= ~((uint16_t) myPinsToVals[idx].val); // overkill but can solve lots of issues
+    }
+  } // end for entries in myPinsToVals[]
 
   if (debugThisManyCalls > 0) { Serial.print(F(" checkButtons found inputs: 0x")); Serial.println((uint16_t) returnInpMask, HEX); }
   if (debugThisManyCalls > 0) { debugThisManyCalls -= 1; }
