@@ -116,7 +116,7 @@ def make_state_table():
     global COLTOINDEX
 
     # Import the excel file
-    xls_file = pd.ExcelFile(r'D:\GitHub-Mark-MDO47\RubberBandGun\RBG_arduino\StateTable_minimal.xlsx')
+    xls_file = pd.ExcelFile(r'./StateTable_minimal.xlsx')
     df = xls_file.parse(xls_file.sheet_names[0])
 
     # map the column names to numbers; will barf if there is a problem
@@ -195,11 +195,24 @@ def make_state_table():
     # Pass 2
 
     # collect found symbols from either goto column
-    found_symbols = []
+    # just for sanity's sake I want them in numerical order
+    tmp_found_symbols = []
     for col in ("gotoOnInput", "gotoWithoutInput"):
         for row, symb in enumerate(FOUNDINCOLUMN[col]):
-            if symb not in found_symbols:
-                found_symbols.append(symb)
+            if symb not in tmp_found_symbols:
+                if symb == "mNONE":
+                    print_debug("  %s is valid" % symb)
+                elif symb in SYMBTABLE.keys():
+                    print_debug("  %s in SYMBTABLE" % symb)
+                    tmp_found_symbols.append("%07d,%s" % (SYMBTABLE[symb]["blockStart"], symb))
+                else:
+                    print("\nERROR - %s not in SYMBTABLE\n" % symb)
+    tmp_found_symbols = sorted(tmp_found_symbols)
+    # now in numerical order
+    found_symbols = []
+    for symb in tmp_found_symbols:
+        found_symbols.append(symb.split(",")[1])
+
 
     print("\n// define the symbols - general use symbols:"
             + "\n#define mUNDEFINED 254"
@@ -215,7 +228,8 @@ def make_state_table():
             + "\n#define mBLOCKSTART 0x80"
             + "\n#define mBLOCKEND   0x40"
             + "\n\n// define the symbols - .index: first the single constant mROW_POWERON one, then the others:"
-            + "\n#define mROW_POWERON 0  // first address in myState[]") # no \n; there are more lines on the way
+            + "\n#define mROW_POWERON 0  // first address in myStateTable[]") # no \n; there are more lines on the way
+
 
     print_debug("Pass 2 found_symbols")
     for key in found_symbols:
