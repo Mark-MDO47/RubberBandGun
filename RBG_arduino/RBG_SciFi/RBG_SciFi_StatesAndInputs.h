@@ -58,8 +58,9 @@
 #define mZERO 0
 
 // define the symbols - .SPECIAL:
-// #define mSPCL_EFCT_ONETIME 0xxxx - this is the standard, no bit needed
-#define mSPCL_EFCT_CONTINUOUS 0x1000 // set this bit for continuous play while waiting for input
+#define mSPCL_EFCT_NONE       0x4000 // set this bit for no jump and no continuous sound
+#define mSPCL_EFCT_ONETIME    0x2000 // set this bit for onetime sound play then jump while waiting for other input or sound end
+#define mSPCL_EFCT_CONTINUOUS 0x1000 // set this bit for continuous sound play while waiting for other input
 #define mSPCL_HANDLER         0x0010 // mask for functions is ((uint16_t) (mSPCL_HANDLER-1))
 #define mSPCL_HANDLER_SHOOT        1 // a special handler function
 #define mSPCL_HANDLER_SOLENOID     2 // a special handler function
@@ -79,6 +80,7 @@
 #define mROW_SOLENOID 10
 #define mROW_OPNBRL 11
 #define mROW_LOKLOD 13
+
 
 // define the effect number ranges - must be divisible by 10
 #define mEFCT_WIND_UP       0  // 001 to 009 - wind-up effects
@@ -254,19 +256,19 @@ static struct myState_t {
 // the state table itself - automatically generated from makeStateTable.py
 //
 static RBGStateTable_t myStateTable[15] = {
-    { /* row 0 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mNONE, .efctSound=mEFCT_PWRON, .efctLED=mEFCT_PWRON, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_MENU, .index=mROW_POWERON, },
-    { /* row 1 */  .blkFlags=mBLOCKSTART, .SPECIAL=mNONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mINP_OPEN, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_MENU_OPEN, .gotoWithoutInput=mNONE, .index=mROW_MENU, },
-    { /* row 2 */  .blkFlags=mBLOCKEND, .SPECIAL=mNONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mINP_LOCK, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_MENU_CLOSED, .gotoWithoutInput=mNONE, .index=mROW_MENU, },
+    { /* row 0 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_PWRON, .efctLED=mEFCT_PWRON, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_MENU, .index=mROW_POWERON, },
+    { /* row 1 */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mINP_OPEN, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_MENU_OPEN, .gotoWithoutInput=mNONE, .index=mROW_MENU, },
+    { /* row 2 */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mINP_LOCK, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_MENU_CLOSED, .gotoWithoutInput=mNONE, .index=mROW_MENU, },
     { /* row 3 */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_WAITING, .efctLED=mEFCT_UNIQ_WAITING, .inputRBG=mINP_TRIG|mINP_BNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_WINDUP_SOUND, .gotoWithoutInput=mNONE, .index=mROW_MENU_OPEN, },
     { /* row 4 */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_WAITING, .efctLED=mEFCT_UNIQ_WAITING, .inputRBG=mINP_LOCK, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_LOKLOD, .gotoWithoutInput=mNONE, .index=mROW_MENU_OPEN, },
     { /* row 5 */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_WAITING, .efctLED=mEFCT_UNIQ_WAITING, .inputRBG=mINP_TRIG|mINP_BNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_WINDUP_SOUND, .gotoWithoutInput=mNONE, .index=mROW_MENU_CLOSED, },
     { /* row 6 */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_WAITING, .efctLED=mEFCT_UNIQ_WAITING, .inputRBG=mINP_OPEN, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_OPNBRL, .gotoWithoutInput=mNONE, .index=mROW_MENU_CLOSED, },
-    { /* row 7 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mNONE, .efctSound=mEFCT_WIND_UP, .efctLED=mEFCT_WIND_UP, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_SHOOT, .index=mROW_WINDUP_SOUND, },
-    { /* row 8 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_SHOOT, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_SHOOT_SOUND, .index=mROW_SHOOT, },
-    { /* row 9 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mNONE, .efctSound=mEFCT_SHOOT, .efctLED=mEFCT_SHOOT, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_SOLENOID, .index=mROW_SHOOT_SOUND, },
-    { /* row 10 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_SOLENOID, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_MENU, .index=mROW_SOLENOID, },
-    { /* row 11 */  .blkFlags=mBLOCKSTART, .SPECIAL=mNONE, .efctSound=mEFCT_OPEN_BARREL, .efctLED=mEFCT_OPEN_BARREL, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_MENU, .index=mROW_OPNBRL, },
-    { /* row 12 */  .blkFlags=mBLOCKEND, .SPECIAL=mNONE, .efctSound=mEFCT_OPEN_BARREL, .efctLED=mEFCT_OPEN_BARREL, .inputRBG=mINP_LOCK, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_LOKLOD, .gotoWithoutInput=mNONE, .index=mROW_OPNBRL, },
-    { /* row 13 */  .blkFlags=mBLOCKSTART, .SPECIAL=mNONE, .efctSound=mEFCT_LOCK_LOAD, .efctLED=mEFCT_LOCK_LOAD, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_MENU, .index=mROW_LOKLOD, },
-    { /* row 14 */  .blkFlags=mBLOCKEND, .SPECIAL=mNONE, .efctSound=mEFCT_LOCK_LOAD, .efctLED=mEFCT_LOCK_LOAD, .inputRBG=mINP_OPEN, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_OPNBRL, .gotoWithoutInput=mNONE, .index=mROW_LOKLOD, },
+    { /* row 7 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_WIND_UP, .efctLED=mEFCT_WIND_UP, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_SHOOT, .index=mROW_WINDUP_SOUND, },
+    { /* row 8 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_SHOOT | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_SHOOT_SOUND, .index=mROW_SHOOT, },
+    { /* row 9 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_SHOOT, .efctLED=mEFCT_SHOOT, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_SOLENOID, .index=mROW_SHOOT_SOUND, },
+    { /* row 10 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_SOLENOID | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_MENU, .index=mROW_SOLENOID, },
+    { /* row 11 */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_OPEN_BARREL, .efctLED=mEFCT_OPEN_BARREL, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_MENU, .index=mROW_OPNBRL, },
+    { /* row 12 */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_OPEN_BARREL, .efctLED=mEFCT_OPEN_BARREL, .inputRBG=mINP_LOCK, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_LOKLOD, .gotoWithoutInput=mNONE, .index=mROW_OPNBRL, },
+    { /* row 13 */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_LOCK_LOAD, .efctLED=mEFCT_LOCK_LOAD, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_MENU, .index=mROW_LOKLOD, },
+    { /* row 14 */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_LOCK_LOAD, .efctLED=mEFCT_LOCK_LOAD, .inputRBG=mINP_OPEN, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_OPNBRL, .gotoWithoutInput=mNONE, .index=mROW_LOKLOD, },
 };
