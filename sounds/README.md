@@ -34,6 +34,6 @@ Here are the files I used, modified, and combined for the prototype sounds (othe
 | by/3.0/ | 216096__richerlandtv__u-f-o.mp3 | https://freesound.org/s/216096/ | RICHERlandTV |
 | by/3.0/ | 88635__uair01__bicycle-picture-in-spectrum.wav | https://freesound.org/s/88635/ | uair01 |
 | by/3.0/ | 7967__cfork__boing-raw.aiff | https://freesound.org/s/7967/ | cfork |
-| by/3.0/	| 145209__lensflare8642__shotgun-sounds.mp3	| https://freesound.org/s/383205/ | SpiceProgram  |
+| by/3.0/	| 383205__spiceprogram__loading-sound.wav	| https://freesound.org/s/383205/ | SpiceProgram  |
 | by-nc/3.0/ | 179281__timbre__boingy-sweep.flac | https://freesound.org/s/179281/ | Timbre |
 
