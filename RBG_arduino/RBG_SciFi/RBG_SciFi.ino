@@ -281,7 +281,7 @@ uint16_t RBG_waitForInput(uint16_t tmpVinputRBG) {
       thisReturn = thisRowPtr->gotoWithoutInput; // this one uses WithoutInput not OnInput
       Serial.print(F(" RBG_waitForInput mSPCL_EFCT_ONETIME thisReturn ")); Serial.print(thisReturn); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
       break;
-    } else if ((0 != (thisRowPtr->inputRBG&mINP_TRIG)) && (0 != (tmpVinputRBG&mVINP_TRIG))) {
+    } else if ((mNONE != (thisRowPtr->inputRBG)) && (0 != (thisRowPtr->inputRBG&mINP_TRIG)) && (0 != (tmpVinputRBG&mVINP_TRIG))) {
       // several cases for trigger
       if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.print(idx); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
       if (0 != (thisRowPtr->inputRBG&mINP_BANY)) {
@@ -289,17 +289,17 @@ uint16_t RBG_waitForInput(uint16_t tmpVinputRBG) {
         thisReturn = thisRowPtr->gotoOnInput;
         Serial.print(F(" RBG_waitForInput mINP_TRIG mINP_BANY thisReturn ")); Serial.print(thisReturn); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
         break;
-      } else if ((0 != (thisRowPtr->inputRBG&mINP_BNONE)) && (0 == (tmpVinputRBG & (mVINP_B01|mVINP_B02|mVINP_B04)))) {
+      } else if ((mNONE != (thisRowPtr->inputRBG)) && (0 != (thisRowPtr->inputRBG&mINP_BNONE)) && (0 == (tmpVinputRBG & (mVINP_B01|mVINP_B02|mVINP_B04)))) {
         if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.print(idx); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
         thisReturn = thisRowPtr->gotoOnInput;
         Serial.print(F(" RBG_waitForInput mINP_TRIG mINP_BANY thisReturn ")); Serial.print(thisReturn); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
         break;
       }
-    } else if ((0 != (thisRowPtr->inputRBG&mINP_OPEN)) && (0 != (tmpVinputRBG&mVINP_OPEN))) {
+    } else if ((mNONE != (thisRowPtr->inputRBG)) && (0 != (thisRowPtr->inputRBG&mINP_OPEN)) && (0 != (tmpVinputRBG&mVINP_OPEN))) {
       thisReturn = thisRowPtr->gotoOnInput;
       Serial.print(F(" RBG_waitForInput mINP_OPEN thisReturn ")); Serial.print(thisReturn); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
       break;
-    } else if ((0 != (thisRowPtr->inputRBG&mINP_LOCK)) && (0 != (tmpVinputRBG&mVINP_LOCK))) {
+    } else if ((mNONE != (thisRowPtr->inputRBG)) && (0 != (thisRowPtr->inputRBG&mINP_LOCK)) && (0 != (tmpVinputRBG&mVINP_LOCK))) {
       thisReturn = thisRowPtr->gotoOnInput; // found an input we were waiting for
       Serial.print(F(" RBG_waitForInput mINP_LOCK thisReturn ")); Serial.print(thisReturn); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
       break;
