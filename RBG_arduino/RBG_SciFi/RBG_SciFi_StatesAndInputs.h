@@ -163,20 +163,6 @@ static decodeBits_t decodeBits_VinputRBG[] = {
     mVINP_SOUNDACTV, " mVINP_SOUNDACTV sound"
 }; // decodeBits_VinputRBG
 
-// masks for in-process events: wait-for-sound or wait-for-input
-//   used (only) in tableRowInProcFlags
-//   NOTE: maximum of one of these bits can be set at any time
-#define mINPROCFLG_SPCL_IN_PROC     ((uint16_t)  0x200)  // Special is in process; don't process this row at this time
-#define mINPROCFLG_WAITFORSOUND     ((uint16_t)   0x80)  // wait for sound to finish
-#define mINPROCFLG_WAITFORINPUT     ((uint16_t)   0x40)  // wait for user input (trigger with perhaps others)
-#define mINPROCFLG_WAITFORSOLENOID  ((uint16_t)   0x20)  // wait for timeout on solenoid (special, not directly set in state table)
-static decodeBits_t decodeBits_inProc[] = {
-    mINPROCFLG_WAITFORSOUND, " mINPROCFLG_WAITFORSOUND wait sound finish",
-    mINPROCFLG_WAITFORINPUT, " mINPROCFLG_WAITFORINPUT wait input (trigger & perhaps others)",
-    mINPROCFLG_WAITFORSOLENOID, " mINPROCFLG_WAITFORSOLENOID wait solenoid timeout",
-    mINPROCFLG_SPCL_IN_PROC, " mINPROCFLG_SPCL_IN_PROC Special is in proc"
-}; // decodeBits_inProc
-
 // table to identify input pins and corresponding masks
 // DPIN_LOCK_LOAD handled separately in code
 // the masks are used (only) in .VinputRBG in myState
@@ -219,7 +205,6 @@ typedef struct _RBGStateTable_t {
 
 static struct myState_t {
   uint16_t tableRow = 0;            // points to state that we will process or are processing
-  uint16_t tableRowInProcFlags = 0; // what we are waiting on to process this state
   uint16_t VinputRBG = mVINP_PREVLOCK; // bits for input buttons and sound finish: mVINP_*
   uint16_t currSound = 0;          // added due to YX5200 not playing same sound twice but NOT NEEDED
   uint16_t currVolume = 0;         // avoid sending volume when not needed

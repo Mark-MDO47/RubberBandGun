@@ -207,7 +207,7 @@ uint16_t RBG_processStateTable(uint16_t tmpVinputRBG) {
   // see if need to start a new row
   if (prevRow != myState.tableRow) { // start a new row
     debugThisManyCalls = 10; // will be interesting for a bit
-    myState.tableRowInProcFlags = RBG_startRow(); // just do what the row says
+    RBG_startRow(); // just do what the row says
     if (debugThisManyCalls > 0) {
       printAllMyState(); Serial.print(F("DEBUG RBG_processStateTable() - tmpVinputRBG 0x")); Serial.print(tmpVinputRBG, HEX); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
       debugThisManyCalls -= 1;
@@ -237,15 +237,13 @@ uint16_t RBG_processStateTable(uint16_t tmpVinputRBG) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RBG_startRow() - start processing a row in myStateTable
 //    basically we just start the effects and do a return
-// returns a tableRowInProcFlags bitmask but FIXME these might not be needed
-uint16_t RBG_startRow() {
+//
+void RBG_startRow() {
   RBGStateTable_t * thisRowPtr = &myStateTable[myState.tableRow];
-  uint16_t thisReturn = 0;
 
   RBG_startEffectSound((uint16_t) (thisRowPtr->efctSound));
   RBG_startEffectLED((uint16_t) (thisRowPtr->efctLED));
 
-  return(thisReturn);
 } // end RBG_startRow()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -388,12 +386,20 @@ void RBG_startEffectLED(uint16_t tmpEfctLED) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RBG_startEffectSound(tmpEfctSound) - start tmpEfctSound if it is valid
-// returns a tableRowInProcFlags bitmask - zero or mINPROCFLG_WAITFORSOUND
-//   caller will determine if this flag should go into tableRowInProcFlags
-// tmpEfctSound is two fields: 0x00vv00nn where nn is sound and vv is volume
+//    tmpEfctSound is two fields: 0x00vv00nn where nn is sound and vv is volume
+//       FIXME - volume not implemented yet
+// Had lots of trouble with reliable operation using playMp3Folder. Came to conclusion
+//    that it is best to use the most primitive of YX5200 commands.
+// Also saw strong correlation of using YX5200 ACK and having even more unreliable
+//    operation, so turned that off in DFinit.
+// There is code checking DPIN_AUDIO_BUSY that can probably be removed now that the
+//    debugging for above is finished.
+// There is code checking myDFPlayer.available() that can maybe also be removed now
+//    that the dubugging for above is finished. Now that I am using myDFPlayer.play(),
+//    it only seems to trigger when I interrupt a playing sound by starting another.
+//    It is sort of interesting but not needed.
 //
-uint16_t  RBG_startEffectSound(uint16_t tmpEfctSound) {
-  uint16_t thisReturn = 0;
+void  RBG_startEffectSound(uint16_t tmpEfctSound) {
   uint16_t idx;
   bool prevHI;
   uint16_t mySound = tmpEfctSound & mMASK_EFCT_SND_NUM;
@@ -415,7 +421,7 @@ uint16_t  RBG_startEffectSound(uint16_t tmpEfctSound) {
     Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" wait msec ")); Serial.print(10*idx); printOneInput(DPIN_AUDIO_BUSY, " AUDIO_BUSY "); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
   } 
 
-  // myVolume is [0-31]. 0 means not specified; else subtract one to make [0-30]
+  // myVolume is [0-31]. 0 means default; else subtract one to make [0-30]
   if (0 == myVolume) {
     myVolume = mDEFAULT_EFCT_SND_VOL;
   } else {
@@ -428,12 +434,6 @@ uint16_t  RBG_startEffectSound(uint16_t tmpEfctSound) {
       mySound += EEPROM.read(EEPOFFSET(mySound));
     }
     Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" EFCT num ")); Serial.print(tmpEfctSound); Serial.print(F(" final num ")); Serial.print(mySound); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
-    /*** DON'T DO THIS - WE JUST NEEDED TO TURN OFF YX5200 ACK
-    // if continuous sound, switch between specified num and (num+128)
-    if ((mySound & ~(mMASK_EFCT_SND_CONTINSWITCH)) == (myState.currSound & ~(mMASK_EFCT_SND_CONTINSWITCH))) {
-      mySound = myState.currSound ^ mMASK_EFCT_SND_CONTINSWITCH;
-    }
-    ***/
     /*** PROBABLY ADD THIS IN LATER FIXME
     if (false) { // (myState.currVolume != myVolume) { FIXME - add the volume after verifying it doesn't mess up communications
       myDFPlayer.volume(myVolume);  // Set volume value. From 0 to 30
@@ -445,21 +445,13 @@ uint16_t  RBG_startEffectSound(uint16_t tmpEfctSound) {
     } // end if volume different this time
     ***/
     myDFPlayer.play(mySound); //play specific mp3 in SD: root directory ###.mp3; number played is physical copy order; first one copied is 1
-    // myDFPlayer.playMp3Folder(mySound); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999)
+    // myDFPlayer.playMp3Folder(mySound); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999) NOTE: this did not work reliably
 
-    /*** DON'T DO THIS - WE JUST NEEDED TO TURN OFF YX5200 ACK
-    if (false) { //  (0 != (myStateTable[myState.tableRow].SPECIAL & mSPCL_EFCT_CONTINUOUS)) {
-      // if continuous sound, start the loop NOTE: this just doesn't seem to work
-      delay(50); // make sure the sound starts
-      myDFPlayer.sendStack((uint8_t) 0x19, (uint16_t) 0x1);  // Turn on single repeat playback
-    }
-    ***/
     if (myDFPlayer.available()) {
       Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__); Serial.println(F(" myDFPlayer problem after play"));
       DFprintDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
     }
     myState.currSound = mySound; // used for continuous sound
-    thisReturn |= mINPROCFLG_WAITFORSOUND;
     // delay(50); // make sure the sound starts
     if (LOW != digitalRead(DPIN_AUDIO_BUSY)) {
       Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__); Serial.println(F(" myDFPlayer problem after check busy"));
@@ -469,7 +461,6 @@ uint16_t  RBG_startEffectSound(uint16_t tmpEfctSound) {
     }
   } // end if should start a sound
 
-  return(thisReturn); // this is a flag that could go into tableRowInProcFlags, depending on context of caller
 } // end RBG_startEffectSound
 
 // ******************************** BUTTON AND TIMING UTILITIES ********************************
@@ -734,9 +725,6 @@ void printAllMyState() {
   Serial.println(F("DEBUG - myState:"));
   Serial.print(F("  - tableRow: "));
   Serial.println((uint16_t) myState.tableRow);
-  Serial.print(F("  - tableRowInProcFlags: 0x"));
-  Serial.println((uint16_t) myState.tableRowInProcFlags, HEX);
-  printExplainBits(myState.tableRowInProcFlags, decodeBits_inProc, NUMOF(decodeBits_inProc));
   Serial.print(F("  - VinputRBG: 0x"));
   Serial.println((uint16_t) myState.VinputRBG, HEX);
   printExplainBits(myState.VinputRBG, decodeBits_VinputRBG, NUMOF(decodeBits_VinputRBG));
