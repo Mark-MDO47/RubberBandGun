@@ -222,7 +222,7 @@ uint16_t RBG_processStateTable(uint16_t tmpVinputRBG) {
         printAllMyState(); Serial.print(F("DEBUG RBG_processStateTable() - tmpVinputRBG 0x")); Serial.print(tmpVinputRBG, HEX); Serial.print(F(" from row ")); Serial.print(myState.tableRow); Serial.print(F(" foundInputRow ")); Serial.print(foundInputRow);  Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
         debugThisManyCalls -= 1;
       }
-      myState.tableRow = foundInputRow;
+      myState.tableRow = foundInputRow; // this should be the only place that this assignment is done
     } else if ((mNONE != thisRowPtr->SPECIAL) && (0 != (thisRowPtr->SPECIAL & mSPCL_EFCT_CONTINUOUS)) && (0 == (tmpVinputRBG&mVINP_SOUNDACTV))) {
       // restart a continuous sound
       if (debugThisManyCalls > 0) {
@@ -346,24 +346,26 @@ uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSPECIAL) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RBG_specialProcShoot() - do the solenoid for shooting
 //
+//   All RBG_specialProcXxx routines get called exactly one time then move off the row
+//
 void RBG_specialProcShoot() {
   uint16_t nextRow = myStateTable[myState.tableRow].gotoWithoutInput;
   digitalWrite(DPIN_SOLENOID, HIGH);
   delay(200); // let's try it the easy way
-  if (mNONE == nextRow) { nextRow = mROW_POWERON; digitalWrite(DPIN_SOLENOID, LOW); Serial.print(F(" RBG_specialProcShoot ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" gotoWithoutInput is mNONE; going to mROW_POWERON")); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
-  myState.tableRow = nextRow;
+  digitalWrite(DPIN_SOLENOID, LOW);
 } // end RBG_specialProcShoot()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RBG_specialProcSolenoid() - release the solenoid after shooting
 //
-// really just in case...
+//   All RBG_specialProcXxx routines get called exactly one time then move off the row
+//
+// really just to be sure... RBG_specialProcShoot() should take care of this
 //
 void RBG_specialProcSolenoid() {
   uint16_t nextRow = myStateTable[myState.tableRow].gotoWithoutInput;
   digitalWrite(DPIN_SOLENOID, LOW);
   if (mNONE == nextRow) { nextRow = mROW_POWERON; Serial.print(F(" RBG_specialProcSolenoid ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" gotoWithoutInput is mNONE; going to mROW_POWERON")); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
-  myState.tableRow = nextRow;
 } // end RBG_specialProcSolenoid()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
