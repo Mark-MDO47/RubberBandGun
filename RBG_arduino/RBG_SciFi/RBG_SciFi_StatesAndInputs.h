@@ -147,9 +147,8 @@ typedef struct _decodeBits_t { uint16_t theBit; const char * theText; } decodeBi
 #define mVINP_B02   0x0002     // mask for DPIN_BTN_GREEN (currently depressed)
 #define mVINP_B04   0x0004     // mask for DPIN_BTN_BLACK (currently depressed)
 #define mVINP_TRIG  0x0020     // mask for just depressed the trigger
-#define mVINP_LOCK  0x0040     // mask for just connected the barrel
-#define mVINP_OPEN  0x0080     // mask for just disconnected the barrel
-#define mVINP_PREVLOCK  0x0100 // mask for the barrel was lock/load last time we checked
+#define mVINP_LOCK  0x0040     // mask for barrel connected
+#define mVINP_OPEN  0x0080     // mask for barrel disconnected
 #define mVINP_SOUNDACTV  0x0200 // mask for sound was active last time we checked
 // #define mVINP_SOUNDEND 0x0400 // mask for sound was ended and previously active
 static decodeBits_t decodeBits_VinputRBG[] = {
@@ -159,7 +158,6 @@ static decodeBits_t decodeBits_VinputRBG[] = {
     mVINP_TRIG, " mVINP_TRIG trigger",
     mVINP_LOCK, " mVINP_LOCK barrel lock/load",
     mVINP_OPEN, " mVINP_OPEN barrel open",
-    mVINP_PREVLOCK, " mVINP_PREVLOCK barrel prev lock/load",
     mVINP_SOUNDACTV, " mVINP_SOUNDACTV sound"
 }; // decodeBits_VinputRBG
 
@@ -205,7 +203,7 @@ typedef struct _RBGStateTable_t {
 
 static struct myState_t {
   uint16_t tableRow = 0;            // points to state that we will process or are processing
-  uint16_t VinputRBG = mVINP_PREVLOCK; // bits for input buttons and sound finish: mVINP_*
+  uint16_t VinputRBG = 0;          // bits for input buttons and sound finish: mVINP_*
   uint16_t currSound = 0;          // added due to YX5200 not playing same sound twice but NOT NEEDED
   uint16_t currVolume = 0;         // avoid sending volume when not needed
   uint32_t timerPrev = 0;          // timer from previous time through loop

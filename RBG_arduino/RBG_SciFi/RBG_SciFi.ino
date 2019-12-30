@@ -172,11 +172,6 @@ void loop() {
   gHue += 3; // rotating "base color" used by Demo Reel 100 patterns
 
   myState.timerNow = millis();
-  if (myState.VinputRBG&mVINP_LOCK) {
-    myState.VinputRBG |= mVINP_PREVLOCK; // set the bit
-  } else {
-    myState.VinputRBG &= ((uint16_t) ~(mVINP_PREVLOCK)); // clear the bit
-  }
 
   nowVinputRBG = getButtonInput();
   if (preVinputRBG != nowVinputRBG) {
