@@ -71,4 +71,5 @@ const uint8_t  start_per_ring[NUM_RINGS_PER_DISK] = {  0, 32, 56 };
 // This is the array the library will read to determine how each LED in the strand should be set
 static uint32_t data_guard_before = 0x55555555;
 static CRGB led_display[(1+NUM_SHADOWS)*NUM_LEDS_PER_DISK]; // 1st set is for display, then shadow1 then shadow2 etc.
+static CRGB led_tmp1, led_tmp2, led_tmp3;
 static uint32_t data_guard_after = 0x55555555;

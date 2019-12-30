@@ -144,8 +144,15 @@ void setup() {
   DFsetup();
 
   // initialize the FastLED library for our setup
-  FastLED.addLeds<NEOPIXEL,DPIN_FASTLED>(led_display, NUM_LEDS_PER_DISK);
+  // according to Amazon comments: Library configuration used was WS2812B GRB (not RGB). Library call: FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);. Everything worked as expected.
+  //    this was for the graduation cap: FastLED.addLeds<NEOPIXEL,DPIN_FASTLED>(led_display, NUM_LEDS_PER_DISK);
+  FastLED.addLeds<WS2812B,DPIN_FASTLED,GRB>(led_display, NUM_LEDS_PER_DISK);
   FastLED.setBrightness(BRIGHTMAX); // we will do our own power management
+  // FIXME initialize led_display
+  led_display[0] = CRGB::Red;
+  for (int idx=1; idx < NUM_LEDS_PER_DISK; idx++) {
+    led_display[idx] = CRGB::Black;
+  }
 
   // if needed, initialize EEPROM variables
   eeprom_check_init();
@@ -181,7 +188,7 @@ void loop() {
   nowVinputRBG = RBG_processStateTable(nowVinputRBG);
 
   checkDataGuard();
-  // doPattern(); // FIXME TBS WILL DO LEDs LATER
+  doPattern(); // FIXME TBS WILL DO LEDs LATER
   checkDataGuard();
   FastLED.show();
 
@@ -195,6 +202,18 @@ void loop() {
   myState.timerPrev = myState.timerNow;
   globalLoopCount += 1;
 }  // end loop()
+
+// ******************************** LED UTILITIES ****************************************
+
+void doPattern() {
+  // simple moving LED
+  led_tmp1 = led_display[0];
+  for (int idx=1; idx < NUM_LEDS_PER_DISK; idx++) {
+    led_display[idx-1] = led_display[idx];
+  }
+  led_display[NUM_LEDS_PER_DISK-1] = led_tmp1;
+} // end doPattern()
+
 
 // ******************************** STATE TABLE UTILITIES ********************************
 
