@@ -54,10 +54,12 @@
 #define NUM_DISKS 1 // definitely not enough room for multiple disks in one Arduino
 #define NUM_LEDS_PER_DISK 72
 #define NUM_RINGS_PER_DISK 3
-#define NUM_SHADOWS 1  // number of shadow disks
+#define MAX_LEDS_PER_RING 32
+#define GCD_LEDS_PER_RING 96 // they all divide into 96 evenly
+#define NUM_SHADOWS 0  // number of shadow disks
 
 // LED count - number of LEDs in each ring in order of serial access
-const uint8_t  leds_per_ring[NUM_RINGS_PER_DISK]  = { 32, 24, 16 };
+const uint8_t  leds_per_ring[NUM_RINGS_PER_DISK]  = { MAX_LEDS_PER_RING, 24, 16 }; // MAX_LEDS_PER_RING = 32
 const uint8_t  leds_per_ringqrtr[NUM_RINGS_PER_DISK]  = { 8, 6, 4 };
 const uint8_t  start_per_ring[NUM_RINGS_PER_DISK] = {  0, 32, 56 };
 
@@ -71,5 +73,21 @@ const uint8_t  start_per_ring[NUM_RINGS_PER_DISK] = {  0, 32, 56 };
 // This is the array the library will read to determine how each LED in the strand should be set
 static uint32_t data_guard_before = 0x55555555;
 static CRGB led_display[(1+NUM_SHADOWS)*NUM_LEDS_PER_DISK]; // 1st set is for display, then shadow1 then shadow2 etc.
-static CRGB led_tmp1, led_tmp2, led_tmp3;
 static uint32_t data_guard_after = 0x55555555;
+
+static CRGB led_tmpRing[MAX_LEDS_PER_RING]; // for temp storage
+static CRGB led_tmp1;
+
+typedef struct _brightSpots_t {
+  uint8_t posn; // position relative to start of ring; + = counterclockwise. 255 or mNONE terminates list
+  CRGB hue;     // color for that position
+} brightSpots_t; // end definition
+
+// for RBG_rotateRingAndFade(), only need to do ring 0 and others follow suit
+static brightSpots_t windup1BrightSpots[] = {
+  { .posn=0, .hue=CRGB::Red },
+  { .posn=8, .hue=CRGB::Green },
+  { .posn=16, .hue=CRGB::Blue },
+  { .posn=24, .hue=CRGB::Yellow },
+  { .posn=mNONE, .hue=CRGB::Black },
+}; // end windup_ring[] definition

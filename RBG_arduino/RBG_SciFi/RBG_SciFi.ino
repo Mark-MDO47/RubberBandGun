@@ -74,8 +74,8 @@
 #include "FastLED.h"                         // to manipulate WS2812b 5050 RGB LED Rings
 #include "DFRobotDFPlayerMini.h"             // to communicate with the YX5200 audio player
 
-#include "RBG_SciFi_LEDs.h"                  // LED structural and pattern definitions
 #include "RBG_SciFi_StatesAndInputs.h"       // state tables and input definitions
+#include "RBG_SciFi_LEDs.h"                  // LED structural and pattern definitions
 
 #define SERIALDEBUG 1                        // serial debugging
 #define REAL_BUTTONS 1                       // use actual buttons
@@ -149,10 +149,7 @@ void setup() {
   FastLED.addLeds<WS2812B,DPIN_FASTLED,GRB>(led_display, NUM_LEDS_PER_DISK);
   FastLED.setBrightness(BRIGHTMAX); // we will do our own power management
   // FIXME initialize led_display
-  led_display[0] = CRGB::Red;
-  for (int idx=1; idx < NUM_LEDS_PER_DISK; idx++) {
-    led_display[idx] = CRGB::Black;
-  }
+  RBG_rotateRingAndFade(mNONE, 0, windup1BrightSpots);
 
   // if needed, initialize EEPROM variables
   eeprom_check_init();
@@ -188,7 +185,7 @@ void loop() {
   nowVinputRBG = RBG_processStateTable(nowVinputRBG);
 
   checkDataGuard();
-  doPattern(); // FIXME TBS WILL DO LEDs LATER
+  doPattern();
   checkDataGuard();
   FastLED.show();
 
@@ -205,6 +202,7 @@ void loop() {
 
 // ******************************** LED UTILITIES ****************************************
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 void doPattern() {
   // simple moving LED
   led_tmp1 = led_display[0];
@@ -214,6 +212,50 @@ void doPattern() {
   led_display[NUM_LEDS_PER_DISK-1] = led_tmp1;
 } // end doPattern()
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// RBG_rotateRingAndFade() - rotate a single ring, fade to black, add in new bright spots
+//
+// whichRing - which ring to rotate, 0 through (NUM_RINGS_PER_DISK-1) {2 for RBG}
+//                value = mNONE (255) means initialize entire disk (actually, anything > 2)
+// rotate96 - fraction of GCD_LEDS_PER_RING to rotate, +/-. With these rings, + is counter-clockwise and - is clockwise
+// brightSpots - list of positions within ring and color for bright spots
+// 
+// writes over led_tmpRing and led_display
+//
+#define DEBUG_RRandF 1
+void RBG_rotateRingAndFade(uint8_t whichRing, int8_t rotate96, brightSpots_t* brightSpots) {
+  int idx;
+
+  if (whichRing > (NUM_RINGS_PER_DISK-1)) {
+    // initialize
+    #ifdef DEBUG_RRandF
+    Serial.print(F(" DEBUG_RRandF whichRing=")); Serial.println(whichRing);
+    #endif // DEBUG_RRandF
+    for (idx=0; idx < NUM_LEDS_PER_DISK; idx++) {
+      led_display[idx] = CRGB::Black;
+    }
+    #ifdef DEBUG_RRandF
+    Serial.print(F(" DEBUG_RRandF CRGB::Black"));
+    #endif // DEBUG_RRandF
+    uint8_t idxRing;
+    for (idxRing=0; idxRing<NUM_RINGS_PER_DISK; idxRing++) {
+      for (idx=0; (brightSpots[idx].posn < leds_per_ring[idxRing]) && (idx < leds_per_ring[idxRing]); idx++) {
+        led_display[brightSpots[idx].posn+start_per_ring[idxRing]] = brightSpots[idx].hue;
+        #ifdef DEBUG_RRandF
+        Serial.print(F(" DEBUG_RRandF idxRing=")); Serial.print(idxRing); Serial.print(F(" idx=")); Serial.print(idx); Serial.print(F(" posn=")); Serial.print(brightSpots[idx].posn);  Serial.print(F(" absPosn=")); Serial.println(brightSpots[idx].posn+start_per_ring[idxRing]); 
+        #endif // DEBUG_RRandF
+      }
+    }
+    #ifdef DEBUG_RRandF
+    delay(20000);
+    #endif // DEBUG_RRandF
+    // end initialize
+  } else if ((whichRing >= 0) && (whichRing <= (NUM_RINGS_PER_DISK-1))) {
+    // process individual ring
+    
+    // end process individual ring
+  } // end check on whichRing
+} // end RBG_rotateRingAndFade()
 
 // ******************************** STATE TABLE UTILITIES ********************************
 
