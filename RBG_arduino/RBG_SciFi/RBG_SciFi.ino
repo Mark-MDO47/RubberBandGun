@@ -81,6 +81,8 @@
 #define REAL_BUTTONS 1                       // use actual buttons
 
 #define DONOTEXPLAINBITS 1                   // don't explain the bits - existing routine uses too much RAM
+#define DEBUG_STATE_MACHINE 1                // 1 to show state machine internals for transitions
+#define DEBUG_INPUTS 0                       // 1 to show all inputs
 
 
 SoftwareSerial mySoftwareSerial(DPIN_SWSRL_RX, DPIN_SWSRL_TX); // to talk to YX5200 audio player
@@ -132,6 +134,7 @@ void setup() {
   pinMode(DPIN_BTN_YELLOW,  INPUT_PULLUP); // configuration button
   pinMode(DPIN_BTN_GREEN,   INPUT_PULLUP); // configuration button
   pinMode(DPIN_BTN_BLACK,   INPUT_PULLUP); // configuration button
+  pinMode(DPIN_BTN_EXTRA,   INPUT_PULLUP); // EXTRA configuration button
   pinMode(DPIN_AUDIO_BUSY,  INPUT_PULLUP); // tells when audio stops
   pinMode(DPIN_LOCK_LOAD,   INPUT_PULLUP); // tells if barrel is locked and loaded
   // and the output pin
@@ -171,33 +174,33 @@ void loop() {
 
   // put your main code here, to run repeatedly:
 
-  uint16_t preVinputRBG = 65535;
-  
-  gHue += 3; // rotating "base color" used by Demo Reel 100 patterns
+  static uint16_t preVinputRBG = 65535;
 
   myState.timerNow = millis();
 
-  nowVinputRBG = getButtonInput();
-  if (preVinputRBG != nowVinputRBG) {
-    Serial.print(F("DEBUG loop() - nowVinputRBG 0x")); Serial.print(nowVinputRBG, HEX); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
-  }
-  preVinputRBG = nowVinputRBG;
-  nowVinputRBG = RBG_processStateTable(nowVinputRBG);
+  // see if time to run the state machine and process inputs
+  if ((myState.timerNow-myState.timerPrevState) >= 40) { // || (myState.VinputRBG != nowVinputRBG)) { THIS MAKES RELEASING TRIGGER TOO FAST AFFECT SOUND START
+    nowVinputRBG = getButtonInput();
+    if (preVinputRBG != nowVinputRBG) {
+      Serial.print(F("DEBUG loop() - nowVinputRBG 0x")); Serial.print(nowVinputRBG, HEX); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
+    }
+    preVinputRBG = nowVinputRBG;
+    nowVinputRBG = RBG_processStateTable(nowVinputRBG);
+    myState.timerPrevState = myState.timerNow;
+    myState.VinputRBG = nowVinputRBG;
+  } // end wait for next State activity
 
-  checkDataGuard();
-  doPattern();
-  checkDataGuard();
-  FastLED.show();
+  // see if time to run the LED patterns
+  if ((myState.timerNow-myState.timerPrevLED) >= myState.ptrnDelayLED) {
+    gHue += 3; // rotating "base color" used by Demo Reel 100 patterns
+    checkDataGuard();
+    doPattern();
+    checkDataGuard();
+    FastLED.show();
+    myState.timerPrevLED = myState.timerNow;
+    globalLoopCount += 1;
+  } // end wait for next LED activity
 
-  if (myState.pattern < MIN_FASTLED_PATTERN) { // Mark's patterns
-    doDwell(myState.ptrn_delay, 1);
-  } else { // FastLED patterns
-    doDwell(myState.ptrn_delay_fastled, 1);
-  }
-
-  myState.VinputRBG = nowVinputRBG;
-  myState.timerPrev = myState.timerNow;
-  globalLoopCount += 1;
 }  // end loop()
 
 // ******************************** LED UTILITIES ****************************************
@@ -222,15 +225,16 @@ void doPattern() {
 // 
 // writes over led_tmpRing and led_display
 //
-#define DEBUG_RRandF 1
+// #define DEBUG_RRandF 1
 void RBG_rotateRingAndFade(uint8_t whichRing, int8_t rotate96, brightSpots_t* brightSpots) {
   int idx;
 
   if (whichRing > (NUM_RINGS_PER_DISK-1)) {
     // initialize
     #ifdef DEBUG_RRandF
-    Serial.print(F(" DEBUG_RRandF whichRing=")); Serial.println(whichRing);
+    Serial.print(F(" DEBUG_RRandF initialize whichRing=")); Serial.println(whichRing);
     #endif // DEBUG_RRandF
+    myState.ptrnDelayLED = DLYLED_rotateRingAndFade;
     for (idx=0; idx < NUM_LEDS_PER_DISK; idx++) {
       led_display[idx] = CRGB::Black;
     }
@@ -274,13 +278,13 @@ void RBG_rotateRingAndFade(uint8_t whichRing, int8_t rotate96, brightSpots_t* br
 //   else if sound ended and continuous sound, RESTART SOUND
 //
 uint16_t RBG_processStateTable(uint16_t tmpVinputRBG) {
-  static uint8_t debugThisManyCalls = 10;
+  static uint8_t debugThisManyCalls = DEBUG_STATE_MACHINE*10;
   static uint16_t prevRow = mNONE;
   RBGStateTable_t * thisRowPtr = &myStateTable[myState.tableRow];
 
   // see if need to start a new row
   if (prevRow != myState.tableRow) { // start a new row
-    debugThisManyCalls = 10; // will be interesting for a bit
+    debugThisManyCalls = DEBUG_STATE_MACHINE*10; // will be interesting for a bit
     RBG_startRow(); // just do what the row says
     if (debugThisManyCalls > 0) {
       printAllMyState(); Serial.print(F("DEBUG RBG_processStateTable() - tmpVinputRBG 0x")); Serial.print(tmpVinputRBG, HEX); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
@@ -330,7 +334,7 @@ void RBG_startRow() {
 //     else if foundinput matches, goto OnInput
 //
 uint16_t RBG_waitForInput(uint16_t tmpVinputRBG) {
-  static uint8_t debugThisManyCalls = 8;
+  static uint8_t debugThisManyCalls = DEBUG_STATE_MACHINE*200;
   uint16_t thisReturn = mNONE; // assume no input found
   RBGStateTable_t * thisRowPtr = &myStateTable[myState.tableRow];
 
@@ -388,7 +392,7 @@ uint16_t RBG_waitForInput(uint16_t tmpVinputRBG) {
     }
   } // end while searching for mBLOCKEND
 
-  debugThisManyCalls -= 1;
+  if (debugThisManyCalls >= 1) debugThisManyCalls -= 1;
 
   return(thisReturn);
 } // end RBG_waitForInput()
@@ -409,7 +413,7 @@ uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSPECIAL) {
       RBG_specialProcSolenoid();
       break;
     default:
-      Serial.print(F(" RBG_specialProcessing ln ")); Serial.print((uint16_t) __LINE__);  Serial.print(F(" mySpec ")); Serial.print(mySpec);  Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
+      Serial.print(F(" RBG_specialProcessing ERROR ln ")); Serial.print((uint16_t) __LINE__);  Serial.print(F(" mySpec ")); Serial.print(mySpec);  Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
       break;
   } // end switch on type of special
   return(myVinputRBG);
@@ -437,7 +441,7 @@ void RBG_specialProcShoot() {
 void RBG_specialProcSolenoid() {
   uint16_t nextRow = myStateTable[myState.tableRow].gotoWithoutInput;
   digitalWrite(DPIN_SOLENOID, LOW);
-  if (mNONE == nextRow) { nextRow = mROW_POWERON; Serial.print(F(" RBG_specialProcSolenoid ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" gotoWithoutInput is mNONE; going to mROW_POWERON")); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
+  if (mNONE == nextRow) { nextRow = mROW_POWERON; Serial.print(F(" RBG_specialProcSolenoid ERROR ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" gotoWithoutInput is mNONE; going to mROW_POWERON")); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
 } // end RBG_specialProcSolenoid()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -452,9 +456,10 @@ void RBG_startEffectLED(uint16_t tmpEfctLED) {
       // configurable sound using EEPROM
       myLED += EEPROM.read(EEPOFFSET(myLED));
     }
+    #if DEBUG_STATE_MACHINE
     Serial.print(F(" RBG_startEffectLED ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" EFCT num ")); Serial.print(tmpEfctLED); Serial.print(F(" final LED num ")); Serial.print(myLED); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
+    #endif // DEBUG_STATE_MACHINE
     Serial.println(F(" RBG_startRow FIXME LEDS to efctLED"));
-    myState.timerLed = millis() + deltaMsLED; // FIXME maybe not needed
   }
 } // end RBG_startEffectLED()
 
@@ -507,7 +512,9 @@ void  RBG_startEffectSound(uint16_t tmpEfctSound) {
       // configurable sound using EEPROM
       mySound += EEPROM.read(EEPOFFSET(mySound));
     }
+    #if DEBUG_STATE_MACHINE
     Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" EFCT num ")); Serial.print(tmpEfctSound); Serial.print(F(" final num ")); Serial.print(mySound); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
+    #endif // DEBUG_STATE_MACHINE
     /*** PROBABLY ADD THIS IN LATER FIXME
     if (false) { // (myState.currVolume != myVolume) { FIXME - add the volume after verifying it doesn't mess up communications
       myDFPlayer.volume(myVolume);  // Set volume value. From 0 to 30
@@ -521,70 +528,31 @@ void  RBG_startEffectSound(uint16_t tmpEfctSound) {
     myDFPlayer.play(mySound); //play specific mp3 in SD: root directory ###.mp3; number played is physical copy order; first one copied is 1
     // myDFPlayer.playMp3Folder(mySound); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999) NOTE: this did not work reliably
 
+    /*
     if (myDFPlayer.available()) {
       Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__); Serial.println(F(" myDFPlayer problem after play"));
       DFprintDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
     }
-    myState.currSound = mySound; // used for continuous sound
-    // delay(50); // make sure the sound starts
-    if (LOW != digitalRead(DPIN_AUDIO_BUSY)) {
-      Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__); Serial.println(F(" myDFPlayer problem after check busy"));
-      if (myDFPlayer.available()) {
-        DFprintDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
+    */
+    idx = 0;
+    while ((0 == idx) && (LOW != digitalRead(DPIN_AUDIO_BUSY))) {
+      if (idx>10) {
+        Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" problem after check busy: waited for AUDIO_BUSY (msec) ")); Serial.println((uint16_t) idx*10); 
+        break;
       }
-    }
+      delay(10);
+      idx++;
+    } // end make sure sound starts
+    Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" waited for AUDIO_BUSY (msec) ")); Serial.println((uint16_t) idx*10); 
+
   } // end if should start a sound
 
 } // end RBG_startEffectSound
 
 // ******************************** BUTTON AND TIMING UTILITIES ********************************
 
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// doDwell(int16_t dwell, uint8_t must_be_diff_pattern) - dwell or break out if button press
-//   returns TRUE if got a change in inputs
-//   else returns false
-//
-// FIXME TBD MAYBE DO NOT NEED - LEFT IT OUT keeps track of button_time
-//
-// FIXME - needs adaptation for Rubber Band Gun - handle LED pattern, sound and solenoid
-//
-#define SMALL_DWELL 20
-int16_t doDwell(int16_t dwell, uint8_t must_be_diff_pattern) {
-  int16_t numloops = dwell / SMALL_DWELL;
-  int16_t i;
-  static uint8_t firstTime = 1;
-
-  if (firstTime) {
-    Serial.println(F("FIXME doDwell(...) - may need improvement for Rubber Band Gun for solenoid timer"));
-    firstTime = 0;
-  }
-
-  for (i = 0; i < numloops; i++) {
-    nowVinputRBG = getButtonInput();
-    if ((0 != must_be_diff_pattern) && (nowVinputRBG == myState.pattern)) {
-      delay(SMALL_DWELL);
-    } else {
-      return(nowVinputRBG);
-    }
-    // button_time += SMALL_DWELL; // FIXME TBD MAYBE DO NOT NEED - LEFT IT OUT
-  } // end for most of the delay
-  if ((dwell % SMALL_DWELL) != 0) {
-    nowVinputRBG = getButtonInput();
-    if ((0 != must_be_diff_pattern) && (nowVinputRBG == myState.pattern)) {
-      delay(dwell % SMALL_DWELL);
-    } else {
-      return(nowVinputRBG);
-    }
-    // button_time += (dwell % SMALL_DWELL); // FIXME TBD MAYBE DO NOT NEED - LEFT IT OUT
-  } // end handle the remainder
-  return(0); // never saw input change
-} // end doDwell()
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-// getButtonInput() - get next button or other input, true inputs or debugging
-//
-// checkButtons() - returns mVINP_ mask for buttons to process
+// getButtonInput() - returns mVINP_ mask for buttons to process
 // 
 // All the buttons are 0 when pressed
 // The lock/load input is 0 when connected and 1 when not lock/load
@@ -593,20 +561,22 @@ int16_t doDwell(int16_t dwell, uint8_t must_be_diff_pattern) {
 // NOTE: DPIN_LOCK_LOAD handled in code
 //
 uint16_t getButtonInput() {
-  static uint8_t debugThisManyCalls = 10;
+  static uint8_t debugThisManyCalls = DEBUG_INPUTS*10;
   uint16_t idx;
   uint16_t thePin;
   uint16_t theVal;
   uint16_t returnInpMask = 0;
 
-  Serial.print("checkButtons() called: "); printAllMyInputs();
+  #if DEBUG_INPUTS
+  Serial.print("getButtonInput() called: "); printAllMyInputs();
+  #endif // DEBUG_INPUTS
   // do lock/load separately in code
   theVal = digitalRead(DPIN_LOCK_LOAD);
   if (LOW == theVal) { // we are locked and loaded; sensitive to trigger and other events
-    if (debugThisManyCalls > 0) { Serial.print(F(" checkButtons ln ")); Serial.println((uint16_t) __LINE__); }
+    if (debugThisManyCalls > 0) { Serial.print(F(" getButtonInput ln ")); Serial.println((uint16_t) __LINE__); }
     returnInpMask = mVINP_LOCK;
   } else { // we are not locked and loaded; abort everything else
-    if (debugThisManyCalls > 0) { Serial.print(F(" checkButtons ln ")); Serial.println((uint16_t) __LINE__); }
+    if (debugThisManyCalls > 0) { Serial.print(F(" getButtonInput ln ")); Serial.println((uint16_t) __LINE__); }
     returnInpMask = mVINP_OPEN;
   }
 
@@ -623,7 +593,7 @@ uint16_t getButtonInput() {
   if (debugThisManyCalls > 0) { debugThisManyCalls -= 1; }
 
   return(returnInpMask);
-} // end checkButtons()
+} // end getButtonInput()
 
 // ******************************** INITIALIZATION UTILITIES ********************************
 

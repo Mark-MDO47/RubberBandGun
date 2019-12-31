@@ -31,7 +31,8 @@
 #define DPIN_BTN_YELLOW   5  // digital input - yellow configuration button
 #define DPIN_BTN_GREEN    6  // digital input - green configuration button
 #define DPIN_BTN_BLACK    7  // digital input - black configuration button
-#define DPIN_LOCK_LOAD    8  // digital input - grounded when in lock and load position
+#define DPIN_BTN_EXTRA    8  // digital input - black EXTRA button
+#define DPIN_LOCK_LOAD    9  // digital input - grounded when in lock and load position
 #define DPIN_SWSRL_RX    10  // serial in  - talk to DFPlayer audio player (YX5200)
 #define DPIN_SWSRL_TX    11  // serial out - talk to DFPlayer audio player (YX5200)
 #define DPIN_AUDIO_BUSY  12  // digital input - signals when audio finishes
@@ -139,22 +140,22 @@ typedef struct _decodeBits_t { uint16_t theBit; const char * theText; } decodeBi
 #define mINP_TRIG  0x0020      // mask for just depressed the trigger
 #define mINP_LOCK  0x0040      // mask for just connected the barrel
 #define mINP_OPEN  0x0080      // mask for just disconnected the barrel
-#define mINP_ENDSOUND 0x0100   // mask for sound just ended
 
 // masks for input values: button, trigger, sound module, and barrel states and state changes
 //   used (only) in .VinputRBG in myState
 #define mVINP_B01   0x0001     // mask for DPIN_BTN_YELLOW (currently depressed)
 #define mVINP_B02   0x0002     // mask for DPIN_BTN_GREEN (currently depressed)
 #define mVINP_B04   0x0004     // mask for DPIN_BTN_BLACK (currently depressed)
+#define mVINP_BXTRA 0x0008     // mask for DPIN_BTN_EXTRA (currently depressed)
 #define mVINP_TRIG  0x0020     // mask for just depressed the trigger
 #define mVINP_LOCK  0x0040     // mask for barrel connected
 #define mVINP_OPEN  0x0080     // mask for barrel disconnected
 #define mVINP_SOUNDACTV  0x0200 // mask for sound was active last time we checked
-// #define mVINP_SOUNDEND 0x0400 // mask for sound was ended and previously active
 static decodeBits_t decodeBits_VinputRBG[] = {
     mVINP_B01, " mVINP_B01 YELLOW",
     mVINP_B02, " mVINP_B02 GREEN",
     mVINP_B04, " mVINP_B04 BLACK",
+    mVINP_BXTRA, " mVINP_BXTRA BTN XTRA",
     mVINP_TRIG, " mVINP_TRIG trigger",
     mVINP_LOCK, " mVINP_LOCK barrel lock/load",
     mVINP_OPEN, " mVINP_OPEN barrel open",
@@ -172,6 +173,7 @@ static pins_to_vals_t myPinsToVals[] = {
   { DPIN_BTN_YELLOW,  mVINP_B01 },
   { DPIN_BTN_GREEN,   mVINP_B02 },
   { DPIN_BTN_BLACK,   mVINP_B04 },
+  { DPIN_BTN_EXTRA,   mVINP_BXTRA },
   { DPIN_AUDIO_BUSY,  mVINP_SOUNDACTV },
 };
 
@@ -202,24 +204,15 @@ typedef struct _RBGStateTable_t {
 
 
 static struct myState_t {
-  uint16_t tableRow = 0;            // points to state that we will process or are processing
+  uint16_t tableRow = 0;           // points to state that we will process or are processing
   uint16_t VinputRBG = 0;          // bits for input buttons and sound finish: mVINP_*
   uint16_t currSound = 0;          // added due to YX5200 not playing same sound twice but NOT NEEDED
   uint16_t currVolume = 0;         // avoid sending volume when not needed
-  uint32_t timerPrev = 0;          // timer from previous time through loop
-  uint32_t timerNow = 0;           // timer from this time through loop
-  uint32_t timerLed = 0;           // timer for next LED activity
-  uint32_t timerSolenoidStart = 0;      // timer for next solenoid OFF
-  uint32_t timerSolenoidEnd   = 0;      // timer for next solenoid OFF
-  uint32_t debounceTimer = 0;      // timer for debounce of buttons
+  uint32_t timerNow = 0;           // timer now
+  uint32_t timerPrevState = 0;     // start timer from previous time through state loop
+  uint32_t timerPrevLED = 0;       // start timer from previous LED activity
   // LED state info
-  int8_t   pattern = 1;            // keep track of patterns - this is what we are doing now
-  int8_t   oldPattern = 2;         // this is the previous pattern
-  int8_t   nextPattern = 2;        // this is the next pattern
-  int8_t   this_ring = 0;          // from ring_3 (value 0, 32 LEDs) to ring_2 (value 1, 24 LEDs) to ring_1 (value 2, 16 LEDs)
-  int8_t   this_qrtr = 0;          // from qrtr_1 (value 0) to qrtr_4 (value 3), count modulo in either direction
-  int16_t  ptrn_delay = 100;       // proper delay for Mark's patterns
-  int16_t  ptrn_delay_fastled = 15;// proper delay for FastLED patterns
+  int16_t  ptrnDelayLED = 7;         // proper delay for Mark's patterns
 } myState;
 
 // patterns: (FIXME these will change)
@@ -233,7 +226,8 @@ static struct myState_t {
 //   8 = bpm; this is the best Demo Reel 100 pattern on the Mokungit 93 LED disk
 //   9 = juggle Demo Reel 100 pattern
 //  10 = Fire2012 from another Kriegsman FastLED example
-#define MIN_FASTLED_PATTERN 7
+#define DLYLED_MIN 7
+#define DLYLED_rotateRingAndFade 25 // for RBG_rotateRingAndFade
 
 //
 // the state table itself - automatically generated from makeStateTable.py
