@@ -83,6 +83,7 @@
 #define DONOTEXPLAINBITS 1                   // don't explain the bits - existing routine uses too much RAM
 #define DEBUG_STATE_MACHINE 1                // 1 to show state machine internals for transitions
 #define DEBUG_INPUTS 0                       // 1 to show all inputs
+#define DEBUG_SHOW_MSEC 1                    // use globalLoopCount for millis() display not loopcount
 
 
 SoftwareSerial mySoftwareSerial(DPIN_SWSRL_RX, DPIN_SWSRL_TX); // to talk to YX5200 audio player
@@ -177,6 +178,9 @@ void loop() {
   static uint16_t preVinputRBG = 65535;
 
   myState.timerNow = millis();
+  #if DEBUG_SHOW_MSEC
+  globalLoopCount = myState.timerNow;
+  #endif // DEBUG_SHOW_MSEC
 
   // see if time to run the state machine and process inputs
   if ((myState.timerNow-myState.timerPrevState) >= 40) { // || (myState.VinputRBG != nowVinputRBG)) { THIS MAKES RELEASING TRIGGER TOO FAST AFFECT SOUND START
@@ -191,13 +195,13 @@ void loop() {
   } // end wait for next State activity
 
   // see if time to run the LED patterns
-  if ((myState.timerNow-myState.timerPrevLED) >= myState.ptrnDelayLED) {
+  if ((myState.timerNow-myState.timerPrevLEDstep) >= myState.ptrnDelayLEDstep) {
     gHue += 3; // rotating "base color" used by Demo Reel 100 patterns
     checkDataGuard();
     doPattern(myStateTable[myState.tableRow].efctLED);
     checkDataGuard();
     FastLED.show();
-    myState.timerPrevLED = myState.timerNow;
+    myState.timerPrevLEDstep = myState.timerNow;
     globalLoopCount += 1;
   } // end wait for next LED activity
 
@@ -300,17 +304,17 @@ void RBG_diskDownTheDrain(int8_t direction) {
 
   if (direction > (NUM_RINGS_PER_DISK-1)) {
     // initialize
-    myState.ptrnDelayLED = DLYLED_diskDownTheDrain;
+    myState.ptrnDelayLEDstep = DLYLED_diskDownTheDrain;
   } else {
     // do pattern
     if (direction > 0) { // counterclockwise
-      if (1 == direction) { led_tmp1 = led_display[0]; } else { led_tmp1 = CRGB::Black; }
+      if (1 == abs(direction)) { led_tmp1 = led_display[0]; } else { led_tmp1 = CRGB::Black; }
       for (int idx=1; idx < NUM_LEDS_PER_DISK; idx++) {
         led_display[idx-1] = led_display[idx];
       }
       led_display[NUM_LEDS_PER_DISK-1] = led_tmp1;
     } else  { // clockwise
-      if (1 == direction) { led_tmp1 = led_display[NUM_LEDS_PER_DISK-1]; } else { led_tmp1 = CRGB::Black; }
+      if (1 == abs(direction)) { led_tmp1 = led_display[NUM_LEDS_PER_DISK-1]; } else { led_tmp1 = CRGB::Black; }
       for (int idx=NUM_LEDS_PER_DISK-1; idx > 0; idx--) {
         led_display[idx] = led_display[idx-1];
       }
@@ -339,7 +343,7 @@ void RBG_ringRotateAndFade(uint8_t whichRing, int8_t rotate96, brightSpots_t* br
     #ifdef DEBUG_RRandF
     Serial.print(F(" DEBUG_RRandF initialize whichRing=")); Serial.println(whichRing);
     #endif // DEBUG_RRandF
-    myState.ptrnDelayLED = DLYLED_ringRotateAndFade;
+    myState.ptrnDelayLEDstep = DLYLED_ringRotateAndFade;
     for (idx=0; idx < NUM_LEDS_PER_DISK; idx++) {
       led_display[idx] = CRGB::Black;
     }
@@ -625,6 +629,8 @@ void  RBG_startEffectSound(uint16_t tmpEfctSound) {
     } // end if volume different this time
     ***/
     myDFPlayer.play(mySound); //play specific mp3 in SD: root directory ###.mp3; number played is physical copy order; first one copied is 1
+    myState.timerForceSoundActv = millis() + mDELAY_SOUNDACTV; // handle YX5200 problem with interrupting play
+    
     // myDFPlayer.playMp3Folder(mySound); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999) NOTE: this did not work reliably
 
     /*
@@ -658,6 +664,7 @@ void  RBG_startEffectSound(uint16_t tmpEfctSound) {
 // The sound complete is 0 when sound is complete
 //
 // NOTE: DPIN_LOCK_LOAD handled in code
+// NOTE: this is where we handle YX5200 active pin instability when interrupting previous play command
 //
 uint16_t getButtonInput() {
   static uint8_t debugThisManyCalls = DEBUG_INPUTS*10;
@@ -687,6 +694,11 @@ uint16_t getButtonInput() {
       returnInpMask &= ~((uint16_t) myPinsToVals[idx].val); // overkill but can solve lots of issues
     }
   } // end for entries in myPinsToVals[]
+
+  if (myState.timerNow < myState.timerForceSoundActv) {
+    // takes a while for YX5200 active pin to go and stay low when interrupted previous play command
+    returnInpMask |= mVINP_SOUNDACTV;
+  }
 
   if (debugThisManyCalls > 0) { Serial.print(F(" checkButtons found inputs: 0x")); Serial.println((uint16_t) returnInpMask, HEX); }
   if (debugThisManyCalls > 0) { debugThisManyCalls -= 1; }
