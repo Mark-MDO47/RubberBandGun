@@ -31,7 +31,7 @@ https://learn.adafruit.com/adafruit-tb6612-h-bridge-dc-stepper-motor-driver-brea
 - 1 @ YX5200 sound player: https://smile.amazon.com/Anmbest-YX5200-DFPlayer-Supporting-Arduino/dp/B07JGWMPTF/
 - 1 @ small speaker: https://smile.amazon.com/Uxcell-a15080600ux0275-Internal-Magnet-Speaker/dp/B0177ABRQ6/
 
-The body of the Rubber Band Gun is made from wood, with a sliding barrel attachment to assist in stringing the rubber band through the LED rings. The handgrip is 3-D printed.
+The barrel of the Rubber Band Gun is made from wood, with a sliding barrel attachment to assist in stringing the rubber band through the LED rings. The rest including the handgrip is 3-D printed.
 
 # Other Parts
 The YX5200 uses FAT32-formatted TF or microSD card up to 32 GByte
