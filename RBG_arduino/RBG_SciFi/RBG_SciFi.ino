@@ -208,6 +208,8 @@ void loop() {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // doPattern(efctLED) - start or step the pattern
 //
+#define DEBUG_DPtrn 1
+//
 void doPattern(uint16_t efctLED) {
   static uint16_t prevEfctLED = mNONE;
   uint16_t nowEfctLED;
@@ -215,9 +217,19 @@ void doPattern(uint16_t efctLED) {
   // FIXME convert via EEPROM
   nowEfctLED = (efctLED & 0x00FF); // just the effect number
 
+  // configurable sounds are zero mod 10; we get config from EEPROM
+  if (EFCT_IS_EEP(nowEfctLED)) {
+    // configurable sound using EEPROM
+    nowEfctLED += EEPROM.read(EEPOFFSET(nowEfctLED)+eeLEDSave);
+  }
+
+  #if DEBUG_DPtrn
+  Serial.print(F(" DEBUG doPattern efctLED ")); Serial.print(efctLED); Serial.print(F(" prevEfctLED ")); Serial.print(prevEfctLED); Serial.print(F(" final myEfctLED ")); Serial.println(prevEfctLED);
+  #endif // DEBUG_DPtrn
+
   switch (nowEfctLED) {
 
-    case PTRNLED_OFF: // 0 = OFF
+    case PTRNLED_OFF: // 258 = OFF
       if (prevEfctLED != efctLED) { // initialize
         prevEfctLED = efctLED;
         for (uint8_t idx = 0; idx < NUM_RINGS_PER_DISK; idx++) {
@@ -229,18 +241,18 @@ void doPattern(uint16_t efctLED) {
     case PTRNLED_pwron1: // RBG_diskDownTheDrain counterclockwise, rotate through
     case PTRNLED_cnfg1:
     case PTRNLED_windup1:
-    case PTRNLED_shoot1:
       if (prevEfctLED != efctLED) { // initialize
         prevEfctLED = efctLED;
         RBG_ringRotateAndFade(mNONE, 0, windup1BrightSpots); // FIXME - initialization from other effect
         RBG_diskDownTheDrain(0);
       } else { // step
-        RBG_diskDownTheDrain(2);
+        RBG_diskDownTheDrain(1);
       }
       break;
 
-    case PTRNLED_open1: // RBG_diskDownTheDrain clockwise, down drain
+    case PTRNLED_open1: // RBG_diskDownTheDrain clockwise, rotate through
     case PTRNLED_lock1:
+    case PTRNLED_shoot1:
     case PTRNLED_uniq1:
     default:
       if (prevEfctLED != efctLED) { // initialize
@@ -248,7 +260,7 @@ void doPattern(uint16_t efctLED) {
         RBG_ringRotateAndFade(mNONE, 0, windup1BrightSpots); // FIXME - initialization from other effect
         RBG_diskDownTheDrain(0);
       } else { // step
-        RBG_diskDownTheDrain(-1);
+        RBG_diskDownTheDrain(-2);
       }
       break;
 /*
@@ -292,13 +304,13 @@ void RBG_diskDownTheDrain(int8_t direction) {
   } else {
     // do pattern
     if (direction > 0) { // counterclockwise
-      if (1 == direction) { led_tmp1 = led_display[0]; } else { led_tmp1 = CRGB::Blue; } // FIXME Black
+      if (1 == direction) { led_tmp1 = led_display[0]; } else { led_tmp1 = CRGB::Black; }
       for (int idx=1; idx < NUM_LEDS_PER_DISK; idx++) {
         led_display[idx-1] = led_display[idx];
       }
       led_display[NUM_LEDS_PER_DISK-1] = led_tmp1;
     } else  { // clockwise
-      if (1 == direction) { led_tmp1 = led_display[NUM_LEDS_PER_DISK-1]; } else { led_tmp1 = CRGB::Blue; } // FIXME Black
+      if (1 == direction) { led_tmp1 = led_display[NUM_LEDS_PER_DISK-1]; } else { led_tmp1 = CRGB::Black; }
       for (int idx=NUM_LEDS_PER_DISK-1; idx > 0; idx--) {
         led_display[idx] = led_display[idx-1];
       }
@@ -543,15 +555,10 @@ void RBG_startEffectLED(uint16_t tmpEfctLED) {
   uint16_t myEfctLED = tmpEfctLED & 0x00FF; // just the effect number; allows bits later
 
   if (mNONE != myEfctLED) {
-    // configurable sounds are zero mod 10; we get config from EEPROM
-    if (EFCT_IS_EEP(myEfctLED)) {
-      // configurable sound using EEPROM
-      myEfctLED += EEPROM.read(EEPOFFSET(myEfctLED)+eeLEDSave);
-    }
     #if DEBUG_STATE_MACHINE
-    Serial.print(F(" RBG_startEffectLED ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" EFCT num ")); Serial.print(tmpEfctLED); Serial.print(F(" final LED num ")); Serial.print(myEfctLED); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
+    Serial.print(F(" RBG_startEffectLED ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" EFCT num ")); Serial.print(tmpEfctLED); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
     #endif // DEBUG_STATE_MACHINE
-    doPattern(myEfctLED | (tmpEfctLED & 0xFF00)); // doPattern figures out if starting a new pattern and initializes
+    doPattern(tmpEfctLED); // doPattern figures out EEPROM configuration and if starting a new pattern and initializes
   }
 } // end RBG_startEffectLED()
 

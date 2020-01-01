@@ -235,7 +235,7 @@ static struct myState_t {
 #define mEFCT_UNIQ        100  // 101 to 127 - unique effects not included in configurations
 
 #define DLYLED_MIN 7
-#define PTRNLED_OFF 0
+#define PTRNLED_OFF 258
 // #define PTRNLED_diskDownTheDrain_rot 1
 // #define PTRNLED_diskDownTheDrain_blk 2
 #define PTRNLED_OFF       0
