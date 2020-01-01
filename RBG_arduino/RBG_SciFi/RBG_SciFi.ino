@@ -218,8 +218,8 @@ void doPattern(uint16_t efctLED) {
   switch (nowEfctLED) {
 
     case PTRNLED_OFF: // 0 = OFF
-      if (prevEfctLED != nowEfctLED) { // initialize
-        prevEfctLED = nowEfctLED;
+      if (prevEfctLED != efctLED) { // initialize
+        prevEfctLED = efctLED;
         for (uint8_t idx = 0; idx < NUM_RINGS_PER_DISK; idx++) {
           led_display[idx] = CRGB::Black;
         }
@@ -269,7 +269,6 @@ void doPattern(uint16_t efctLED) {
       break;
 */
   }
-  RBG_diskDownTheDrain(1);
 } // end doPattern()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -279,8 +278,13 @@ void doPattern(uint16_t efctLED) {
 // 
 // initialize does not overwrite current colors in disk
 //
+#define DEBUG_DDtD 1
 void RBG_diskDownTheDrain(int8_t direction) {
   int8_t idx;
+
+  #ifdef DEBUG_DDtD
+  Serial.print(F(" DEBUG_DDtD direction=")); Serial.println(direction);
+  #endif // DEBUG_RRandF
 
   if (direction > (NUM_RINGS_PER_DISK-1)) {
     // initialize
@@ -288,14 +292,14 @@ void RBG_diskDownTheDrain(int8_t direction) {
   } else {
     // do pattern
     if (direction > 0) { // counterclockwise
-      if (1 == direction) { led_tmp1 = led_display[0]; } else { led_tmp1 = CRGB::Black; }
+      if (1 == direction) { led_tmp1 = led_display[0]; } else { led_tmp1 = CRGB::Blue; } // FIXME Black
       for (int idx=1; idx < NUM_LEDS_PER_DISK; idx++) {
         led_display[idx-1] = led_display[idx];
       }
       led_display[NUM_LEDS_PER_DISK-1] = led_tmp1;
     } else  { // clockwise
-      if (1 == direction) { led_tmp1 = led_display[NUM_LEDS_PER_DISK-1]; } else { led_tmp1 = CRGB::Black; }
-      for (int idx=1; idx < NUM_LEDS_PER_DISK; idx++) {
+      if (1 == direction) { led_tmp1 = led_display[NUM_LEDS_PER_DISK-1]; } else { led_tmp1 = CRGB::Blue; } // FIXME Black
+      for (int idx=NUM_LEDS_PER_DISK-1; idx > 0; idx--) {
         led_display[idx] = led_display[idx-1];
       }
       led_display[0] = led_tmp1;
@@ -327,9 +331,6 @@ void RBG_ringRotateAndFade(uint8_t whichRing, int8_t rotate96, brightSpots_t* br
     for (idx=0; idx < NUM_LEDS_PER_DISK; idx++) {
       led_display[idx] = CRGB::Black;
     }
-    #ifdef DEBUG_RRandF
-    Serial.print(F(" DEBUG_RRandF CRGB::Black"));
-    #endif // DEBUG_RRandF
     uint8_t idxRing;
     for (idxRing=0; idxRing<NUM_RINGS_PER_DISK; idxRing++) {
       for (idx=0; (brightSpots[idx].posn < leds_per_ring[idxRing]) && (idx < leds_per_ring[idxRing]); idx++) {
@@ -339,13 +340,12 @@ void RBG_ringRotateAndFade(uint8_t whichRing, int8_t rotate96, brightSpots_t* br
         #endif // DEBUG_RRandF
       }
     }
-    #ifdef DEBUG_RRandF
-    delay(20000);
-    #endif // DEBUG_RRandF
     // end initialize
   } else if ((whichRing >= 0) && (whichRing <= (NUM_RINGS_PER_DISK-1))) {
     // process individual ring
-    
+    #ifdef DEBUG_RRandF
+    Serial.print(F(" DEBUG_RRandF ERROR CALL whichRing=")); Serial.println(whichRing);
+    #endif // DEBUG_RRandF
     // end process individual ring
   } // end check on whichRing
 } // end RBG_ringRotateAndFade()
