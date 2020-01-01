@@ -214,8 +214,8 @@ static struct myState_t {
   uint16_t currVolume = 0;          // avoid sending volume when not needed - FIXME FUTURE FEATURE
   uint32_t timerNow = 0;            // timer now
   uint32_t timerPrevState = 0;      // start timer from previous time through state loop
-  uint32_t timerForceSoundActv = 0; // end timer for forcing mVINP_SOUNDACTV true
   uint32_t timerPrevLEDstep = 0;    // start timer from previous LED activity
+  uint32_t timerForceSoundActv = 0; // end timer for forcing mVINP_SOUNDACTV true
   int16_t  ptrnDelayLEDstep = 7;    // proper delta delay for Mark's patterns
 } myState;
 

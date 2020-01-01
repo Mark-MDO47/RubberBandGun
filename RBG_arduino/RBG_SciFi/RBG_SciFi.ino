@@ -81,7 +81,7 @@
 #define REAL_BUTTONS 1                       // use actual buttons
 
 #define DONOTEXPLAINBITS 1                   // don't explain the bits - existing routine uses too much RAM
-#define DEBUG_STATE_MACHINE 1                // 1 to show state machine internals for transitions
+#define DEBUG_STATE_MACHINE 0                // 1 to show state machine internals for transitions
 #define DEBUG_INPUTS 0                       // 1 to show all inputs
 #define DEBUG_SHOW_MSEC 1                    // use globalLoopCount for millis() display not loopcount
 
@@ -212,7 +212,7 @@ void loop() {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // doPattern(efctLED) - start or step the pattern
 //
-#define DEBUG_DPtrn 1
+#define DEBUG_DPtrn 0
 //
 void doPattern(uint16_t efctLED) {
   static uint16_t prevEfctLED = mNONE;
@@ -294,13 +294,13 @@ void doPattern(uint16_t efctLED) {
 // 
 // initialize does not overwrite current colors in disk
 //
-#define DEBUG_DDtD 1
+// #define DEBUG_DDtD 1
 void RBG_diskDownTheDrain(int8_t direction) {
   int8_t idx;
 
   #ifdef DEBUG_DDtD
   Serial.print(F(" DEBUG_DDtD direction=")); Serial.println(direction);
-  #endif // DEBUG_RRandF
+  #endif // DEBUG_DDtD
 
   if (direction > (NUM_RINGS_PER_DISK-1)) {
     // initialize
@@ -629,27 +629,8 @@ void  RBG_startEffectSound(uint16_t tmpEfctSound) {
     } // end if volume different this time
     ***/
     myDFPlayer.play(mySound); //play specific mp3 in SD: root directory ###.mp3; number played is physical copy order; first one copied is 1
-    myState.timerForceSoundActv = millis() + mDELAY_SOUNDACTV; // handle YX5200 problem with interrupting play
-    
     // myDFPlayer.playMp3Folder(mySound); //play specific mp3 in SD:/MP3/####.mp3; File Name(0~9999) NOTE: this did not work reliably
-
-    /*
-    if (myDFPlayer.available()) {
-      Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__); Serial.println(F(" myDFPlayer problem after play"));
-      DFprintDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
-    }
-    */
-    idx = 0;
-    while ((0 == idx) && (LOW != digitalRead(DPIN_AUDIO_BUSY))) {
-      if (idx>10) {
-        Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" problem after check busy: waited for AUDIO_BUSY (msec) ")); Serial.println((uint16_t) idx*10); 
-        break;
-      }
-      delay(10);
-      idx++;
-    } // end make sure sound starts
-    Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" waited for AUDIO_BUSY (msec) ")); Serial.println((uint16_t) idx*10); 
-
+    myState.timerForceSoundActv = millis() + mDELAY_SOUNDACTV; // handle YX5200 problem with interrupting play
   } // end if should start a sound
 
 } // end RBG_startEffectSound
