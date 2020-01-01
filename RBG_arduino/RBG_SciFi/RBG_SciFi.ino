@@ -151,8 +151,8 @@ void setup() {
   //    this was for the graduation cap: FastLED.addLeds<NEOPIXEL,DPIN_FASTLED>(led_display, NUM_LEDS_PER_DISK);
   FastLED.addLeds<WS2812B,DPIN_FASTLED,GRB>(led_display, NUM_LEDS_PER_DISK);
   FastLED.setBrightness(BRIGHTMAX); // we will do our own power management
-  // FIXME initialize led_display
-  RBG_rotateRingAndFade(mNONE, 0, windup1BrightSpots);
+  // initialize led_display
+  RBG_ringRotateAndFade(mNONE, 0, windup1BrightSpots); // FIXME need initialize for this pattern
 
   // if needed, initialize EEPROM variables
   eeprom_check_init();
@@ -194,7 +194,7 @@ void loop() {
   if ((myState.timerNow-myState.timerPrevLED) >= myState.ptrnDelayLED) {
     gHue += 3; // rotating "base color" used by Demo Reel 100 patterns
     checkDataGuard();
-    doPattern();
+    doPattern(myStateTable[myState.tableRow].efctLED);
     checkDataGuard();
     FastLED.show();
     myState.timerPrevLED = myState.timerNow;
@@ -206,17 +206,106 @@ void loop() {
 // ******************************** LED UTILITIES ****************************************
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-void doPattern() {
-  // simple moving LED
-  led_tmp1 = led_display[0];
-  for (int idx=1; idx < NUM_LEDS_PER_DISK; idx++) {
-    led_display[idx-1] = led_display[idx];
+// doPattern(efctLED) - start or step the pattern
+//
+void doPattern(uint16_t efctLED) {
+  static uint16_t prevEfctLED = mNONE;
+  uint16_t nowEfctLED;
+
+  // FIXME convert via EEPROM
+  nowEfctLED = (efctLED & 0x00FF); // just the effect number
+
+  switch (nowEfctLED) {
+
+    case PTRNLED_OFF: // 0 = OFF
+      if (prevEfctLED != nowEfctLED) { // initialize
+        prevEfctLED = nowEfctLED;
+        for (uint8_t idx = 0; idx < NUM_RINGS_PER_DISK; idx++) {
+          led_display[idx] = CRGB::Black;
+        }
+      } // there is no "step"
+      break;
+
+    case PTRNLED_pwron1: // RBG_diskDownTheDrain counterclockwise, rotate through
+    case PTRNLED_cnfg1:
+    case PTRNLED_windup1:
+    case PTRNLED_shoot1:
+      if (prevEfctLED != efctLED) { // initialize
+        prevEfctLED = efctLED;
+        RBG_ringRotateAndFade(mNONE, 0, windup1BrightSpots); // FIXME - initialization from other effect
+        RBG_diskDownTheDrain(0);
+      } else { // step
+        RBG_diskDownTheDrain(2);
+      }
+      break;
+
+    case PTRNLED_open1: // RBG_diskDownTheDrain clockwise, down drain
+    case PTRNLED_lock1:
+    case PTRNLED_uniq1:
+    default:
+      if (prevEfctLED != efctLED) { // initialize
+        prevEfctLED = efctLED;
+        RBG_ringRotateAndFade(mNONE, 0, windup1BrightSpots); // FIXME - initialization from other effect
+        RBG_diskDownTheDrain(0);
+      } else { // step
+        RBG_diskDownTheDrain(-1);
+      }
+      break;
+/*
+    case PTRNLED_ringRotateAndFade_windup1: // 3 = RBG_ringRotateAndFade windup pattern1
+      if (prevEfctLED != efctLED) { // initialize
+        prevEfctLED = efctLED;
+        RBG_ringRotateAndFade(mNONE, 0, windup1BrightSpots);
+      } else { // step
+        
+      }
+      break;
+    case 4: // 4 = 
+      if (prevEfctLED != efctLED) { // initialize
+        prevEfctLED = efctLED;
+      } else { // step
+        
+      }
+      break;
+*/
   }
-  led_display[NUM_LEDS_PER_DISK-1] = led_tmp1;
+  RBG_diskDownTheDrain(1);
 } // end doPattern()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// RBG_rotateRingAndFade() - rotate a single ring, fade to black, add in new bright spots
+// RBG_diskDownTheDrain() - 
+//
+// direction - 0="initialize", +/- 1 = down drain +/- 2 = rotate through. With these rings, + is counter-clockwise and - is clockwise
+// 
+// initialize does not overwrite current colors in disk
+//
+void RBG_diskDownTheDrain(int8_t direction) {
+  int8_t idx;
+
+  if (direction > (NUM_RINGS_PER_DISK-1)) {
+    // initialize
+    myState.ptrnDelayLED = DLYLED_diskDownTheDrain;
+  } else {
+    // do pattern
+    if (direction > 0) { // counterclockwise
+      if (1 == direction) { led_tmp1 = led_display[0]; } else { led_tmp1 = CRGB::Black; }
+      for (int idx=1; idx < NUM_LEDS_PER_DISK; idx++) {
+        led_display[idx-1] = led_display[idx];
+      }
+      led_display[NUM_LEDS_PER_DISK-1] = led_tmp1;
+    } else  { // clockwise
+      if (1 == direction) { led_tmp1 = led_display[NUM_LEDS_PER_DISK-1]; } else { led_tmp1 = CRGB::Black; }
+      for (int idx=1; idx < NUM_LEDS_PER_DISK; idx++) {
+        led_display[idx] = led_display[idx-1];
+      }
+      led_display[0] = led_tmp1;
+    }
+  } // end do pattern
+
+} // end RBG_diskDownTheDrain()
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// RBG_ringRotateAndFade() - rotate a single ring, fade to black, add in new bright spots
 //
 // whichRing - which ring to rotate, 0 through (NUM_RINGS_PER_DISK-1) {2 for RBG}
 //                value = mNONE (255) means initialize entire disk (actually, anything > 2)
@@ -226,15 +315,15 @@ void doPattern() {
 // writes over led_tmpRing and led_display
 //
 // #define DEBUG_RRandF 1
-void RBG_rotateRingAndFade(uint8_t whichRing, int8_t rotate96, brightSpots_t* brightSpots) {
-  int idx;
+void RBG_ringRotateAndFade(uint8_t whichRing, int8_t rotate96, brightSpots_t* brightSpots) {
+  int8_t idx;
 
   if (whichRing > (NUM_RINGS_PER_DISK-1)) {
     // initialize
     #ifdef DEBUG_RRandF
     Serial.print(F(" DEBUG_RRandF initialize whichRing=")); Serial.println(whichRing);
     #endif // DEBUG_RRandF
-    myState.ptrnDelayLED = DLYLED_rotateRingAndFade;
+    myState.ptrnDelayLED = DLYLED_ringRotateAndFade;
     for (idx=0; idx < NUM_LEDS_PER_DISK; idx++) {
       led_display[idx] = CRGB::Black;
     }
@@ -259,7 +348,7 @@ void RBG_rotateRingAndFade(uint8_t whichRing, int8_t rotate96, brightSpots_t* br
     
     // end process individual ring
   } // end check on whichRing
-} // end RBG_rotateRingAndFade()
+} // end RBG_ringRotateAndFade()
 
 // ******************************** STATE TABLE UTILITIES ********************************
 
@@ -445,21 +534,24 @@ void RBG_specialProcSolenoid() {
 } // end RBG_specialProcSolenoid()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// RBG_startEffectLED((uint16_t) (tmpEfctLEDctNum);
+// RBG_startEffectLED(tmpEfctLED) - starts a new LED pattern
+//
+// tmpEfctLED - 8 LSBits is pattern number - EEPROM configurable or uniq
+//              8 MSBits reservered for parameter
 //
 void RBG_startEffectLED(uint16_t tmpEfctLED) {
-  uint16_t myLED = tmpEfctLED;
+  uint16_t myEfctLED = tmpEfctLED & 0x00FF; // just the effect number; allows bits later
 
-  if (mNONE != myLED) {
+  if (mNONE != myEfctLED) {
     // configurable sounds are zero mod 10; we get config from EEPROM
-    if (EFCT_IS_EEP(myLED)) {
+    if (EFCT_IS_EEP(myEfctLED)) {
       // configurable sound using EEPROM
-      myLED += EEPROM.read(EEPOFFSET(myLED));
+      myEfctLED += EEPROM.read(EEPOFFSET(myEfctLED)+eeLEDSave);
     }
     #if DEBUG_STATE_MACHINE
-    Serial.print(F(" RBG_startEffectLED ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" EFCT num ")); Serial.print(tmpEfctLED); Serial.print(F(" final LED num ")); Serial.print(myLED); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
+    Serial.print(F(" RBG_startEffectLED ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" EFCT num ")); Serial.print(tmpEfctLED); Serial.print(F(" final LED num ")); Serial.print(myEfctLED); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
     #endif // DEBUG_STATE_MACHINE
-    Serial.println(F(" RBG_startRow FIXME LEDS to efctLED"));
+    doPattern(myEfctLED | (tmpEfctLED & 0xFF00)); // doPattern figures out if starting a new pattern and initializes
   }
 } // end RBG_startEffectLED()
 
@@ -510,7 +602,7 @@ void  RBG_startEffectSound(uint16_t tmpEfctSound) {
     // configurable sounds are zero mod 10; we get config from EEPROM
     if (EFCT_IS_EEP(mySound)) {
       // configurable sound using EEPROM
-      mySound += EEPROM.read(EEPOFFSET(mySound));
+      mySound += EEPROM.read(EEPOFFSET(mySound)+eeSoundSave);
     }
     #if DEBUG_STATE_MACHINE
     Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" EFCT num ")); Serial.print(tmpEfctSound); Serial.print(F(" final num ")); Serial.print(mySound); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);

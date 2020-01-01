@@ -114,7 +114,7 @@
 
 
 // EEPROM addresses
-// EEPROM[eeSoundSave+idx] idx: 0 WindUp, 1 Shoot, 2 Open, 3 Load, 4 PowerUp 8 Configure
+// EEPROM[eeSoundSave+idx] idx: 0 WindUp, 1 Shoot, 2 Open, 3 Load, 4 PowerUp, 8 Configure
 #define eeSoundSave 0x0000 // EEPROM starting address for sound configuration
 #define eeLEDSave   0x0010 // EEPROM starting address for LED pattern configuration
 #define eeLastNonChksum  0x1E // EEPROM address of last non-checksum data
@@ -226,8 +226,29 @@ static struct myState_t {
 //   8 = bpm; this is the best Demo Reel 100 pattern on the Mokungit 93 LED disk
 //   9 = juggle Demo Reel 100 pattern
 //  10 = Fire2012 from another Kriegsman FastLED example
+#define mEFCT_WIND_UP       0  // 001 to 009 - wind-up effects
+#define mEFCT_SHOOT        10  // 011 to 019 - shoot effects
+#define mEFCT_OPEN_BARREL  20  // 021 to 029 - open barrel effects
+#define mEFCT_LOCK_LOAD    30  // 031 to 039 - lock and load barrel effects
+#define mEFCT_PWRON        40  // 041 to 049 - after initial power-up effects
+#define mEFCT_CONFIGURE    80  // 081 to 099 - effects used to navigate menus
+#define mEFCT_UNIQ        100  // 101 to 127 - unique effects not included in configurations
+
 #define DLYLED_MIN 7
-#define DLYLED_rotateRingAndFade 25 // for RBG_rotateRingAndFade
+#define PTRNLED_OFF 0
+// #define PTRNLED_diskDownTheDrain_rot 1
+// #define PTRNLED_diskDownTheDrain_blk 2
+#define PTRNLED_OFF       0
+#define PTRNLED_pwron1    (1+mEFCT_PWRON)
+#define PTRNLED_cnfg1     (1+mEFCT_CONFIGURE)
+#define PTRNLED_open1     (1+mEFCT_OPEN_BARREL)
+#define PTRNLED_lock1     (1+mEFCT_LOCK_LOAD)
+#define PTRNLED_windup1   (1+mEFCT_WIND_UP)
+#define PTRNLED_shoot1    (1+mEFCT_SHOOT)
+#define PTRNLED_uniq1     (1+mEFCT_UNIQ)
+
+#define DLYLED_ringRotateAndFade 25 // for RBG_ringRotateAndFade
+#define DLYLED_diskDownTheDrain 25 // for RBG_DiskDownTheDrain
 
 //
 // the state table itself - automatically generated from makeStateTable.py
