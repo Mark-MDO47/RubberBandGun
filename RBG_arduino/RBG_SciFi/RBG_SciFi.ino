@@ -7,7 +7,7 @@
 //    A sad note that Daniel Garcia, co-author of FastLED library, was on the dive boat that caught fire and has passed. 
 //    Here is some info on the FastLED Reddit https://www.reddit.com/r/FastLED/
 //
-// As usual, I am using a mix of my hand-coded LED patterns plus Mark Kriegsman's classic DemoReel100.ino https://github.com/FastLED/FastLED/tree/master/examples/DemoReel100
+// As usual, I am using a mix of my hand-coded LED patterns plus a few from Mark Kriegsman's classic DemoReel100.ino https://github.com/FastLED/FastLED/tree/master/examples/DemoReel100
 //
 // I am using an Arduino Nano with a USB mini-B connector
 //   example: http://www.ebay.com/itm/Nano-V3-0-ATmega328P-5V-16M-CH340-Compatible-to-Arduino-Nano-V3-Without-Cable/201804111413?_trksid=p2141725.c100338.m3726&_trkparms=aid%3D222007%26algo%3DSIC.MBE%26ao%3D1%26asc%3D20150313114020%26meid%3Dea29973f227743f78772d7a22512af53%26pid%3D100338%26rk%3D1%26rkt%3D30%26sd%3D191602576205
@@ -247,7 +247,6 @@ void doPattern(uint16_t efctLED) {
 
     case PTRNLED_pwron1: // RBG_diskDownTheDrainOrRotate counterclockwise, rotate through
     case PTRNLED_cnfg1:
-    case PTRNLED_windup1:
       if (prevEfctLED != efctLED) { // initialize
         prevEfctLED = efctLED;
         RBG_ringRotateAndFade(mNONE, 0, windup1BrightSpots); // FIXME - initialization from other effect
@@ -259,7 +258,6 @@ void doPattern(uint16_t efctLED) {
 
     case PTRNLED_open1: // RBG_diskDownTheDrainOrRotate clockwise, rotate through
     case PTRNLED_lock1:
-    case PTRNLED_shoot1:
     case PTRNLED_uniq1:
       if (prevEfctLED != efctLED) { // initialize
         prevEfctLED = efctLED;
@@ -270,8 +268,17 @@ void doPattern(uint16_t efctLED) {
       }
       break;
 
+    case PTRNLED_shoot1:
+      bpm();
+      break;
+
+    case PTRNLED_windup1:
+      juggle();
+      break;
+
     case mEFCT_UNIQ_WAITING:
-       rainbowWithGlitter();
+       confetti();
+       // rainbowWithGlitter();
        break;
 
 /*
@@ -432,6 +439,10 @@ void RBG_ringRotateOrDrain(int8_t direction, CRGB* pColor, uint8_t whichRing) {
   }
 } // end RBG_ringRotateOrDrain()
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// a few of Mark Kriegsman's classic DemoReel100.ino patterns
+//
+ 
 void rainbow() { // pattern from Demo Reel 100
   // FastLED's built-in rainbow generator
   fill_rainbow( led_display, NUM_LEDS_PER_DISK, gHue, 7);
@@ -998,13 +1009,13 @@ void printExplainBits(uint16_t myBits, decodeBits_t theDecodeTable[], uint16_t n
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // printAllMyInputs() - interpret the input bits
 void printAllMyInputs() {
-  Serial.print(F("DEBUG - printAllMyInputs:"));
-  printOneInput(DPIN_BTN_TRIGGER, " DPIN_BTN_TRIGGER ");
-  printOneInput(DPIN_BTN_YELLOW, " DPIN_BTN_YELLOW ");
-  printOneInput(DPIN_BTN_GREEN, " DPIN_BTN_GREEN ");
-  printOneInput(DPIN_BTN_BLACK, " DPIN_BTN_BLACK ");
-  printOneInput(DPIN_LOCK_LOAD, " DPIN_LOCK_LOAD ");
-  printOneInput(DPIN_AUDIO_BUSY, " DPIN_AUDIO_BUSY ");
+  Serial.print(F("printAllMyInputs:"));
+  printOneInput(DPIN_BTN_TRIGGER, " TRIGGER ");
+  printOneInput(DPIN_BTN_YELLOW, " YELLOW ");
+  printOneInput(DPIN_BTN_GREEN, " GREEN ");
+  printOneInput(DPIN_BTN_BLACK, " BLACK ");
+  printOneInput(DPIN_LOCK_LOAD, " LOAD ");
+  printOneInput(DPIN_AUDIO_BUSY, " AUDIO_BUSY ");
   Serial.println(" ");
 } // end printAllMyInputs()
 
