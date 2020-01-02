@@ -7,6 +7,8 @@
 //    A sad note that Daniel Garcia, co-author of FastLED library, was on the dive boat that caught fire and has passed. 
 //    Here is some info on the FastLED Reddit https://www.reddit.com/r/FastLED/
 //
+// As usual, I am using a mix of my hand-coded LED patterns plus Mark Kriegsman's classic DemoReel100.ino https://github.com/FastLED/FastLED/tree/master/examples/DemoReel100
+//
 // I am using an Arduino Nano with a USB mini-B connector
 //   example: http://www.ebay.com/itm/Nano-V3-0-ATmega328P-5V-16M-CH340-Compatible-to-Arduino-Nano-V3-Without-Cable/201804111413?_trksid=p2141725.c100338.m3726&_trkparms=aid%3D222007%26algo%3DSIC.MBE%26ao%3D1%26asc%3D20150313114020%26meid%3Dea29973f227743f78772d7a22512af53%26pid%3D100338%26rk%3D1%26rkt%3D30%26sd%3D191602576205
 //            V3.0 ATmega328P 5V 16M CH340 Compatible to Arduino Nano V3
@@ -14,7 +16,7 @@
 //            http://www.mouser.com/pdfdocs/Gravitech_Arduino_Nano3_0.pdf
 //            http://www.pighixxx.com/test/pinouts/boards/nano.pdf
 //
-// Using the biggest three of two sets of LED rings: https://smile.amazon.com/gp/product/B07437X7SL/ref=ppx_yo_dt_b_asin_title_o03_s00?ie=UTF8&psc=1
+// Using the biggest three rings of two sets of LED disks, one facing forward and one facing back: https://smile.amazon.com/gp/product/B07437X7SL/ref=ppx_yo_dt_b_asin_title_o03_s00?ie=UTF8&psc=1
 //
 // Also using a YX5200 sound player
 //   The YX5200 uses FAT32-formatted TF (or SD ?) card up to 32 GByte
@@ -30,7 +32,7 @@
 // https://www.gw-openscience.org/audiogwtc1/
 // I particularly like GW170817-template.wav; it has the ramp-up and then the kick at the end.
 //
-// Here are the files I used, modified, and combined for the prototype sounds (other than GW170817-template.wav)
+// Here are the files I used, modified, and combined (or plan to use) for the sounds (other than GW170817-template.wav above)
 // | Tag        | File Name                                      | URL                             | Who |
 // | ---        | ---                                            | ---                             | --- |
 // | zero/1.0/  | 407052__sojan__power-charge.flac               | https://freesound.org/s/193610/ | crashoverride61088 |
@@ -267,6 +269,11 @@ void doPattern(uint16_t efctLED) {
         RBG_diskDownTheDrainOrRotate(-1);
       }
       break;
+
+    case mEFCT_UNIQ_WAITING:
+       rainbowWithGlitter();
+       break;
+
 /*
     case PTRNLED_ringRotateAndFade_windup1: // 3 = RBG_ringRotateAndFade windup pattern1
       if (prevEfctLED != efctLED) { // initialize
@@ -424,6 +431,50 @@ void RBG_ringRotateOrDrain(int8_t direction, CRGB* pColor, uint8_t whichRing) {
     led_display[0] = led_tmp1;
   }
 } // end RBG_ringRotateOrDrain()
+
+void rainbow() { // pattern from Demo Reel 100
+  // FastLED's built-in rainbow generator
+  fill_rainbow( led_display, NUM_LEDS_PER_DISK, gHue, 7);
+}
+
+void rainbowWithGlitter() { // pattern from Demo Reel 100
+  // built-in FastLED rainbow, plus some random sparkly glitter
+  rainbow();
+  addGlitter(100);
+} // end rainbowWithGlitter
+
+void addGlitter( fract8 chanceOfGlitter) { // helper routine from Demo Reel 100
+  if( random8() < chanceOfGlitter) {
+    led_display[ random16(NUM_LEDS_PER_DISK) ] += CRGB::White;
+  }
+} // end 
+
+void confetti() { // pattern from Demo Reel 100
+  // random colored speckles that blink in and fade smoothly
+  fadeToBlackBy( led_display, NUM_LEDS_PER_DISK, 10);
+  int pos = random16(NUM_LEDS_PER_DISK);
+  led_display[pos] += CHSV( gHue + random8(64), 200, 255);
+} // end 
+
+void bpm() { // pattern from Demo Reel 100
+  // colored stripes pulsing at a defined Beats-Per-Minute (BPM)
+  uint8_t BeatsPerMinute = 62+10;
+  CRGBPalette16 palette = PartyColors_p;
+  uint8_t beat = beatsin8( BeatsPerMinute, 64, 255);
+  for( int i = 0; i < NUM_LEDS_PER_DISK; i++) { //9948
+    led_display[i] = ColorFromPalette(palette, gHue+(i*2), beat-gHue+(i*10));
+  }
+} // end bpm()
+
+void juggle() { // pattern from Demo Reel 100
+  // eight colored dots, weaving in and out of sync with each other
+  fadeToBlackBy( led_display, NUM_LEDS_PER_DISK, 20);
+  byte dothue = 0;
+  for( int i = 0; i < 8; i++) {
+    led_display[beatsin16(i+7,0,NUM_LEDS_PER_DISK)] |= CHSV(dothue, 200, 255);
+    dothue += 32;
+  }
+} // end juggle()
 
 // ******************************** STATE TABLE UTILITIES ********************************
 

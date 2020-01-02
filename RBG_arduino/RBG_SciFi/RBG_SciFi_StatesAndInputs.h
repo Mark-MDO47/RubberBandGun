@@ -221,11 +221,11 @@ static struct myState_t {
 
 // patterns: (FIXME these will change)
 //   1 = OFF
-//   2 = draw then down the drain
-//   3 = Radar POLY 2018
-//   4 = POLY 2018
-//   5 = draw rings
-//   6 = do surrounding around letter then fade one to the other
+//   2 = 
+//   3 = 
+//   4 = 
+//   5 = 
+//   6 = 
 //   7 = rainbowWithGlitter Demo Reel 100 pattern
 //   8 = bpm; this is the best Demo Reel 100 pattern on the Mokungit 93 LED disk
 //   9 = juggle Demo Reel 100 pattern
