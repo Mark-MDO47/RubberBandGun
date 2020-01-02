@@ -59,8 +59,8 @@
 #define NUM_SHADOWS 0  // number of shadow disks
 
 // LED count - number of LEDs in each ring in order of serial access
-const uint8_t  leds_per_ring[NUM_RINGS_PER_DISK]  = { MAX_LEDS_PER_RING, 24, 16 }; // MAX_LEDS_PER_RING = 32
-const uint8_t  leds_per_ringqrtr[NUM_RINGS_PER_DISK]  = { 8, 6, 4 };
+const uint16_t  leds_per_ring[NUM_RINGS_PER_DISK]  = { MAX_LEDS_PER_RING, 24, 16 }; // MAX_LEDS_PER_RING = 32
+// const uint16_t  leds_per_ringqrtr[NUM_RINGS_PER_DISK]  = { 8, 6, 4 };
 const uint8_t  start_per_ring[NUM_RINGS_PER_DISK] = {  0, 32, 56 };
 
 #define LED_TYPE     WS2812
@@ -77,6 +77,7 @@ static uint32_t data_guard_after = 0x55555555;
 
 static CRGB led_tmpRing[MAX_LEDS_PER_RING]; // for temp storage
 static CRGB led_tmp1;
+static CRGB led_BLACK = CRGB::Black;
 
 typedef struct _brightSpots_t {
   uint8_t posn; // position relative to start of ring; + = counterclockwise. 255 or mNONE terminates list

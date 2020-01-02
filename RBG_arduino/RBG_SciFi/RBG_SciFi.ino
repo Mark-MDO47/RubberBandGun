@@ -234,6 +234,7 @@ void doPattern(uint16_t efctLED) {
   switch (nowEfctLED) {
 
     case PTRNLED_OFF: // 258 = OFF
+    default:
       if (prevEfctLED != efctLED) { // initialize
         prevEfctLED = efctLED;
         for (uint8_t idx = 0; idx < NUM_RINGS_PER_DISK; idx++) {
@@ -242,29 +243,28 @@ void doPattern(uint16_t efctLED) {
       } // there is no "step"
       break;
 
-    case PTRNLED_pwron1: // RBG_diskDownTheDrain counterclockwise, rotate through
+    case PTRNLED_pwron1: // RBG_diskDownTheDrainOrRotate counterclockwise, rotate through
     case PTRNLED_cnfg1:
     case PTRNLED_windup1:
       if (prevEfctLED != efctLED) { // initialize
         prevEfctLED = efctLED;
         RBG_ringRotateAndFade(mNONE, 0, windup1BrightSpots); // FIXME - initialization from other effect
-        RBG_diskDownTheDrain(0);
+        RBG_diskDownTheDrainOrRotate(0);
       } else { // step
-        RBG_diskDownTheDrain(1);
+        RBG_diskDownTheDrainOrRotate(1);
       }
       break;
 
-    case PTRNLED_open1: // RBG_diskDownTheDrain clockwise, rotate through
+    case PTRNLED_open1: // RBG_diskDownTheDrainOrRotate clockwise, rotate through
     case PTRNLED_lock1:
     case PTRNLED_shoot1:
     case PTRNLED_uniq1:
-    default:
       if (prevEfctLED != efctLED) { // initialize
         prevEfctLED = efctLED;
         RBG_ringRotateAndFade(mNONE, 0, windup1BrightSpots); // FIXME - initialization from other effect
-        RBG_diskDownTheDrain(0);
+        RBG_diskDownTheDrainOrRotate(0);
       } else { // step
-        RBG_diskDownTheDrain(-2);
+        RBG_diskDownTheDrainOrRotate(-1);
       }
       break;
 /*
@@ -288,14 +288,14 @@ void doPattern(uint16_t efctLED) {
 } // end doPattern()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// RBG_diskDownTheDrain() - 
+// RBG_diskDownTheDrainOrRotate(direction) - 
 //
-// direction - 0="initialize", +/- 1 = down drain +/- 2 = rotate through. With these rings, + is counter-clockwise and - is clockwise
+// direction - 0="initialize", +/- 1 = rotate through, +/- 2 = down drain. With these rings, + is counter-clockwise and - is clockwise
 // 
 // initialize does not overwrite current colors in disk
 //
 // #define DEBUG_DDtD 1
-void RBG_diskDownTheDrain(int8_t direction) {
+void RBG_diskDownTheDrainOrRotate(int8_t direction) {
   int8_t idx;
 
   #ifdef DEBUG_DDtD
@@ -307,25 +307,13 @@ void RBG_diskDownTheDrain(int8_t direction) {
     myState.ptrnDelayLEDstep = DLYLED_diskDownTheDrain;
   } else {
     // do pattern
-    if (direction > 0) { // counterclockwise
-      if (1 == abs(direction)) { led_tmp1 = led_display[0]; } else { led_tmp1 = CRGB::Black; }
-      for (int idx=1; idx < NUM_LEDS_PER_DISK; idx++) {
-        led_display[idx-1] = led_display[idx];
-      }
-      led_display[NUM_LEDS_PER_DISK-1] = led_tmp1;
-    } else  { // clockwise
-      if (1 == abs(direction)) { led_tmp1 = led_display[NUM_LEDS_PER_DISK-1]; } else { led_tmp1 = CRGB::Black; }
-      for (int idx=NUM_LEDS_PER_DISK-1; idx > 0; idx--) {
-        led_display[idx] = led_display[idx-1];
-      }
-      led_display[0] = led_tmp1;
-    }
+    RBG_diskRotateOrDrain(direction, &led_BLACK);
   } // end do pattern
 
-} // end RBG_diskDownTheDrain()
+} // end RBG_diskDownTheDrainOrRotate()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// RBG_ringRotateAndFade() - rotate a single ring, fade to black, add in new bright spots
+// RBG_ringRotateAndFade(whichRing, rotate96, brightSpots) - rotate a single ring, fade to black, add in new bright spots
 //
 // whichRing - which ring to rotate, 0 through (NUM_RINGS_PER_DISK-1) {2 for RBG}
 //                value = mNONE (255) means initialize entire disk (actually, anything > 2)
@@ -337,6 +325,7 @@ void RBG_diskDownTheDrain(int8_t direction) {
 // #define DEBUG_RRandF 1
 void RBG_ringRotateAndFade(uint8_t whichRing, int8_t rotate96, brightSpots_t* brightSpots) {
   int8_t idx;
+  static int16_t startLocPerRing[NUM_RINGS_PER_DISK]; // (95 + 95 = 190) > 127 so int8_t will not work
 
   if (whichRing > (NUM_RINGS_PER_DISK-1)) {
     // initialize
@@ -344,27 +333,97 @@ void RBG_ringRotateAndFade(uint8_t whichRing, int8_t rotate96, brightSpots_t* br
     Serial.print(F(" DEBUG_RRandF initialize whichRing=")); Serial.println(whichRing);
     #endif // DEBUG_RRandF
     myState.ptrnDelayLEDstep = DLYLED_ringRotateAndFade;
-    for (idx=0; idx < NUM_LEDS_PER_DISK; idx++) {
-      led_display[idx] = CRGB::Black;
-    }
-    uint8_t idxRing;
-    for (idxRing=0; idxRing<NUM_RINGS_PER_DISK; idxRing++) {
-      for (idx=0; (brightSpots[idx].posn < leds_per_ring[idxRing]) && (idx < leds_per_ring[idxRing]); idx++) {
-        led_display[brightSpots[idx].posn+start_per_ring[idxRing]] = brightSpots[idx].hue;
-        #ifdef DEBUG_RRandF
-        Serial.print(F(" DEBUG_RRandF idxRing=")); Serial.print(idxRing); Serial.print(F(" idx=")); Serial.print(idx); Serial.print(F(" posn=")); Serial.print(brightSpots[idx].posn);  Serial.print(F(" absPosn=")); Serial.println(brightSpots[idx].posn+start_per_ring[idxRing]); 
-        #endif // DEBUG_RRandF
-      }
+    RBG_diskInitBrightSpots(brightSpots, &led_BLACK);
+    for (idx=0; idx < NUM_RINGS_PER_DISK; idx++) {
+      startLocPerRing[idx] = 0;
     }
     // end initialize
-  } else if ((whichRing >= 0) && (whichRing <= (NUM_RINGS_PER_DISK-1))) {
+  } else if ((whichRing >= 0) && (whichRing <= (NUM_RINGS_PER_DISK-1)) && (0 != rotate96)) {
     // process individual ring
+    int8_t num96PerLED = 96 / leds_per_ring[whichRing];
+    int16_t numHere = startLocPerRing[whichRing] / num96PerLED;
+    int16_t numEnd = (startLocPerRing[whichRing] + rotate96) / num96PerLED;
+    int8_t moveBy;
+    
+    if (rotate96 < 0) {
+      moveBy = -1;
+    } else {
+      moveBy = 1;
+    }
+    startLocPerRing[whichRing] = (startLocPerRing[whichRing] + rotate96) % 96;
     #ifdef DEBUG_RRandF
     Serial.print(F(" DEBUG_RRandF ERROR CALL whichRing=")); Serial.println(whichRing);
     #endif // DEBUG_RRandF
     // end process individual ring
   } // end check on whichRing
 } // end RBG_ringRotateAndFade()
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// RBG_diskInitBrightSpots(brightSpots, color) - 
+//
+// brightSpots - list of positions within ring and color for bright spots
+// pColor    - pointer to color to use as fill (typically &CRGB::Black)
+//
+void RBG_diskInitBrightSpots(brightSpots_t* brightSpots, CRGB* pColor) {
+  uint8_t idx, idxRing;
+
+  for (idx=0; idx < NUM_LEDS_PER_DISK; idx++) {
+    led_display[idx] = *pColor;
+  } // end set all to pColor
+  for (idxRing=0; idxRing<NUM_RINGS_PER_DISK; idxRing++) {
+    for (idx=0; (brightSpots[idx].posn < leds_per_ring[idxRing]) && (idx < leds_per_ring[idxRing]); idx++) {
+      led_display[brightSpots[idx].posn+start_per_ring[idxRing]] = brightSpots[idx].hue;
+    } // end for all bright spots this ring
+  } // end for all rings
+} // end RBG_diskInitBrightSpots()
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// RBG_diskRotateOrDrain(direction, pColor) - 
+//
+// direction - +/- 1 = rotate through, +/- 2 = down drain. With these rings, + is counter-clockwise and - is clockwise
+// pColor    - pointer to color to use as fill (typically &CRGB::Black)
+// 
+void RBG_diskRotateOrDrain(int8_t direction, CRGB* pColor) {
+  // do rotate/drain
+  if (direction > 0) { // counterclockwise
+    if (1 == direction) { led_tmp1 = led_display[0]; } else { led_tmp1 = *pColor; }
+    for (int idx=1; idx < NUM_LEDS_PER_DISK; idx++) {
+      led_display[idx-1] = led_display[idx];
+    }
+    led_display[NUM_LEDS_PER_DISK-1] = led_tmp1;
+  } else  { // clockwise
+    if (-1 == direction) { led_tmp1 = led_display[NUM_LEDS_PER_DISK-1]; } else { led_tmp1 = *pColor; }
+    for (int idx=NUM_LEDS_PER_DISK-1; idx > 0; idx--) {
+      led_display[idx] = led_display[idx-1];
+    }
+    led_display[0] = led_tmp1;
+  }
+} // end RBG_diskRotate()
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// RBG_ringRotateOrDrain(direction, pColor, whichRing) - 
+//
+// direction - +/- 1 = rotate through, +/- 2 = down drain. With these rings, + is counter-clockwise and - is clockwise
+// pColor    - pointer to color to use as fill (typically &CRGB::Black)
+// whichRing - which ring to rotate, 0 through (NUM_RINGS_PER_DISK-1) {2 for RBG}
+// 
+void RBG_ringRotateOrDrain(int8_t direction, CRGB* pColor, uint8_t whichRing) {
+  // do rotate/drain
+  int idx;
+  if (direction > 0) { // counterclockwise
+    if (1 == direction) { led_tmp1 = led_display[start_per_ring[whichRing]]; } else { led_tmp1 = *pColor; }
+    for (idx=start_per_ring[whichRing]+1; idx < start_per_ring[whichRing]+leds_per_ring[whichRing]; idx++) {
+      led_display[idx-1] = led_display[idx];
+    }
+    led_display[led_display[start_per_ring[whichRing]+leds_per_ring[whichRing]-1]] = led_tmp1;
+  } else  { // clockwise
+    if (-1 == direction) { led_tmp1 = led_display[start_per_ring[whichRing]+leds_per_ring[whichRing]-1]; } else { led_tmp1 = *pColor; }
+    for (idx=start_per_ring[whichRing]+leds_per_ring[whichRing]-1; idx > start_per_ring[whichRing]; idx--) {
+      led_display[idx] = led_display[idx-1];
+    }
+    led_display[0] = led_tmp1;
+  }
+} // end RBG_ringRotateOrDrain()
 
 // ******************************** STATE TABLE UTILITIES ********************************
 
