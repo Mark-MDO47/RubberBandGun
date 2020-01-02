@@ -16,6 +16,6 @@ My experience:
 
 Extras:
 
-Check out https://https://github.com/PowerBroker2/DFPlayerMini_Fast for a re-write (much simplified) of the DFRobot routines.
+Check out https://https://github.com/PowerBroker2/DFPlayerMini_Fast for a re-write (much simplified) of the DFRobot routines. I continued using the DFRobot routines for this project since by the time I found the other I had a lot of experience with the DFRobot routines.
 
 That area also includes the PDF file I copied into my YX5200_info/ directory above; that is the best information on the chip that forms the basis of the YX5200 module that I have seen.
