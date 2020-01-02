@@ -7,3 +7,7 @@ Files to help with using YX5200 can be found here:
 https://wiki.dfrobot.com/DFPlayer_Mini_SKU_DFR0299
 
 https://github.com/DFRobot/DFRobotDFPlayerMini
+
+My experience:
+- Using .playMp3Folder() worked on the first few calls but I had trouble making it work when interrupting a playing sound. I tried a bunch of things (but not every combination) and finally gave it up and now use the most basic of functions .play().
+- While doing the above experiments I had the impression that turning ACK on (default at this time) made it more likely to have the trouble above. I turned ACK off in the .begin(mySoftwareSerial, false, true) call.
