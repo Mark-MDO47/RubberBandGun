@@ -155,7 +155,7 @@ void setup() {
   FastLED.addLeds<WS2812B,DPIN_FASTLED,GRB>(led_display, NUM_LEDS_PER_DISK);
   FastLED.setBrightness(BRIGHTMAX); // we will do our own power management
   // initialize led_display
-  RBG_ringRotateAndFade(mNONE, 0, windup1BrightSpots); // FIXME need initialize for this pattern
+  RBG_diskInitBrightSpots(windup1BrightSpots, &led_BLACK); // FIXME need initialize for this pattern
 
   // if needed, initialize EEPROM variables
   eeprom_check_init();
@@ -218,6 +218,7 @@ void loop() {
 //
 void doPattern(uint16_t efctLED) {
   static uint16_t prevEfctLED = mNONE;
+  static uint16_t numSteps = 0;
   uint16_t nowEfctLED;
 
   // FIXME convert via EEPROM
@@ -238,21 +239,20 @@ void doPattern(uint16_t efctLED) {
     case PTRNLED_OFF: // 258 = OFF
     default:
       if (prevEfctLED != efctLED) { // initialize
-        prevEfctLED = efctLED;
         for (uint8_t idx = 0; idx < NUM_RINGS_PER_DISK; idx++) {
           led_display[idx] = CRGB::Black;
         }
       } // there is no "step"
       break;
 
-    case PTRNLED_pwron1: // RBG_diskDownTheDrainOrRotate counterclockwise, rotate through
+    case PTRNLED_pwron1: // RBG_diskDownTheDrainOrRotate counterclockwise, drain
     case PTRNLED_cnfg1:
-      if (prevEfctLED != efctLED) { // initialize
-        prevEfctLED = efctLED;
+      if ((prevEfctLED != efctLED) || (numSteps > (10+NUM_LEDS_PER_DISK))) { // initialize
         RBG_ringRotateAndFade(mNONE, 0, windup1BrightSpots); // FIXME - initialization from other effect
-        RBG_diskDownTheDrainOrRotate(0);
+        numSteps = 0;
       } else { // step
-        RBG_diskDownTheDrainOrRotate(1);
+        RBG_diskDownTheDrainOrRotate(2);
+        numSteps += 1;
       }
       break;
 
@@ -278,7 +278,8 @@ void doPattern(uint16_t efctLED) {
       break;
 
     case mEFCT_UNIQ_WAITING:
-       confetti();
+       bpm_rings();
+       // confetti();
        break;
 
 /*
@@ -298,7 +299,10 @@ void doPattern(uint16_t efctLED) {
       }
       break;
 */
-  }
+  } // end switch
+
+  // take care of previous effect so can do initialization where needed
+  prevEfctLED = efctLED;
 } // end doPattern()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -438,6 +442,19 @@ void RBG_ringRotateOrDrain(int8_t direction, CRGB* pColor, uint8_t whichRing) {
     led_display[0] = led_tmp1;
   }
 } // end RBG_ringRotateOrDrain()
+
+void bpm_rings() { // my mod of pattern from Demo Reel 100
+  // colored stripes pulsing at a defined Beats-Per-Minute (BPM)
+  uint8_t BeatsPerMinute = 62+10;
+  CRGBPalette16 palette = PartyColors_p;
+  int16_t beat = beatsin8( BeatsPerMinute, 0, 255);
+  for ( uint8_t ring = 0; ring < NUM_RINGS_PER_DISK; ring++ ) {
+    beat = -beat+255; // reverse lighting directions
+    for ( uint8_t i = start_per_ring[ring]; i < (start_per_ring[ring]+leds_per_ring[ring]); i++ ) {
+      led_display[i] = ColorFromPalette(palette, gHue+(i*2), beat-gHue+(i*10));
+    } // end for LEDs
+  } // end for rings
+} // end bpm()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // a few of Mark Kriegsman's classic DemoReel100.ino patterns
@@ -1004,7 +1021,7 @@ void printExplainBits(uint16_t myBits, decodeBits_t theDecodeTable[], uint16_t n
   if (strlen(printAsText) > 5) {
     Serial.println(printAsText);
   }
-#endif DONOTEXPLAINBITS // this coding takes too much space - needs re-write
+#endif // DONOTEXPLAINBITS // this coding takes too much space - needs re-write
 } // end printExplainBits()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////

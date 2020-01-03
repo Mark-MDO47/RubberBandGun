@@ -1,4 +1,4 @@
- 
+
 // Mark Olson 2019-11
 //
 // Major kudos to Daniel Garcia and Mark Kriegsman for the FANTASTIC FastLED library and examples!!!
@@ -242,7 +242,6 @@ static struct myState_t {
 #define PTRNLED_OFF 258
 // #define PTRNLED_diskDownTheDrain_rot 1
 // #define PTRNLED_diskDownTheDrain_blk 2
-#define PTRNLED_OFF       0
 #define PTRNLED_pwron1    (1+mEFCT_PWRON)
 #define PTRNLED_cnfg1     (1+mEFCT_CONFIGURE)
 #define PTRNLED_open1     (1+mEFCT_OPEN_BARREL)
