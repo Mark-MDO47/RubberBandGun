@@ -60,14 +60,13 @@
 
 // LED count - number of LEDs in each ring in order of serial access
 const uint16_t  leds_per_ring[NUM_RINGS_PER_DISK]  = { MAX_LEDS_PER_RING, 24, 16 }; // MAX_LEDS_PER_RING = 32
+const uint8_t   start_per_ring[NUM_RINGS_PER_DISK] = {  0, 32, 56 };
 // const uint16_t  leds_per_ringqrtr[NUM_RINGS_PER_DISK]  = { 8, 6, 4 };
-const uint8_t  start_per_ring[NUM_RINGS_PER_DISK] = {  0, 32, 56 };
 
-#define LED_TYPE     WS2812
+#define LED_TYPE     WS2812B
 #define COLOR_ORDER  GRB
-#define FRAMES_PER_SECOND  120
-
-#define deltaMsLED ((unsigned long) (1000 / FRAMES_PER_SECOND))
+// #define FRAMES_PER_SECOND  120
+// #define deltaMsLED ((unsigned long) (1000 / FRAMES_PER_SECOND))
 
 // Creates an array with the length set by NUM_LEDS_PER_DISK above
 // This is the array the library will read to determine how each LED in the strand should be set
@@ -75,9 +74,13 @@ static uint32_t data_guard_before = 0x55555555;
 static CRGB led_display[(1+NUM_SHADOWS)*NUM_LEDS_PER_DISK]; // 1st set is for display, then shadow1 then shadow2 etc.
 static uint32_t data_guard_after = 0x55555555;
 
-static CRGB led_tmpRing[MAX_LEDS_PER_RING]; // for temp storage
-static CRGB led_tmp1;
-static CRGB led_BLACK = CRGB::Black;
+// static CRGB led_tmpRing[MAX_LEDS_PER_RING]; // for temp storage
+static CRGB led_tmp1; // for temporary storage
+static CRGB led_BLACK  = CRGB::Black;
+static CRGB led_RED    = CRGB::Red;
+static CRGB led_GREEN  = CRGB::Green;
+static CRGB led_BLUE   = CRGB::Blue;
+static CRGB led_YELLOW = CRGB::Yellow;
 
 typedef struct _brightSpots_t {
   uint8_t posn; // position relative to start of ring; + = counterclockwise. 255 or mNONE terminates list

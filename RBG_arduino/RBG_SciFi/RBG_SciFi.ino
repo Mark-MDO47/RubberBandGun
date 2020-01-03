@@ -83,7 +83,7 @@
 #define REAL_BUTTONS 1                       // use actual buttons
 
 #define DONOTEXPLAINBITS 1                   // don't explain the bits - existing routine uses too much RAM
-#define DEBUG_STATE_MACHINE 0                // 1 to show state machine internals for transitions
+#define DEBUG_STATE_MACHINE 1                // 1 to show state machine internals for transitions
 #define DEBUG_INPUTS 0                       // 1 to show all inputs
 #define DEBUG_SHOW_MSEC 1                    // use globalLoopCount for millis() display not loopcount
 
@@ -273,12 +273,12 @@ void doPattern(uint16_t efctLED) {
       break;
 
     case PTRNLED_windup1:
+      // rainbowWithGlitter();
       juggle();
       break;
 
     case mEFCT_UNIQ_WAITING:
        confetti();
-       // rainbowWithGlitter();
        break;
 
 /*
@@ -482,10 +482,11 @@ void juggle() { // pattern from Demo Reel 100
   fadeToBlackBy( led_display, NUM_LEDS_PER_DISK, 20);
   byte dothue = 0;
   for( int i = 0; i < 8; i++) {
-    led_display[beatsin16(i+7,0,NUM_LEDS_PER_DISK)] |= CHSV(dothue, 200, 255);
+    led_display[beatsin16(i+7,0,NUM_LEDS_PER_DISK-1)] |= CHSV(dothue, 200, 255);
     dothue += 32;
   }
 } // end juggle()
+
 
 // ******************************** STATE TABLE UTILITIES ********************************
 
@@ -523,7 +524,7 @@ uint16_t RBG_processStateTable(uint16_t tmpVinputRBG) {
     if (foundInputRow != mNONE) {
       if (debugThisManyCalls > 0) {
         Serial.println(F("DEBUG RBG_processStateTable() - after RBG_waitForInput() call"));
-        printAllMyState(); Serial.print(F("DEBUG RBG_processStateTable() - tmpVinputRBG 0x")); Serial.print(tmpVinputRBG, HEX); Serial.print(F(" from row ")); Serial.print(myState.tableRow); Serial.print(F(" foundInputRow ")); Serial.print(foundInputRow);  Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
+        printAllMyState();Serial.print(F("DEBUG RBG_processStateTable() - tmpVinputRBG 0x")); Serial.print(tmpVinputRBG, HEX); Serial.print(F(" from row ")); Serial.print(myState.tableRow); Serial.print(F(" foundInputRow ")); Serial.print(foundInputRow);  Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
         debugThisManyCalls -= 1;
       }
       myState.tableRow = foundInputRow; // this should be the only place that this assignment is done
