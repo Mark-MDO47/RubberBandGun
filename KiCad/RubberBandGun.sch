@@ -41,7 +41,7 @@ $Descr A 11000 8500
 encoding utf-8
 Sheet 1 2
 Title "Rubber Band Gun"
-Date "2019-09-13"
+Date "2020-01-02"
 Rev "---"
 Comp ""
 Comment1 ""
@@ -402,8 +402,6 @@ Connection ~ 7400 2000
 Connection ~ 3800 3800
 Connection ~ 4000 3800
 Wire Wire Line
-	4650 2800 5350 2800
-Wire Wire Line
 	4200 1100 4200 950 
 Connection ~ 4200 950 
 Wire Wire Line
@@ -513,4 +511,14 @@ Wire Wire Line
 	7000 3700 5350 3700
 Wire Wire Line
 	5350 3700 5350 3100
+Text Notes 2200 2300 0    60   ~ 0
+D04 = Trigger
+Text Notes 2200 2400 0    59   ~ 0
+D05 = Yellow
+Text Notes 2200 2500 0    59   ~ 0
+D06 = Green
+Text Notes 2200 2600 0    59   ~ 0
+D07 = Black
+Text Notes 2200 2700 0    59   ~ 0
+D08 = Extra
 $EndSCHEMATC
