@@ -48,11 +48,11 @@ https://github.com/DFRobot/DFRobotDFPlayerMini
 This one is a re-write of the DFRobot library; also includes an English language spec sheet in the "extras" directory.
 https://https://github.com/PowerBroker2/DFPlayerMini_Fast
 
-For a description of my experiences with using this module, see the Readme.md in the sounds/ directory.
+For a description of my experiences with using this module, see the Readme.md in https://github.com/Mark-MDO47/RubberBandGun/tree/master/RBG_arduino.
 
 # Sounds
 
-See the Readme.md in the sounds/ directory for attribution and other information about the sounds that are used in this project.
+See the Readme.md in https://github.com/Mark-MDO47/RubberBandGun/tree/master/sounds for attribution and other information about the sounds that are used in this project.
 
 The sounds reside on a 16Gbyte SD card inserted in the YX5200 module. Also on that SD card is an ATTRIBUTION directory containing an HTML file with attributions for the sounds used in this project.
 
