@@ -16,7 +16,7 @@ STATETABLEROW = {"blkFlags": "", "SPECIAL": "", "efctSound": "", "efctLED": "", 
 COLTOSTRUCT = {
                "blkFlags":         "    uint16_t blkFlags;         // mBLOCKSTART, mBLOCKEND or mZERO",
                "SPECIAL":          "    uint16_t SPECIAL;          // special row-handling flags: mSPCL_*",
-               "efctSound":        "    uint16_t efctSound;        // index for sound to make | (loud << mSHIFT_EFCT_SND_VOL)",
+               "efctSound":        "    uint16_t efctSound;        // index for sound to make | (loud << mSHIFT_EFCT_SND_VOL) | masks",
                "efctLED":          "    uint16_t efctLED;          // index for light pattern",
                "inputRBG":         "    uint16_t inputRBG;         // mask for input expected",
                "storeVal":         "    uint16_t storeVal;         // value to store, 8 bit uint",
@@ -61,7 +61,7 @@ translateToMasks = {
     "SPECIAL": {},
     "efctSound": {},
     "efctLED": {},
-    "inputRBG": {
+    "inputRBG": { # note: blank turned to mNONE before this
         "trigPlus": "mINP_TRIG|mINP_BANY",
         "trig00": "mINP_TRIG|mINP_BNONE",
         "trig01": "mINP_TRIG|mINP_B01",
@@ -73,12 +73,12 @@ translateToMasks = {
         "trig07": "mINP_TRIG|mINP_B07",
         "open": "mINP_OPEN",
         "lock": "mINP_LOCK",
-        "": "mINP_NONE",
         "trigOnly": "mINP_TRIG|mINP_BNONE",
         "trigYellow": "mINP_TRIG|mINP_B01",
         "trigGreen": "mINP_TRIG|mINP_B02",
         "trigBlack": "mINP_TRIG|mINP_B03",
-        "trigAll": "mINP_TRIG|mINP_B07",
+        "trigAll3": "mINP_TRIG|mINP_B07",
+        "trigExtra": "mINP_TRIG|mINP_BXTRA",
     },
     "storeVal": {},
     "storeAddr": {},
@@ -106,19 +106,18 @@ mMASK_EFCT_SND_NUM = 0xFF # mask for sound number
 mSHIFT_EFCT_SND_VOL = 16 # shift for volume
 mMASK_EFCT_SND_VOL = 0x1F # mask for volume once shifted in place
 mDEFAULT_EFCT_SND_VOL = 25 # default volume
-#  mMASK_EFCT_SND_CONTINSWITCH = 0x100 # NOT NEEDED if continuous sound, switch between specified num and (num+128)
 #
 EFFECT_MAP = {
     "mEFCT_WIND_UP": [mEFCT_WIND_UP, " // 001 to 009 - wind-up effects"],
     "mEFCT_SHOOT": [mEFCT_SHOOT, " // 011 to 019 - shoot effects"],
     "mEFCT_OPEN_BARREL": [mEFCT_OPEN_BARREL, " // 021 to 029 - open barrel effects"],
     "mEFCT_LOCK_LOAD": [mEFCT_LOCK_LOAD, " // 031 to 039 - lock and load barrel effects"],
-    "mEFCT_PWRON": [mEFCT_PWRON, " // 041 to 049 - after initial power-up effects"],
+    "mEFCT_PWRON": [mEFCT_PWRON, " // 041 to 049 - initial power-up effects"],
     "mEFCT_WAIT": [mEFCT_WAIT, " // 051 to 059 - waiting for trigger"],
     "mEFCT_CONFIGURE": [mEFCT_CONFIGURE, " // 061 to 099 - effects used to navigate menus"],
     "mEFCT_UNIQ": [mEFCT_UNIQ,  " // 101 to 127 - unique effects not included in configurations\n"],
     "mMASK_EFCT_SND_NUM": [mMASK_EFCT_SND_NUM, " // mask for sound number"],
     "mSHIFT_EFCT_SND_VOL": [mSHIFT_EFCT_SND_VOL, " // shift for volume"],
     "mMASK_EFCT_SND_VOL": [mMASK_EFCT_SND_VOL, "  // mask for volume once shifted in place"],
-    "mDEFAULT_EFCT_SND_VOL": [mDEFAULT_EFCT_SND_VOL, " // default volume"]
+    "mDEFAULT_EFCT_SND_VOL": [mDEFAULT_EFCT_SND_VOL, " // default volume - 25 is pretty good"]
 }
