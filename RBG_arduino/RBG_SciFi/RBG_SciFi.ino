@@ -144,7 +144,7 @@ void setup() {
   pinMode(DPIN_SOLENOID,   OUTPUT);        // fires the rubber band
 
   // make sure solenoid is not drawing power
-  digitalWrite(DPIN_SOLENOID, LOW);
+  RBG_specialProcSolenoid(); // digitalWrite(DPIN_SOLENOID, LOW);
 
   // initialize the DFPlayer audio player
   DFsetup();
@@ -183,6 +183,11 @@ void loop() {
   #if DEBUG_SHOW_MSEC
   globalLoopCount = myState.timerNow;
   #endif // DEBUG_SHOW_MSEC
+
+  // handle solenoid OFF processing quickly no matter how long the shooting sound is
+  if ((myState.timerForceSolenoidLow > 0) && (myState.timerNow > myState.timerForceSolenoidLow)) {
+    RBG_specialProcSolenoid(); // digitalWrite(DPIN_SOLENOID, LOW);
+  }
 
   // see if time to run the state machine and process inputs
   if ((myState.timerNow-myState.timerPrevState) >= 40) { // || (myState.VinputRBG != nowVinputRBG)) { THIS MAKES RELEASING TRIGGER TOO FAST AFFECT SOUND START
@@ -595,7 +600,7 @@ uint16_t RBG_waitForInput(uint16_t tmpVinputRBG) {
 
     if ((mNONE != thisRowPtr->SPECIAL) && (0 != (thisRowPtr->SPECIAL & mSPCL_HANDLER))) { // special handler
       // no sounds no LEDs for mSPCL_HANDLER; it gets called exactly once
-      RBG_specialProcessing(tmpVinputRBG, thisRowPtr->SPECIAL);
+      RBG_specialProcessing(tmpVinputRBG, thisRowPtr->SPECIAL, thisRowPtr->storeVal, thisRowPtr->storeAddr);
       thisReturn = thisRowPtr->gotoWithoutInput; // this one uses WithoutInput not OnInput
       Serial.print(F(" RBG_waitForInput mSPCL_HANDLER thisReturn ")); Serial.print(thisReturn); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
       break;
@@ -642,10 +647,10 @@ uint16_t RBG_waitForInput(uint16_t tmpVinputRBG) {
 } // end RBG_waitForInput()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// RBG_specialProcessing(int16_t tmpVinputRBG, uint16_t tmpSPECIAL)
+// RBG_specialProcessing(tmpVinputRBG, tmpSPECIAL, tmpStoreVal, tmpStoreAddr)
 //   do the SPECIAL processing - mostly the solenoid stuff
 //
-uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSPECIAL) {
+uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSPECIAL, uint16_t tmpStoreVal, uint16_t tmpStoreAddr) {
   uint16_t myVinputRBG = tmpVinputRBG;
   uint16_t mySpec = tmpSPECIAL & (mSPCL_HANDLER-1);
 
@@ -656,6 +661,15 @@ uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSPECIAL) {
     case mSPCL_HANDLER_SOLENOID:
       RBG_specialProcSolenoid();
       break;
+    case mSPCL_HANDLER_CFGSTORE:
+      RBG_specialProcConfigStore(tmpStoreVal, tmpStoreAddr);
+      break;
+    case mSPCL_HANDLER_CFGNEXT:
+      RBG_specialProcConfigNext();
+      break;
+    case mSPCL_HANDLER_CFG2EEPROM:
+      RBG_specialProcConfig2Eeprom();
+      break;
     default:
       Serial.print(F(" RBG_specialProcessing ERROR ln ")); Serial.print((uint16_t) __LINE__);  Serial.print(F(" mySpec ")); Serial.print(mySpec);  Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
       break;
@@ -664,27 +678,77 @@ uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSPECIAL) {
 } // end RBG_specialProcessing(uint16_t tmpVinputRBG)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
+// RBG_specialProcConfigStore(tmpStoreVal, tmpStoreAddr) - prepare for configuration list
+//
+// tmpStoreVal  - 8 MSbits: max num, 8 LSbits: mEFCT_ category
+// tmpStoreAddr - code: mADDR_CFGSND, mADDR_CFGLED, or mADDR_CFGOTHER 
+//
+//   All RBG_specialProcXxx routines get called exactly one time then move to .gotoWithoutInput
+//
+void RBG_specialProcConfigStore(uint16_t tmpStoreVal, uint16_t tmpStoreAddr) {
+  // initialize numbers for mSPCL_EFCT_CONFIGURE
+  myState.cfg_curnum = 1; // current number for configuration list of choices
+  myState.cfg_maxnum = (tmpStoreVal >> mSHIFT_EFCT_CFGMAXVAL) & 0xFF; // maximum number for configuration list of choices
+  myState.cfg_category = tmpStoreVal & 0xFF; // example: mEFCT_LOCK_LOAD
+  myState.cfg_type = tmpStoreAddr; // code: mADDR_CFGSND, mADDR_CFGLED, or mADDR_CFGOTHER
+} // end RBG_specialProcConfigStore()
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// RBG_specialProcConfigNext() - prepare for next item in configuration list
+//
+//   All RBG_specialProcXxx routines get called exactly one time then move to .gotoWithoutInput
+//
+void RBG_specialProcConfigNext() {
+  // go to next choice in list of choices. Loop if needed.
+  if (myState.cfg_curnum >= myState.cfg_maxnum) {
+    myState.cfg_curnum = 1;
+  } else {
+    myState.cfg_curnum += 1;
+  }
+} // end RBG_specialProcConfigNext()
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// RBG_specialProcConfig2Eeprom() - store choice in proper place in EEPROM
+//
+//   All RBG_specialProcXxx routines get called exactly one time then move to .gotoWithoutInput
+//
+void RBG_specialProcConfig2Eeprom() {
+  // store choice in EEPROM
+  switch (myState.cfg_type) {
+    case mADDR_CFGSND:
+      eeprom_store_with_chksum(eeSoundSave+EEPOFFSET(myState.cfg_category), myState.cfg_curnum);
+      break;
+    case mADDR_CFGLED:
+      eeprom_store_with_chksum(eeLEDSave+EEPOFFSET(myState.cfg_category), myState.cfg_curnum);
+      break;
+    case mADDR_CFGOTHER:
+      break;
+    default:
+      Serial.print(F(" RBG_specialProcConfig2Eeprom ERROR bad cfg_type ")); Serial.println((uint16_t) myState.cfg_type);
+  } // end switch ()
+  myState.cfg_curnum = myState.cfg_maxnum = myState.cfg_category = myState.cfg_type = mNONE;
+} // end RBG_specialProcConfigStore()
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RBG_specialProcShoot() - do the solenoid for shooting
 //
-//   All RBG_specialProcXxx routines get called exactly one time then move off the row
+//   All RBG_specialProcXxx routines get called exactly one time then move to .gotoWithoutInput
 //
 void RBG_specialProcShoot() {
   uint16_t nextRow = myStateTable[myState.tableRow].gotoWithoutInput;
   digitalWrite(DPIN_SOLENOID, HIGH);
-  delay(200); // let's try it the easy way
-  digitalWrite(DPIN_SOLENOID, LOW);
+  myState.timerForceSolenoidLow = millis() + DLYSOLENOID;
 } // end RBG_specialProcShoot()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RBG_specialProcSolenoid() - release the solenoid after shooting
 //
-//   All RBG_specialProcXxx routines get called exactly one time then move off the row
-//
-// really just to be sure... RBG_specialProcShoot() should take care of this
+//   All RBG_specialProcXxx routines get called exactly one time then move to .gotoWithoutInput
 //
 void RBG_specialProcSolenoid() {
   uint16_t nextRow = myStateTable[myState.tableRow].gotoWithoutInput;
   digitalWrite(DPIN_SOLENOID, LOW);
+  myState.timerForceSolenoidLow = 0;
   if (mNONE == nextRow) { nextRow = mROW_POWERON; Serial.print(F(" RBG_specialProcSolenoid ERROR ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" gotoWithoutInput is mNONE; going to mROW_POWERON")); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
 } // end RBG_specialProcSolenoid()
 

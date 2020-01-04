@@ -201,6 +201,42 @@ static pins_to_vals_t myPinsToVals[] = {
 };
 
 
+static struct _myState_t {
+  uint16_t tableRow = 0;            // points to state that we will process or are processing
+  uint16_t VinputRBG = 0;           // bits for input buttons and sound finish: mVINP_*
+  uint16_t currVolume = 0;          // avoid sending volume when not needed - FIXME FUTURE FEATURE
+  uint32_t timerNow = 0;            // timer now
+  uint32_t timerPrevState = 0;      // start timer from previous time through state loop
+  uint32_t timerPrevLEDstep = 0;    // start timer from previous LED activity
+  uint32_t timerForceSoundActv = 0; // end timer for forcing mVINP_SOUNDACTV true
+  uint32_t timerForceSolenoidLow = 0; // end timer for forcing mVINP_SOUNDACTV true
+  uint8_t ptrnDelayLEDstep = 7;     // proper delta delay for Mark's patterns
+  uint8_t cfg_curnum = mNONE;       // current number for configuration list of choices
+  uint8_t cfg_maxnum = mNONE;       // maximum number for configuration list of choices
+  uint8_t cfg_category = mNONE;     // example: mEFCT_LOCK_LOAD
+  uint8_t cfg_type = mNONE;         // code: mADDR_CFGSND, mADDR_CFGLED, or mADDR_CFGOTHER
+} myState;
+
+#define DLYSOLENOID 200  // num milliseconds to leave solenoid on
+
+#define DLYLED_MIN 7
+#define PTRNLED_OFF 258
+// #define PTRNLED_diskDownTheDrain_rot 1
+// #define PTRNLED_diskDownTheDrain_blk 2
+#define PTRNLED_pwron1    (1+mEFCT_PWRON)
+#define PTRNLED_cnfg1     (1+mEFCT_CONFIGURE)
+#define PTRNLED_open1     (1+mEFCT_OPEN_BARREL)
+#define PTRNLED_lock1     (1+mEFCT_LOCK_LOAD)
+#define PTRNLED_wait1     (1+mEFCT_WAIT)
+#define PTRNLED_windup1   (1+mEFCT_WIND_UP)
+#define PTRNLED_shoot1    (1+mEFCT_SHOOT)
+#define PTRNLED_uniq1     (1+mEFCT_UNIQ)
+
+#define DLYLED_ringRotateAndFade 25 // for RBG_ringRotateAndFade
+#define DLYLED_diskDownTheDrain 25 // for RBG_DiskDownTheDrain
+
+
+
 // STATE TABLE
 //  EEPROM[stateTable_ROW->storeAddr] = addr
 //  EEPROM[stateTable_ROW->storeVal] = val
@@ -224,34 +260,6 @@ typedef struct _RBGStateTable_t {
     uint16_t gotoWithoutInput; // index within table to go without waiting for input
     uint16_t index;            // input column unused in this table
 } RBGStateTable_t;
-
-
-static struct myState_t {
-  uint16_t tableRow = 0;            // points to state that we will process or are processing
-  uint16_t VinputRBG = 0;           // bits for input buttons and sound finish: mVINP_*
-  uint16_t currVolume = 0;          // avoid sending volume when not needed - FIXME FUTURE FEATURE
-  uint32_t timerNow = 0;            // timer now
-  uint32_t timerPrevState = 0;      // start timer from previous time through state loop
-  uint32_t timerPrevLEDstep = 0;    // start timer from previous LED activity
-  uint32_t timerForceSoundActv = 0; // end timer for forcing mVINP_SOUNDACTV true
-  int16_t  ptrnDelayLEDstep = 7;    // proper delta delay for Mark's patterns
-} myState;
-
-#define DLYLED_MIN 7
-#define PTRNLED_OFF 258
-// #define PTRNLED_diskDownTheDrain_rot 1
-// #define PTRNLED_diskDownTheDrain_blk 2
-#define PTRNLED_pwron1    (1+mEFCT_PWRON)
-#define PTRNLED_cnfg1     (1+mEFCT_CONFIGURE)
-#define PTRNLED_open1     (1+mEFCT_OPEN_BARREL)
-#define PTRNLED_lock1     (1+mEFCT_LOCK_LOAD)
-#define PTRNLED_wait1     (1+mEFCT_WAIT)
-#define PTRNLED_windup1   (1+mEFCT_WIND_UP)
-#define PTRNLED_shoot1    (1+mEFCT_SHOOT)
-#define PTRNLED_uniq1     (1+mEFCT_UNIQ)
-
-#define DLYLED_ringRotateAndFade 25 // for RBG_ringRotateAndFade
-#define DLYLED_diskDownTheDrain 25 // for RBG_DiskDownTheDrain
 
 //
 // the state table itself - automatically generated from makeStateTable.py
