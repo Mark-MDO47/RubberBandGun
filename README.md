@@ -47,3 +47,13 @@ https://github.com/DFRobot/DFRobotDFPlayerMini
 
 This one is a re-write of the DFRobot library; also includes an English language spec sheet in the "extras" directory.
 https://https://github.com/PowerBroker2/DFPlayerMini_Fast
+
+For a description of my experiences with using this module, see the Readme.md in the sounds/ directory.
+
+# Sounds
+
+See the Readme.md in the sounds/ directory for attribution and other information about the sounds that are used in this project.
+
+The sounds reside on a 16Gbyte SD card inserted in the YX5200 module. Also on that SD card is an ATTRIBUTION directory containing an HTML file with attributions for the sounds used in this project.
+
+Note that the sounds were de-stereo'd, chopped up, and in many cases modified and/or combined with other sounds. There is not a one-to-one onto relationship between the source of the sounds and the sounds as played by the Rubber Band Gun.
