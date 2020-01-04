@@ -7,6 +7,8 @@ or a simulation of this. We will shamelessly Hollywoodify this sound to make it 
 
 Thank you LIGO folks for making the fun sounds available to non-researchers!
 
+A very readable one-page comparison of gravity waves to light and sound wave perception is here: http://gmunu.mit.edu/sounds/sounds.html
+
 https://www.ligo.org/index.php
 https://www.ligo.org/detections/O1O2catalog.php
 https://www.gw-openscience.org/audiogwtc1/
