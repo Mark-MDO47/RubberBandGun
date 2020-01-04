@@ -84,7 +84,7 @@
 
 #define DONOTEXPLAINBITS 1                   // don't explain the bits - existing routine uses too much RAM
 #define DEBUG_STATE_MACHINE 1                // 1 to show state machine internals for transitions
-#define DEBUG_INPUTS 0                       // 1 to show all inputs
+#define DEBUG_INPUTS 1                       // 1 to show all inputs
 #define DEBUG_SHOW_MSEC 1                    // use globalLoopCount for millis() display not loopcount
 
 
@@ -259,6 +259,7 @@ void doPattern(uint16_t efctLED) {
     case PTRNLED_open1: // RBG_diskDownTheDrainOrRotate clockwise, rotate through
     case PTRNLED_lock1:
     case PTRNLED_uniq1:
+    case PTRNLED_wait1:
       if (prevEfctLED != efctLED) { // initialize
         prevEfctLED = efctLED;
         RBG_ringRotateAndFade(mNONE, 0, windup1BrightSpots); // FIXME - initialization from other effect

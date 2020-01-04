@@ -116,7 +116,7 @@ def make_state_table():
     global COLTOINDEX
 
     # Import the excel file
-    xls_file = pd.ExcelFile(r'./StateTable_minimal.xlsx')
+    xls_file = pd.ExcelFile(r'd:/GitHub-Mark-MDO47/RubberBandGun/RBG_arduino/StateTable_minimal.xlsx')
     df = xls_file.parse(xls_file.sheet_names[0])
 
     # map the column names to numbers; will barf if there is a problem
