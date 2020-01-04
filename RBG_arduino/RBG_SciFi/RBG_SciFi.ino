@@ -259,7 +259,6 @@ void doPattern(uint16_t efctLED) {
     case PTRNLED_open1: // RBG_diskDownTheDrainOrRotate clockwise, rotate through
     case PTRNLED_lock1:
     case PTRNLED_uniq1:
-    case PTRNLED_wait1:
       if (prevEfctLED != efctLED) { // initialize
         prevEfctLED = efctLED;
         RBG_ringRotateAndFade(mNONE, 0, windup1BrightSpots); // FIXME - initialization from other effect
@@ -278,7 +277,7 @@ void doPattern(uint16_t efctLED) {
       juggle();
       break;
 
-    case mEFCT_UNIQ_WAITING:
+    case PTRNLED_wait1:
        bpm_rings();
        // confetti();
        break;
