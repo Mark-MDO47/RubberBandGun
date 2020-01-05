@@ -534,7 +534,7 @@ uint16_t RBG_processStateTable(uint16_t tmpVinputRBG) {
   // see if need to start a new row
   if (prevRow != myState.tableRow) { // start a new row
     debugThisManyCalls = DEBUG_STATE_MACHINE*10; // will be interesting for a bit
-    RBG_startRow(); // just do what the row says
+    RBG_startRow(thisRowPtr); // just do what the row says
     if (debugThisManyCalls > 0) {
       printAllMyState(); Serial.print(F("DEBUG RBG_processStateTable() - tmpVinputRBG 0x")); Serial.print(tmpVinputRBG, HEX); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
       debugThisManyCalls -= 1;
@@ -550,26 +550,25 @@ uint16_t RBG_processStateTable(uint16_t tmpVinputRBG) {
         debugThisManyCalls -= 1;
       }
       myState.tableRow = foundInputRow; // this should be the only place that this assignment is done
-    } else if ((mNONE != thisRowPtr->SPECIAL) && (0 != (thisRowPtr->SPECIAL & mSPCL_EFCT_CONTINUOUS)) && (0 == (tmpVinputRBG&mVINP_SOUNDACTV))) {
+    } else if ((mNONE != thisRowPtr->SPECIAL) && (0 != (thisRowPtr->SPECIAL & (mSPCL_EFCT_CONTINUOUS | mSPCL_EFCT_CONFIGURE))) && (0 == (tmpVinputRBG&mVINP_SOUNDACTV))) {
       // restart a continuous sound
       if (debugThisManyCalls > 0) {
         printAllMyState(); Serial.print(F("DEBUG RBG_processStateTable() - tmpVinputRBG 0x")); Serial.print(tmpVinputRBG, HEX); Serial.print(F(" restart sound ")); Serial.print(thisRowPtr->efctSound); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
         debugThisManyCalls -= 1;
       }
-      RBG_startEffectSound(thisRowPtr->efctSound);
+      RBG_startEffectSound(thisRowPtr->efctSound, thisRowPtr->SPECIAL);
     } // end check restart continuous sound
   } // end check for inputs satisfied
 } // end RBG_processStateTable()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// RBG_startRow() - start processing a row in myStateTable
+// RBG_startRow(thisRowPtr) - start processing a row in myStateTable
 //    basically we just start the effects and do a return
 //
-void RBG_startRow() {
-  RBGStateTable_t * thisRowPtr = &myStateTable[myState.tableRow];
+void RBG_startRow(RBGStateTable_t* thisRowPtr) {
 
-  RBG_startEffectSound((uint16_t) (thisRowPtr->efctSound));
-  RBG_startEffectLED((uint16_t) (thisRowPtr->efctLED));
+  RBG_startEffectSound(thisRowPtr->efctSound, thisRowPtr->SPECIAL);
+  RBG_startEffectLED(thisRowPtr->efctLED, thisRowPtr->SPECIAL);
 
 } // end RBG_startRow()
 
@@ -753,13 +752,18 @@ void RBG_specialProcSolenoid() {
 } // end RBG_specialProcSolenoid()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// RBG_startEffectLED(tmpEfctLED) - starts a new LED pattern
+// RBG_startEffectLED(tmpEfctLED, tmpSPECIAL) - starts a new LED pattern
 //
 // tmpEfctLED - 8 LSBits is pattern number - EEPROM configurable or uniq
 //              8 MSBits reservered for parameter
+// If the row says mSPCL_EFCT_CONFIGURE and efctSound is mNONE and mADDR_CFGLED then we use the configuration variables
 //
-void RBG_startEffectLED(uint16_t tmpEfctLED) {
+void RBG_startEffectLED(uint16_t tmpEfctLED, uint16_t tmpSPECIAL) {
   uint16_t myEfctLED = tmpEfctLED & 0x00FF; // just the effect number; allows bits later
+
+  if ((0 != (mSPCL_EFCT_CONFIGURE & tmpSPECIAL)) && (mADDR_CFGLED == myState.cfg_type) && (mNONE == tmpEfctLED)) { // handle configuration effects
+    tmpEfctLED = myState.cfg_curnum + myState.cfg_category;
+  } // end if special configuration effects
 
   if (mNONE != myEfctLED) {
     #if DEBUG_STATE_MACHINE
@@ -770,9 +774,12 @@ void RBG_startEffectLED(uint16_t tmpEfctLED) {
 } // end RBG_startEffectLED()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// RBG_startEffectSound(tmpEfctSound) - start tmpEfctSound if it is valid
-//    tmpEfctSound is two fields: 0x00vv00nn where nn is sound and vv is volume
+// RBG_startEffectSound(tmpEfctSound, tmpSPECIAL) - start tmpEfctSound if it is valid
+//
+// tmpEfctSound is two fields: 0x00vv00nn where nn is sound and vv is volume
 //       FIXME - volume not implemented yet
+// If the row says mSPCL_EFCT_CONFIGURE and efctSound is mNONE and mADDR_CFGSND then we use the configuration variables
+//
 // Had lots of trouble with reliable operation using playMp3Folder. Came to conclusion
 //    that it is best to use the most primitive of YX5200 commands.
 // Also saw strong correlation of using YX5200 ACK and having even more unreliable
@@ -784,12 +791,17 @@ void RBG_startEffectLED(uint16_t tmpEfctLED) {
 //    it only seems to trigger when I interrupt a playing sound by starting another.
 //    It is sort of interesting but not needed.
 //
-void  RBG_startEffectSound(uint16_t tmpEfctSound) {
+void  RBG_startEffectSound(uint16_t tmpEfctSound, uint16_t tmpSPECIAL) {
   uint16_t idx;
   bool prevHI;
   uint16_t mySound = tmpEfctSound & mMASK_EFCT_SND_NUM;
   // uint16_t myVolume = (tmpEfctSound >> mSHIFT_EFCT_SND_VOL) & mMASK_EFCT_SND_VOL; // USE BELOW to convince MS VS 2019 we don't lose data
   uint16_t myVolume = ((tmpEfctSound & (mMASK_EFCT_SND_VOL << mSHIFT_EFCT_SND_VOL)) >> mSHIFT_EFCT_SND_VOL) & mMASK_EFCT_SND_VOL;
+
+  if ((0 != (mSPCL_EFCT_CONFIGURE & tmpSPECIAL)) && (mADDR_CFGSND == myState.cfg_type) && (mNONE == tmpEfctSound)) { // handle configuration effects
+    tmpEfctSound = myState.cfg_curnum + myState.cfg_category;
+    myVolume = 25;
+  } // end if special configuration effects
 
   // wait up to one second for two "LOW" indications in a row
   prevHI = false;

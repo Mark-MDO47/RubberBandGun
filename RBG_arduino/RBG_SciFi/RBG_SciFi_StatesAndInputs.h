@@ -200,7 +200,6 @@ static pins_to_vals_t myPinsToVals[] = {
   { DPIN_AUDIO_BUSY,  mVINP_TRUESOUNDACTV },
 };
 
-
 static struct _myState_t {
   uint16_t tableRow = 0;            // points to state that we will process or are processing
   uint16_t VinputRBG = 0;           // bits for input buttons and sound finish: mVINP_*
