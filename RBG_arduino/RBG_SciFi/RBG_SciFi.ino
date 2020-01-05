@@ -229,9 +229,9 @@ void doPattern(uint16_t efctLED) {
   // FIXME convert via EEPROM
   nowEfctLED = (efctLED & 0x00FF); // just the effect number
 
-  // configurable sounds are zero mod 10; we get config from EEPROM
-  if (EFCT_IS_EEP(nowEfctLED)) {
-    // configurable sound using EEPROM
+  // configurable effects are zero mod 10; we get config from EEPROM
+  if ((EFCT_IS_EEP(nowEfctLED)) && (nowEfctLED <= mEFCT_LAST_EEP_CONFIG)) {
+    // configurable effect using EEPROM
     nowEfctLED += EEPROM.read(EEPOFFSET(nowEfctLED)+eeLEDSave);
   }
 
@@ -825,7 +825,7 @@ void  RBG_startEffectSound(uint16_t tmpEfctSound, uint16_t tmpSPECIAL) {
   }
   if (mNONE != mySound) {
     // configurable sounds are zero mod 10; we get config from EEPROM
-    if (EFCT_IS_EEP(mySound)) {
+    if ((EFCT_IS_EEP(mySound)) && (mySound <= mEFCT_LAST_EEP_CONFIG)) {
       // configurable sound using EEPROM
       mySound += EEPROM.read(EEPOFFSET(mySound)+eeSoundSave);
     }
@@ -858,11 +858,13 @@ void  RBG_startEffectSound(uint16_t tmpEfctSound, uint16_t tmpSPECIAL) {
 // The lock/load input is 0 when connected and 1 when not lock/load
 // The sound complete is 0 when sound is complete
 //
+// NOTE: DPIN_BTN_TRIGGER handled in code: edge trigger, only goes 1 once on trigger press
 // NOTE: DPIN_LOCK_LOAD handled in code
 // NOTE: this is where we handle YX5200 active pin instability when interrupting previous play command
 //
 uint16_t getButtonInput() {
   static uint8_t debugThisManyCalls = DEBUG_INPUTS*10;
+  static uint8_t prevTrigstate = 0; // 0=trigger on LOW, 1=wait for HIGH
   uint16_t idx;
   uint16_t thePin;
   uint16_t theVal;
@@ -875,10 +877,21 @@ uint16_t getButtonInput() {
   theVal = digitalRead(DPIN_LOCK_LOAD);
   if (LOW == theVal) { // we are locked and loaded; sensitive to trigger and other events
     if (debugThisManyCalls > 0) { Serial.print(F(" getButtonInput ln ")); Serial.println((uint16_t) __LINE__); }
-    returnInpMask = mVINP_LOCK;
+    returnInpMask |= mVINP_LOCK;
   } else { // we are not locked and loaded; abort everything else
     if (debugThisManyCalls > 0) { Serial.print(F(" getButtonInput ln ")); Serial.println((uint16_t) __LINE__); }
-    returnInpMask = mVINP_OPEN;
+    returnInpMask |= mVINP_OPEN;
+  }
+
+  // do trigger separately in code
+  theVal = digitalRead(DPIN_BTN_TRIGGER);
+  if ((0 == prevTrigstate) && (LOW == theVal)) { // this is our edge
+    if (debugThisManyCalls > 0) { Serial.print(F(" getButtonInput ln ")); Serial.println((uint16_t) __LINE__); }
+    prevTrigstate = 1; // 0=trigger on LOW, 1=wait for HIGH
+    returnInpMask |= mVINP_TRIG;
+  } else if (HIGH == theVal) {
+    if (debugThisManyCalls > 0) { Serial.print(F(" getButtonInput ln ")); Serial.println((uint16_t) __LINE__); }
+    prevTrigstate = 0; // 0=trigger on LOW, 1=wait for HIGH
   }
 
   // set/clear the input bits for the standard inputs
@@ -1102,14 +1115,14 @@ void printExplainBits(uint16_t myBits, decodeBits_t theDecodeTable[], uint16_t n
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // printAllMyInputs() - interpret the input bits
 void printAllMyInputs() {
-  Serial.print(F("printAllMyInputs:"));
   printOneInput(DPIN_BTN_TRIGGER, " TRIGGER ");
   printOneInput(DPIN_BTN_YELLOW, " YELLOW ");
   printOneInput(DPIN_BTN_GREEN, " GREEN ");
   printOneInput(DPIN_BTN_BLACK, " BLACK ");
+  printOneInput(DPIN_BTN_EXTRA, " EXTRA ");
   printOneInput(DPIN_LOCK_LOAD, " LOAD ");
   printOneInput(DPIN_AUDIO_BUSY, " AUDIO_BUSY ");
-  Serial.println(" ");
+  Serial.println(" that is all");
 } // end printAllMyInputs()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
