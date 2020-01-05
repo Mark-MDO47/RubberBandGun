@@ -251,7 +251,6 @@ void doPattern(uint16_t efctLED) {
       break;
 
     case PTRNLED_pwron1: // RBG_diskDownTheDrainOrRotate counterclockwise, drain
-    case PTRNLED_cnfg1:
       if ((prevEfctLED != efctLED) || (numSteps > (10+NUM_LEDS_PER_DISK))) { // initialize
         RBG_ringRotateAndFade(mNONE, 0, windup1BrightSpots); // FIXME - initialization from other effect
         numSteps = 0;
