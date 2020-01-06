@@ -70,9 +70,10 @@
 #define mSPCL_HANDLER_CFGNEXT      5 // configuration - go to next value at address
 #define mSPCL_HANDLER_CFG2EEPROM   6 // configuration - install current configuration in EEPROM
 // these are used with mSPCL_HANDLER_STORE and _NEXT
-#define mADDR_CFGSND               2 // configuration - for looping through sounds
-#define mADDR_CFGLED               3 // configuration - for looping through LED patterns
-#define mADDR_CFGOTHER             4 // configuration - for looping through other configurations
+#define mADDR_CFGSND               1 // configuration - for looping through sounds
+#define mADDR_CFGLED               2 // configuration - for looping through LED patterns
+#define mADDR_CFGOTHER             3 // configuration - for looping through other configurations
+#define mEFCT_TYPE_CFG_STOREADDR_MAX mADDR_CFGOTHER // .storeAddr - maximum value
 #define mSHIFT_EFCT_CFGMAXVAL      8 // shift to put maximum value into .storeVal
 
 // define the symbols - .blkFlags:
@@ -111,14 +112,13 @@
 #define mEFCT_LOCK_LOAD    30  // 031 to 039 - lock and load barrel effects
 #define mEFCT_PWRON        40  // 041 to 049 - initial power-up effects
 #define mEFCT_WAIT         50  // 051 to 059 - waiting for trigger
-#define mEFCT_UNIQ         60  // 061 to 127 - effects used to navigate menus or other unique effects
+#define mEFCT_UNIQ         60  // 061 to 127 - unique effects used to navigate menus or other unique effects
 
-#define mEFCT_LAST_EEP_CONFIG mEFCT_WAIT // this is the last EEPROM-configurable set of efects
+#define mEFCT_LAST_EEP_CONFIG 50  // this is the last EEPROM-configurable set of effects
 
 #define mMASK_EFCT_SND_NUM 255  // mask for sound number
-#define mSHIFT_EFCT_SND_VOL 16  // shift for volume
+#define mSHIFT_EFCT_SND_VOL 8  // shift for volume
 #define mMASK_EFCT_SND_VOL 31   // mask for volume once shifted in place
-
 #define mDEFAULT_EFCT_SND_VOL 25  // default volume - 25 is pretty good
 
 /////////////////// end -> INPUTS 1 FROM makeStateTable.py <- //////////////////////////////////
@@ -126,26 +126,26 @@
 //
 // define the UNIQUE effects (lights and sounds) here. These cannot be configured as the other effects can.
 //
-#define mEFCT_UNIQ_INTRO       62 // Welcome to RBG configuration! Your call is important to us. Choose YELLOW for sounds, GREEN for lights, BLACK for other; then also press trigger. To go back, press trigger all by itself.
-#define mEFCT_UNIQ_SND_INSTR   63 // Press just trigger to cycle through sound choices, trigger + any color to choose the sound.
-#define mEFCT_UNIQ_LED_INSTR   64 // Press just trigger to cycle through LED pattern choices, trigger + any color to choose the LED Pattern.
-#define mEFCT_UNIQ_OTHR_INSTR  65 // Press just trigger to cycle through a list of other choices, trigger + any color to choose the other choice.
-#define mEFCT_UNIQ_TYPE_CHOICES_INSTR 66 // Press just trigger to cycle through effect TYPE choices, trigger + any color to choose the effect TYPE.
-#define mEFCT_UNIQ_CHARGEUP 71           // Effect type CHARGE-UP FOR SHOOTING. Trigger alone for next type.
-#define mEFCT_UNIQ_SHOOTING 72           // Effect type SHOOTING. Trigger alone for next type.
-#define mEFCT_UNIQ_OPENBARREL 73         // Effect type OPEN BARREL. Trigger alone for next type.
-#define mEFCT_UNIQ_LOCKLOAD 74           // Effect type LOCK-AND-LOAD. Trigger alone for next type.
-#define mEFCT_UNIQ_POWERON 75            // Effect type POWER-ON. Trigger alone for next type.
-#define mEFCT_UNIQ_WAITFORTRIG 76        // Effect type WAITING-FOR-TRIGGER. Trigger alone for next type.
-#define mEFCT_UNIQ_SILENCE   101 // silence
-#define mEFCT_UNIQ_NOT_IMPL  102 // not implemented
+#define mEFCT_UNIQ_INTRO               62 // Welcome to RBG configuration! Your call is important to us.  Press color button first then trigger: YELLOW for sounds, GREEN for lights, BLACK for other. To go back, press trigger all by itself.
+#define mEFCT_UNIQ_SND_INSTR           63 // Press just trigger to cycle through sound choices, trigger + any color to choose the sound.
+#define mEFCT_UNIQ_LED_INSTR           64 // Press just trigger to cycle through LED pattern choices, trigger + any color to choose the LED Pattern.
+#define mEFCT_UNIQ_OTHR_INSTR          65 // Press just trigger to cycle through a list of other choices, trigger + any color to choose the other choice.
+#define mEFCT_UNIQ_TYPE_CHOICES_INSTR  66 // Press just trigger to cycle through effect TYPE choices, trigger + any color to choose the effect TYPE.
+#define mEFCT_UNIQ_CHARGEUP            71 // Effect typeCHARGE-UP FOR SHOOTING. Trigger alone for next type.
+#define mEFCT_UNIQ_SHOOTING            72 // Effect type SHOOTING. Trigger alone for next type.
+#define mEFCT_UNIQ_OPENBARREL          73 // Effect type OPEN BARREL. Trigger alone for next type.
+#define mEFCT_UNIQ_LOCKLOAD            74 // Effect type LOCK-AND-LOAD. Trigger alone for next type.
+#define mEFCT_UNIQ_POWERON             75 // Effect type POWER-ON. Trigger alone for next type.
+#define mEFCT_UNIQ_WAITFORTRIG         76 // Effect type WAITING-FOR-TRIGGER. Trigger alone for next type.
+#define mEFCT_UNIQ_SILENCE            101 // silence
+#define mEFCT_UNIQ_NOT_IMPL           102 // Not yet implemented
 
 // EEPROM addresses
 // EEPROM[eeSoundSave+idx] idx: 0 WindUp, 1 Shoot, 2 Open, 3 Load, 4 PowerUp, 8 Configure
 #define eeSoundSave 0x0000 // EEPROM starting address for sound configuration
 #define eeLEDSave   0x0010 // EEPROM starting address for LED pattern configuration
 #define eeLastNonChksum  0x1E // EEPROM address of last non-checksum data
-#define eeInvertedChksum 0x1F // EEPROM address of last non-checksum data
+#define eeInvertedChksum 0x1F // EEPROM address of checksum data
 
 #define EEPOFFSET(parm)   ((uint16_t) (parm / 10)) // example: EEPOFFSET(mEFCT_SHOOT) = 1
 #define EFCT_IS_EEP(parm) (0 == ((uint16_t) parm) % 10) // if (EFCT_IS_EEP(mEFCT_PWRON)) will be true

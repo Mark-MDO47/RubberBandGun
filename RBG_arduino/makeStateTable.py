@@ -230,10 +230,11 @@ def make_state_table():
           + "\n#define mSPCL_HANDLER_CFGNEXT      5 // configuration - go to next value at address"
           + "\n#define mSPCL_HANDLER_CFG2EEPROM   6 // configuration - install current configuration in EEPROM"
           + "\n// these are used with mSPCL_HANDLER_STORE and _NEXT"
-          + "\n#define mADDR_CFGSND               2 // configuration - for looping through sounds"
-          + "\n#define mADDR_CFGLED               3 // configuration - for looping through LED patterns"
-          + "\n#define mADDR_CFGOTHER             4 // configuration - for looping through other configurations"
-          + "\n#define mSHIFT_EFCT_CFGMAXVAL     16 // shift to put maximum value into .storeVal"
+          + "\n#define mADDR_CFGSND               1 // configuration - for looping through sounds"
+          + "\n#define mADDR_CFGLED               2 // configuration - for looping through LED patterns"
+          + "\n#define mADDR_CFGOTHER             3 // configuration - for looping through other configurations"
+          + "\n#define mEFCT_TYPE_CFG_STOREADDR_MAX mADDR_CFGOTHER // .storeAddr - maximum value"
+          + "\n#define mSHIFT_EFCT_CFGMAXVAL      8 // shift to put maximum value into .storeVal"
           + "\n\n// define the symbols - .blkFlags:"
           + "\n#define mBLOCKSTART 0x80"
           + "\n#define mBLOCKEND   0x40"
@@ -257,7 +258,7 @@ def make_state_table():
     print("\n")
 
 
-    known_effects = {"mNONE": 0xFF, "mEFCT_UNIQ_WAITING": 91}
+    known_effects = {"mNONE": 0xFF}
     count_effects = {'efctLED': 1, 'efctSound': 1}
     found_effects = {'efctLED': {}, 'efctSound': {}}
 

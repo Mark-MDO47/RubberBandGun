@@ -93,11 +93,12 @@ mEFCT_OPEN_BARREL = 20  # 021 to 029 - open barrel effects
 mEFCT_LOCK_LOAD = 30  # 031 to 039 - lock and load barrel effects
 mEFCT_PWRON = 40  # 041 to 049 - after initial power-up effects
 mEFCT_WAIT = 50  # 051 to 059 - waiting for trigger
-mEFCT_CONFIGURE = 60  # 061 to 099 - effects used to navigate menus
-mEFCT_UNIQ = 100  # 101 to 109 - unique effects not included in configurations
+mEFCT_UNIQ = 60 # 61 to 127 - unique effects used to navigate menus or other unique effects
+
+#define mEFCT_LAST_EEP_CONFIG mEFCT_WAIT // this is the last EEPROM-configurable set of efects
 
 mMASK_EFCT_SND_NUM = 0xFF # mask for sound number
-mSHIFT_EFCT_SND_VOL = 16 # shift for volume
+mSHIFT_EFCT_SND_VOL = 8 # shift for volume
 mMASK_EFCT_SND_VOL = 0x1F # mask for volume once shifted in place
 mDEFAULT_EFCT_SND_VOL = 25 # default volume
 #
@@ -108,8 +109,8 @@ EFFECT_MAP = {
     "mEFCT_LOCK_LOAD": [mEFCT_LOCK_LOAD, " // 031 to 039 - lock and load barrel effects"],
     "mEFCT_PWRON": [mEFCT_PWRON, " // 041 to 049 - initial power-up effects"],
     "mEFCT_WAIT": [mEFCT_WAIT, " // 051 to 059 - waiting for trigger"],
-    "mEFCT_CONFIGURE": [mEFCT_CONFIGURE, " // 061 to 099 - effects used to navigate menus"],
-    "mEFCT_UNIQ": [mEFCT_UNIQ,  " // 101 to 127 - unique effects not included in configurations\n"],
+    "mEFCT_UNIQ": [mEFCT_UNIQ,  " // 061 to 127 - unique effects used to navigate menus or other unique effects\n"],
+    "mEFCT_LAST_EEP_CONFIG": [mEFCT_WAIT, " // this is the last EEPROM-configurable set of effects\n"],
     "mMASK_EFCT_SND_NUM": [mMASK_EFCT_SND_NUM, " // mask for sound number"],
     "mSHIFT_EFCT_SND_VOL": [mSHIFT_EFCT_SND_VOL, " // shift for volume"],
     "mMASK_EFCT_SND_VOL": [mMASK_EFCT_SND_VOL, "  // mask for volume once shifted in place"],

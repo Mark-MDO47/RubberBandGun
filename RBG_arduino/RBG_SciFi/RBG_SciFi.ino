@@ -175,6 +175,7 @@ void setup() {
 //     If needed, release the rubber band and set timer to stop the solenoid current later
 //
 void loop() {
+  RBGStateTable_t * thisRowPtr = &myStateTable[myState.tableRow];
 
   // put your main code here, to run repeatedly:
 
@@ -206,7 +207,7 @@ void loop() {
   if ((myState.timerNow-myState.timerPrevLEDstep) >= myState.ptrnDelayLEDstep) {
     gHue += 3; // rotating "base color" used by Demo Reel 100 patterns
     checkDataGuard();
-    doPattern(myStateTable[myState.tableRow].efctLED);
+    doPattern(thisRowPtr->efctLED, thisRowPtr->SPECIAL, 0); // start
     checkDataGuard();
     FastLED.show();
     myState.timerPrevLEDstep = myState.timerNow;
@@ -218,33 +219,39 @@ void loop() {
 // ******************************** LED UTILITIES ****************************************
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// doPattern(efctLED) - start or step the pattern
+// doPattern(tmpEfctLED, tmpSpecial, tmpInit) - start or step the pattern
+//
+// If tmpInit is nonzero, do initialization of pattern
+// If tmpSpecial says mSPCL_EFCT_CONFIGURE and efctSound is mNONE and mADDR_CFGLED then we use the configuration variables
+// If tmpEfctLED is an EEPROM configurable pattern (divisible by 10) then configure it
 //
 #define DEBUG_DPtrn 0
 //
-void doPattern(uint16_t efctLED) {
-  static uint16_t prevEfctLED = mNONE;
+void doPattern(uint16_t tmpEfctLED, uint16_t tmpSpecial, uint8_t tmpInit) {
+//  static uint16_t prevEfctLED = mNONE;
   static uint16_t numSteps = 0;
-  uint16_t nowEfctLED;
+  uint16_t nowEfctLED = tmpEfctLED & 0x00FF; // just the effect number
 
-  // FIXME convert via EEPROM
-  nowEfctLED = (efctLED & 0x00FF); // just the effect number
+  if ((mNONE == nowEfctLED) && (0 != (mSPCL_EFCT_CONFIGURE & tmpSpecial)) && (mADDR_CFGLED == myState.cfg_type)) {
+    // handle configuration choice effects
+    nowEfctLED = myState.cfg_curnum + myState.cfg_category;
+    tmpEfctLED = (0xFF00 & tmpEfctLED) | nowEfctLED;
+  } // end if special configuration choice effects
 
-  // configurable effects are zero mod 10; we get config from EEPROM
-  if ((EFCT_IS_EEP(nowEfctLED)) && (nowEfctLED <= mEFCT_LAST_EEP_CONFIG)) {
-    // configurable effect using EEPROM
+  if ((mNONE != nowEfctLED) && (EFCT_IS_EEP(nowEfctLED)) && (nowEfctLED <= mEFCT_LAST_EEP_CONFIG)) {
+    // configurable LED patterns are zero mod 10; we get config from EEPROM
     nowEfctLED += EEPROM.read(EEPOFFSET(nowEfctLED)+eeLEDSave);
-  }
+  } // end if configurable LED pattern
 
   #if DEBUG_DPtrn
-  Serial.print(F(" DEBUG doPattern efctLED ")); Serial.print(efctLED); Serial.print(F(" prevEfctLED ")); Serial.print(prevEfctLED); Serial.print(F(" final myEfctLED ")); Serial.println(prevEfctLED);
+  Serial.print(F(" DEBUG doPattern tmpEfctLED ")); Serial.print(tmpEfctLED); Serial.print(F(" tmpInit ")); Serial.print(tmpInit); Serial.print(F(" final myEfctLED ")); Serial.println(myEfctLED);
   #endif // DEBUG_DPtrn
 
   switch (nowEfctLED) {
 
     case PTRNLED_OFF: // 258 = OFF
     default:
-      if (prevEfctLED != efctLED) { // initialize
+      if (0 != tmpInit) { // initialize
         for (uint8_t idx = 0; idx < NUM_RINGS_PER_DISK; idx++) {
           led_display[idx] = CRGB::Black;
         }
@@ -252,7 +259,7 @@ void doPattern(uint16_t efctLED) {
       break;
 
     case PTRNLED_pwron1: // RBG_diskDownTheDrainOrRotate counterclockwise, drain
-      if ((prevEfctLED != efctLED) || (numSteps > (10+NUM_LEDS_PER_DISK))) { // initialize
+      if ((0 != tmpInit) || (numSteps > (10+NUM_LEDS_PER_DISK))) { // initialize
         RBG_ringRotateAndFade(mNONE, 0, windup1BrightSpots); // FIXME - initialization from other effect
         numSteps = 0;
       } else { // step
@@ -264,8 +271,7 @@ void doPattern(uint16_t efctLED) {
     case PTRNLED_open1: // RBG_diskDownTheDrainOrRotate clockwise, rotate through
     case PTRNLED_lock1:
     case PTRNLED_uniq1:
-      if (prevEfctLED != efctLED) { // initialize
-        prevEfctLED = efctLED;
+      if (0 != tmpInit) { // initialize
         RBG_ringRotateAndFade(mNONE, 0, windup1BrightSpots); // FIXME - initialization from other effect
         RBG_diskDownTheDrainOrRotate(0);
       } else { // step
@@ -289,25 +295,20 @@ void doPattern(uint16_t efctLED) {
 
 /*
     case PTRNLED_ringRotateAndFade_windup1: // 3 = RBG_ringRotateAndFade windup pattern1
-      if (prevEfctLED != efctLED) { // initialize
-        prevEfctLED = efctLED;
+      if (0 != tmpInit) { // initialize
         RBG_ringRotateAndFade(mNONE, 0, windup1BrightSpots);
       } else { // step
         
       }
       break;
     case 4: // 4 = 
-      if (prevEfctLED != efctLED) { // initialize
-        prevEfctLED = efctLED;
+      if (0 != tmpInit) { // initialize
       } else { // step
         
       }
       break;
 */
   } // end switch
-
-  // take care of previous effect so can do initialization where needed
-  prevEfctLED = efctLED;
 } // end doPattern()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -648,12 +649,12 @@ uint16_t RBG_waitForInput(uint16_t tmpVinputRBG) {
 } // end RBG_waitForInput()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// RBG_specialProcessing(tmpVinputRBG, tmpSPECIAL, tmpStoreVal, tmpStoreAddr)
+// RBG_specialProcessing(tmpVinputRBG, tmpSpecial, tmpStoreVal, tmpStoreAddr)
 //   do the SPECIAL processing - mostly the solenoid stuff
 //
-uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSPECIAL, uint16_t tmpStoreVal, uint16_t tmpStoreAddr) {
+uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSpecial, uint16_t tmpStoreVal, uint16_t tmpStoreAddr) {
   uint16_t myVinputRBG = tmpVinputRBG;
-  uint16_t mySpec = tmpSPECIAL & (mSPCL_HANDLER-1);
+  uint16_t mySpec = tmpSpecial & (mSPCL_HANDLER-1);
 
   switch (mySpec) {
     case mSPCL_HANDLER_SHOOT:
@@ -772,30 +773,25 @@ void RBG_specialProcSolenoid() {
 } // end RBG_specialProcSolenoid()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// RBG_startEffectLED(tmpEfctLED, tmpSPECIAL) - starts a new LED pattern
+// RBG_startEffectLED(tmpEfctLED, tmpSpecial) - starts a new LED pattern
 //
 // tmpEfctLED - 8 LSBits is pattern number - EEPROM configurable or uniq
 //              8 MSBits reservered for parameter
-// If the row says mSPCL_EFCT_CONFIGURE and efctSound is mNONE and mADDR_CFGLED then we use the configuration variables
+// both EEPROM configuration of pattern and configuration choice effects are handled in doPattern
 //
-void RBG_startEffectLED(uint16_t tmpEfctLED, uint16_t tmpSPECIAL) {
+void RBG_startEffectLED(uint16_t tmpEfctLED, uint16_t tmpSpecial) {
   uint16_t myEfctLED = tmpEfctLED & 0x00FF; // just the effect number; allows bits later
-
-  if ((0 != (mSPCL_EFCT_CONFIGURE & tmpSPECIAL)) && (mADDR_CFGLED == myState.cfg_type) && (mNONE == tmpEfctLED)) { // handle configuration effects
-    myEfctLED = myState.cfg_curnum + myState.cfg_category;
-    tmpEfctLED = (0xFF00 & tmpEfctLED) + myEfctLED;
-  } // end if special configuration effects
 
   if (mNONE != myEfctLED) {
     #if DEBUG_STATE_MACHINE
     Serial.print(F(" RBG_startEffectLED ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" EFCT num ")); Serial.print(tmpEfctLED); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
     #endif // DEBUG_STATE_MACHINE
-    doPattern(tmpEfctLED); // doPattern figures out EEPROM configuration and if starting a new pattern and initializes
+    doPattern(tmpEfctLED, tmpSpecial, 1); // doPattern figures out EEPROM configuration and configuration choice effects
   }
 } // end RBG_startEffectLED()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// RBG_startEffectSound(tmpEfctSound, tmpSPECIAL) - start tmpEfctSound if it is valid
+// RBG_startEffectSound(tmpEfctSound, tmpSpecial) - start tmpEfctSound if it is valid
 //
 // tmpEfctSound is two fields: 0x00vv00nn where nn is sound and vv is volume
 //       FIXME - volume not implemented yet
@@ -812,14 +808,14 @@ void RBG_startEffectLED(uint16_t tmpEfctLED, uint16_t tmpSPECIAL) {
 //    it only seems to trigger when I interrupt a playing sound by starting another.
 //    It is sort of interesting but not needed.
 //
-void  RBG_startEffectSound(uint16_t tmpEfctSound, uint16_t tmpSPECIAL) {
+void  RBG_startEffectSound(uint16_t tmpEfctSound, uint16_t tmpSpecial) {
   uint16_t idx;
   bool prevHI;
   uint16_t mySound = tmpEfctSound & mMASK_EFCT_SND_NUM;
   // uint16_t myVolume = (tmpEfctSound >> mSHIFT_EFCT_SND_VOL) & mMASK_EFCT_SND_VOL; // USE BELOW to convince MS VS 2019 we don't lose data
   uint16_t myVolume = ((tmpEfctSound & (mMASK_EFCT_SND_VOL << mSHIFT_EFCT_SND_VOL)) >> mSHIFT_EFCT_SND_VOL) & mMASK_EFCT_SND_VOL;
 
-  if ((0 != (mSPCL_EFCT_CONFIGURE & tmpSPECIAL)) && (mADDR_CFGSND == myState.cfg_type) && (mNONE == tmpEfctSound)) { // handle configuration effects
+  if ((0 != (mSPCL_EFCT_CONFIGURE & tmpSpecial)) && (mADDR_CFGSND == myState.cfg_type) && (mNONE == tmpEfctSound)) { // handle configuration effects
     mySound = myState.cfg_curnum + myState.cfg_category;
     tmpEfctSound = (0xFF00 & tmpEfctSound) + mySound;
     myVolume = 25;
