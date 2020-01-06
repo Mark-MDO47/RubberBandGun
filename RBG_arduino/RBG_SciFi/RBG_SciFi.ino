@@ -86,6 +86,7 @@
 #define DEBUG_STATE_MACHINE 1                // 1 to show state machine internals for transitions
 #define DEBUG_INPUTS 1                       // 1 to show all inputs
 #define DEBUG_SHOW_MSEC 1                    // use globalLoopCount for millis() display not loopcount
+#define DEBUG_CONFIG 1                       // 1 to show all CONFIGURATION special activity
 
 
 SoftwareSerial mySoftwareSerial(DPIN_SWSRL_RX, DPIN_SWSRL_TX); // to talk to YX5200 audio player
@@ -607,14 +608,16 @@ uint16_t RBG_waitForInput(uint16_t tmpVinputRBG) {
       Serial.print(F(" RBG_waitForInput mSPCL_EFCT_ONETIME thisReturn ")); Serial.print(thisReturn); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
       break;
     } else if ((mNONE != (thisRowPtr->inputRBG)) && (0 != (thisRowPtr->inputRBG&mINP_TRIG)) && (0 != (tmpVinputRBG&mVINP_TRIG))) {
-      // several cases for trigger
+      // two cases for trigger: trigger + any of the listed buttons (but at least one of them) OR trigger + exact match with buttons listed (even if no button listed)
       if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.print(idx); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
-      if (0 != (thisRowPtr->inputRBG&mINP_BANY)) {
+      if ((0 != (thisRowPtr->inputRBG&mINP_BANY)) && (0 != (thisRowPtr->inputRBG&mINP_B0F&tmpVinputRBG))) {
+        // mINP_BANY means any of the listed buttons but at least one
         if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.print(idx); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
         thisReturn = thisRowPtr->gotoOnInput;
         Serial.print(F(" RBG_waitForInput mINP_TRIG mINP_BANY thisReturn ")); Serial.print(thisReturn); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
         break;
-      } else if ((mNONE != (thisRowPtr->inputRBG)) && (0 != (thisRowPtr->inputRBG&mINP_BNONE)) && (0 == (tmpVinputRBG & (mVINP_B01|mVINP_B02|mVINP_B04)))) {
+      } else if ((mNONE != (thisRowPtr->inputRBG)) && ((tmpVinputRBG&mINP_B0F) == (thisRowPtr->inputRBG&mINP_B0F))) {
+        // else we must match buttons listed exactly, even if there are no buttons listed
         if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.print(idx); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
         thisReturn = thisRowPtr->gotoOnInput;
         Serial.print(F(" RBG_waitForInput mINP_TRIG mINP_BANY thisReturn ")); Serial.print(thisReturn); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
@@ -689,6 +692,9 @@ void RBG_specialProcConfigStore(uint16_t tmpStoreVal, uint16_t tmpStoreAddr) {
   myState.cfg_maxnum = (tmpStoreVal >> mSHIFT_EFCT_CFGMAXVAL) & 0xFF; // maximum number for configuration list of choices
   myState.cfg_category = tmpStoreVal & 0xFF; // example: mEFCT_LOCK_LOAD
   myState.cfg_type = tmpStoreAddr; // code: mADDR_CFGSND, mADDR_CFGLED, or mADDR_CFGOTHER
+  #if DEBUG_CONFIG
+  Serial.print(F(" RBG_specialProcConfigStore cfg_curnum ")); Serial.print((uint16_t) myState.cfg_curnum); Serial.print(F(" cfg_maxnum ")); Serial.print((uint16_t) myState.cfg_maxnum); Serial.print(F(" cfg_category ")); Serial.print((uint16_t) myState.cfg_category); Serial.print(F(" cfg_type ")); Serial.println((uint16_t) myState.cfg_type);
+  #endif // DEBUG_CONFIG
 } // end RBG_specialProcConfigStore()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -698,11 +704,20 @@ void RBG_specialProcConfigStore(uint16_t tmpStoreVal, uint16_t tmpStoreAddr) {
 //
 void RBG_specialProcConfigNext() {
   // go to next choice in list of choices. Loop if needed.
+  #if DEBUG_CONFIG
+  Serial.print(F(" RBG_specialProcConfigNext B4 cfg_curnum ")); Serial.print((uint16_t) myState.cfg_curnum); Serial.print(F(" cfg_maxnum ")); Serial.println((uint16_t) myState.cfg_maxnum);
+  #endif // DEBUG_CONFIG
   if (myState.cfg_curnum >= myState.cfg_maxnum) {
+    #if DEBUG_CONFIG
+    Serial.print(F(" RBG_specialProcConfigNext B4 ")); Serial.print((uint16_t) myState.cfg_curnum); Serial.print(F(" cfg_maxnum ")); Serial.println((uint16_t) myState.cfg_maxnum);
+    #endif // DEBUG_CONFIG
     myState.cfg_curnum = 1;
   } else {
     myState.cfg_curnum += 1;
   }
+  #if DEBUG_CONFIG
+  Serial.print(F(" so set cfg_curnum to ")); Serial.println((uint16_t) myState.cfg_curnum);
+  #endif // DEBUG_CONFIG
 } // end RBG_specialProcConfigNext()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -714,15 +729,22 @@ void RBG_specialProcConfig2Eeprom() {
   // store choice in EEPROM
   switch (myState.cfg_type) {
     case mADDR_CFGSND:
+      #if DEBUG_CONFIG
+      Serial.print(F(" RBG_specialProcConfig2Eeprom mADDR_CFGSND cfg_curnum ")); Serial.print((uint16_t) myState.cfg_curnum); Serial.print(F(" cfg_category ")); Serial.print((uint16_t) myState.cfg_category); Serial.print(F(" EEPOFFSET(cfg_category) ")); Serial.print((uint16_t) EEPOFFSET(myState.cfg_category)); Serial.print(F(" eeSoundSave ")); Serial.println((uint16_t) eeSoundSave);
+      #endif // DEBUG_CONFIG
       eeprom_store_with_chksum(eeSoundSave+EEPOFFSET(myState.cfg_category), myState.cfg_curnum);
       break;
     case mADDR_CFGLED:
+      #if DEBUG_CONFIG
+      Serial.print(F(" RBG_specialProcConfig2Eeprom mADDR_CFGLED cfg_curnum ")); Serial.print((uint16_t) myState.cfg_curnum); Serial.print(F(" cfg_category ")); Serial.print((uint16_t) myState.cfg_category); Serial.print(F(" EEPOFFSET(cfg_category) ")); Serial.print((uint16_t) EEPOFFSET(myState.cfg_category)); Serial.print(F(" eeLEDSave ")); Serial.println((uint16_t) eeLEDSave);
+      #endif // DEBUG_CONFIG
       eeprom_store_with_chksum(eeLEDSave+EEPOFFSET(myState.cfg_category), myState.cfg_curnum);
       break;
     case mADDR_CFGOTHER:
+      Serial.print(F(" RBG_specialProcConfig2Eeprom not implemented mADDR_CFGOTHER cfg_curnum ")); Serial.print((uint16_t) myState.cfg_curnum); Serial.print(F(" cfg_category ")); Serial.print((uint16_t) myState.cfg_category); Serial.print(F(" EEPOFFSET(cfg_category) ")); Serial.println((uint16_t) EEPOFFSET(myState.cfg_category));
       break;
     default:
-      Serial.print(F(" RBG_specialProcConfig2Eeprom ERROR bad cfg_type ")); Serial.println((uint16_t) myState.cfg_type);
+      Serial.print(F(" RBG_specialProcConfig2Eeprom ERROR bad cfg_type ")); Serial.print((uint16_t) myState.cfg_type);
   } // end switch ()
   myState.cfg_curnum = myState.cfg_maxnum = myState.cfg_category = myState.cfg_type = mNONE;
 } // end RBG_specialProcConfigStore()
@@ -733,9 +755,9 @@ void RBG_specialProcConfig2Eeprom() {
 //   All RBG_specialProcXxx routines get called exactly one time then move to .gotoWithoutInput
 //
 void RBG_specialProcShoot() {
-  uint16_t nextRow = myStateTable[myState.tableRow].gotoWithoutInput;
   digitalWrite(DPIN_SOLENOID, HIGH);
   myState.timerForceSolenoidLow = millis() + DLYSOLENOID;
+  Serial.print(F(" RBG_specialProcShoot HIGH timerForceSolenoidLow ")); Serial.print(myState.timerForceSolenoidLow); Serial.print(F(" timerNow ")); Serial.print(myState.timerNow); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
 } // end RBG_specialProcShoot()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -744,10 +766,9 @@ void RBG_specialProcShoot() {
 //   All RBG_specialProcXxx routines get called exactly one time then move to .gotoWithoutInput
 //
 void RBG_specialProcSolenoid() {
-  uint16_t nextRow = myStateTable[myState.tableRow].gotoWithoutInput;
   digitalWrite(DPIN_SOLENOID, LOW);
+  Serial.print(F(" RBG_specialProcSolenoid LOW timerForceSolenoidLow ")); Serial.print(myState.timerForceSolenoidLow); Serial.print(F(" timerNow ")); Serial.print(myState.timerNow); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
   myState.timerForceSolenoidLow = 0;
-  if (mNONE == nextRow) { nextRow = mROW_POWERON; Serial.print(F(" RBG_specialProcSolenoid ERROR ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" gotoWithoutInput is mNONE; going to mROW_POWERON")); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
 } // end RBG_specialProcSolenoid()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -761,7 +782,8 @@ void RBG_startEffectLED(uint16_t tmpEfctLED, uint16_t tmpSPECIAL) {
   uint16_t myEfctLED = tmpEfctLED & 0x00FF; // just the effect number; allows bits later
 
   if ((0 != (mSPCL_EFCT_CONFIGURE & tmpSPECIAL)) && (mADDR_CFGLED == myState.cfg_type) && (mNONE == tmpEfctLED)) { // handle configuration effects
-    tmpEfctLED = myState.cfg_curnum + myState.cfg_category;
+    myEfctLED = myState.cfg_curnum + myState.cfg_category;
+    tmpEfctLED = (0xFF00 & tmpEfctLED) + myEfctLED;
   } // end if special configuration effects
 
   if (mNONE != myEfctLED) {
@@ -798,24 +820,11 @@ void  RBG_startEffectSound(uint16_t tmpEfctSound, uint16_t tmpSPECIAL) {
   uint16_t myVolume = ((tmpEfctSound & (mMASK_EFCT_SND_VOL << mSHIFT_EFCT_SND_VOL)) >> mSHIFT_EFCT_SND_VOL) & mMASK_EFCT_SND_VOL;
 
   if ((0 != (mSPCL_EFCT_CONFIGURE & tmpSPECIAL)) && (mADDR_CFGSND == myState.cfg_type) && (mNONE == tmpEfctSound)) { // handle configuration effects
-    tmpEfctSound = myState.cfg_curnum + myState.cfg_category;
+    mySound = myState.cfg_curnum + myState.cfg_category;
+    tmpEfctSound = (0xFF00 & tmpEfctSound) + mySound;
     myVolume = 25;
+    Serial.print(F(" RBG_startEffectSound mSPCL_EFCT_CONFIGURE cfg_curnum ")); Serial.print((uint16_t) myState.cfg_curnum); Serial.print(F(" cfg_type ")); Serial.print((uint16_t) myState.cfg_type); Serial.print(F(" mySound ")); Serial.println((uint16_t) mySound);
   } // end if special configuration effects
-
-  // wait up to one second for two "LOW" indications in a row
-  prevHI = false;
-  for (idx = 0; idx < 3; idx++) {
-    delay(10);
-    if (LOW != digitalRead(DPIN_AUDIO_BUSY)) {
-      if (prevHI) break;
-      prevHI = true;
-    } else {
-      prevHI = false;
-    }
-  }
-  if (idx > 3) {
-    Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" wait msec ")); Serial.print(10*idx); printOneInput(DPIN_AUDIO_BUSY, " AUDIO_BUSY "); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
-  } 
 
   // myVolume is [0-31]. 0 means default; else subtract one to make [0-30]
   if (0 == myVolume) {
@@ -871,7 +880,7 @@ uint16_t getButtonInput() {
   uint16_t returnInpMask = 0;
 
   #if DEBUG_INPUTS
-  Serial.print("getButtonInput() called: "); printAllMyInputs();
+  Serial.print("getButtonInput() called: "); printAllMyInputs(); Serial.println(F(" that is all"));
   #endif // DEBUG_INPUTS
   // do lock/load separately in code
   theVal = digitalRead(DPIN_LOCK_LOAD);
@@ -908,7 +917,9 @@ uint16_t getButtonInput() {
     returnInpMask |= mVINP_SOUNDACTV;
   }
 
-  if (debugThisManyCalls > 0) { Serial.print(F(" checkButtons found inputs: 0x")); Serial.println((uint16_t) returnInpMask, HEX); }
+  #if DEBUG_INPUTS
+  Serial.print(F("    getButtonInput inputs: 0x")); Serial.print((uint16_t) returnInpMask, HEX); Serial.println(F(" that is all"));
+  #endif // DEBUG_INPUTS
   if (debugThisManyCalls > 0) { debugThisManyCalls -= 1; }
 
   return(returnInpMask);
@@ -1122,7 +1133,6 @@ void printAllMyInputs() {
   printOneInput(DPIN_BTN_EXTRA, " EXTRA ");
   printOneInput(DPIN_LOCK_LOAD, " LOAD ");
   printOneInput(DPIN_AUDIO_BUSY, " AUDIO_BUSY ");
-  Serial.println(" that is all");
 } // end printAllMyInputs()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
