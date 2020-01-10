@@ -273,32 +273,41 @@ def make_state_table():
 
     print("typedef struct _RBGStateTable_t {")
     for key in COLTOSTRUCT:
-        print("%s" % COLTOSTRUCT[key])
+        if key != "index":
+            print("%s" % COLTOSTRUCT[key])
     print("} RBGStateTable_t;")
 
     ### first the old way; curiously, Microsoft Visual Studio Community Edition 2019 in Console App wants the old way
     print("\n// now the old way so can debug in Microsoft Visual Studio Community Edition 2019 in Console App")
     len_statetable = len(STATETABLE)
     len_statetablekeys = len(STATETABLE[0])
-    print("static RBGStateTable_t myStateTable[%d] = {" % len_statetable)
+    print("static const RBGStateTable_t myStateTable[%d]" % len_statetable)
+    print("#if USE_PROGMEM")
+    print("  PROGMEM")
+    print("#endif // end USE_PROGMEM")
+    print("  = {")
     for idx in range(len_statetable):
-        sys.stdout.write("    { /* row %d %s */ " % (idx, STATETABLE[idx]["index"]))
+        sys.stdout.write("      { /* row %d %s */ " % (idx, STATETABLE[idx]["index"]))
         for count, key in enumerate(STATETABLE[idx]):
             if key != "index":
                 sys.stdout.write(" %s," % (STATETABLE[idx][key]))
         print(" },")  # C is no longer picky about the last comma
-    print("};")
+    print("}; // end definition of myStateTable[]")
 
     print("\n// now the new way")
-    print("static RBGStateTable_t myStateTable[%d] = {" % len_statetable)
+    print("static const RBGStateTable_t myStateTable[%d]" % len_statetable)
+    print("#if USE_PROGMEM")
+    print("  PROGMEM")
+    print("#endif // end USE_PROGMEM")
+    print("  = {")
     for idx in range(len_statetable):
-        sys.stdout.write("    { /* row %d %s */ " % (idx, STATETABLE[idx]["index"]))
+        sys.stdout.write("      { /* row %d %s */ " % (idx, STATETABLE[idx]["index"]))
         for count, key in enumerate(STATETABLE[idx]):
             if key != "index":
                 sys.stdout.write(" .%s=%s," % (key, STATETABLE[idx][key]))
             # print("         %s, // %s" % (STATETABLE[idx][key], key))
         print(" },")  # C is no longer picky about the last comma
-    print("};")
+    print("}; // end definition of myStateTable[]")
 
 
 if __name__ == "__main__":

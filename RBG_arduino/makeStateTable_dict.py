@@ -24,7 +24,7 @@ COLTOSTRUCT = {
                                  + "                               //   eeSoundSave|mFUNC: idx= 3 WindUp, 2 Shoot, 4 Open, 7 Load",
                "gotoOnInput":      "    uint16_t gotoOnInput;      // index within table to go with matching input",
                "gotoWithoutInput": "    uint16_t gotoWithoutInput; // index within table to go without waiting for input",
-               "index":            "    uint16_t index;            // input column unused in this table"
+               "index":            "    uint16_t index;            // input column <<<unused in this table>>>"
               }
 
 FOUNDINCOLUMN = {
@@ -42,19 +42,6 @@ FOUNDINCOLUMN = {
 # INPUT:
 COLTOINDEX = {"index": -1, "SPECIAL": -1, "efctSound": -1, "efctLED": -1, "inputRBG": -1, "storeVal": -1,
               "storeAddr": -1, "gotoOnInput": -1, "gotoWithoutInput": -1}
-
-STRUCTSTRING = "    typedef struct struct_statetable { \
-    uint8_t SPECIAL;          // special row-handling flags: mSPCL_* \
-    uint8_t efctSound;  // index for sound to make \
-    uint8_t efctLED;           // index for light pattern \
-    uint8_t inputRBG;         // mask for input expected \
-    uint8_t storeVal;         // value to store, 8 bit uint \
-    uint8_t storeAddr;        // address to store; includes mask for mFUNC, mVAL, \
-                                    eeSoundSave|mFUNC: idx= 1 WindUp, 2 Shoot, 4 Open, 7 Load \
-    uint8_t gotoOnInput;      // index within table to go with matching input \
-    uint8_t gotoWithoutInput; // index within table to go without waiting for input \
-    } TYPE_STATETABLE; "
-
 
 translateToMasks = {
     "blkFlags": {},
