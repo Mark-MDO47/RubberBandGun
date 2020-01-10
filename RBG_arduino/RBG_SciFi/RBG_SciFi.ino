@@ -138,7 +138,7 @@ void setup() {
   pinMode(DPIN_BTN_YELLOW,  INPUT_PULLUP); // configuration button
   pinMode(DPIN_BTN_GREEN,   INPUT_PULLUP); // configuration button
   pinMode(DPIN_BTN_BLACK,   INPUT_PULLUP); // configuration button
-  pinMode(DPIN_BTN_EXTRA,   INPUT_PULLUP); // EXTRA configuration button
+  pinMode(DPIN_BTN_BLUE,    INPUT_PULLUP); // configuration button
   pinMode(DPIN_AUDIO_BUSY,  INPUT_PULLUP); // tells when audio stops
   pinMode(DPIN_LOCK_LOAD,   INPUT_PULLUP); // tells if barrel is locked and loaded
   // and the output pin
@@ -222,7 +222,7 @@ void loop() {
 // doPattern(tmpEfctLED, tmpSpecial, tmpInit) - start or step the pattern
 //
 // If tmpInit is nonzero, do initialization of pattern
-// If tmpSpecial says mSPCL_EFCT_CONFIGURE and efctSound is mNONE and mADDR_CFGLED then we use the configuration variables
+// If tmpSpecial says mSPCL_EFCT_CONFIGURE and efctSound == mNONE and cfg_curnum != mNONE then we use the configuration variables
 // If tmpEfctLED is an EEPROM configurable pattern (divisible by 10) then configure it
 //
 #define DEBUG_DPtrn 0
@@ -232,7 +232,7 @@ void doPattern(uint16_t tmpEfctLED, uint16_t tmpSpecial, uint8_t tmpInit) {
   static uint16_t numSteps = 0;
   uint16_t nowEfctLED = tmpEfctLED & 0x00FF; // just the effect number
 
-  if ((mNONE == nowEfctLED) && (0 != (mSPCL_EFCT_CONFIGURE & tmpSpecial)) && (mADDR_CFGLED == myState.cfg_type)) {
+  if ((mNONE == nowEfctLED) && (0 != (mSPCL_EFCT_CONFIGURE & tmpSpecial)) && (mNONE != myState.cfg_curnum)) {
     // handle configuration choice effects
     nowEfctLED = myState.cfg_curnum + myState.cfg_category;
     tmpEfctLED = (0xFF00 & tmpEfctLED) | nowEfctLED;
@@ -663,14 +663,14 @@ uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSpecial, uint1
     case mSPCL_HANDLER_SOLENOID:
       RBG_specialProcSolenoid();
       break;
-    case mSPCL_HANDLER_CFGSTORE:
-      RBG_specialProcConfigStore(tmpStoreVal, tmpStoreAddr);
+    case mSPCL_HANDLER_CFGSTART:
+      RBG_specialProcConfigStore(tmpStoreAddr);
       break;
     case mSPCL_HANDLER_CFGNEXT:
       RBG_specialProcConfigNext();
       break;
-    case mSPCL_HANDLER_CFG2EEPROM:
-      RBG_specialProcConfig2Eeprom();
+    case mSPCL_HANDLER_CFG2STORAGE:
+      RBG_specialProcConfig2Storage();
       break;
     default:
       Serial.print(F(" RBG_specialProcessing ERROR ln ")); Serial.print((uint16_t) __LINE__);  Serial.print(F(" mySpec ")); Serial.print(mySpec);  Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
@@ -680,19 +680,40 @@ uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSpecial, uint1
 } // end RBG_specialProcessing(uint16_t tmpVinputRBG)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// RBG_specialProcConfigStore(tmpStoreVal, tmpStoreAddr) - prepare for configuration list
+// RBG_specialProcConfigStore(tmpStoreAddr) - prepare for configuration list
 //
-// tmpStoreVal  - 8 MSbits: max num, 8 LSbits: mEFCT_ category
-// tmpStoreAddr - code: mADDR_CFGSND, mADDR_CFGLED, or mADDR_CFGOTHER 
+// tmpStoreAddr - code: mADDR_CFG_CATEGORY, mADDR_CFG_TYPE, mADDR_CFG_EFFECT 
 //
 //   All RBG_specialProcXxx routines get called exactly one time then move to .gotoWithoutInput
 //
-void RBG_specialProcConfigStore(uint16_t tmpStoreVal, uint16_t tmpStoreAddr) {
+// apparently no doubly dimensioned arrays for Arduino
+void RBG_specialProcConfigStore(uint16_t tmpStoreAddr) {
   // initialize numbers for mSPCL_EFCT_CONFIGURE
   myState.cfg_curnum = 1; // current number for configuration list of choices
-  myState.cfg_maxnum = (tmpStoreVal >> mSHIFT_EFCT_CFGMAXVAL) & 0xFF; // maximum number for configuration list of choices
-  myState.cfg_category = tmpStoreVal & 0xFF; // example: mEFCT_LOCK_LOAD
-  myState.cfg_type = tmpStoreAddr; // code: mADDR_CFGSND, mADDR_CFGLED, or mADDR_CFGOTHER
+  if (mADDR_CFG_CATEGORY == tmpStoreAddr) {
+    myState.cfg_maxnum = mCFG_CATEGORY_MAXNUM; // sound or LED pattern
+    myState.cfg_category = mNONE;
+    myState.cfg_type = mNONE;
+  } else if (mADDR_CFG_TYPE == tmpStoreAddr) {
+    if (mADDR_CFG_CATEGORY != myState.cfg_addr) {
+      Serial.print(F("ERROR RBG_specialProcConfigStore mADDR_CFG_TYPE and prev addr not mADDR_CFG_CATEGORY but ")); Serial.print(myState.cfg_addr); Serial.print(F(" on row ")); Serial.println(myState.tableRow);
+    }
+    myState.cfg_maxnum = EEPOFFSET(mEFCT_UNIQ);
+    myState.cfg_type = mNONE;
+  }
+  else if (mADDR_CFG_EFFECT == tmpStoreAddr) {
+    if (mADDR_CFG_TYPE != myState.cfg_addr) {
+      Serial.print(F("ERROR RBG_specialProcConfigStore mADDR_CFG_EFFECT and prev addr not mADDR_CFG_TYPE but ")); Serial.print(myState.cfg_addr); Serial.print(F(" on row ")); Serial.println(myState.tableRow);
+    }
+    if (1 == myState.cfg_category) {
+      myState.cfg_maxnum = cfgMaxSoundForType[myState.cfg_category, myState.cfg_type];
+    } else {
+      myState.cfg_maxnum = cfgMaxLEDForType[myState.cfg_category, myState.cfg_type];
+    }
+  } else {
+    Serial.print(F("ERROR RBG_specialProcConfigStore tmpStoreAddr is ")); Serial.print(tmpStoreAddr); Serial.print(F(" on row ")); Serial.println(myState.tableRow);
+  }
+  myState.cfg_addr = tmpStoreAddr; // code: mADDR_CFG_CATEGORY, mADDR_CFG_TYPE, or mADDR_CFG_EFFECT
   #if DEBUG_CONFIG
   Serial.print(F(" RBG_specialProcConfigStore cfg_curnum ")); Serial.print((uint16_t) myState.cfg_curnum); Serial.print(F(" cfg_maxnum ")); Serial.print((uint16_t) myState.cfg_maxnum); Serial.print(F(" cfg_category ")); Serial.print((uint16_t) myState.cfg_category); Serial.print(F(" cfg_type ")); Serial.println((uint16_t) myState.cfg_type);
   #endif // DEBUG_CONFIG
@@ -722,32 +743,44 @@ void RBG_specialProcConfigNext() {
 } // end RBG_specialProcConfigNext()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// RBG_specialProcConfig2Eeprom() - store choice in proper place in EEPROM
+// RBG_specialProcConfig2Storage() - store choice in proper place in EEPROM
 //
 //   All RBG_specialProcXxx routines get called exactly one time then move to .gotoWithoutInput
 //
-void RBG_specialProcConfig2Eeprom() {
-  // store choice in EEPROM
-  switch (myState.cfg_type) {
-    case mADDR_CFGSND:
-      #if DEBUG_CONFIG
-      Serial.print(F(" RBG_specialProcConfig2Eeprom mADDR_CFGSND cfg_curnum ")); Serial.print((uint16_t) myState.cfg_curnum); Serial.print(F(" cfg_category ")); Serial.print((uint16_t) myState.cfg_category); Serial.print(F(" EEPOFFSET(cfg_category) ")); Serial.print((uint16_t) EEPOFFSET(myState.cfg_category)); Serial.print(F(" eeSoundSave ")); Serial.println((uint16_t) eeSoundSave);
-      #endif // DEBUG_CONFIG
-      eeprom_store_with_chksum(eeSoundSave+EEPOFFSET(myState.cfg_category), myState.cfg_curnum);
+void RBG_specialProcConfig2Storage() {
+  // store choice in either EEPROM or myState
+
+  switch (myState.cfg_addr) { //  mADDR_CFG_CATEGORY, mADDR_CFG_TYPE, mADDR_CFG_EFFECT
+    case mADDR_CFG_CATEGORY:
+      myState.cfg_category = myState.cfg_curnum;
       break;
-    case mADDR_CFGLED:
-      #if DEBUG_CONFIG
-      Serial.print(F(" RBG_specialProcConfig2Eeprom mADDR_CFGLED cfg_curnum ")); Serial.print((uint16_t) myState.cfg_curnum); Serial.print(F(" cfg_category ")); Serial.print((uint16_t) myState.cfg_category); Serial.print(F(" EEPOFFSET(cfg_category) ")); Serial.print((uint16_t) EEPOFFSET(myState.cfg_category)); Serial.print(F(" eeLEDSave ")); Serial.println((uint16_t) eeLEDSave);
-      #endif // DEBUG_CONFIG
-      eeprom_store_with_chksum(eeLEDSave+EEPOFFSET(myState.cfg_category), myState.cfg_curnum);
+    case mADDR_CFG_TYPE:
+      myState.cfg_type = (myState.cfg_curnum-1) * 10; // reconstruct type
       break;
-    case mADDR_CFGOTHER:
-      Serial.print(F(" RBG_specialProcConfig2Eeprom not implemented mADDR_CFGOTHER cfg_curnum ")); Serial.print((uint16_t) myState.cfg_curnum); Serial.print(F(" cfg_category ")); Serial.print((uint16_t) myState.cfg_category); Serial.print(F(" EEPOFFSET(cfg_category) ")); Serial.println((uint16_t) EEPOFFSET(myState.cfg_category));
+    case mADDR_CFG_EFFECT:
+      // store the selection in EEPROM
+      uint8_t eepromBase;
+      switch (myState.cfg_category) {
+        case mCFG_CATEGORY_SOUND:
+          eepromBase = eeSoundSave;
+          break;
+        case mCFG_CATEGORY_LEDPTRN:
+          eepromBase = eeLEDSave;
+          break;
+        default:
+          Serial.print(F(" RBG_specialProcConfig2Storage ERROR bad myState.cfg_category ")); Serial.print((uint16_t) myState.cfg_category);
+          break;
+      } // end switch on myState.cfg_category
+      #if DEBUG_CONFIG
+      Serial.print(F(" RBG_specialProcConfig2Storage mADDR_CFG_EFFECT cfg_curnum ")); Serial.print((uint16_t) myState.cfg_curnum); Serial.print(F(" cfg_category ")); Serial.print((uint16_t) myState.cfg_category); Serial.print(F(" EEPOFFSET(cfg_type) ")); Serial.print((uint16_t) EEPOFFSET(myState.cfg_type)); Serial.print(F(" eepromBase ")); Serial.println((uint16_t) eepromBase);
+      #endif // DEBUG_CONFIG
+      eeprom_store_with_chksum(eepromBase+EEPOFFSET(myState.cfg_type), myState.cfg_curnum);
+      myState.cfg_maxnum =  myState.cfg_category = myState.cfg_type = mNONE;
       break;
     default:
-      Serial.print(F(" RBG_specialProcConfig2Eeprom ERROR bad cfg_type ")); Serial.print((uint16_t) myState.cfg_type);
-  } // end switch ()
-  myState.cfg_curnum = myState.cfg_maxnum = myState.cfg_category = myState.cfg_type = mNONE;
+      Serial.print(F(" RBG_specialProcConfig2Eeprom ERROR bad myState.cfg_addr ")); Serial.print((uint16_t) myState.cfg_addr);
+      break;
+  } // end switch on myState.cfg_addr
 } // end RBG_specialProcConfigStore()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -795,7 +828,7 @@ void RBG_startEffectLED(uint16_t tmpEfctLED, uint16_t tmpSpecial) {
 //
 // tmpEfctSound is two fields: 0x00vv00nn where nn is sound and vv is volume
 //       FIXME - volume not implemented yet
-// If the row says mSPCL_EFCT_CONFIGURE and efctSound is mNONE and mADDR_CFGSND then we use the configuration variables
+// If the row says mSPCL_EFCT_CONFIGURE and efctSound is mNONE and cfg_category is mCFG_CATEGORY_SOUND then we use the configuration variables
 //
 // Had lots of trouble with reliable operation using playMp3Folder. Came to conclusion
 //    that it is best to use the most primitive of YX5200 commands.
@@ -815,7 +848,7 @@ void  RBG_startEffectSound(uint16_t tmpEfctSound, uint16_t tmpSpecial) {
   // uint16_t myVolume = (tmpEfctSound >> mSHIFT_EFCT_SND_VOL) & mMASK_EFCT_SND_VOL; // USE BELOW to convince MS VS 2019 we don't lose data
   uint16_t myVolume = ((tmpEfctSound & (mMASK_EFCT_SND_VOL << mSHIFT_EFCT_SND_VOL)) >> mSHIFT_EFCT_SND_VOL) & mMASK_EFCT_SND_VOL;
 
-  if ((0 != (mSPCL_EFCT_CONFIGURE & tmpSpecial)) && (mADDR_CFGSND == myState.cfg_type) && (mNONE == tmpEfctSound)) { // handle configuration effects
+  if ((0 != (mSPCL_EFCT_CONFIGURE & tmpSpecial)) && (mCFG_CATEGORY_SOUND == myState.cfg_category) && (mNONE == tmpEfctSound)) { // handle configuration effects
     mySound = myState.cfg_curnum + myState.cfg_category;
     tmpEfctSound = (0xFF00 & tmpEfctSound) + mySound;
     myVolume = 25;
@@ -1126,7 +1159,7 @@ void printAllMyInputs() {
   printOneInput(DPIN_BTN_YELLOW, " YELLOW ");
   printOneInput(DPIN_BTN_GREEN, " GREEN ");
   printOneInput(DPIN_BTN_BLACK, " BLACK ");
-  printOneInput(DPIN_BTN_EXTRA, " EXTRA ");
+  printOneInput(DPIN_BTN_BLUE, " BLUE ");
   printOneInput(DPIN_LOCK_LOAD, " LOAD ");
   printOneInput(DPIN_AUDIO_BUSY, " AUDIO_BUSY ");
 } // end printAllMyInputs()

@@ -210,8 +210,10 @@ def make_state_table():
     tmp_found_symbols = sorted(tmp_found_symbols)
     # now in numerical order
     found_symbols = []
+    prevSymb = ""
     for symb in tmp_found_symbols:
-        found_symbols.append(symb.split(",")[1])
+        if symb != prevSymb:
+           found_symbols.append(symb.split(",")[1])
 
 
     print("\n// define the symbols - general use symbols:"
@@ -226,15 +228,14 @@ def make_state_table():
           + "\n#define mSPCL_HANDLER         0x0010 // mask for functions is ((uint16_t) (mSPCL_HANDLER-1))"
           + "\n#define mSPCL_HANDLER_SHOOT        2 // solenoid ON"
           + "\n#define mSPCL_HANDLER_SOLENOID     3 // solenoid OFF"
-          + "\n#define mSPCL_HANDLER_CFGSTORE     4 // configuration - store value at address"
+          + "\n#define mSPCL_HANDLER_CFGSTART     4 // configuration - store value at address"
           + "\n#define mSPCL_HANDLER_CFGNEXT      5 // configuration - go to next value at address"
-          + "\n#define mSPCL_HANDLER_CFG2EEPROM   6 // configuration - install current configuration in EEPROM"
-          + "\n// these are used with mSPCL_HANDLER_STORE and _NEXT"
-          + "\n#define mADDR_CFGSND               1 // configuration - for looping through sounds"
-          + "\n#define mADDR_CFGLED               2 // configuration - for looping through LED patterns"
-          + "\n#define mADDR_CFGOTHER             3 // configuration - for looping through other configurations"
-          + "\n#define mEFCT_TYPE_CFG_STOREADDR_MAX mADDR_CFGOTHER // .storeAddr - maximum value"
-          + "\n#define mSHIFT_EFCT_CFGMAXVAL      8 // shift to put maximum value into .storeVal"
+          + "\n#define mSPCL_HANDLER_CFG2STORAGE  6 // configuration - install current config num in EEPROM or myState"
+          + "\n// these are used with mSPCL_HANDLER_START and _NEXT"
+          + "\n#define mADDR_CFG_CATEGORY         1 // for looping through SOUND or LED PATTERN"
+          + "\n#define mADDR_CFG_TYPE             2 // for looping through number groups: shooting, open, close, etc."
+          + "\n#define mADDR_CFG_EFFECT           3 // for looping through the effects for that CATEGORY and TYPE"
+          + "\n#define mEFCT_TYPE_CFG_STOREADDR_MAX mADDR_CFG_EFFECT // .storeAddr - maximum value"
           + "\n\n// define the symbols - .blkFlags:"
           + "\n#define mBLOCKSTART 0x80"
           + "\n#define mBLOCKEND   0x40"
@@ -243,7 +244,13 @@ def make_state_table():
 
 
     print_debug("Pass 2 found_symbols")
+    prevKey = ""
     for key in found_symbols:
+        if key == prevKey:
+            continue
+        prevKey = key
+        if key == "mROW_CFG_TYPE_CHOICE":
+            prevKey = key
         if key == "mNONE":
             print_debug("  %s is valid" % key)
         elif key in SYMBTABLE.keys():
@@ -275,18 +282,20 @@ def make_state_table():
     len_statetablekeys = len(STATETABLE[0])
     print("static RBGStateTable_t myStateTable[%d] = {" % len_statetable)
     for idx in range(len_statetable):
-        sys.stdout.write("    { /* row %d */ " % idx)
+        sys.stdout.write("    { /* row %d %s */ " % (idx, STATETABLE[idx]["index"]))
         for count, key in enumerate(STATETABLE[idx]):
-            sys.stdout.write(" %s," % (STATETABLE[idx][key]))
+            if key != "index":
+                sys.stdout.write(" %s," % (STATETABLE[idx][key]))
         print(" },")  # C is no longer picky about the last comma
     print("};")
 
     print("\n// now the new way")
     print("static RBGStateTable_t myStateTable[%d] = {" % len_statetable)
     for idx in range(len_statetable):
-        sys.stdout.write("    { /* row %d */ " % idx)
+        sys.stdout.write("    { /* row %d %s */ " % (idx, STATETABLE[idx]["index"]))
         for count, key in enumerate(STATETABLE[idx]):
-            sys.stdout.write(" .%s=%s," % (key, STATETABLE[idx][key]))
+            if key != "index":
+                sys.stdout.write(" .%s=%s," % (key, STATETABLE[idx][key]))
             # print("         %s, // %s" % (STATETABLE[idx][key], key))
         print(" },")  # C is no longer picky about the last comma
     print("};")

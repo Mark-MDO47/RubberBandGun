@@ -68,7 +68,7 @@ translateToMasks = {
         "trigYellow": "mINP_TRIG|mINP_B01",
         "trigGreen": "mINP_TRIG|mINP_B02",
         "trigBlack": "mINP_TRIG|mINP_B04",
-        "trigExtra": "mINP_TRIG|mINP_BXTRA",
+        "trigBlue": "mINP_TRIG|mINP_BLUE",
         "trigAny3": "mINP_TRIG|mINP_BANY|mINP_B07",
         "trigAll3": "mINP_TRIG|mINP_B07",
         "trigAny4": "mINP_TRIG|mINP_BANY|mINP_B0F",
