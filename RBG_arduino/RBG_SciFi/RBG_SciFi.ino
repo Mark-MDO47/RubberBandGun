@@ -717,16 +717,18 @@ void RBG_specialProcConfigStart(uint16_t tmpStoreAddr) {
   myState.cfg_curnum = 1; // current number for configuration list of choices
   if (mADDR_CFG_CATEGORY == tmpStoreAddr) {
     myState.cfg_maxnum = mCFG_CATEGORY_MAXNUM; // sound or LED pattern
-    myState.cfg_category = myState.cfg_category2save = mNONE;
-    myState.cfg_type = myState.cfg_type2save = mNONE;
+    myState.cfg_category = mCFG_CATEGORY_SOUND; // so we can speak choices
+    myState.cfg_category2save = mNONE;
+    myState.cfg_type = EEPOFFSET(mEFCT_UNIQ_CFG_SOUNDS_DESCRIP)*10; // sounds for descriptions of types
+    myState.cfg_type2save = mNONE;
   } else if (mADDR_CFG_TYPE == tmpStoreAddr) {
     if (mADDR_CFG_CATEGORY != myState.cfg_addr) {
       Serial.print(F("ERROR RBG_specialProcConfigStart mADDR_CFG_TYPE and prev addr not mADDR_CFG_CATEGORY but ")); Serial.print(myState.cfg_addr); Serial.print(F(" on row ")); Serial.println(myState.tableRow);
     }
-    myState.cfg_category = mCFG_CATEGORY_SOUND; // so we can speak choices
     myState.cfg_maxnum = EEPOFFSET(mEFCT_UNIQ);
-    myState.cfg_type2save = mNONE;
+    myState.cfg_category = mCFG_CATEGORY_SOUND; // so we can speak choices
     myState.cfg_type = EEPOFFSET(mEFCT_UNIQ_CFG_WINDUP_DESCRIP)*10; // sounds for descriptions of types
+    myState.cfg_type2save = mNONE;
   }
   else if (mADDR_CFG_EFFECT == tmpStoreAddr) {
     if (mADDR_CFG_TYPE != myState.cfg_addr) {
@@ -734,9 +736,9 @@ void RBG_specialProcConfigStart(uint16_t tmpStoreAddr) {
     }
     myState.cfg_category = myState.cfg_category2save; // so we can show either sound or LED pattern
     if (1 == myState.cfg_category2save) {
-      myState.cfg_maxnum = cfgMaxSoundForType[myState.cfg_category2save, myState.cfg_type2save];
+      myState.cfg_maxnum = cfgMaxSoundForType[myState.cfg_category2save, EEPOFFSET(myState.cfg_type2save)];
     } else {
-      myState.cfg_maxnum = cfgMaxLEDForType[myState.cfg_category2save, myState.cfg_type2save];
+      myState.cfg_maxnum = cfgMaxLEDForType[myState.cfg_category2save, EEPOFFSET(myState.cfg_type2save)];
     }
   } else {
     Serial.print(F("ERROR RBG_specialProcConfigStart tmpStoreAddr is ")); Serial.print(tmpStoreAddr); Serial.print(F(" on row ")); Serial.println(myState.tableRow);
@@ -811,7 +813,7 @@ void RBG_specialProcConfig2Storage() {
       Serial.print(F(" RBG_specialProcConfig2Eeprom ERROR bad myState.cfg_addr ")); Serial.print((uint16_t) myState.cfg_addr);
       break;
   } // end switch on myState.cfg_addr
-} // end RBG_specialProcConfigStart()
+} // end RBG_specialProcConfig2Storage()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RBG_specialProcShoot() - do the solenoid for shooting
