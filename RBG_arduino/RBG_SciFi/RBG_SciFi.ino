@@ -723,13 +723,16 @@ void RBG_specialProcConfigStart(uint16_t tmpStoreAddr) {
     if (mADDR_CFG_CATEGORY != myState.cfg_addr) {
       Serial.print(F("ERROR RBG_specialProcConfigStart mADDR_CFG_TYPE and prev addr not mADDR_CFG_CATEGORY but ")); Serial.print(myState.cfg_addr); Serial.print(F(" on row ")); Serial.println(myState.tableRow);
     }
+    myState.cfg_category = mCFG_CATEGORY_SOUND; // so we can speak choices
     myState.cfg_maxnum = EEPOFFSET(mEFCT_UNIQ);
-    myState.cfg_type = myState.cfg_type2save = mNONE;
+    myState.cfg_type2save = mNONE;
+    myState.cfg_type = EEPOFFSET(mEFCT_UNIQ_CFG_WINDUP_DESCRIP)*10; // sounds for descriptions of types
   }
   else if (mADDR_CFG_EFFECT == tmpStoreAddr) {
     if (mADDR_CFG_TYPE != myState.cfg_addr) {
       Serial.print(F("ERROR RBG_specialProcConfigStart mADDR_CFG_EFFECT and prev addr not mADDR_CFG_TYPE but ")); Serial.print(myState.cfg_addr); Serial.print(F(" on row ")); Serial.println(myState.tableRow);
     }
+    myState.cfg_category = myState.cfg_category2save; // so we can show either sound or LED pattern
     if (1 == myState.cfg_category2save) {
       myState.cfg_maxnum = cfgMaxSoundForType[myState.cfg_category2save, myState.cfg_type2save];
     } else {
@@ -876,7 +879,7 @@ void  RBG_startEffectSound(uint16_t tmpEfctSound, uint16_t tmpSpecial) {
   uint16_t myVolume = ((tmpEfctSound & (mMASK_EFCT_SND_VOL << mSHIFT_EFCT_SND_VOL)) >> mSHIFT_EFCT_SND_VOL) & mMASK_EFCT_SND_VOL;
 
   if ((0 != (mSPCL_EFCT_CONFIGURE & tmpSpecial)) && (mCFG_CATEGORY_SOUND == myState.cfg_category) && (mNONE == tmpEfctSound)) { // handle configuration effects
-    mySound = myState.cfg_curnum + myState.cfg_category;
+    mySound = myState.cfg_curnum + myState.cfg_type;
     tmpEfctSound = (0xFF00 & tmpEfctSound) + mySound;
     myVolume = 25;
     Serial.print(F(" RBG_startEffectSound mSPCL_EFCT_CONFIGURE cfg_curnum ")); Serial.print((uint16_t) myState.cfg_curnum); Serial.print(F(" cfg_type2save ")); Serial.print((uint16_t) myState.cfg_type2save); Serial.print(F(" mySound ")); Serial.println((uint16_t) mySound);

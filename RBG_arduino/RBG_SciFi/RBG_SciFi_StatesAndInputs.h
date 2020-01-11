@@ -129,11 +129,16 @@
 //
 // define the UNIQUE effects (lights and sounds) here. These cannot be configured as the other effects can.
 //
-#define mEFCT_UNIQ_INTRO             62 // Welcome to FOOF RBG configuration! Your call is important to us. Press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow, Green or Black button then press trigger. To exit configuration, hold down Blue button then press trigger.
-#define mEFCT_UNIQ_CFG_CATEGORY      63 // Now choose which effect category: sounds or LED patterns. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow, Green or Black button then press trigger. To exit configuration, hold down Blue button thenpress trigger.
-#define mEFCT_UNIQ_CFG_TYPE          64 // Now choose when the effect happens. This list includes when powering-on, when shooting, etc. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow, Green or Black button then press trigger. To exit configuration, hold down Blue button thenpress trigger.
-#define mEFCT_UNIQ_CFG_EFECT         65 // Now choose the effect itself. This list cycles through the effects one by one. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow, Green or Black button then press trigger. To exit configuration, hold down Blue button thenpress trigger.
-#define mEFCT_UNIQ_CFG_TYPE_DESCRIP  71 // Effect is during wind-up to shooting
+#define mEFCT_UNIQ_INTRO               62 // Welcome to FOOF RBG configuration! Your call is important to us. Press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow, Green or Black button then press trigger. To exit configuration, hold down Blue button then press trigger.
+#define mEFCT_UNIQ_CFG_CATEGORY        63 // Now choose which effect category: sounds or LED patterns. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow, Green or Black button then press trigger. To exit configuration, hold down Blue button thenpress trigger.
+#define mEFCT_UNIQ_CFG_TYPE            64 // Now choose when the effect happens. This list includes when powering-on, when shooting, etc. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow, Green or Black button then press trigger. To exit configuration, hold down Blue button thenpress trigger.
+#define mEFCT_UNIQ_CFG_EFECT           65 // Now choose the effect itself. This list cycles through the effects one by one. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow, Green or Black button then press trigger. To exit configuration, hold down Blue button thenpress trigger.
+#define mEFCT_UNIQ_CFG_WINDUP_DESCRIP  71 // Effect happens during wind-up to shooting
+#define mEFCT_UNIQ_CFG_SHOOT_DESCRIP   72 // Effect happens during shooting itself
+#define mEFCT_UNIQ_CFG_OPEN_DESCRIP    73 // Effect happens during opening of the barrel
+#define mEFCT_UNIQ_CFG_LKLOD_DESCRIP   74 // Effect happens during lock-and-load of the barrel
+#define mEFCT_UNIQ_CFG_PWRON_DESCRIP   75 // Effect happens during initial power-on
+#define mEFCT_UNIQ_CFG_WAIT_DESCRIP    76 // Effect happens when waiting to shoot
 
 
 #define mEFCT_UNIQ_SILENCE            101 // silence
