@@ -129,10 +129,12 @@
 //
 // define the UNIQUE effects (lights and sounds) here. These cannot be configured as the other effects can.
 //
-#define mEFCT_UNIQ_INTRO               62 // Welcome to RBG configuration! Your call is important to us. To go forward to next step or to cycle through choices, always press trigger by itself. To go back, press trigger plus Yellow, Green or Black button. To exit configuration, press trigger plus Blue button.
-#define mEFCT_UNIQ_CFG_CATEGORY        63 // Now choose which effect category: sounds or LED patterns. As always press trigger by itself to go forward to next step or to cycle through choices To select a choice, press trigger plus any combination of Yellow, Green or Black button. To exit configuration, press trigger plus Blue button.
-#define mEFCT_UNIQ_CFG_TYPE            64 // Now choose when the effect happens. This list includes when powering-on, when shooting, etc. As always press trigger by itself to go forward to next step  or to cycle through choices. To select a choice, press trigger plus any combination of Yellow, Green or Black button. To exit configuration, press trigger plus Blue button.
-#define mEFCT_UNIQ_CFG_EFECT           65 // Now choose the effect itself. This list cycles through the effects one by one. As always press trigger by itself to go forward to next step  or to cycle through choices. To select a choice, press trigger plus any combination of Yellow, Green or Black button. To exit configuration, press trigger plus Blue button.
+#define mEFCT_UNIQ_INTRO             62 // Welcome to FOOF RBG configuration! Your call is important to us. Press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow, Green or Black button then press trigger. To exit configuration, hold down Blue button then press trigger.
+#define mEFCT_UNIQ_CFG_CATEGORY      63 // Now choose which effect category: sounds or LED patterns. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow, Green or Black button then press trigger. To exit configuration, hold down Blue button thenpress trigger.
+#define mEFCT_UNIQ_CFG_TYPE          64 // Now choose when the effect happens. This list includes when powering-on, when shooting, etc. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow, Green or Black button then press trigger. To exit configuration, hold down Blue button thenpress trigger.
+#define mEFCT_UNIQ_CFG_EFECT         65 // Now choose the effect itself. This list cycles through the effects one by one. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow, Green or Black button then press trigger. To exit configuration, hold down Blue button thenpress trigger.
+#define mEFCT_UNIQ_CFG_TYPE_DESCRIP  71 // Effect is during wind-up to shooting
+
 
 #define mEFCT_UNIQ_SILENCE            101 // silence
 #define mEFCT_UNIQ_NOT_IMPL           102 // Not yet implemented
@@ -221,13 +223,16 @@ static struct _myState_t {
   uint8_t ptrnDelayLEDstep = 7;     // proper delta delay for Mark's patterns
   uint8_t cfg_curnum = mNONE;       // current number for configuration list of choices
   uint8_t cfg_maxnum = mNONE;       // maximum number for configuration list of choices
-  uint8_t cfg_category = mNONE;     // either 1 = SOUND or 2 = LED Pattern
+  uint8_t cfg_category = mNONE;     // either 1 = SOUND or 2 = LED Pattern - used to tell sounds when configuring LEDs
+  uint8_t cfg_category2save = mNONE;// either 1 = SOUND or 2 = LED Pattern
   uint8_t cfg_type = mNONE;         // example: mEFCT_LOCK_LOAD
+  uint8_t cfg_type2save = mNONE;    // example: mEFCT_LOCK_LOAD
   uint8_t cfg_addr = mNONE;         // code: mADDR_CFG_CATEGORY, mADDR_CFG_TYPE, mADDR_CFG_EFFECT
 } myState;
 #define mCFG_CATEGORY_SOUND   1 // for myState.cfg_category
 #define mCFG_CATEGORY_LEDPTRN 2 // for myState.cfg_category
 #define mCFG_CATEGORY_MAXNUM  mCFG_CATEGORY_LEDPTRN // for myState.cfg_category
+// apparently no doubly dimensioned arrays for Arduino
 static uint8_t cfgMaxSoundForType[EEPOFFSET(mEFCT_UNIQ)] = {
   6, 9, 6, 6, 3, 8 // sound - mEFCT_WIND_UP mEFCT_SHOOT mEFCT_OPEN_BARREL mEFCT_LOCK_LOAD mEFCT_PWRON mEFCT_WAIT
 };

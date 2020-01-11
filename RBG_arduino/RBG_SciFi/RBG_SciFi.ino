@@ -690,7 +690,7 @@ uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSpecial, uint1
       RBG_specialProcSolenoid();
       break;
     case mSPCL_HANDLER_CFGSTART:
-      RBG_specialProcConfigStore(tmpStoreAddr);
+      RBG_specialProcConfigStart(tmpStoreAddr);
       break;
     case mSPCL_HANDLER_CFGNEXT:
       RBG_specialProcConfigNext();
@@ -706,44 +706,43 @@ uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSpecial, uint1
 } // end RBG_specialProcessing(uint16_t tmpVinputRBG)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// RBG_specialProcConfigStore(tmpStoreAddr) - prepare for configuration list
+// RBG_specialProcConfigStart(tmpStoreAddr) - prepare for configuration list
 //
 // tmpStoreAddr - code: mADDR_CFG_CATEGORY, mADDR_CFG_TYPE, mADDR_CFG_EFFECT 
 //
 //   All RBG_specialProcXxx routines get called exactly one time then move to .gotoWithoutInput
 //
-// apparently no doubly dimensioned arrays for Arduino
-void RBG_specialProcConfigStore(uint16_t tmpStoreAddr) {
+void RBG_specialProcConfigStart(uint16_t tmpStoreAddr) {
   // initialize numbers for mSPCL_EFCT_CONFIGURE
   myState.cfg_curnum = 1; // current number for configuration list of choices
   if (mADDR_CFG_CATEGORY == tmpStoreAddr) {
     myState.cfg_maxnum = mCFG_CATEGORY_MAXNUM; // sound or LED pattern
-    myState.cfg_category = mNONE;
-    myState.cfg_type = mNONE;
+    myState.cfg_category = myState.cfg_category2save = mNONE;
+    myState.cfg_type = myState.cfg_type2save = mNONE;
   } else if (mADDR_CFG_TYPE == tmpStoreAddr) {
     if (mADDR_CFG_CATEGORY != myState.cfg_addr) {
-      Serial.print(F("ERROR RBG_specialProcConfigStore mADDR_CFG_TYPE and prev addr not mADDR_CFG_CATEGORY but ")); Serial.print(myState.cfg_addr); Serial.print(F(" on row ")); Serial.println(myState.tableRow);
+      Serial.print(F("ERROR RBG_specialProcConfigStart mADDR_CFG_TYPE and prev addr not mADDR_CFG_CATEGORY but ")); Serial.print(myState.cfg_addr); Serial.print(F(" on row ")); Serial.println(myState.tableRow);
     }
     myState.cfg_maxnum = EEPOFFSET(mEFCT_UNIQ);
-    myState.cfg_type = mNONE;
+    myState.cfg_type = myState.cfg_type2save = mNONE;
   }
   else if (mADDR_CFG_EFFECT == tmpStoreAddr) {
     if (mADDR_CFG_TYPE != myState.cfg_addr) {
-      Serial.print(F("ERROR RBG_specialProcConfigStore mADDR_CFG_EFFECT and prev addr not mADDR_CFG_TYPE but ")); Serial.print(myState.cfg_addr); Serial.print(F(" on row ")); Serial.println(myState.tableRow);
+      Serial.print(F("ERROR RBG_specialProcConfigStart mADDR_CFG_EFFECT and prev addr not mADDR_CFG_TYPE but ")); Serial.print(myState.cfg_addr); Serial.print(F(" on row ")); Serial.println(myState.tableRow);
     }
-    if (1 == myState.cfg_category) {
-      myState.cfg_maxnum = cfgMaxSoundForType[myState.cfg_category, myState.cfg_type];
+    if (1 == myState.cfg_category2save) {
+      myState.cfg_maxnum = cfgMaxSoundForType[myState.cfg_category2save, myState.cfg_type2save];
     } else {
-      myState.cfg_maxnum = cfgMaxLEDForType[myState.cfg_category, myState.cfg_type];
+      myState.cfg_maxnum = cfgMaxLEDForType[myState.cfg_category2save, myState.cfg_type2save];
     }
   } else {
-    Serial.print(F("ERROR RBG_specialProcConfigStore tmpStoreAddr is ")); Serial.print(tmpStoreAddr); Serial.print(F(" on row ")); Serial.println(myState.tableRow);
+    Serial.print(F("ERROR RBG_specialProcConfigStart tmpStoreAddr is ")); Serial.print(tmpStoreAddr); Serial.print(F(" on row ")); Serial.println(myState.tableRow);
   }
   myState.cfg_addr = tmpStoreAddr; // code: mADDR_CFG_CATEGORY, mADDR_CFG_TYPE, or mADDR_CFG_EFFECT
   #if DEBUG_CONFIG
-  Serial.print(F(" RBG_specialProcConfigStore cfg_curnum ")); Serial.print((uint16_t) myState.cfg_curnum); Serial.print(F(" cfg_maxnum ")); Serial.print((uint16_t) myState.cfg_maxnum); Serial.print(F(" cfg_category ")); Serial.print((uint16_t) myState.cfg_category); Serial.print(F(" cfg_type ")); Serial.println((uint16_t) myState.cfg_type);
+  Serial.print(F(" RBG_specialProcConfigStart cfg_curnum ")); Serial.print((uint16_t) myState.cfg_curnum); Serial.print(F(" cfg_maxnum ")); Serial.print((uint16_t) myState.cfg_maxnum); Serial.print(F(" cfg_category2save ")); Serial.print((uint16_t) myState.cfg_category2save); Serial.print(F(" cfg_type2save ")); Serial.println((uint16_t) myState.cfg_type2save);
   #endif // DEBUG_CONFIG
-} // end RBG_specialProcConfigStore()
+} // end RBG_specialProcConfigStart()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RBG_specialProcConfigNext() - prepare for next item in configuration list
@@ -778,15 +777,17 @@ void RBG_specialProcConfig2Storage() {
 
   switch (myState.cfg_addr) { //  mADDR_CFG_CATEGORY, mADDR_CFG_TYPE, mADDR_CFG_EFFECT
     case mADDR_CFG_CATEGORY:
-      myState.cfg_category = myState.cfg_curnum;
+      myState.cfg_category = mCFG_CATEGORY_SOUND; // so we can speak choices
+      myState.cfg_category2save = myState.cfg_curnum;
       break;
     case mADDR_CFG_TYPE:
-      myState.cfg_type = (myState.cfg_curnum-1) * 10; // reconstruct type
+      myState.cfg_type = myState.cfg_type2save = (myState.cfg_curnum-1) * 10; // reconstruct type
+      myState.cfg_category = myState.cfg_category2save; // so we can show LED patterns or make sounds
       break;
     case mADDR_CFG_EFFECT:
       // store the selection in EEPROM
       uint8_t eepromBase;
-      switch (myState.cfg_category) {
+      switch (myState.cfg_category2save) {
         case mCFG_CATEGORY_SOUND:
           eepromBase = eeSoundSave;
           break;
@@ -796,18 +797,18 @@ void RBG_specialProcConfig2Storage() {
         default:
           Serial.print(F(" RBG_specialProcConfig2Storage ERROR bad myState.cfg_category ")); Serial.print((uint16_t) myState.cfg_category);
           break;
-      } // end switch on myState.cfg_category
+      } // end switch on myState.cfg_category2save
       #if DEBUG_CONFIG
-      Serial.print(F(" RBG_specialProcConfig2Storage mADDR_CFG_EFFECT cfg_curnum ")); Serial.print((uint16_t) myState.cfg_curnum); Serial.print(F(" cfg_category ")); Serial.print((uint16_t) myState.cfg_category); Serial.print(F(" EEPOFFSET(cfg_type) ")); Serial.print((uint16_t) EEPOFFSET(myState.cfg_type)); Serial.print(F(" eepromBase ")); Serial.println((uint16_t) eepromBase);
+      Serial.print(F(" RBG_specialProcConfig2Storage mADDR_CFG_EFFECT cfg_curnum ")); Serial.print((uint16_t) myState.cfg_curnum); Serial.print(F(" cfg_category2save ")); Serial.print((uint16_t) myState.cfg_category2save); Serial.print(F(" EEPOFFSET(cfg_type2save) ")); Serial.print((uint16_t) EEPOFFSET(myState.cfg_type2save)); Serial.print(F(" eepromBase ")); Serial.println((uint16_t) eepromBase);
       #endif // DEBUG_CONFIG
-      eeprom_store_with_chksum(eepromBase+EEPOFFSET(myState.cfg_type), myState.cfg_curnum);
-      myState.cfg_maxnum =  myState.cfg_category = myState.cfg_type = mNONE;
+      eeprom_store_with_chksum(eepromBase+EEPOFFSET(myState.cfg_type2save), myState.cfg_curnum);
+      myState.cfg_maxnum =  myState.cfg_category = myState.cfg_category2save = myState.cfg_type = myState.cfg_type2save = mNONE;
       break;
     default:
       Serial.print(F(" RBG_specialProcConfig2Eeprom ERROR bad myState.cfg_addr ")); Serial.print((uint16_t) myState.cfg_addr);
       break;
   } // end switch on myState.cfg_addr
-} // end RBG_specialProcConfigStore()
+} // end RBG_specialProcConfigStart()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RBG_specialProcShoot() - do the solenoid for shooting
@@ -878,7 +879,7 @@ void  RBG_startEffectSound(uint16_t tmpEfctSound, uint16_t tmpSpecial) {
     mySound = myState.cfg_curnum + myState.cfg_category;
     tmpEfctSound = (0xFF00 & tmpEfctSound) + mySound;
     myVolume = 25;
-    Serial.print(F(" RBG_startEffectSound mSPCL_EFCT_CONFIGURE cfg_curnum ")); Serial.print((uint16_t) myState.cfg_curnum); Serial.print(F(" cfg_type ")); Serial.print((uint16_t) myState.cfg_type); Serial.print(F(" mySound ")); Serial.println((uint16_t) mySound);
+    Serial.print(F(" RBG_startEffectSound mSPCL_EFCT_CONFIGURE cfg_curnum ")); Serial.print((uint16_t) myState.cfg_curnum); Serial.print(F(" cfg_type2save ")); Serial.print((uint16_t) myState.cfg_type2save); Serial.print(F(" mySound ")); Serial.println((uint16_t) mySound);
   } // end if special configuration effects
 
   // myVolume is [0-31]. 0 means default; else subtract one to make [0-30]
