@@ -26,6 +26,10 @@
 
 #define NUMOF(x) (sizeof((x)) / sizeof((*x)))
 
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+} // returns -1, 0, 1 for (T < 0), (T == 0), (T > 0) respectively. returns warning if used on uintx_t
+
 #define DPIN_FASTLED      3  // serial out - talk to LED rings
 #define DPIN_BTN_TRIGGER  4  // digital input - the trigger (we only count once per trigger press)
 #define DPIN_BTN_YELLOW   5  // digital input - yellow configuration button
@@ -147,8 +151,9 @@
 
 // EEPROM addresses
 // EEPROM[eeSoundSave+idx] idx: 0 WindUp, 1 Shoot, 2 Open, 3 Load, 4 PowerUp, 8 Configure
-#define eeSoundSave 0x0000 // EEPROM starting address for sound configuration
-#define eeLEDSave   0x0010 // EEPROM starting address for LED pattern configuration
+#define eeSoundSave    0x0000 // EEPROM starting address for sound configuration
+#define eeSoundVolDef  0x000f // EEPROM address for volume default
+#define eeLEDSave      0x0010 // EEPROM starting address for LED pattern configuration
 #define eeLastNonChksum  0x1E // EEPROM address of last non-checksum data
 #define eeInvertedChksum 0x1F // EEPROM address of checksum data
 

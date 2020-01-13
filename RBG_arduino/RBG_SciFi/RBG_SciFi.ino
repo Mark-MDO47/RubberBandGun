@@ -114,6 +114,7 @@ CRGB light_color_palette[1] = { CRGB::LimeGreen, CRGB::Yellow, CRGB::Aqua, CRGB:
 #endif // FASTLED_FIRE_PATTERN
 static uint16_t nowVinputRBG; // latest button inputs, to compare with previous in myState
 
+static RBGStateTable_t loopRow; // for use in setup() and loop()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // setup()
@@ -123,6 +124,12 @@ static uint16_t nowVinputRBG; // latest button inputs, to compare with previous 
 //   initializes FastLED library
 void setup() {
   // put your setup code here, to run once:
+
+#if USE_PROGMEM   
+  memcpy_P(&loopRow, &myStateTable[myState.tableRow], sizeof(myStateTable[0]));
+#else // not USE_PROGMEM
+  memcpy(&loopRow, &myStateTable[myState.tableRow], sizeof(myStateTable[0]));
+#endif // use, not USE_PROGMEM
 
   Serial.begin(115200);         // this is for general debug
 
@@ -158,7 +165,7 @@ void setup() {
   FastLED.addLeds<WS2812B,DPIN_FASTLED,GRB>(led_display, NUM_LEDS_PER_DISK);
   FastLED.setBrightness(BRIGHTMAX); // we will do our own power management
   // initialize led_display
-  RBG_diskInitBrightSpots(windup1BrightSpots, &led_BLACK); // FIXME need initialize for this pattern
+  RBG_diskInitBrightSpots(windup1BrightSpots, &led_BLACK, 3, 196); // FIXME need initialize for this pattern
 
   // if needed, initialize EEPROM variables
   eeprom_check_init();
@@ -177,7 +184,6 @@ void setup() {
 //     If needed, release the rubber band and set timer to stop the solenoid current later
 //
 void loop() {
-  static RBGStateTable_t loopRow;
 
 #if USE_PROGMEM   
   memcpy_P(&loopRow, &myStateTable[myState.tableRow], sizeof(myStateTable[0]));
@@ -365,7 +371,7 @@ void RBG_ringRotateAndFade(uint8_t whichRing, int8_t rotate96, brightSpots_t* br
     Serial.print(F(" DEBUG_RRandF initialize whichRing=")); Serial.println(whichRing);
     #endif // DEBUG_RRandF
     myState.ptrnDelayLEDstep = DLYLED_ringRotateAndFade;
-    RBG_diskInitBrightSpots(brightSpots, &led_BLACK);
+    RBG_diskInitBrightSpots(brightSpots, &led_BLACK, -3, 196);
     for (idx=0; idx < NUM_RINGS_PER_DISK; idx++) {
       startLocPerRing[idx] = 0;
     }
@@ -391,23 +397,54 @@ void RBG_ringRotateAndFade(uint8_t whichRing, int8_t rotate96, brightSpots_t* br
 } // end RBG_ringRotateAndFade()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// RBG_diskInitBrightSpots(brightSpots, color) - 
+// RBG_ringIdxIncrDecr(idx, idxRing, direction)
+//
+// idx - index of LED within ring. must be (start_per_ring[idxRing]) <= idx < (start_per_ring[idxRing]+leds_per_ring[idxRing])
+// idxRing - which ring we are on, 0 <= idxRing < NUM_RINGS_PER_DISK
+// direction - either -1, 0, or 1
+// returns value modulus value of idx+direction where (start_per_ring[idxRing]) <= return < (start_per_ring[idxRing]+leds_per_ring[idxRing])
+//
+uint8_t RBG_ringIdxIncrDecr(uint8_t idx, uint8_t idxRing, int8_t direction) {
+  int16_t rtn = idx + direction;
+
+  if (rtn >= start_per_ring[idxRing]+leds_per_ring[idxRing]) {
+    rtn = start_per_ring[idxRing];
+  } else if (rtn < start_per_ring[idxRing]) {
+    rtn = start_per_ring[idxRing]+leds_per_ring[idxRing];
+  } // end if special case
+  return((uint8_t) rtn);
+} // end RBG_ringIdxIncrDecr(...)
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// RBG_diskInitBrightSpots(brightSpots, color, direction, fade) - 
 //
 // brightSpots - list of positions within ring and color for bright spots
-// pColor    - pointer to color to use as fill (typically &CRGB::Black)
+// pColor      - pointer to color to use as fill (typically &CRGB::Black)
+// direction   - if zero, ignore direction and fade
+//               if non-zero, take that many steps in that direction, fading to fade/256 value each step
+// fade        - ignored if direction is zero, else fade/256 each step
 //
-void RBG_diskInitBrightSpots(brightSpots_t* brightSpots, CRGB* pColor) {
-  uint8_t idx, idxRing;
+void RBG_diskInitBrightSpots(brightSpots_t* brightSpots, CRGB* pColor, int8_t direction, uint16_t fade) {
+  int16_t idxBrtspt, idxRing, idxFade, idx;
+  CRGB myHue;
 
   for (idx=0; idx < NUM_LEDS_PER_DISK; idx++) {
     led_display[idx] = *pColor;
   } // end set all to pColor
   for (idxRing=0; idxRing<NUM_RINGS_PER_DISK; idxRing++) {
-    for (idx=0; (brightSpots[idx].posn < leds_per_ring[idxRing]) && (idx < leds_per_ring[idxRing]); idx++) {
-      led_display[brightSpots[idx].posn+start_per_ring[idxRing]] = brightSpots[idx].hue;
+    for (idxBrtspt=0; (brightSpots[idxBrtspt].posn < leds_per_ring[idxRing]) && (idxBrtspt < leds_per_ring[idxRing]); idxBrtspt++) {
+      myHue = brightSpots[idxBrtspt].hue;
+      led_display[brightSpots[idxBrtspt].posn+start_per_ring[idxRing]] = myHue;
+      // note: sgn(direction) is -1, 0, 1 for (direction < 0), (direction == 0), (direction > 0) respectively
+      idxFade = brightSpots[idxBrtspt].posn+start_per_ring[idxRing];
+      for (idxFade = RBG_ringIdxIncrDecr(idxFade, idxRing, direction); 0 != sgn(direction); idxFade = RBG_ringIdxIncrDecr(idxFade, idxRing, direction)) {
+        myHue.fadeToBlackBy(fade);
+        led_display[idxFade] = myHue;
+        direction -= sgn(direction); // decrement the count
+      } // end do fade if requested
     } // end for all bright spots this ring
   } // end for all rings
-} // end RBG_diskInitBrightSpots()
+} // end RBG_diskInitBrightSpots(...)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RBG_diskRotateOrDrain(direction, pColor) - 
@@ -1109,7 +1146,10 @@ void eeprom_check_init() {
     byteValue = 1;
     for (address = 0; address < eeLastNonChksum; address++) { // one less than entire data area
       byte2Value = EEPROM.read(address);
-      if (byte2Value != byteValue) { // avoid EEPROM writes when possible
+      // avoid EEPROM writes when possible
+      if ((eeSoundVolDef == address) && (mDEFAULT_EFCT_SND_VOL != byte2Value)) {
+        EEPROM.write(address, mDEFAULT_EFCT_SND_VOL);
+      } else if (byte2Value != byteValue) {
         EEPROM.write(address, byteValue);
       }
     } // end zero out our EEPROM area except last value
@@ -1154,15 +1194,27 @@ uint8_t eeprom_calc_inverted_checksum() {
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// printAllMyState() - print the important states
+// printAllMyState() - print (almost) ALL states
 //
 void printAllMyState() {
   Serial.println(F("DEBUG - myState:"));
-  Serial.print(F("  - tableRow: "));
-  Serial.println((uint16_t) myState.tableRow);
-  Serial.print(F("  - VinputRBG: 0x"));
-  Serial.println((uint16_t) myState.VinputRBG, HEX);
+  Serial.print(F("  - tableRow: ")); Serial.println((uint16_t) myState.tableRow);
+  Serial.print(F("  - VinputRBG: 0x")); Serial.println((uint16_t) myState.VinputRBG, HEX);
   printExplainBits(myState.VinputRBG, decodeBits_VinputRBG, NUMOF(decodeBits_VinputRBG));
+  Serial.print(F("  - timerNow: ")); Serial.println(myState.timerNow);
+  Serial.print(F("  - timerPrevState: ")); Serial.println(myState.timerPrevState);
+  Serial.print(F("  - timerPrevLEDstep: ")); Serial.println(myState.timerPrevLEDstep);
+  Serial.print(F("  - timerForceSoundActv: ")); Serial.println(myState.timerForceSoundActv);
+  Serial.print(F("  - timerForceSoundActv: ")); Serial.println(myState.timerForceSoundActv);
+  Serial.print(F("  - timerForceSolenoidLow: ")); Serial.println(myState.timerForceSolenoidLow);
+  Serial.print(F("  - ptrnDelayLEDstep: ")); Serial.println(myState.ptrnDelayLEDstep);
+  Serial.print(F("  - cfg_curnum: ")); Serial.println(myState.cfg_curnum);
+  Serial.print(F("  - cfg_maxnum: ")); Serial.println(myState.cfg_maxnum);
+  Serial.print(F("  - cfg_category: ")); Serial.println(myState.cfg_category);
+  Serial.print(F("  - cfg_category2save: ")); Serial.println(myState.cfg_category2save);
+  Serial.print(F("  - cfg_type: ")); Serial.println(myState.cfg_type);
+  Serial.print(F("  - cfg_type2save: ")); Serial.println(myState.cfg_type2save);
+  Serial.print(F("  - cfg_addr: ")); Serial.println(myState.cfg_addr);
 } // end printAllMyState()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
