@@ -95,3 +95,11 @@ static brightSpots_t windup1BrightSpots[] = {
   { .posn=24, .hue=CRGB::Yellow },
   { .posn=mNONE, .hue=CRGB::Black },
 }; // end windup_ring[] definition
+
+
+// a few of Mark Kriegsman's classic DemoReel100.ino patterns
+void rainbow();
+void rainbowWithGlitter();
+void confetti();
+void bpm();
+void juggle();

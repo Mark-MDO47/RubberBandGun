@@ -269,7 +269,7 @@ void doPattern(uint16_t tmpEfctLED, uint16_t tmpSpecial, uint8_t tmpInit) {
         for (uint8_t idx = 0; idx < NUM_RINGS_PER_DISK; idx++) {
           led_display[idx] = CRGB::Black;
         }
-      } // there is no "step"
+      } // there is no "step"; just leave the LEDs off
       break;
 
     case PTRNLED_pwron1: // RBG_diskDownTheDrainOrRotate counterclockwise, drain
@@ -478,7 +478,7 @@ void RBG_diskRotateOrDrain(int8_t direction, CRGB* pColor) {
 // 
 void RBG_ringRotateOrDrain(int8_t direction, CRGB* pColor, uint8_t whichRing) {
   // do rotate/drain
-  int idx;
+  int16_t idx;
   if (direction > 0) { // counterclockwise
     if (1 == direction) { led_tmp1 = led_display[start_per_ring[whichRing]]; } else { led_tmp1 = *pColor; }
     for (idx=start_per_ring[whichRing]+1; idx < start_per_ring[whichRing]+leds_per_ring[whichRing]; idx++) {
@@ -494,6 +494,64 @@ void RBG_ringRotateOrDrain(int8_t direction, CRGB* pColor, uint8_t whichRing) {
   }
 } // end RBG_ringRotateOrDrain()
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// RBG_RailGunEffect(myInit, pColor)
+//
+// myInit - nonzero for initialization
+//
+void RBG_RailGunEffect(uint8_t myInit, CRGB* pColor) {
+  static uint16_t myStep = 0;
+  uint8_t idx;
+
+  if (0 != myInit) {
+    myStep = 0;
+    myState.ptrnDelayLEDstep = 25;
+    for (idx = 0; idx < NUM_LEDS_PER_DISK; idx++) { led_display[idx] = led_BLACK; }
+  } else {
+    if (myStep < 8*4*3) { // 3 cycles
+      switch ((myStep / 8) % 4) {
+        case 0: // after some black
+          for (idx = start_per_ring[2]; idx < start_per_ring[2]+leds_per_ring[2]; idx++) {
+            led_display[idx] = *pColor;
+          } // end for smallest ring
+          break;
+        case 1: // after some black
+          for (idx = start_per_ring[2]; idx < start_per_ring[2]+leds_per_ring[2]; idx++) {
+            led_display[idx] = led_BLACK;
+          }
+          for (idx = start_per_ring[1]; idx < start_per_ring[1]+leds_per_ring[1]; idx++) {
+            led_display[idx] = *pColor;
+          } // end for middle ring
+          break;
+        case 2: // after some black
+          for (idx = start_per_ring[1]; idx < start_per_ring[1]+leds_per_ring[1]; idx++) {
+            led_display[idx] = led_BLACK;
+          } // end for smallest ring
+          for (idx = start_per_ring[0]; idx < start_per_ring[0]+leds_per_ring[0]; idx++) {
+            led_display[idx] = *pColor;
+          } // end for largest ring
+          break;
+        case 3:
+          if (myStep > 8) {
+            myState.ptrnDelayLEDstep = 7; // speed it up
+          }
+          for (idx = start_per_ring[0]; idx < start_per_ring[0]+leds_per_ring[0]; idx++) {
+            led_display[idx] = led_BLACK;
+          } // all black
+          break;
+      } // end switch every eight intervals
+      myStep += 1;
+      // end for three cycles
+    } else {
+      // then just effect
+      confetti();
+    } // end if lots of steps
+  } // end if not initialization
+} // end RBG_RailGunEffect()
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// bpm_rings() - a variant of one of Mark Kriegsman's classic DemoReel100.ino pattern
+//
 void bpm_rings() { // my mod of pattern from Demo Reel 100
   // colored stripes pulsing at a defined Beats-Per-Minute (BPM)
   uint8_t BeatsPerMinute = 62+10;
@@ -505,7 +563,8 @@ void bpm_rings() { // my mod of pattern from Demo Reel 100
       led_display[i] = ColorFromPalette(palette, gHue+(i*2), beat-gHue+(i*10));
     } // end for LEDs
   } // end for rings
-} // end bpm()
+} // end bpm_rings()
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // a few of Mark Kriegsman's classic DemoReel100.ino patterns
@@ -526,14 +585,14 @@ void addGlitter( fract8 chanceOfGlitter) { // helper routine from Demo Reel 100
   if( random8() < chanceOfGlitter) {
     led_display[ random16(NUM_LEDS_PER_DISK) ] += CRGB::White;
   }
-} // end 
+} // end rainbowWithGlitter()
 
 void confetti() { // pattern from Demo Reel 100
   // random colored speckles that blink in and fade smoothly
   fadeToBlackBy( led_display, NUM_LEDS_PER_DISK, 10);
   int pos = random16(NUM_LEDS_PER_DISK);
   led_display[pos] += CHSV( gHue + random8(64), 200, 255);
-} // end 
+} // end confetti()
 
 void bpm() { // pattern from Demo Reel 100
   // colored stripes pulsing at a defined Beats-Per-Minute (BPM)
