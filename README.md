@@ -17,6 +17,8 @@ or a simulation of this. We will shamelessly Hollywoodify this sound to make it 
 
 At the same time as the sound, the LED rings will be doing trippy patterns to make it look like they are being charged up followed by a sequential pulsing that would convince anyone who knows absolutely less than nothing about such things that a rail-gun effect is propelling the rubber band down the central tube.
 
+Here is a video of the software running on a prototype: https://youtu.be/HhxDTWORpCo
+
 # Parts List
 We are still in the design stages but expect to use these parts or similar:
 - 1 @ clothespin in homage to rubber band guns everywhere
