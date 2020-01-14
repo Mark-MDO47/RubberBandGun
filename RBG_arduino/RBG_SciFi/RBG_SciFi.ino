@@ -294,7 +294,8 @@ void doPattern(uint16_t tmpEfctLED, uint16_t tmpSpecial, uint8_t tmpInit) {
       break;
 
     case PTRNLED_shoot1:
-      bpm();
+      RBG_RailGunEffect(tmpInit, &led_BLUE);
+      // bpm();
       break;
 
     case PTRNLED_windup1:
@@ -532,7 +533,9 @@ void RBG_RailGunEffect(uint8_t myInit, CRGB* pColor) {
           } // end for largest ring
           break;
         case 3:
-          if (myStep > 8) {
+          if (myStep < 8*4*1) {
+            myState.ptrnDelayLEDstep = 16; // speed it up
+          } else if (myStep < 8*4*2) {
             myState.ptrnDelayLEDstep = 7; // speed it up
           }
           for (idx = start_per_ring[0]; idx < start_per_ring[0]+leds_per_ring[0]; idx++) {

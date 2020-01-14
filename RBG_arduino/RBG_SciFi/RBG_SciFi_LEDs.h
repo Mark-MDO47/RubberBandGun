@@ -81,6 +81,7 @@ static CRGB led_RED    = CRGB::Red;
 static CRGB led_GREEN  = CRGB::Green;
 static CRGB led_BLUE   = CRGB::Blue;
 static CRGB led_YELLOW = CRGB::Yellow;
+static CRGB led_WHITE  = CRGB::White;
 
 typedef struct _brightSpots_t {
   uint8_t posn; // position relative to start of ring; + = counterclockwise. 255 or mNONE terminates list
