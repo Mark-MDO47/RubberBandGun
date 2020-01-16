@@ -132,6 +132,14 @@ template <typename T> int sgn(T val) {
 /////////////////// end -> INPUTS 1 FROM makeStateTable.py <- //////////////////////////////////
 
 //
+// we don't really need these definitions since it is a configurable sound
+//
+#define mEFCT_PWRON_LFOOF                41 // This is the awesome FOOF Rubber Band Gun, darling.
+#define mEFCT_PWRON_MFOOF                42 // This is the awesome FOOF Rubber Band Gun.
+#define mEFCT_PWRON_CFOOF                43 // Achtung! This is the awesome FOOF Rubber Band Gun.
+#define mEFCT_PWRON_RFOOF                44 // https://lingojam.com/RobotVoiceGenerator: This is the awesome FOOF Rubber Band Gun. Be afraid.
+
+//
 // define the UNIQUE effects (lights and sounds) here. These cannot be configured as the other effects can.
 //
 #define mEFCT_UNIQ_INTRO                62 // Welcome to FOOF RBG configuration! Your call is important to us. Press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow, Green or Black button then press trigger. To exit configuration, hold down Blue button then press trigger.
@@ -246,7 +254,7 @@ static struct _myState_t {
 #define mCFG_CATEGORY_MAXNUM  mCFG_CATEGORY_LEDPTRN // for myState.cfg_category
 // apparently no doubly dimensioned arrays for Arduino
 static uint8_t cfgMaxSoundForType[EEPOFFSET(mEFCT_UNIQ)] = {
-  6, 9, 6, 6, 3, 8 // sound - mEFCT_WIND_UP mEFCT_SHOOT mEFCT_OPEN_BARREL mEFCT_LOCK_LOAD mEFCT_PWRON mEFCT_WAIT
+  6, 9, 6, 6, 4, 8 // sound - mEFCT_WIND_UP mEFCT_SHOOT mEFCT_OPEN_BARREL mEFCT_LOCK_LOAD mEFCT_PWRON mEFCT_WAIT
 };
 static uint8_t cfgMaxLEDForType[EEPOFFSET(mEFCT_UNIQ)] = {
   3, 3, 3, 3, 3, 3 // LED - mEFCT_WIND_UP mEFCT_SHOOT mEFCT_OPEN_BARREL mEFCT_LOCK_LOAD mEFCT_PWRON mEFCT_WAIT
