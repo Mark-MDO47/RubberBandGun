@@ -34,8 +34,7 @@ template <typename T> int sgn(T val) {
 #define DPIN_BTN_TRIGGER  4  // digital input - the trigger (we only count once per trigger press)
 #define DPIN_BTN_YELLOW   5  // digital input - yellow configuration button
 #define DPIN_BTN_GREEN    6  // digital input - green configuration button
-#define DPIN_BTN_BLACK    7  // digital input - black configuration button
-#define DPIN_BTN_BLUE     8  // digital input - blue configuration button
+#define DPIN_BTN_RED      7  // digital input - blue configuration button
 #define DPIN_LOCK_LOAD    9  // digital input - grounded when in lock and load position
 #define DPIN_SWSRL_RX    10  // serial in  - talk to DFPlayer audio player (YX5200)
 #define DPIN_SWSRL_TX    11  // serial out - talk to DFPlayer audio player (YX5200)
@@ -45,7 +44,7 @@ template <typename T> int sgn(T val) {
 
 
 // values that can be stored in EEPROM (FIXME THIS MAY CHANGE)
-#define VYBG 0x10    // whatever is in DPIN_BTN_YELLOW and DPIN_BTN_GREEN and DPIN_BTN_BLACK (0 thru 7)
+#define VYBG 0x10    // whatever is in DPIN_BTN_YELLOW and DPIN_BTN_GREEN and DPIN_BTN_RED (0 thru 7)
 #define V00  0x00    // the value 0
 #define V01  0x01    // the value 1
 #define V02  0x02    // the value 2
@@ -127,7 +126,7 @@ template <typename T> int sgn(T val) {
 #define mMASK_EFCT_SND_NUM 255  // mask for sound number
 #define mSHIFT_EFCT_SND_VOL 8  // shift for volume
 #define mMASK_EFCT_SND_VOL 31   // mask for volume once shifted in place
-#define mDEFAULT_EFCT_SND_VOL 25  // default volume - 25 is pretty good
+#define mDEFAULT_EFCT_SND_VOL 15  // default volume - 25 is pretty good
 
 /////////////////// end -> INPUTS 1 FROM makeStateTable.py <- //////////////////////////////////
 
@@ -177,17 +176,14 @@ typedef struct _decodeBits_t { uint16_t theBit; const char * theText; } decodeBi
 #define mINP_B01   0x0001      // mask for DPIN_BTN_YELLOW
 #define mINP_B02   0x0002      // mask for DPIN_BTN_GREEN
 #define mINP_B03   0x0003      // mask for DPIN_BTN_YELLOW, DPIN_BTN_GREEN
-#define mINP_B04   0x0004      // mask for DPIN_BTN_BLACK
-#define mINP_B05   0x0005      // mask for DPIN_BTN_YELLOW, DPIN_BTN_BLACK
-#define mINP_B06   0x0006      // mask for DPIN_BTN_GREEN, DPIN_BTN_BLACK
-#define mINP_B07   0x0007      // mask for DPIN_BTN_YELLOW, DPIN_BTN_GREEN, DPIN_BTN_BLACK
-#define mINP_B08   0x0008      // mask for DPIN_BTN_BLUE
-#define mINP_B0F   0x000F      // mask for DPIN_BTN_YELLOW, DPIN_BTN_GREEN, DPIN_BTN_BLACK, DPIN_BTN_BLUE
+#define mINP_B04   0x0004      // mask for DPIN_BTN_RED
+#define mINP_B05   0x0005      // mask for DPIN_BTN_YELLOW, DPIN_BTN_RED
+#define mINP_B06   0x0006      // mask for DPIN_BTN_GREEN, DPIN_BTN_RED
+#define mINP_B07   0x0007      // mask for DPIN_BTN_YELLOW, DPIN_BTN_GREEN, DPIN_BTN_RED
 #define mINP_YELLOW mINP_B01   // mask for DPIN_BTN_YELLOW
 #define mINP_GREEN  mINP_B02   // mask for DPIN_BTN_GREEN
-#define mINP_BLACK  mINP_B04   // mask for DPIN_BTN_BLACK
-#define mINP_BLUE   mINP_B08   // mask for DPIN_BTN_BLUE
-#define mINP_BANY  0x0010      // mask for any of the specified DPIN_BTN_{BYGX} combination but at least one other than trigger
+#define mINP_RED    mINP_B04   // mask for DPIN_BTN_RED
+#define mINP_BANY  0x0010      // mask for any of the specified DPIN_BTN_{YG} combination but at least one other than trigger
 #define mINP_TRIG  0x0040      // mask for just depressed the trigger (edge detect)
 #define mINP_LOCK  0x0100      // mask for just connected the barrel
 #define mINP_OPEN  0x0200      // mask for just disconnected the barrel
@@ -196,8 +192,7 @@ typedef struct _decodeBits_t { uint16_t theBit; const char * theText; } decodeBi
 //   used (only) in .VinputRBG in myState
 #define mVINP_B01   0x0001     // mask for DPIN_BTN_YELLOW (currently depressed)
 #define mVINP_B02   0x0002     // mask for DPIN_BTN_GREEN (currently depressed)
-#define mVINP_B04   0x0004     // mask for DPIN_BTN_BLACK (currently depressed)
-#define mVINP_BLUE 0x0008     // mask for DPIN_BTN_BLUE (currently depressed)
+#define mVINP_B04   0x0004     // mask for DPIN_BTN_RED (currently depressed)
 #define mVINP_TRIG  0x0020     // mask for just depressed the trigger
 #define mVINP_LOCK  0x0100     // mask for barrel connected
 #define mVINP_OPEN  0x0200     // mask for barrel disconnected
@@ -205,14 +200,13 @@ typedef struct _decodeBits_t { uint16_t theBit; const char * theText; } decodeBi
 #define mVINP_TRUESOUNDACTV  0x4000 // TRUE mask for hardware sound was active last time we checked
 #define mDELAY_SOUNDACTV 250    // milliseconds to keep SW twiddled sound active after doing myDFPlayer.play(mySound)
 static decodeBits_t decodeBits_VinputRBG[] = {
-    mVINP_B01, " mVINP_B01 YELLOW",
-    mVINP_B02, " mVINP_B02 GREEN",
-    mVINP_B04, " mVINP_B04 BLACK",
-    mVINP_BLUE, " mVINP_B08 BLUE",
-    mVINP_TRIG, " mVINP_TRIG trigger",
-    mVINP_LOCK, " mVINP_LOCK barrel lock/load",
-    mVINP_OPEN, " mVINP_OPEN barrel open",
-    mVINP_SOUNDACTV, " mVINP_SOUNDACTV sound SW",
+    mVINP_B01,           " mVINP_B01 YELLOW",
+    mVINP_B02,           " mVINP_B02 GREEN",
+    mVINP_B04,           " mVINP_B04 RED",
+    mVINP_TRIG,          " mVINP_TRIG trigger",
+    mVINP_LOCK,          " mVINP_LOCK barrel lock/load",
+    mVINP_OPEN,          " mVINP_OPEN barrel open",
+    mVINP_SOUNDACTV,     " mVINP_SOUNDACTV sound SW",
     mVINP_TRUESOUNDACTV, " mVINP_TRUESOUNDACTV sound HW"
 }; // decodeBits_VinputRBG
 
@@ -225,8 +219,7 @@ typedef struct _pins_to_vals_t {
 static pins_to_vals_t myPinsToVals[] = {
   { DPIN_BTN_YELLOW,  mVINP_B01 },
   { DPIN_BTN_GREEN,   mVINP_B02 },
-  { DPIN_BTN_BLACK,   mVINP_B04 },
-  { DPIN_BTN_BLUE,   mVINP_BLUE },
+  { DPIN_BTN_RED,     mVINP_B04 },
   { DPIN_AUDIO_BUSY,  mVINP_SOUNDACTV },
   { DPIN_AUDIO_BUSY,  mVINP_TRUESOUNDACTV },
 };
@@ -274,8 +267,8 @@ static uint8_t cfgMaxLEDForType[EEPOFFSET(mEFCT_UNIQ)] = {
 #define PTRNLED_shoot1    (1+mEFCT_SHOOT)
 #define PTRNLED_uniq1     (1+mEFCT_UNIQ)
 
-#define DLYLED_ringRotateAndFade 25 // for RBG_ringRotateAndFade
-#define DLYLED_diskDownTheDrain 25 // for RBG_DiskDownTheDrain
+#define DLYLED_ringRotateAndFade 7 // for RBG_ringRotateAndFade
+#define DLYLED_diskDownTheDrain 7 // for RBG_DiskDownTheDrain
 
 
 
@@ -314,18 +307,18 @@ static const RBGStateTable_t myStateTable[50]
       { /* row 0 mROW_POWERON */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mINP_OPEN, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_PWRON_OPEN, .gotoWithoutInput=mNONE, },
       { /* row 1 mROW_POWERON */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mINP_LOCK, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_PWRON_LOCKED, .gotoWithoutInput=mNONE, },
       { /* row 2 mROW_PWRON_OPEN */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_PWRON, .efctLED=mEFCT_PWRON, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_MENU, },
-      { /* row 3 mROW_PWRON_OPEN */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_PWRON, .efctLED=mEFCT_PWRON, .inputRBG=mINP_TRIG|mINP_BANY|mINP_B0F, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_MENU, .gotoWithoutInput=mNONE, },
+      { /* row 3 mROW_PWRON_OPEN */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_PWRON, .efctLED=mEFCT_PWRON, .inputRBG=mINP_TRIG|mINP_BANY|mINP_B01|mINP_B02|mINP_B04, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_MENU, .gotoWithoutInput=mNONE, },
       { /* row 4 mROW_PWRON_LOCKED */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_PWRON, .efctLED=mEFCT_PWRON, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_MENU, },
       { /* row 5 mROW_PWRON_LOCKED */  .blkFlags=mZERO, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_PWRON, .efctLED=mEFCT_PWRON, .inputRBG=mINP_TRIG, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_WINDUP_SOUND, .gotoWithoutInput=mNONE, },
-      { /* row 6 mROW_PWRON_LOCKED */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_PWRON, .efctLED=mEFCT_PWRON, .inputRBG=mINP_TRIG|mINP_BANY|mINP_B0F, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_MENU, .gotoWithoutInput=mNONE, },
+      { /* row 6 mROW_PWRON_LOCKED */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_PWRON, .efctLED=mEFCT_PWRON, .inputRBG=mINP_TRIG|mINP_BANY|mINP_B01|mINP_B02|mINP_B04, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_MENU, .gotoWithoutInput=mNONE, },
       { /* row 7 mROW_MENU */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mINP_OPEN, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_MENU_OPEN, .gotoWithoutInput=mNONE, },
       { /* row 8 mROW_MENU */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mINP_LOCK, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_MENU_CLOSED, .gotoWithoutInput=mNONE, },
       { /* row 9 mROW_MENU_OPEN */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_WAIT, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_WINDUP_SOUND, .gotoWithoutInput=mNONE, },
       { /* row 10 mROW_MENU_OPEN */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_WAIT, .efctLED=mEFCT_WAIT, .inputRBG=mINP_LOCK, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_LOKLOD, .gotoWithoutInput=mNONE, },
-      { /* row 11 mROW_MENU_CLOSED */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_WAIT, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG|mINP_BANY|mINP_B0F, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_MENU, .gotoWithoutInput=mNONE, },
+      { /* row 11 mROW_MENU_CLOSED */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_WAIT, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG|mINP_BANY|mINP_B01|mINP_B02|mINP_B04, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_MENU, .gotoWithoutInput=mNONE, },
       { /* row 12 mROW_MENU_CLOSED */  .blkFlags=mZERO, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_WAIT, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_WINDUP_SOUND, .gotoWithoutInput=mNONE, },
       { /* row 13 mROW_MENU_CLOSED */  .blkFlags=mZERO, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_WAIT, .efctLED=mEFCT_WAIT, .inputRBG=mINP_OPEN, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_OPNBRL, .gotoWithoutInput=mNONE, },
-      { /* row 14 mROW_MENU_CLOSED */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_WAIT, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG|mINP_BANY|mINP_B0F, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_MENU, .gotoWithoutInput=mNONE, },
+      { /* row 14 mROW_MENU_CLOSED */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_WAIT, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG|mINP_BANY|mINP_B01|mINP_B02|mINP_B04, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_MENU, .gotoWithoutInput=mNONE, },
       { /* row 15 mROW_WINDUP_SOUND */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_WIND_UP, .efctLED=mEFCT_WIND_UP, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_SHOOT, },
       { /* row 16 mROW_SHOOT */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_SHOOT | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_SHOOT_SOUND, },
       { /* row 17 mROW_SHOOT_SOUND */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_SHOOT, .efctLED=mEFCT_SHOOT, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_SOLENOID, },
@@ -336,15 +329,15 @@ static const RBGStateTable_t myStateTable[50]
       { /* row 22 mROW_LOKLOD */  .blkFlags=mZERO, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_LOCK_LOAD, .efctLED=mEFCT_LOCK_LOAD, .inputRBG=mINP_OPEN, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_OPNBRL, .gotoWithoutInput=mNONE, },
       { /* row 23 mROW_LOKLOD */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_LOCK_LOAD, .efctLED=mEFCT_LOCK_LOAD, .inputRBG=mINP_TRIG, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_WINDUP_SOUND, .gotoWithoutInput=mNONE, },
       { /* row 24 mROW_CFG_MENU */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_INTRO, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_CATEGORY, .gotoWithoutInput=mNONE, },
-      { /* row 25 mROW_CFG_MENU */  .blkFlags=mZERO, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_INTRO, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG|mINP_BANY|mINP_B07, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_CATEGORY, .gotoWithoutInput=mNONE, },
-      { /* row 26 mROW_CFG_MENU */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_INTRO, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG|mINP_BLUE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_MENU, .gotoWithoutInput=mNONE, },
+      { /* row 25 mROW_CFG_MENU */  .blkFlags=mZERO, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_INTRO, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG|mINP_BANY|mINP_B01|mINP_B02, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_CATEGORY, .gotoWithoutInput=mNONE, },
+      { /* row 26 mROW_CFG_MENU */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_INTRO, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG|mINP_B04, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_MENU, .gotoWithoutInput=mNONE, },
       { /* row 27 mROW_CFG_CATEGORY */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFGSTART | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=0.0, .storeAddr=mADDR_CFG_CATEGORY, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_CATEGORY_LOOPSTART, },
       { /* row 28 mROW_CFG_CATEGORY_LOOPSTART */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_CFG_CATEGORY, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_CATEGORY_LOOP, .gotoWithoutInput=mNONE, },
-      { /* row 29 mROW_CFG_CATEGORY_LOOPSTART */  .blkFlags=mZERO, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_CFG_CATEGORY, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG|mINP_BANY|mINP_B07, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_CATEGORY_LOOP, .gotoWithoutInput=mNONE, },
-      { /* row 30 mROW_CFG_CATEGORY_LOOPSTART */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_CFG_CATEGORY, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG|mINP_BLUE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_MENU, .gotoWithoutInput=mNONE, },
+      { /* row 29 mROW_CFG_CATEGORY_LOOPSTART */  .blkFlags=mZERO, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_CFG_CATEGORY, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG|mINP_BANY|mINP_B01|mINP_B02, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_CATEGORY_LOOP, .gotoWithoutInput=mNONE, },
+      { /* row 30 mROW_CFG_CATEGORY_LOOPSTART */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_CFG_CATEGORY, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG|mINP_B04, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_MENU, .gotoWithoutInput=mNONE, },
       { /* row 31 mROW_CFG_CATEGORY_LOOP */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_CONFIGURE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mINP_TRIG, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_CATEGORY_NEXT, .gotoWithoutInput=mNONE, },
-      { /* row 32 mROW_CFG_CATEGORY_LOOP */  .blkFlags=mZERO, .SPECIAL=mSPCL_EFCT_CONFIGURE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mINP_TRIG|mINP_BANY|mINP_B07, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_CATEGORY_CHOICE, .gotoWithoutInput=mNONE, },
-      { /* row 33 mROW_CFG_CATEGORY_LOOP */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONFIGURE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mINP_TRIG|mINP_BLUE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_MENU, .gotoWithoutInput=mNONE, },
+      { /* row 32 mROW_CFG_CATEGORY_LOOP */  .blkFlags=mZERO, .SPECIAL=mSPCL_EFCT_CONFIGURE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mINP_TRIG|mINP_BANY|mINP_B01|mINP_B02, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_CATEGORY_CHOICE, .gotoWithoutInput=mNONE, },
+      { /* row 33 mROW_CFG_CATEGORY_LOOP */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONFIGURE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mINP_TRIG|mINP_B04, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_MENU, .gotoWithoutInput=mNONE, },
       { /* row 34 mROW_CFG_CATEGORY_NEXT */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFGNEXT | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_CATEGORY_LOOP, },
       { /* row 35 mROW_CFG_CATEGORY_CHOICE */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFG2STORAGE | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_TYPE, },
       { /* row 36 mROW_CFG_TYPE */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFGSTART | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=0.0, .storeAddr=mADDR_CFG_TYPE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_TYPE_LOOPSTART, },
@@ -352,13 +345,13 @@ static const RBGStateTable_t myStateTable[50]
       { /* row 38 mROW_CFG_TYPE_LOOPSTART */  .blkFlags=mZERO, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_CFG_TYPE, .efctLED=mEFCT_WAIT, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mNONE, },
       { /* row 39 mROW_CFG_TYPE_LOOPSTART */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_CFG_TYPE, .efctLED=mEFCT_WAIT, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mNONE, },
       { /* row 40 mROW_CFG_TYPE_LOOP */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_CONFIGURE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mINP_TRIG, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_TYPE_NEXT, .gotoWithoutInput=mNONE, },
-      { /* row 41 mROW_CFG_TYPE_LOOP */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONFIGURE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mINP_TRIG|mINP_BANY|mINP_B07, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_TYPE_CHOICE, .gotoWithoutInput=mNONE, },
+      { /* row 41 mROW_CFG_TYPE_LOOP */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONFIGURE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mINP_TRIG|mINP_BANY|mINP_B01|mINP_B02, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_TYPE_CHOICE, .gotoWithoutInput=mNONE, },
       { /* row 42 mROW_CFG_TYPE_NEXT */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFGNEXT | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_TYPE_LOOP, },
       { /* row 43 mROW_CFG_TYPE_CHOICE */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFG2STORAGE | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_EFFECT, },
       { /* row 44 mROW_CFG_EFFECT */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFGSTART | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=0.0, .storeAddr=mADDR_CFG_EFFECT, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_EFFECT_LOOPSTART, },
       { /* row 45 mROW_CFG_EFFECT_LOOPSTART */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_CFG_EFECT, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_EFFECT_LOOP, .gotoWithoutInput=mNONE, },
       { /* row 46 mROW_CFG_EFFECT_LOOP */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_CONFIGURE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mINP_TRIG, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_EFFECT_NEXT, .gotoWithoutInput=mNONE, },
-      { /* row 47 mROW_CFG_EFFECT_LOOP */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONFIGURE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mINP_TRIG|mINP_BANY|mINP_B07, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_EFFECT_CHOICE, .gotoWithoutInput=mNONE, },
+      { /* row 47 mROW_CFG_EFFECT_LOOP */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONFIGURE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mINP_TRIG|mINP_BANY|mINP_B01|mINP_B02, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_EFFECT_CHOICE, .gotoWithoutInput=mNONE, },
       { /* row 48 mROW_CFG_EFFECT_NEXT */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFGNEXT | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_EFFECT_LOOP, },
       { /* row 49 mROW_CFG_EFFECT_CHOICE */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFG2STORAGE | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_TYPE_LOOPSTART, },
 }; // end definition of myStateTable[]

@@ -85,10 +85,10 @@
 #define REAL_BUTTONS 1                       // use actual buttons
 
 #define DONOTEXPLAINBITS 1                   // don't explain the bits - existing routine uses too much RAM
-#define DEBUG_STATE_MACHINE 1                // 1 to show state machine internals for transitions
-#define DEBUG_INPUTS 1                       // 1 to show all inputs
+#define DEBUG_STATE_MACHINE 0                // 1 to show state machine internals for transitions
+#define DEBUG_INPUTS 0                       // 1 to show all inputs
 #define DEBUG_SHOW_MSEC 1                    // use globalLoopCount for millis() display not loopcount
-#define DEBUG_CONFIG 1                       // 1 to show all CONFIGURATION special activity
+#define DEBUG_CONFIG 0                       // 1 to show all CONFIGURATION special activity
 
 
 SoftwareSerial mySoftwareSerial(DPIN_SWSRL_RX, DPIN_SWSRL_TX); // to talk to YX5200 audio player
@@ -146,8 +146,7 @@ void setup() {
   pinMode(DPIN_BTN_TRIGGER, INPUT_PULLUP); // trigger
   pinMode(DPIN_BTN_YELLOW,  INPUT_PULLUP); // configuration button
   pinMode(DPIN_BTN_GREEN,   INPUT_PULLUP); // configuration button
-  pinMode(DPIN_BTN_BLACK,   INPUT_PULLUP); // configuration button
-  pinMode(DPIN_BTN_BLUE,    INPUT_PULLUP); // configuration button
+  pinMode(DPIN_BTN_RED,     INPUT_PULLUP); // configuration button
   pinMode(DPIN_AUDIO_BUSY,  INPUT_PULLUP); // tells when audio stops
   pinMode(DPIN_LOCK_LOAD,   INPUT_PULLUP); // tells if barrel is locked and loaded
   // and the output pin
@@ -304,7 +303,7 @@ void doPattern(uint16_t tmpEfctLED, uint16_t tmpSpecial, uint8_t tmpInit) {
       break;
 
     case PTRNLED_wait1:
-       bpm_rings();
+       RBG_bpm_rings();
        // confetti();
        break;
 
@@ -500,13 +499,19 @@ void RBG_ringRotateOrDrain(int8_t direction, CRGB* pColor, uint8_t whichRing) {
 //
 // myInit - nonzero for initialization
 //
+#define DEBUG_RBG_RailGunEffect 0
 void RBG_RailGunEffect(uint8_t myInit, CRGB* pColor) {
   static uint16_t myStep = 0;
+  static int8_t lastState = 99;
   uint8_t idx;
 
+#if DEBUG_RBG_RailGunEffect
+  Serial.print(F("DEBUG rail BEFORE myInit=")); Serial.print(myInit); Serial.print(F(" myStep=")); Serial.print(myStep); Serial.print(F(" ptrnDelayLEDstep=")); Serial.print(myState.ptrnDelayLEDstep); Serial.print(F(" millis()=")); Serial.print(millis()); Serial.print(F(" timerNow=")); Serial.print(myState.timerNow); Serial.print(F(" timerPrevLEDstep=")); Serial.print(myState.timerPrevLEDstep); Serial.print(F(" lastState=")); Serial.println(lastState);
+#endif // DEBUG_RBG_RailGunEffect
   if (0 != myInit) {
     myStep = 0;
     myState.ptrnDelayLEDstep = 25;
+    lastState = -1; // DEBUG
     for (idx = 0; idx < NUM_LEDS_PER_DISK; idx++) { led_display[idx] = led_BLACK; }
   } else {
     if (myStep < 8*4*3) { // 3 cycles
@@ -515,6 +520,7 @@ void RBG_RailGunEffect(uint8_t myInit, CRGB* pColor) {
           for (idx = start_per_ring[2]; idx < start_per_ring[2]+leds_per_ring[2]; idx++) {
             led_display[idx] = *pColor;
           } // end for smallest ring
+          lastState = 0; // DEBUG
           break;
         case 1: // after some black
           for (idx = start_per_ring[2]; idx < start_per_ring[2]+leds_per_ring[2]; idx++) {
@@ -523,6 +529,7 @@ void RBG_RailGunEffect(uint8_t myInit, CRGB* pColor) {
           for (idx = start_per_ring[1]; idx < start_per_ring[1]+leds_per_ring[1]; idx++) {
             led_display[idx] = *pColor;
           } // end for middle ring
+          lastState = 1; // DEBUG
           break;
         case 2: // after some black
           for (idx = start_per_ring[1]; idx < start_per_ring[1]+leds_per_ring[1]; idx++) {
@@ -531,6 +538,7 @@ void RBG_RailGunEffect(uint8_t myInit, CRGB* pColor) {
           for (idx = start_per_ring[0]; idx < start_per_ring[0]+leds_per_ring[0]; idx++) {
             led_display[idx] = *pColor;
           } // end for largest ring
+          lastState = 2; // DEBUG
           break;
         case 3:
           if (myStep < 8*4*1) {
@@ -541,21 +549,27 @@ void RBG_RailGunEffect(uint8_t myInit, CRGB* pColor) {
           for (idx = start_per_ring[0]; idx < start_per_ring[0]+leds_per_ring[0]; idx++) {
             led_display[idx] = led_BLACK;
           } // all black
+          lastState = 3; // DEBUG
           break;
       } // end switch every eight intervals
       myStep += 1;
       // end for three cycles
     } else {
       // then just effect
-      confetti();
+      RBG_confetti_fadeby(128);
+      lastState = 4; // DEBUG
+      // confetti();
     } // end if lots of steps
   } // end if not initialization
+#if DEBUG_RBG_RailGunEffect
+  Serial.print(F("DEBUG rail AFTER  myInit=")); Serial.print(myInit); Serial.print(F(" myStep=")); Serial.print(myStep); Serial.print(F(" ptrnDelayLEDstep=")); Serial.print(myState.ptrnDelayLEDstep); Serial.print(F(" millis()=")); Serial.print(millis()); Serial.print(F(" timerNow=")); Serial.print(myState.timerNow); Serial.print(F(" timerPrevLEDstep=")); Serial.print(myState.timerPrevLEDstep); Serial.print(F(" lastState=")); Serial.println(lastState);
+#endif // DEBUG_RBG_RailGunEffect
 } // end RBG_RailGunEffect()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// bpm_rings() - a variant of one of Mark Kriegsman's classic DemoReel100.ino pattern
+// RBG_bpm_rings() - a variant of one of Mark Kriegsman's classic DemoReel100.ino patterns
 //
-void bpm_rings() { // my mod of pattern from Demo Reel 100
+void RBG_bpm_rings() { // my mod of pattern from Demo Reel 100
   // colored stripes pulsing at a defined Beats-Per-Minute (BPM)
   uint8_t BeatsPerMinute = 62+10;
   CRGBPalette16 palette = PartyColors_p;
@@ -566,7 +580,20 @@ void bpm_rings() { // my mod of pattern from Demo Reel 100
       led_display[i] = ColorFromPalette(palette, gHue+(i*2), beat-gHue+(i*10));
     } // end for LEDs
   } // end for rings
-} // end bpm_rings()
+} // end RBG_bpm_rings()
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// RBG_confetti_fadeby(fadeVal) - a variant of one of Mark Kriegsman's classic DemoReel100.ino patterns
+//
+// fadeVal -  // 8 bit, 1 = slow, 255 = fast
+//
+void RBG_confetti_fadeby(uint8_t fadeVal) { // pattern from Demo Reel 100
+  // random colored speckles that blink in and fade smoothly
+  fadeToBlackBy(led_display, NUM_LEDS_PER_DISK, fadeVal);
+  int pos = random16(NUM_LEDS_PER_DISK);
+  led_display[pos] += CHSV( gHue + random8(64), 200, 255);
+} // end confetti()
+
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -731,13 +758,13 @@ uint16_t RBG_waitForInput(uint16_t tmpVinputRBG) {
     } else if ((mNONE != (waitRow.inputRBG)) && (0 != (waitRow.inputRBG&mINP_TRIG)) && (0 != (tmpVinputRBG&mVINP_TRIG))) {
       // two cases for trigger: trigger + any of the listed buttons (but at least one of them) OR trigger + exact match with buttons listed (even if no button listed)
       if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.print(idx); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
-      if ((0 != (waitRow.inputRBG&mINP_BANY)) && (0 != (waitRow.inputRBG&mINP_B0F&tmpVinputRBG))) {
+      if ((0 != (waitRow.inputRBG&mINP_BANY)) && (0 != (waitRow.inputRBG&mINP_B07&tmpVinputRBG))) {
         // mINP_BANY means any of the listed buttons but at least one
         if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.print(idx); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
         thisReturn = waitRow.gotoOnInput;
         Serial.print(F(" RBG_waitForInput mINP_TRIG mINP_BANY thisReturn ")); Serial.print(thisReturn); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
         break;
-      } else if ((mNONE != (waitRow.inputRBG)) && ((tmpVinputRBG&mINP_B0F) == (waitRow.inputRBG&mINP_B0F))) {
+      } else if ((mNONE != (waitRow.inputRBG)) && ((tmpVinputRBG&mINP_B07) == (waitRow.inputRBG&mINP_B07))) {
         // else we must match buttons listed exactly, even if there are no buttons listed
         if (debugThisManyCalls > 0) { Serial.print(F(" RBG_waitForInput ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" idx ")); Serial.print(idx); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
         thisReturn = waitRow.gotoOnInput;
@@ -1304,8 +1331,7 @@ void printAllMyInputs() {
   printOneInput(DPIN_BTN_TRIGGER, " TRIGGER ");
   printOneInput(DPIN_BTN_YELLOW, " YELLOW ");
   printOneInput(DPIN_BTN_GREEN, " GREEN ");
-  printOneInput(DPIN_BTN_BLACK, " BLACK ");
-  printOneInput(DPIN_BTN_BLUE, " BLUE ");
+  printOneInput(DPIN_BTN_RED, " RED ");
   printOneInput(DPIN_LOCK_LOAD, " LOAD ");
   printOneInput(DPIN_AUDIO_BUSY, " AUDIO_BUSY ");
 } // end printAllMyInputs()

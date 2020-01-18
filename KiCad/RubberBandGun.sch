@@ -256,17 +256,6 @@ F 3 "" H 7850 3600 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L SW_Push SW?
-U 1 1 5D7D1785
-P 4200 5050
-F 0 "SW?" H 4350 5160 50  0000 C CNN
-F 1 "SW_PUSH" H 4200 4970 50  0000 C CNN
-F 2 "" H 4200 5050 60  0000 C CNN
-F 3 "" H 4200 5050 60  0000 C CNN
-	1    4200 5050
-	0    -1   -1   0   
-$EndComp
-$Comp
 L R R?
 U 1 1 5D7D3856
 P 4400 1250
@@ -276,17 +265,6 @@ F 2 "" V 4330 1250 30  0000 C CNN
 F 3 "" H 4400 1250 30  0000 C CNN
 	1    4400 1250
 	1    0    0    -1  
-$EndComp
-$Comp
-L SW_Push SW?
-U 1 1 5D7D389D
-P 4400 4300
-F 0 "SW?" H 4550 4410 50  0000 C CNN
-F 1 "SW_PUSH" H 4400 4220 50  0000 C CNN
-F 2 "" H 4400 4300 60  0000 C CNN
-F 3 "" H 4400 4300 60  0000 C CNN
-	1    4400 4300
-	0    -1   -1   0   
 $EndComp
 $Comp
 L L L?
@@ -344,23 +322,23 @@ Wire Wire Line
 Wire Wire Line
 	5350 2300 3600 2300
 Wire Wire Line
-	3600 1400 3600 4000
+	3600 1400 3600 4100
 Wire Wire Line
 	5350 2400 3800 2400
 Wire Wire Line
-	3800 1400 3800 4700
+	3800 1400 3800 4800
 Wire Wire Line
 	5350 2500 4000 2500
 Wire Wire Line
-	4000 1400 4000 4000
+	4000 1400 4000 4100
 Wire Wire Line
-	3600 4600 3600 6400
+	3600 4500 3600 6400
 Connection ~ 3600 6400
 Wire Wire Line
-	3800 5300 3800 6400
+	3800 5200 3800 6400
 Connection ~ 3800 6400
 Wire Wire Line
-	4000 4600 4000 6400
+	4000 4500 4000 6400
 Connection ~ 4000 6400
 Wire Wire Line
 	3600 1100 3600 950 
@@ -405,24 +383,13 @@ Wire Wire Line
 	4200 1100 4200 950 
 Connection ~ 4200 950 
 Wire Wire Line
-	4200 1400 4200 4850
-Wire Wire Line
-	4200 5250 4200 6400
-Connection ~ 4200 6400
-Wire Wire Line
 	5350 2600 4200 2600
 Connection ~ 4200 2600
 Wire Wire Line
 	4400 1100 4400 950 
 Connection ~ 4400 950 
 Wire Wire Line
-	4400 1400 4400 4100
-Wire Wire Line
-	4400 4500 4400 6400
-Connection ~ 4400 6400
-Wire Wire Line
-	5350 2700 4400 2700
-Connection ~ 4400 2700
+	4400 1400 4400 4500
 Wire Notes Line
 	8350 2550 8350 2850
 Wire Notes Line
@@ -519,6 +486,39 @@ Text Notes 2200 2500 0    59   ~ 0
 D06 = Green
 Text Notes 2200 2600 0    59   ~ 0
 D07 = Black
-Text Notes 2200 2700 0    59   ~ 0
-D08 = Extra
+Text Notes 2200 2900 0    59   ~ 0
+D09 = Barrel\n    grounded = closed
+Wire Wire Line
+	5350 2800 4400 2800
+Connection ~ 4400 2800
+$Comp
+L SW_SPST SW?
+U 1 1 5E2283C4
+P 4600 4500
+F 0 "SW?" H 4600 4625 50  0000 C CNN
+F 1 "SW_SPST" H 4600 4400 50  0000 C CNN
+F 2 "" H 4600 4500 50  0001 C CNN
+F 3 "" H 4600 4500 50  0001 C CNN
+	1    4600 4500
+	1    0    0    -1  
+$EndComp
+Connection ~ 4200 6400
+Wire Wire Line
+	4800 4500 4800 6400
+Connection ~ 4800 6400
+$Comp
+L SW_Push SW?
+U 1 1 5E22B63A
+P 4200 5000
+F 0 "SW?" H 4350 5110 50  0000 C CNN
+F 1 "SW_PUSH" H 4200 4920 50  0000 C CNN
+F 2 "" H 4200 5000 60  0000 C CNN
+F 3 "" H 4200 5000 60  0000 C CNN
+	1    4200 5000
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	4200 1400 4200 4800
+Wire Wire Line
+	4200 5200 4200 6400
 $EndSCHEMATC
