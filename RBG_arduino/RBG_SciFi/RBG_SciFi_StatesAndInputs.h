@@ -141,18 +141,20 @@ template <typename T> int sgn(T val) {
 //
 // define the UNIQUE effects (lights and sounds) here. These cannot be configured as the other effects can.
 //
-#define mEFCT_UNIQ_INTRO                62 // Welcome to FOOF RBG configuration! Your call is important to us. Press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow, Green or Black button then press trigger. To exit configuration, hold down Blue button then press trigger.
-#define mEFCT_UNIQ_CFG_CATEGORY         63 // Now choose which effect category: sounds or LED patterns. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow, Green or Black button then press trigger. To exit configuration, hold down Blue button thenpress trigger.
-#define mEFCT_UNIQ_CFG_TYPE             64 // Now choose when the effect happens. This list includes when powering-on, when shooting, etc. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow, Green or Black button then press trigger. To exit configuration, hold down Blue button thenpress trigger.
-#define mEFCT_UNIQ_CFG_EFECT            65 // Now choose the effect itself. This list cycles through the effects one by one. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow, Green or Black button then press trigger. To exit configuration, hold down Blue button thenpress trigger.
-#define mEFCT_UNIQ_CFG_WINDUP_DESCRIP   71 // Effect happens during wind-up to shooting
-#define mEFCT_UNIQ_CFG_SHOOT_DESCRIP    72 // Effect happens during shooting itself
-#define mEFCT_UNIQ_CFG_OPEN_DESCRIP     73 // Effect happens during opening of the barrel
-#define mEFCT_UNIQ_CFG_LKLOD_DESCRIP    74 // Effect happens during lock-and-load of the barrel
-#define mEFCT_UNIQ_CFG_PWRON_DESCRIP    75 // Effect happens during initial power-on
-#define mEFCT_UNIQ_CFG_WAIT_DESCRIP     76 // Effect happens when waiting to shoot
-#define mEFCT_UNIQ_CFG_SOUNDS_DESCRIP   81 // Effect is SOUNDS
-#define mEFCT_UNIQ_CFG_LEDPTRN_DESCRIP  82 // Effect is LED PATTERNS
+#define mEFCT_UNIQ_INTRO                62 // Welcome to the FOOF Rubber Band Gun configuration! Your call is important to us. Press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow or Green button then press trigger. To exit configuration, hold down Red button then press trigger.
+#define mEFCT_UNIQ_CFG_CATEGORY         63 // Now choose which effect category: sounds or LED patterns. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow or Green button then press trigger. To exit configuration, hold down Red button then press trigger.
+#define mEFCT_UNIQ_CFG_TYPE             64 // Now choose when the effect happens. This list includes when powering-on, when shooting, etc. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow or Green button then press trigger. To exit configuration, hold down Red button then press trigger.
+#define mEFCT_UNIQ_CFG_EFECT            65 // Now choose the effect itself. This list cycles through the effects one by one. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow or Green button then press trigger. To exit configuration, hold down Red button then press trigger.
+#define mEFCT_UNIQ_CFG_WINDUP_DESCRIP   71 // The effect happens during wind-up to shooting
+#define mEFCT_UNIQ_CFG_SHOOT_DESCRIP    72 // The effect happens during shooting itself
+#define mEFCT_UNIQ_CFG_OPEN_DESCRIP     73 // The effect happens during opening of the barrel
+#define mEFCT_UNIQ_CFG_LKLOD_DESCRIP    74 // The effect happens during lock-and-load of the barrel
+#define mEFCT_UNIQ_CFG_PWRON_DESCRIP    75 // The effect happens during initial power-on
+#define mEFCT_UNIQ_CFG_WAIT_DESCRIP     76 // The effect happens when waiting to shoot
+#define mEFCT_UNIQ_CFG_SOUNDS_DESCRIP   81 // The effect is SOUNDS
+#define mEFCT_UNIQ_CFG_LEDPTRN_DESCRIP  82 // The effect is LED PATTERNS
+#define mEFCT_UNIQ_SILENCE             101 // silence
+#define mEFCT_UNIQ_NOT_IMPL            102 // This feature is not yet implemented
 
 #define mEFCT_UNIQ_SILENCE             101 // silence
 #define mEFCT_UNIQ_NOT_IMPL            102 // Not yet implemented
