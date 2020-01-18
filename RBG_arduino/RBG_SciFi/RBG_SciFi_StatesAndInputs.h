@@ -195,7 +195,7 @@ typedef struct _decodeBits_t { uint16_t theBit; const char * theText; } decodeBi
 #define mVINP_B01   0x0001     // mask for DPIN_BTN_YELLOW (currently depressed)
 #define mVINP_B02   0x0002     // mask for DPIN_BTN_GREEN (currently depressed)
 #define mVINP_B04   0x0004     // mask for DPIN_BTN_RED (currently depressed)
-#define mVINP_TRIG  0x0020     // mask for just depressed the trigger
+#define mVINP_TRIG  0x0040     // mask for just depressed the trigger
 #define mVINP_LOCK  0x0100     // mask for barrel connected
 #define mVINP_OPEN  0x0200     // mask for barrel disconnected
 #define mVINP_SOUNDACTV  0x0400 // mask for sound was active last time we checked- twiddled by SW
@@ -355,5 +355,5 @@ static const RBGStateTable_t myStateTable[50]
       { /* row 46 mROW_CFG_EFFECT_LOOP */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_CONFIGURE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mINP_TRIG, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_EFFECT_NEXT, .gotoWithoutInput=mNONE, },
       { /* row 47 mROW_CFG_EFFECT_LOOP */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONFIGURE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mINP_TRIG|mINP_BANY|mINP_B01|mINP_B02, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_EFFECT_CHOICE, .gotoWithoutInput=mNONE, },
       { /* row 48 mROW_CFG_EFFECT_NEXT */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFGNEXT | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_EFFECT_LOOP, },
-      { /* row 49 mROW_CFG_EFFECT_CHOICE */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFG2STORAGE | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_TYPE_LOOPSTART, },
+      { /* row 49 mROW_CFG_EFFECT_CHOICE */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFG2STORAGE | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_CATEGORY, },
 }; // end definition of myStateTable[]

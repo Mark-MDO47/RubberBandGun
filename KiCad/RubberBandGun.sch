@@ -41,7 +41,7 @@ $Descr A 11000 8500
 encoding utf-8
 Sheet 1 2
 Title "Rubber Band Gun"
-Date "2020-01-02"
+Date "2020-01-18"
 Rev "---"
 Comp ""
 Comment1 ""
@@ -485,7 +485,7 @@ D05 = Yellow
 Text Notes 2200 2500 0    59   ~ 0
 D06 = Green
 Text Notes 2200 2600 0    59   ~ 0
-D07 = Black
+D07 = Red
 Text Notes 2200 2900 0    59   ~ 0
 D09 = Barrel\n    grounded = closed
 Wire Wire Line
