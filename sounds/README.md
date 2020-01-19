@@ -63,3 +63,15 @@ Here are the sound files I used, modified, and combined for the prototype sounds
 | zero/1.0/ | 162814__timgormly__spaceship-4.aiff | https://freesound.org/s/162814/ | timgormly |
 | by-nc/3.0/ | 91296__timbre__bwaang-2-reverb.mp3 | https://freesound.org/s/91296/ | timbre |
 
+The Rubber Band Gun speaks to you when you want to configure the sounds or LED patterns. 
+I used the "original" eSpeak text-to-speak program version 1.48.04. This produces sounds with a robotic flavor, which I wanted.
+
+The original eSpeak text to speech code and compiled versions can be found at http://espeak.sourceforge.net/
+- Kudos to (email) jonsd at users dot sourceforge.net for creating eSpeak
+
+Note that eSpeak project is inactive since disappearance of Jonathan Duddington.
+
+Active development and support now happens in eSpeak NG project https://github.com/espeak-ng/espeak-ng, maintained by Reece H. Dunn.
+- Kudos to Reece H. Dunn for continuing the good work
+
+A web implementation of eSpeak can be found as below; it is great fun, and just one of many STT engines on the site. https://lingojam.com/RobotVoiceGenerator
