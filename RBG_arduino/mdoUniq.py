@@ -1,5 +1,10 @@
 #
-# mdoUniq.py - my uniq for looking between
+# mdoUniq.py - my crude "uniq" for comparing only between start and end strings
+#
+# Author: Mark Olson 2019-12-21
+#
+# Rubber Band Gun - https://github.com/Mark-MDO47/RubberBandGun
+# RBG - A high-tech imagining of the rubber band gun
 #
 
 import sys
