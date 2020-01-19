@@ -4,6 +4,7 @@
 # RBG - A high-tech imagining of the rubber band gun
 #
 # This program will read the arduino code for RBG_SciFi.ino and create on stdout a mostly-debuggable form for Microsoft Visual Studio Community 2019
+# Used mostly to debug the state table machine.
 #
 
 import copy
