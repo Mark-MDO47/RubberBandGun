@@ -117,7 +117,8 @@ def make_state_table():
 
     # Import the excel file
     xls_file = pd.ExcelFile(r'd:/GitHub-Mark-MDO47/RubberBandGun/RBG_arduino/StateTable_minimal.xlsx')
-    df = xls_file.parse(xls_file.sheet_names[0])
+    idx = xls_file.sheet_names.index('StateTable')
+    df = xls_file.parse(xls_file.sheet_names[idx])
 
     # map the column names to numbers; will barf if there is a problem
     df_col_names = df.columns.values.tolist()

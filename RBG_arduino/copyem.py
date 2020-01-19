@@ -8,7 +8,7 @@ import sys
 
 theFnames = []
 maxNum = 127  # beyond that is not currently used
-fnameSilence = "0101_silence.wav"  # to fill in gaps
+fnameSilence = "0101__mdo47__silence.wav"  # to fill in gaps
 theFrom = "D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut"
 theSD = "H:"
 

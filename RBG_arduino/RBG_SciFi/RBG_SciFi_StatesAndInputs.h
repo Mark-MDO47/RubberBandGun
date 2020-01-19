@@ -111,6 +111,8 @@ template <typename T> int sgn(T val) {
 #define mROW_CFG_EFFECT_LOOP 46
 #define mROW_CFG_EFFECT_NEXT 48
 #define mROW_CFG_EFFECT_CHOICE 49
+#define mROW_CFG_ACCEPTED 50
+
 
 // define the effect number ranges - must be divisible by 10
 #define mEFCT_WIND_UP       0  // 001 to 009 - wind-up effects
@@ -126,7 +128,7 @@ template <typename T> int sgn(T val) {
 #define mMASK_EFCT_SND_NUM 255  // mask for sound number
 #define mSHIFT_EFCT_SND_VOL 8  // shift for volume
 #define mMASK_EFCT_SND_VOL 31   // mask for volume once shifted in place
-#define mDEFAULT_EFCT_SND_VOL 15  // default volume - 25 is pretty good
+#define mDEFAULT_EFCT_SND_VOL 25  // default volume - 25 is pretty good
 
 /////////////////// end -> INPUTS 1 FROM makeStateTable.py <- //////////////////////////////////
 
@@ -144,17 +146,18 @@ template <typename T> int sgn(T val) {
 #define mEFCT_UNIQ_INTRO                62 // Welcome to the FOOF Rubber Band Gun configuration! Your call is important to us. Press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow or Green button then press trigger. To exit configuration, hold down Red button then press trigger.
 #define mEFCT_UNIQ_CFG_CATEGORY         63 // Now choose which effect category: sounds or LED patterns. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow or Green button then press trigger. To exit configuration, hold down Red button then press trigger.
 #define mEFCT_UNIQ_CFG_TYPE             64 // Now choose when the effect happens. This list includes when powering-on, when shooting, etc. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow or Green button then press trigger. To exit configuration, hold down Red button then press trigger.
-#define mEFCT_UNIQ_CFG_EFECT            65 // Now choose the effect itself. This list cycles through the effects one by one. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow or Green button then press trigger. To exit configuration, hold down Red button then press trigger.
+#define mEFCT_UNIQ_CFG_EFFECT           65 // Now choose the effect itself. This list cycles through the effects one by one. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow or Green button then press trigger. To exit configuration, hold down Red button then press trigger.
+#define mEFCT_UNIQ_CFG_ACCEPT           66 // Your choice has been saved into the default settings.
+
 #define mEFCT_UNIQ_CFG_WINDUP_DESCRIP   71 // The effect happens during wind-up to shooting
 #define mEFCT_UNIQ_CFG_SHOOT_DESCRIP    72 // The effect happens during shooting itself
 #define mEFCT_UNIQ_CFG_OPEN_DESCRIP     73 // The effect happens during opening of the barrel
 #define mEFCT_UNIQ_CFG_LKLOD_DESCRIP    74 // The effect happens during lock-and-load of the barrel
 #define mEFCT_UNIQ_CFG_PWRON_DESCRIP    75 // The effect happens during initial power-on
 #define mEFCT_UNIQ_CFG_WAIT_DESCRIP     76 // The effect happens when waiting to shoot
+
 #define mEFCT_UNIQ_CFG_SOUNDS_DESCRIP   81 // The effect is SOUNDS
 #define mEFCT_UNIQ_CFG_LEDPTRN_DESCRIP  82 // The effect is LED PATTERNS
-#define mEFCT_UNIQ_SILENCE             101 // silence
-#define mEFCT_UNIQ_NOT_IMPL            102 // This feature is not yet implemented
 
 #define mEFCT_UNIQ_SILENCE             101 // silence
 #define mEFCT_UNIQ_NOT_IMPL            102 // Not yet implemented
@@ -301,7 +304,7 @@ typedef struct _RBGStateTable_t {
 //
 // the state table itself - automatically generated from makeStateTable.py
 //
-static const RBGStateTable_t myStateTable[50]
+static const RBGStateTable_t myStateTable[51]
 #if USE_PROGMEM
   PROGMEM
 #endif // end USE_PROGMEM
@@ -351,9 +354,10 @@ static const RBGStateTable_t myStateTable[50]
       { /* row 42 mROW_CFG_TYPE_NEXT */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFGNEXT | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_TYPE_LOOP, },
       { /* row 43 mROW_CFG_TYPE_CHOICE */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFG2STORAGE | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_EFFECT, },
       { /* row 44 mROW_CFG_EFFECT */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFGSTART | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=0.0, .storeAddr=mADDR_CFG_EFFECT, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_EFFECT_LOOPSTART, },
-      { /* row 45 mROW_CFG_EFFECT_LOOPSTART */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_CFG_EFECT, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_EFFECT_LOOP, .gotoWithoutInput=mNONE, },
+      { /* row 45 mROW_CFG_EFFECT_LOOPSTART */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_CFG_EFFECT, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_EFFECT_LOOP, .gotoWithoutInput=mNONE, },
       { /* row 46 mROW_CFG_EFFECT_LOOP */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_CONFIGURE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mINP_TRIG, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_EFFECT_NEXT, .gotoWithoutInput=mNONE, },
       { /* row 47 mROW_CFG_EFFECT_LOOP */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONFIGURE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mINP_TRIG|mINP_BANY|mINP_B01|mINP_B02, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_EFFECT_CHOICE, .gotoWithoutInput=mNONE, },
       { /* row 48 mROW_CFG_EFFECT_NEXT */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFGNEXT | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_EFFECT_LOOP, },
-      { /* row 49 mROW_CFG_EFFECT_CHOICE */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFG2STORAGE | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_CATEGORY, },
+      { /* row 49 mROW_CFG_EFFECT_CHOICE */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFG2STORAGE | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_ACCEPTED, },
+      { /* row 50 mROW_CFG_ACCEPTED */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_UNIQ_CFG_ACCEPT, .efctLED=mEFCT_WAIT, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_CATEGORY, },
 }; // end definition of myStateTable[]
