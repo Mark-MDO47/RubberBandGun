@@ -55,6 +55,7 @@
 #define NUM_LEDS_PER_DISK 72
 #define NUM_RINGS_PER_DISK 3
 #define MAX_LEDS_PER_RING 32
+#define MIN_LEDS_PER_RING 16
 #define GCD_LEDS_PER_RING 96 // they all divide into 96 evenly
 #define NUM_SHADOWS 0  // number of shadow disks
 

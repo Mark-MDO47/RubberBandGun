@@ -84,11 +84,12 @@
 #define SERIALDEBUG 1                        // serial debugging
 #define REAL_BUTTONS 1                       // use actual buttons
 
-#define DONOTEXPLAINBITS 1                   // don't explain the bits - existing routine uses too much RAM
-#define DEBUG_STATE_MACHINE 0                // 1 to show state machine internals for transitions
-#define DEBUG_INPUTS 0                       // 1 to show all inputs
 #define DEBUG_SHOW_MSEC 1                    // use globalLoopCount for millis() display not loopcount
-#define DEBUG_CONFIG 0                       // 1 to show all CONFIGURATION special activity
+#define DONOTEXPLAINBITS 1                   // don't explain the bits - existing routine uses too much RAM
+#define DEBUGALL_GLOBAL 1                    // sets many of the following
+#define DEBUG_STATE_MACHINE (0 | DEBUGALL_GLOBAL) // 1 to show state machine internals for transitions
+#define DEBUG_INPUTS (0 | DEBUGALL_GLOBAL)        // 1 to show all inputs
+#define DEBUG_CONFIG (0 | DEBUGALL_GLOBAL)        // 1 to show all CONFIGURATION special activity
 
 
 SoftwareSerial mySoftwareSerial(DPIN_SWSRL_RX, DPIN_SWSRL_TX); // to talk to YX5200 audio player
@@ -238,17 +239,20 @@ void loop() {
 // If tmpSpecial says mSPCL_EFCT_CONFIGURE and efctSound == mNONE and cfg_curnum != mNONE then we use the configuration variables
 // If tmpEfctLED is an EEPROM configurable pattern (divisible by 10) then configure it
 //
-#define DEBUG_DPtrn 0
+#define DEBUG_DPtrn 1
 //
 void doPattern(uint16_t tmpEfctLED, uint16_t tmpSpecial, uint8_t tmpInit) {
 //  static uint16_t prevEfctLED = mNONE;
   static uint16_t numSteps = 0;
   uint16_t nowEfctLED = tmpEfctLED & 0x00FF; // just the effect number
 
+  #if DEBUG_DPtrn
+  Serial.print(F(" DEBUG doPattern BEFORE tmpEfctLED ")); Serial.print(tmpEfctLED); Serial.print(F(" tmpInit ")); Serial.print(tmpInit); Serial.print(F(" final nowEfctLED ")); Serial.print(nowEfctLED); Serial.println(F(" that is all"));
+  #endif // DEBUG_DPtrn
+
   if ((mNONE == nowEfctLED) && (0 != (mSPCL_EFCT_CONFIGURE & tmpSpecial)) && (mNONE != myState.cfg_curnum)) {
     // handle configuration choice effects
     nowEfctLED = myState.cfg_curnum + myState.cfg_category;
-    tmpEfctLED = (0xFF00 & tmpEfctLED) | nowEfctLED;
   } // end if special configuration choice effects
 
   if ((mNONE != nowEfctLED) && (EFCT_IS_EEP(nowEfctLED)) && (nowEfctLED <= mEFCT_LAST_EEP_CONFIG)) {
@@ -256,13 +260,21 @@ void doPattern(uint16_t tmpEfctLED, uint16_t tmpSpecial, uint8_t tmpInit) {
     nowEfctLED += EEPROM.read(EEPOFFSET(nowEfctLED)+eeLEDSave);
   } // end if configurable LED pattern
 
+  // now convert "configuration" effect number to pattern effect number
   #if DEBUG_DPtrn
-  Serial.print(F(" DEBUG doPattern tmpEfctLED ")); Serial.print(tmpEfctLED); Serial.print(F(" tmpInit ")); Serial.print(tmpInit); Serial.print(F(" final myEfctLED ")); Serial.println(myEfctLED);
+  Serial.print(F(" DEBUG doPattern BEFORE lookupLEDpattern tmpEfctLED ")); Serial.print(tmpEfctLED); Serial.print(F(" tmpInit ")); Serial.print(tmpInit); Serial.print(F(" final nowEfctLED ")); Serial.print(nowEfctLED);
+  Serial.print(F(" lookup(-1) ")); Serial.print(lookupLEDpattern(nowEfctLED-1)); Serial.print(F(" lookupLEDpattern lookup(+0) ")); Serial.print(lookupLEDpattern(nowEfctLED)); Serial.print(F(" lookupLEDpattern lookup(+1) ")); Serial.println(lookupLEDpattern(nowEfctLED+1)); 
+  #endif // DEBUG_DPtrn
+  nowEfctLED = lookupLEDpattern(nowEfctLED);
+  tmpEfctLED = (0xFF00 & tmpEfctLED) | nowEfctLED;
+
+  #if DEBUG_DPtrn
+  Serial.print(F(" DEBUG doPattern AFTER  lookupLEDpattern tmpEfctLED ")); Serial.print(tmpEfctLED); Serial.print(F(" tmpInit ")); Serial.print(tmpInit); Serial.print(F(" final nowEfctLED ")); Serial.println(nowEfctLED);
   #endif // DEBUG_DPtrn
 
   switch (nowEfctLED) {
 
-    case PTRNLED_OFF: // 258 = OFF
+    case mEFCT_PTRNLED_OFF: // 254 = OFF
     default:
       if (0 != tmpInit) { // initialize
         for (uint8_t idx = 0; idx < NUM_RINGS_PER_DISK; idx++) {
@@ -271,7 +283,28 @@ void doPattern(uint16_t tmpEfctLED, uint16_t tmpSpecial, uint8_t tmpInit) {
       } // there is no "step"; just leave the LEDs off
       break;
 
-    case PTRNLED_pwron1: // RBG_diskDownTheDrainOrRotate counterclockwise, drain
+    case 1:
+      juggle();
+      break;
+
+    case 2:
+      rainbowWithGlitter();
+      break;
+
+    case 3:
+      RBG_bpm_rings();
+      break;
+
+    case 4: // RBG_diskDownTheDrainOrRotate(-1) disk, clockwise, rotate through
+      if (0 != tmpInit) { // initialize
+        RBG_ringRotateAndFade(mNONE, 0, windup1BrightSpots); // FIXME - initialization from other effect
+        RBG_diskDownTheDrainOrRotate(0);
+      } else { // step
+        RBG_diskDownTheDrainOrRotate(-1);
+      }
+      break;
+
+    case 5: // RBG_diskDownTheDrainOrRotate(2) disk, counterclockwise, drain, repeat
       if ((0 != tmpInit) || (numSteps > (10+NUM_LEDS_PER_DISK))) { // initialize
         RBG_ringRotateAndFade(mNONE, 0, windup1BrightSpots); // FIXME - initialization from other effect
         numSteps = 0;
@@ -281,7 +314,50 @@ void doPattern(uint16_t tmpEfctLED, uint16_t tmpSpecial, uint8_t tmpInit) {
       }
       break;
 
-    case PTRNLED_open1: // RBG_diskDownTheDrainOrRotate clockwise, rotate through
+    case 6: // RBG_juggle_numdot_ring(-4) rings, 4 dots
+      RBG_juggle_numdot_ring(-4);
+      break;
+
+    case 7: // RBG_juggle_numdot_ring(5); RBG_confetti_fadeby(128); disk, 5 dots, sparkle confetti
+      RBG_juggle_numdot_ring(5);
+      RBG_confetti_fadeby(128);
+      break;
+
+    case 8:
+      RBG_RailGunEffect(tmpInit, &led_BLUE);
+      break;
+
+    case 9:
+      RBG_RailGunEffect(tmpInit, &led_RED);
+      break;
+
+    case 10:
+      RBG_RailGunEffect(tmpInit, &led_GREEN);
+      break;
+
+    case 11:
+      RBG_confetti_fadeby(128);
+      break;
+
+    case 12:
+      bpm();
+      break;
+
+    case 13:
+      confetti();
+      break;
+/*
+    case PTRNLED_pwron1: // RBG_diskDownTheDrainOrRotate disk, counterclockwise, drain, repeat
+      if ((0 != tmpInit) || (numSteps > (10+NUM_LEDS_PER_DISK))) { // initialize
+        RBG_ringRotateAndFade(mNONE, 0, windup1BrightSpots); // FIXME - initialization from other effect
+        numSteps = 0;
+      } else { // step
+        RBG_diskDownTheDrainOrRotate(2);
+        numSteps += 1;
+      }
+      break;
+
+    case PTRNLED_open1: // RBG_diskDownTheDrainOrRotate disk, clockwise, rotate through
     case PTRNLED_lock1:
     case PTRNLED_uniq1:
       if (0 != tmpInit) { // initialize
@@ -299,31 +375,48 @@ void doPattern(uint16_t tmpEfctLED, uint16_t tmpSpecial, uint8_t tmpInit) {
 
     case PTRNLED_windup1:
       // rainbowWithGlitter();
-      juggle();
+      // juggle();
+      RBG_juggle_numdot_ring(5);
+      RBG_confetti_fadeby(128);
+      //addGlitter(100);
       break;
 
     case PTRNLED_wait1:
-       RBG_bpm_rings();
-       // confetti();
-       break;
-
-/*
-    case PTRNLED_ringRotateAndFade_windup1: // 3 = RBG_ringRotateAndFade windup pattern1
-      if (0 != tmpInit) { // initialize
-        RBG_ringRotateAndFade(mNONE, 0, windup1BrightSpots);
-      } else { // step
-        
-      }
-      break;
-    case 4: // 4 = 
-      if (0 != tmpInit) { // initialize
-      } else { // step
-        
-      }
+      // RBG_bpm_rings();
+      RBG_juggle_numdot_ring(-4);
+      // confetti();
       break;
 */
   } // end switch
 } // end doPattern()
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// lookupLEDpattern(nowEfctLED)
+//
+// nowEfctLED - "configured" LED pattern number. This already has EEPROM or CFG applied. Is not divisible by 10.
+//
+// The table used for this purpose is in PROGMEM
+//
+// returns: actual LED pattern number
+//
+uint16_t lookupLEDpattern(uint16_t nowEfctLED) {
+  TYPEOF_lookupLEDpatternTbl myRetVal;
+
+  nowEfctLED &= 0xFF; // must be 8 bits for actual pattern
+  if (nowEfctLED == mEFCT_PTRNLED_OFF) {
+    myRetVal = mEFCT_PTRNLED_OFF;
+  } else if ((nowEfctLED >= mEFCT_UNIQ) || (0 == nowEfctLED)) {
+    Serial.print(F("ERROR - lookupLEDpattern() out of range - ")); Serial.println(nowEfctLED);
+    myRetVal = mEFCT_PTRNLED_OFF;
+  } else {
+#if USE_PROGMEM
+    memcpy_P(&myRetVal, &lookupLEDpatternTbl[nowEfctLED-1], sizeof(lookupLEDpatternTbl[0]));
+#else // not USE_PROGMEM
+    myRetVal = lookupLEDpatternTbl[nowEfctLED-1];
+#endif // USE_PROGMEM
+  }
+  return(myRetVal);
+} // end lookupLEDpattern(nowEfctLED)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RBG_diskDownTheDrainOrRotate(direction) - 
@@ -594,6 +687,37 @@ void RBG_confetti_fadeby(uint8_t fadeVal) { // pattern from Demo Reel 100
   led_display[pos] += CHSV( gHue + random8(64), 200, 255);
 } // end confetti()
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// RBG_juggle_numdot_ring(numDots) - a variant of one of Mark Kriegsman's classic DemoReel100.ino patterns
+//
+// numDots: >0 - number of dots, travel entire disk
+//          <0 - number of dots, travel within rings
+//          =0 - same as 8
+//
+void RBG_juggle_numdot_ring(int8_t numDots) { // pattern from Demo Reel 100
+  // colored dots, weaving in and out of sync with each other
+  byte dothue = 0;
+
+  fadeToBlackBy( led_display, NUM_LEDS_PER_DISK, 20);
+  if (0 == numDots) { numDots = 8; }
+  if (0 < numDots) {
+    for( int i = 0; i < numDots; i++) {
+      led_display[beatsin16(i+7,0,NUM_LEDS_PER_DISK-1)] |= CHSV(dothue, 200, 255);
+      dothue += 32;
+    }
+  } else { // <0 means travel within rings
+    uint16_t tmp;
+    numDots = -numDots; // make it >0
+    if (numDots > MIN_LEDS_PER_RING) { numDots = MIN_LEDS_PER_RING; }
+    for ( uint8_t ring = 0; ring < NUM_RINGS_PER_DISK; ring++ ) {
+      for( int i = 0; i < numDots; i++) {
+        tmp = beatsin16(i+7,start_per_ring[ring],start_per_ring[ring]+leds_per_ring[ring]-1);
+        led_display[tmp] |= CHSV(dothue, 200, 255);
+        dothue += 32;
+      } // end for dots
+    } // end for rings
+  } // end if rings or whole disk
+} // end RBG_juggle_numdot_ring()
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -883,12 +1007,9 @@ void RBG_specialProcConfigStart(uint16_t tmpStoreAddr) {
 void RBG_specialProcConfigNext() {
   // go to next choice in list of choices. Loop if needed.
   #if DEBUG_CONFIG
-  Serial.print(F(" RBG_specialProcConfigNext B4 cfg_curnum ")); Serial.print((uint16_t) myState.cfg_curnum); Serial.print(F(" cfg_maxnum ")); Serial.println((uint16_t) myState.cfg_maxnum);
+  Serial.print(F(" RBG_specialProcConfigNext B4 cfg_curnum ")); Serial.print((uint16_t) myState.cfg_curnum); Serial.print(F(" cfg_maxnum ")); Serial.print((uint16_t) myState.cfg_maxnum);
   #endif // DEBUG_CONFIG
   if (myState.cfg_curnum >= myState.cfg_maxnum) {
-    #if DEBUG_CONFIG
-    Serial.print(F(" RBG_specialProcConfigNext B4 ")); Serial.print((uint16_t) myState.cfg_curnum); Serial.print(F(" cfg_maxnum ")); Serial.println((uint16_t) myState.cfg_maxnum);
-    #endif // DEBUG_CONFIG
     myState.cfg_curnum = 1;
   } else {
     myState.cfg_curnum += 1;
@@ -973,9 +1094,13 @@ void RBG_specialProcSolenoid() {
 void RBG_startEffectLED(uint16_t tmpEfctLED, uint16_t tmpSpecial) {
   uint16_t myEfctLED = tmpEfctLED & 0x00FF; // just the effect number; allows bits later
 
-  if (mNONE != myEfctLED) {
+  if ((mNONE != myEfctLED) ||
+      ((0 != (mSPCL_EFCT_CONFIGURE & tmpSpecial)) && (mNONE != myState.cfg_category) && (mNONE == myEfctLED))) {
     #if DEBUG_STATE_MACHINE
     Serial.print(F(" RBG_startEffectLED ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" EFCT num ")); Serial.print(tmpEfctLED); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
+    if ((0 != (mSPCL_EFCT_CONFIGURE & tmpSpecial)) && (mCFG_CATEGORY_LEDPTRN == myState.cfg_category) && (mNONE == myEfctLED)) {
+      Serial.print(F(" RBG_startEffectLED mSPCL_EFCT_CONFIGURE cfg_curnum ")); Serial.print((uint16_t) myState.cfg_curnum); Serial.print(F(" cfg_type2save ")); Serial.print((uint16_t) myState.cfg_type2save); Serial.print(F(" myEfctLED ")); Serial.println((uint16_t) myEfctLED);
+    }
     #endif // DEBUG_STATE_MACHINE
     doPattern(tmpEfctLED, tmpSpecial, 1); // doPattern figures out EEPROM configuration and configuration choice effects
   }
@@ -986,7 +1111,8 @@ void RBG_startEffectLED(uint16_t tmpEfctLED, uint16_t tmpSpecial) {
 //
 // tmpEfctSound is two fields: 0x00vv00nn where nn is sound and vv is volume
 //       FIXME - volume not implemented yet
-// If the row says mSPCL_EFCT_CONFIGURE and efctSound is mNONE and cfg_category is mCFG_CATEGORY_SOUND then we use the configuration variables
+// If the row says mSPCL_EFCT_CONFIGURE and efctSound is mNONE and cfg_category is mCFG_CATEGORY_SOUND then we use the cfg_current to pick sound
+// If the row says mSPCL_EFCT_CONFIGURE and efctSound is mNONE and cfg_category is not mCFG_CATEGORY_SOUND, then we use cfg_type to pick sound
 //
 // Had lots of trouble with reliable operation using playMp3Folder. Came to conclusion
 //    that it is best to use the most primitive of YX5200 commands.
@@ -1011,6 +1137,17 @@ void  RBG_startEffectSound(uint16_t tmpEfctSound, uint16_t tmpSpecial) {
     tmpEfctSound = (0xFF00 & tmpEfctSound) + mySound;
     myVolume = 25;
     Serial.print(F(" RBG_startEffectSound mSPCL_EFCT_CONFIGURE cfg_curnum ")); Serial.print((uint16_t) myState.cfg_curnum); Serial.print(F(" cfg_type2save ")); Serial.print((uint16_t) myState.cfg_type2save); Serial.print(F(" mySound ")); Serial.println((uint16_t) mySound);
+  } else if ((0 != (mSPCL_EFCT_CONFIGURE & tmpSpecial)) && (mCFG_CATEGORY_SOUND != myState.cfg_category) && (mNONE == tmpEfctSound)) {
+    if (mCFG_CATEGORY_LEDPTRN == myState.cfg_category2save) {
+      mySound = mEFCT_UNIQ_CFG_EFFECT;
+      tmpEfctSound = (0xFF00 & tmpEfctSound) + mySound;
+      myVolume = 25;
+    } else {
+      mySound = mEFCT_UNIQ_NOT_IMPL;
+      tmpEfctSound = (0xFF00 & tmpEfctSound) + mySound;
+      myVolume = 25;
+      Serial.print(F(" RBG_startEffectSound mSPCL_EFCT_CONFIGURE ERROR - unprogrammed cfg_category2save ")); Serial.println((uint16_t) myState.cfg_category2save); 
+    }
   } // end if special configuration effects
 
   // myVolume is [0-31]. 0 means default; else subtract one to make [0-30]
