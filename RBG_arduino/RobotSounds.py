@@ -73,6 +73,7 @@ def readSounds():
         if len(row_index_fname) > 0:
             print("espeak -g 5 -v en-us -w raw_%s \"%s\"" % (row_index_fname, row_index_Desc))
     print("\nespeak -g 5 -v en-us -w totString.wav \"%s\"" % totString)
+
 if __name__ == "__main__":
     readSounds()
 

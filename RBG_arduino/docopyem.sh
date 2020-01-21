@@ -63,8 +63,8 @@ cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0062__mdo47__cfg_introtocon
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0063__mdo47__cfg_configcateginstruct.wav H:/063.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0064__mdo47__cfg_configwheninstruct.wav H:/064.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0065__mdo47__cfg_configeffectinstruct.wav H:/065.wav
-cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0066__mdo47__cfg_configaccepted.wav H:/066.wav
-cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0101__mdo47__silence.wav H:/067.wav
+cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0066__mdo47__cfg_led2choose.wav H:/066.wav
+cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0067__mdo47__cfg_configaccepted.wav H:/067.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0101__mdo47__silence.wav H:/068.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0101__mdo47__silence.wav H:/069.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0101__mdo47__silence.wav H:/070.wav

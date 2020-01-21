@@ -252,10 +252,8 @@ void doPattern(uint16_t tmpEfctLED, uint16_t tmpSpecial, uint8_t tmpInit) {
 
   if ((mNONE == nowEfctLED) && (0 != (mSPCL_EFCT_CONFIGURE & tmpSpecial)) && (mNONE != myState.cfg_curnum)) {
     // handle configuration choice effects
-    nowEfctLED = myState.cfg_curnum + myState.cfg_category;
-  } // end if special configuration choice effects
-
-  if ((mNONE != nowEfctLED) && (EFCT_IS_EEP(nowEfctLED)) && (nowEfctLED <= mEFCT_LAST_EEP_CONFIG)) {
+    nowEfctLED = myState.cfg_curnum + myState.cfg_type2save;
+  } else if ((mNONE != nowEfctLED) && (EFCT_IS_EEP(nowEfctLED)) && (nowEfctLED <= mEFCT_LAST_EEP_CONFIG)) {
     // configurable LED patterns are zero mod 10; we get config from EEPROM
     nowEfctLED += EEPROM.read(EEPOFFSET(nowEfctLED)+eeLEDSave);
   } // end if configurable LED pattern
@@ -1139,7 +1137,7 @@ void  RBG_startEffectSound(uint16_t tmpEfctSound, uint16_t tmpSpecial) {
     Serial.print(F(" RBG_startEffectSound mSPCL_EFCT_CONFIGURE cfg_curnum ")); Serial.print((uint16_t) myState.cfg_curnum); Serial.print(F(" cfg_type2save ")); Serial.print((uint16_t) myState.cfg_type2save); Serial.print(F(" mySound ")); Serial.println((uint16_t) mySound);
   } else if ((0 != (mSPCL_EFCT_CONFIGURE & tmpSpecial)) && (mCFG_CATEGORY_SOUND != myState.cfg_category) && (mNONE == tmpEfctSound)) {
     if (mCFG_CATEGORY_LEDPTRN == myState.cfg_category2save) {
-      mySound = mEFCT_UNIQ_CFG_EFFECT;
+      mySound = mEFCT_UNIQ_CFG_LED2CHOOSE;
       tmpEfctSound = (0xFF00 & tmpEfctSound) + mySound;
       myVolume = 25;
     } else {

@@ -145,7 +145,8 @@ template <typename T> int sgn(T val) {
 #define mEFCT_UNIQ_CFG_CATEGORY         63 // Now choose which effect category: sounds or LED patterns. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow or Green button then press trigger. To exit configuration, hold down Red button then press trigger.
 #define mEFCT_UNIQ_CFG_TYPE             64 // Now choose when the effect happens. This list includes when powering-on, when shooting, etc. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow or Green button then press trigger. To exit configuration, hold down Red button then press trigger.
 #define mEFCT_UNIQ_CFG_EFFECT           65 // Now choose the effect itself. This list cycles through the effects one by one. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow or Green button then press trigger. To exit configuration, hold down Red button then press trigger.
-#define mEFCT_UNIQ_CFG_ACCEPT           66 // Your choice has been saved into the default settings.
+#define mEFCT_UNIQ_CFG_LED2CHOOSE       66 // This is an LED pattern you can choose. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow or Green button then press trigger. To exit configuration, hold down Red button then press trigger.
+#define mEFCT_UNIQ_CFG_ACCEPT           67 // Your choice has been saved into the default settings.
 
 #define mEFCT_UNIQ_CFG_WINDUP_DESCRIP   71 // The effect happens during wind-up to shooting
 #define mEFCT_UNIQ_CFG_SHOOT_DESCRIP    72 // The effect happens during shooting itself
