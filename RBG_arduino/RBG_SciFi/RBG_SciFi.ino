@@ -86,7 +86,8 @@
 
 #define DEBUG_SHOW_MSEC 1                    // use globalLoopCount for millis() display not loopcount
 #define DONOTEXPLAINBITS 1                   // don't explain the bits - existing routine uses too much RAM
-#define DEBUGALL_GLOBAL 1                    // sets many of the following
+
+#define DEBUGALL_GLOBAL 0                    // sets many of the following
 #define DEBUG_STATE_MACHINE (0 | DEBUGALL_GLOBAL) // 1 to show state machine internals for transitions
 #define DEBUG_INPUTS (0 | DEBUGALL_GLOBAL)        // 1 to show all inputs
 #define DEBUG_CONFIG (0 | DEBUGALL_GLOBAL)        // 1 to show all CONFIGURATION special activity
@@ -239,7 +240,7 @@ void loop() {
 // If tmpSpecial says mSPCL_EFCT_CONFIGURE and efctSound == mNONE and cfg_curnum != mNONE then we use the configuration variables
 // If tmpEfctLED is an EEPROM configurable pattern (divisible by 10) then configure it
 //
-#define DEBUG_DPtrn 1
+#define DEBUG_DPtrn 0
 //
 void doPattern(uint16_t tmpEfctLED, uint16_t tmpSpecial, uint8_t tmpInit) {
 //  static uint16_t prevEfctLED = mNONE;
