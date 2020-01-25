@@ -870,8 +870,10 @@ uint16_t RBG_waitForInput(uint16_t tmpVinputRBG) {
 
     if ((mNONE != waitRow.SPECIAL) && (0 != (waitRow.SPECIAL & mSPCL_HANDLER))) { // special handler
       // no sounds no LEDs for mSPCL_HANDLER; it gets called exactly once
-      RBG_specialProcessing(tmpVinputRBG, waitRow.SPECIAL, waitRow.storeVal, waitRow.storeAddr);
-      thisReturn = waitRow.gotoWithoutInput; // this one uses WithoutInput not OnInput
+      thisReturn = RBG_specialProcessing(tmpVinputRBG, waitRow.SPECIAL, waitRow.storeVal, waitRow.storeAddr);
+      if (mNONE == thisReturn) {
+        thisReturn = waitRow.gotoWithoutInput; // this one uses WithoutInput not OnInput
+      }
       Serial.print(F(" RBG_waitForInput mSPCL_HANDLER thisReturn ")); Serial.print(thisReturn); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
       break;
     } else if ((0 != (waitRow.SPECIAL&mSPCL_EFCT_ONETIME)) && (0 == (tmpVinputRBG&mVINP_SOUNDACTV))) {
@@ -927,9 +929,13 @@ uint16_t RBG_waitForInput(uint16_t tmpVinputRBG) {
 // RBG_specialProcessing(tmpVinputRBG, tmpSpecial, tmpStoreVal, tmpStoreAddr)
 //   do the SPECIAL processing - mostly the solenoid stuff
 //
+// return mNONE to have next level up decide where to jump
+// otherwise return an mROW value
+//
 uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSpecial, uint16_t tmpStoreVal, uint16_t tmpStoreAddr) {
   uint16_t myVinputRBG = tmpVinputRBG;
   uint16_t mySpec = tmpSpecial & (mSPCL_HANDLER-1);
+  uint16_t myRet = mNONE;
 
   switch (mySpec) {
     case mSPCL_HANDLER_SHOOT:
@@ -947,11 +953,17 @@ uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSpecial, uint1
     case mSPCL_HANDLER_CFG2STORAGE:
       RBG_specialProcConfig2Storage();
       break;
+    case mSPCL_HANDLER_CFG2STORAGESKIP:
+      myRet = RBG_specialProcConfig2Storage();
+      break;
+    case mSPCL_HANDLER_CFG2CPYRST:
+      myRet = RBG_specialProcConfig2Storage();
+      break;
     default:
       Serial.print(F(" RBG_specialProcessing ERROR ln ")); Serial.print((uint16_t) __LINE__);  Serial.print(F(" mySpec ")); Serial.print(mySpec);  Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
       break;
   } // end switch on type of special
-  return(myVinputRBG);
+  return(myRet);
 } // end RBG_specialProcessing(uint16_t tmpVinputRBG)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1022,14 +1034,17 @@ void RBG_specialProcConfigNext() {
 // RBG_specialProcConfig2Storage() - store choice in proper place in EEPROM
 //
 //   All RBG_specialProcXxx routines get called exactly one time then move to .gotoWithoutInput
+//      UNLESS caller decides to use the return myRet as an mROW to jump to
 //
-void RBG_specialProcConfig2Storage() {
+uint16_t RBG_specialProcConfig2Storage() {
   // store choice in either EEPROM or myState
+  uint16_t myRet = mNONE; // flag not to use the return category
 
   switch (myState.cfg_addr) { //  mADDR_CFG_CATEGORY, mADDR_CFG_TYPE, mADDR_CFG_EFFECT
     case mADDR_CFG_CATEGORY:
       myState.cfg_category = mCFG_CATEGORY_SOUND; // so we can speak choices
       myState.cfg_category2save = myState.cfg_curnum;
+      myRet = myState.tableRow + myState.cfg_curnum; // we could skip by the choice number
       break;
     case mADDR_CFG_TYPE:
       myState.cfg_type = myState.cfg_type2save = (myState.cfg_curnum-1) * 10; // reconstruct type
@@ -1055,10 +1070,16 @@ void RBG_specialProcConfig2Storage() {
       eeprom_store_with_chksum(eepromBase+EEPOFFSET(myState.cfg_type2save), myState.cfg_curnum);
       myState.cfg_maxnum =  myState.cfg_category = myState.cfg_category2save = myState.cfg_type = myState.cfg_type2save = mNONE;
       break;
+    case mADDR_CFG_CPY_RST:
+      myState.cfg_category = mCFG_CATEGORY_SOUND; // so we can speak choices
+      myState.cfg_type = myState.cfg_type2save = mEFCT_UNIQ_CFG_MGMT_01 - (mEFCT_UNIQ_CFG_MGMT_01 % 10); // do the config copies and factory reset choices
+      myRet = myState.tableRow + myState.cfg_curnum; // we could skip by the choice number
+      break;
     default:
       Serial.print(F(" RBG_specialProcConfig2Eeprom ERROR bad myState.cfg_addr ")); Serial.print((uint16_t) myState.cfg_addr);
       break;
   } // end switch on myState.cfg_addr
+  return(myRet);
 } // end RBG_specialProcConfig2Storage()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////

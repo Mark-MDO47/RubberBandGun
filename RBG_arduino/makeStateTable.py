@@ -232,17 +232,20 @@ def make_state_table():
           + "\n#define mSPCL_HANDLER_CFGSTART     4 // configuration - store value at address"
           + "\n#define mSPCL_HANDLER_CFGNEXT      5 // configuration - go to next value at address"
           + "\n#define mSPCL_HANDLER_CFG2STORAGE  6 // configuration - install current config num in EEPROM or myState"
+          + "\n#define mSPCL_HANDLER_CFG2STORAGESKIP 7 // configuration - store current config num in EEPROM or myState, skip number based on choice"
+          + "\n#define mSPCL_HANDLER_CFG2CPYRST   8 // configuration - use current config num to manage EEPROM with copy or reset, then clear out configuration states"
           + "\n// these are used with mSPCL_HANDLER_START and _NEXT"
           + "\n#define mADDR_CFG_CATEGORY         1 // for looping through SOUND or LED PATTERN"
           + "\n#define mADDR_CFG_TYPE             2 // for looping through number groups: shooting, open, close, etc."
           + "\n#define mADDR_CFG_EFFECT           3 // for looping through the effects for that CATEGORY and TYPE"
-          + "\n#define mEFCT_TYPE_CFG_STOREADDR_MAX mADDR_CFG_EFFECT // .storeAddr - maximum value"
+          + "\n#define mADDR_CFG_CPY_RST          4 // configuration copies and factory resets"
+          + "\n#define mADDR_CFG_ADVANCED         5 // advanced configuration"
+          + "\n#define mEFCT_TYPE_CFG_STOREADDR_MAX mADDR_CFG_ADVANCED // .storeAddr - maximum value"
           + "\n\n// define the symbols - .blkFlags:"
           + "\n#define mBLOCKSTART 0x80"
           + "\n#define mBLOCKEND   0x40"
           + "\n\n// define the symbols - .index: first the single constant mROW_POWERON one, then the others:"
           + "\n#define mROW_POWERON 0  // first address in myStateTable[]") # no \n; there are more lines on the way
-
 
     print_debug("Pass 2 found_symbols")
     prevKey = ""
