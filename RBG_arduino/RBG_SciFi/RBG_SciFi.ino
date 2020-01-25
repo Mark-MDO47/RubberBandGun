@@ -918,6 +918,18 @@ uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSpecial, uint1
     case mSPCL_HANDLER_CFG2CPYRST:
       RBG_specialProcConfig2Storage();
       break;
+    case mSPCL_HANDLER_FACT2RUN:
+      eeprom_factory_init(EEPROM_CONFIG_RUNNING);
+      break;
+    case mSPCL_HANDLER_FACT2ALL:
+      eeprom_factory_init(EEPROM_PROCESS_ALL_CONFIG);
+      break;
+    case mSPCL_HANDLER_RUN2ONE:
+    case mSPCL_HANDLER_RUN2TWO:
+    case mSPCL_HANDLER_RUN2THREE:
+    case mSPCL_HANDLER_ONE2RUN:
+    case mSPCL_HANDLER_TWO2RUN:
+    case mSPCL_HANDLER_THREE2RUN:
     default:
       Serial.print(F(" RBG_specialProcessing ERROR ln ")); Serial.print((uint16_t) __LINE__);  Serial.print(F(" mySpec ")); Serial.print(mySpec);  Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
       break;

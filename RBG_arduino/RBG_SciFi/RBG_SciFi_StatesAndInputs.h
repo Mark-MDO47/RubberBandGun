@@ -61,6 +61,16 @@ template <typename T> int sgn(T val) {
 #define mSPCL_HANDLER_CFG2STORAGE  6 // configuration - install current config num in EEPROM or myState
 #define mSPCL_HANDLER_CFG2STORAGESKIP 7 // configuration - store current config num in EEPROM or myState, skip number based on choice
 #define mSPCL_HANDLER_CFG2CPYRST   8 // configuration - use current config num to manage EEPROM with copy or reset, then clear out configuration states
+
+#define mSPCL_HANDLER_FACT2RUN     9 // configuration - factory setting to running configuration
+#define mSPCL_HANDLER_FACT2ALL    10 // configuration - factory setting to all saved configuration
+#define mSPCL_HANDLER_RUN2ONE     11 // configuration - running configuration to saved config one
+#define mSPCL_HANDLER_RUN2TWO     12 // configuration - running configuration to saved config 
+#define mSPCL_HANDLER_RUN2THREE   13 // configuration - running configuration to saved config 
+#define mSPCL_HANDLER_ONE2RUN     14 // configuration - saved configuration one to running config
+#define mSPCL_HANDLER_TWO2RUN     15 // configuration - saved configuration two to running config
+#define mSPCL_HANDLER_THREE2RUN   16 // configuration - saved configuration three to running config
+
 // these are used with mSPCL_HANDLER_START and _NEXT
 #define mADDR_CFG_CATEGORY         1 // for looping through SOUND or LED PATTERN
 #define mADDR_CFG_TYPE             2 // for looping through number groups: shooting, open, close, etc.
@@ -107,7 +117,7 @@ template <typename T> int sgn(T val) {
 #define mROW_CFG_CPY_RST_LOOP 59
 #define mROW_CFG_CPY_RST_NEXT 62
 #define mROW_CFG_CPY_RST_CHOICE 63
-#define mROW_CFG_ADVANCED 64
+#define mROW_CFG_ADVANCED 72
 
 // define the effect number ranges - must be divisible by 10
 #define mEFCT_WIND_UP       0  // 001 to 009 - wind-up effects
@@ -374,7 +384,7 @@ typedef struct _RBGStateTable_t {
 //
 // the state table itself - automatically generated from makeStateTable.py
 //
-static const RBGStateTable_t myStateTable[65]
+static const RBGStateTable_t myStateTable[73]
 #if USE_PROGMEM
   PROGMEM
 #endif // end USE_PROGMEM
@@ -442,6 +452,14 @@ static const RBGStateTable_t myStateTable[65]
       { /* row 60 mROW_CFG_CPY_RST_LOOP */  .blkFlags=mZERO, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_CFG_CATEGORY, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG|mINP_BANY|mINP_B01|mINP_B02, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_CPY_RST_CHOICE, .gotoWithoutInput=mNONE, },
       { /* row 61 mROW_CFG_CPY_RST_LOOP */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_CFG_CATEGORY, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG|mINP_B04, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_MENU, .gotoWithoutInput=mNONE, },
       { /* row 62 mROW_CFG_CPY_RST_NEXT */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFGNEXT | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_CPY_RST_LOOP, },
-      { /* row 63 mROW_CFG_CPY_RST_CHOICE */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFG2CPYRST | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_EFFECT, },
-      { /* row 64 mROW_CFG_ADVANCED */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_UNIQ_NOT_IMPL, .efctLED=mEFCT_WAIT, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_MENU, },
+      { /* row 63 mROW_CFG_CPY_RST_CHOICE */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFG2CPYRST | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_POWERON, },
+      { /* row 64 mROW_CFG_CPY_RST_SKIP1 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_FACT2RUN | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_POWERON, },
+      { /* row 65 mROW_CFG_CPY_RST_SKIP2 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_FACT2ALL | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_POWERON, },
+      { /* row 66 mROW_CFG_CPY_RST_SKIP3 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_RUN2ONE | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_POWERON, },
+      { /* row 67 mROW_CFG_CPY_RST_SKIP4 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_RUN2TWO | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_POWERON, },
+      { /* row 68 mROW_CFG_CPY_RST_SKIP5 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_RUN2THREE | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_POWERON, },
+      { /* row 69 mROW_CFG_CPY_RST_SKIP6 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_ONE2RUN | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_POWERON, },
+      { /* row 70 mROW_CFG_CPY_RST_SKIP7 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_TWO2RUN | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_POWERON, },
+      { /* row 71 mROW_CFG_CPY_RST_SKIP8 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_THREE2RUN | mSPCL_EFCT_NONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_POWERON, },
+      { /* row 72 mROW_CFG_ADVANCED */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_UNIQ_NOT_IMPL, .efctLED=mEFCT_WAIT, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_MENU, },
 }; // end definition of myStateTable[]
