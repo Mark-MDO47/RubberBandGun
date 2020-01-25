@@ -41,18 +41,6 @@ template <typename T> int sgn(T val) {
 #define DPIN_SOLENOID    13  // often has internal LED and resistor soldered to board, can make INPUT not work
 
 
-
-// values that can be stored in EEPROM (FIXME THIS MAY CHANGE)
-#define VYBG 0x10    // whatever is in DPIN_BTN_YELLOW and DPIN_BTN_GREEN and DPIN_BTN_RED (0 thru 7)
-#define V00  0x00    // the value 0
-#define V01  0x01    // the value 1
-#define V02  0x02    // the value 2
-#define V03  0x03    // the value 3
-#define V04  0x04    // the value 4
-#define V05  0x05    // the value 5
-#define V06  0x06    // the value 6
-#define V07  0x07    // the value 7
-
 /////////////////// start -> INPUTS 1 FROM makeStateTable.py <- //////////////////////////////////
 
 // define the symbols - general use symbols:
@@ -135,9 +123,72 @@ template <typename T> int sgn(T val) {
 #define mMASK_EFCT_SND_NUM 255  // mask for sound number
 #define mSHIFT_EFCT_SND_VOL 8  // shift for volume
 #define mMASK_EFCT_SND_VOL 31   // mask for volume once shifted in place
-#define mDEFAULT_EFCT_SND_VOL 25  // default volume - 25 is pretty good
+#define mDEFAULT_EFCT_SND_VOL 15  // default volume - 25 is pretty good
 
 /////////////////// end -> INPUTS 1 FROM makeStateTable.py <- //////////////////////////////////
+
+// Storage of configuration into EEPROM
+//
+// There are four EEPROM configurations:
+//    0: running configuration
+//    1: saved auxilliary configuration 1
+//    2: saved auxilliary configuration 2
+//    3: saved auxilliary configuration 3
+// There is a factory configuration for each of the EEPROM configurations
+#define EEPROM_PROCESS_ALL_CONFIG 0x20 // really it is just an arbitrary number
+#define EEPROM_CONFIG_RUNNING        0 //
+#define EEPROM_SAVED_ONE             1 //
+#define EEPROM_SAVED_TWO             2 //
+#define EEPROM_SAVED_THREE           3 //
+#define EEPROM_SAVED_FIRST EEPROM_SAVED_ONE   //
+#define EEPROM_SAVED_LAST  EEPROM_SAVED_THREE //
+#define NUM_EEPROM_CONFIGURATIONS    4   // total number of EEPROM configurations: 0 to 3
+//
+// At this time, the EEPROM configurations only implement choices for the effects: SOUNDS or LED PATTERNS.
+//       I am reserving EEPROM_VOLUME_CONFIG for later volume configuration FIXME
+//    The choices for effects are in ranges of 10 decimal (example: mEFCT_SHOOT is 10, but choices of shoot must be 11 <= choice <= 19)
+//    These #defs will convert or test these ranges
+#define EEPOFFSET(parm)   ((uint16_t) (parm / 10)) // example: EEPOFFSET(mEFCT_SHOOT) = 1
+#define EFCT_IS_EEP(parm) (0 == ((uint16_t) parm) % 10) // if (EFCT_IS_EEP(mEFCT_PWRON)) will be true
+//
+// EEPROM addresses within a single configuration
+// EEPROM[EEPROM_START_SOUND_CONFIGS+idx] idx: 0 WindUp, 1 Shoot, 2 Open, 3 Load, 4 PowerUp, 5 Wait
+// EEPROM[EEPROM_START_LED_CONFIGS  +idx] idx: 0 WindUp, 1 Shoot, 2 Open, 3 Load, 4 PowerUp, 5 Wait
+// EEPROM[EEPROM_INVERTED_CHKSM] is checksum byte
+//
+// Important global offsets within a single configuration
+#define EEPROM_START_SOUND_CONFIGS    0x0000 // EEPROM starting address for sound configuration
+#define EEPROM_VOLUME_CONFIG          0x000e // EEPROM address for volume default
+#define EEPROM_START_LED_CONFIGS      0x0010 // EEPROM starting address for LED pattern configuration
+#define EEPROM_LAST_NON_CHKSM           0x1E // EEPROM address of last non-checksum data
+#define EEPROM_INVERTED_CHKSM           0x1F // EEPROM address of checksum data
+#define EEPROM_BYTES_PER_CONFIG (EEPROM_INVERTED_CHKSM+1)
+//
+// Factory Settings: see tab "FactorySettings" in StateTable_minimal.xlsx
+#define NUM_EEPROM_EFFECT_TYPES (1 + EEPOFFSET(mEFCT_LAST_EEP_CONFIG)) // at this time, total of six EEPROM configurable effect types
+
+static const uint8_t factory_effect_configs[NUM_EEPROM_CONFIGURATIONS][EEPROM_BYTES_PER_CONFIG]
+#if USE_PROGMEM
+  PROGMEM
+#endif // end USE_PROGMEM
+  = {
+/* 0 SOUND */    1, 1, 6, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 25,
+/* 0 LED PTRN */ 3, 1, 5, 1, 1, 7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+/* 1 SOUND */    4, 4, 5, 4, 2, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 25,
+/* 1 LED PTRN */ 6, 2, 4, 6, 2, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+/* 2 SOUND */    5, 7, 4, 5, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 25,
+/* 2 LED PTRN */ 1, 3, 1, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+/* 3 SOUND */    3, 2, 3, 6, 4, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 25,
+/* 3 LED PTRN */ 5, 8, 6, 2, 7, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+};
+
+
+static const uint8_t fact_LED_patterns[NUM_EEPROM_CONFIGURATIONS][NUM_EEPROM_EFFECT_TYPES] = {
+/* 0 LED PTRN */ { 3, 1, 5, 1, 1, 7 },
+/* 1 LED PTRN */ { 6, 2, 4, 6, 2, 6 },
+/* 2 LED PTRN */ { 1, 3, 1, 3, 3, 1 },
+/* 3 LED PTRN */ { 5, 8, 6, 2, 7, 3 }
+}; // end fact_LED_patterns[NUM_EEPROM_CONFIGURATIONS][NUM_EEPROM_EFFECT_TYPES]
 
 //
 // we don't really need  ALL these definitions since the ones below 60 are a configurable sounds
@@ -191,18 +242,6 @@ template <typename T> int sgn(T val) {
 #define mEFCT_UNIQ_CFG_ENTER_PASSWORD    107 // Please state password loudly, then press trigger.
 #define mEFCT_UNIQ_CFG_ENTER_DANCE       108 // I could not understand your password, please enter password by interpretive dance, then press trigger.
 #define mEFCT_UNIQ_CFG_SORRY_NO_PASSWORD 109 // Sorry, I don't have a password, but you dance very well. Please press trigger.
-
-// EEPROM addresses
-// EEPROM[eeSoundSave+idx] idx: 0 WindUp, 1 Shoot, 2 Open, 3 Load, 4 PowerUp, 8 Configure
-#define eeSoundSave    0x0000 // EEPROM starting address for sound configuration
-#define eeSoundVolDef  0x000f // EEPROM address for volume default
-#define eeLEDSave      0x0010 // EEPROM starting address for LED pattern configuration
-#define eeLastNonChksum  0x1E // EEPROM address of last non-checksum data
-#define eeInvertedChksum 0x1F // EEPROM address of checksum data
-
-#define EEPOFFSET(parm)   ((uint16_t) (parm / 10)) // example: EEPOFFSET(mEFCT_SHOOT) = 1
-#define EFCT_IS_EEP(parm) (0 == ((uint16_t) parm) % 10) // if (EFCT_IS_EEP(mEFCT_PWRON)) will be true
-
 
 typedef struct _decodeBits_t { uint16_t theBit; const char * theText; } decodeBits_t;
 
@@ -326,7 +365,7 @@ typedef struct _RBGStateTable_t {
     uint16_t inputRBG;         // mask for input expected
     uint16_t storeVal;         // value to store, 8 bit uint
     uint16_t storeAddr;        // address to store; includes mask for mFUNC, mVAL,
-                               //   eeSoundSave|mFUNC: idx= 3 WindUp, 2 Shoot, 4 Open, 7 Load
+                               //   EEPROM_START_SOUND_CONFIGS|mFUNC: idx= 3 WindUp, 2 Shoot, 4 Open, 7 Load
     uint16_t gotoOnInput;      // index within table to go with matching input
     uint16_t gotoWithoutInput; // index within table to go without waiting for input
     // uint16_t index;            // input column unused in this table
