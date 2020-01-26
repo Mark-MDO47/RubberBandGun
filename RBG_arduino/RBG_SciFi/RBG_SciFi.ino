@@ -1434,7 +1434,7 @@ void eeprom_store_with_chksum(int address, uint8_t byteValue) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // eeprom_factory_init(configToProc)
-//   set requested EEPROM configurations to factory reset state - including special case for EEPROM_VOLUME_CONFIG
+//   set requested EEPROM configurations to factory reset state
 // configToProc - can be EEPROM_PROCESS_ALL_CONFIG or just one of the configs 0 <= config < NUM_EEPROM_CONFIGURATIONS
 //
 void eeprom_factory_init(uint8_t configToProc) {
@@ -1463,9 +1463,7 @@ void eeprom_factory_init(uint8_t configToProc) {
 #else // not USE_PROGMEM
     memcpy(&effectConfigs, &factory_effect_configs[this_config_start], EEPROM_BYTES_PER_CONFIG);
 #endif // use, not USE_PROGMEM
-    // special case for EEPROM_VOLUME_CONFIG
-    effectConfigs[EEPROM_VOLUME_CONFIG] = mDEFAULT_EFCT_SND_VOL;
-    copy_ram_to_eeprom(&effectConfigs, configToProc);
+    copy_ram_to_eeprom(effectConfigs, configToProc);
   } // end for all configurations we should factory initialize
 }; // end eeprom_factory_init(configToProc)
 
@@ -1496,7 +1494,7 @@ void copy_ram_to_eeprom(uint8_t *ramAddr, uint8_t configToProc) {
 // fromConfigToProc - must be just one of the configs 0 <= config < NUM_EEPROM_CONFIGURATIONS
 // toConfigToProc   - must be just one of the configs 0 <= config < NUM_EEPROM_CONFIGURATIONS
 // 
-void copy_ram_to_eeprom(uint8_t fromConfigToProc, uint8_t toConfigToProc) {
+void copy_eeprom_to_eeprom(uint8_t fromConfigToProc, uint8_t toConfigToProc) {
   uint8_t desiredValue, nowValue;
   uint16_t address;
 
@@ -1510,7 +1508,7 @@ void copy_ram_to_eeprom(uint8_t fromConfigToProc, uint8_t toConfigToProc) {
   } // end zero out our EEPROM area except last value
   desiredValue  = EEPROM.read(EEPROM_LAST_NON_CHKSM + fromConfigToProc*EEPROM_BYTES_PER_CONFIG);
   eeprom_store_with_chksum(EEPROM_LAST_NON_CHKSM + toConfigToProc*EEPROM_BYTES_PER_CONFIG, desiredValue); // store last value and checksum
-} // end copy_ram_to_eeprom(ramAddr, configToProc)
+} // end copy_eeprom_to_eeprom(ramAddr, configToProc)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // printAllMyState() - print (almost) ALL states
