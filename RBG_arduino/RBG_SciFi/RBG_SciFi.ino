@@ -170,6 +170,7 @@ void setup() {
 
   // if needed, initialize EEPROM variables
   eeprom_check_init(EEPROM_PROCESS_ALL_CONFIG);
+  eeprom_factory_init(EEPROM_PROCESS_ALL_CONFIG);
 
   printAllMyState();
   printAllMyInputs();
@@ -916,7 +917,7 @@ uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSpecial, uint1
       myRet = RBG_specialProcConfig2Storage();
       break;
     case mSPCL_HANDLER_CFG2CPYRST:
-      RBG_specialProcConfig2Storage();
+      myRet = RBG_specialProcCfgCpyRst_skip();
       break;
     case mSPCL_HANDLER_FACT2RUN:
       eeprom_factory_init(EEPROM_CONFIG_RUNNING);
@@ -1052,6 +1053,18 @@ uint16_t RBG_specialProcConfig2Storage() {
   } // end switch on myState.cfg_addr
   return(myRet);
 } // end RBG_specialProcConfig2Storage()
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// RBG_specialProcCfgCpyRst_skiprocShoot() - do the solenoid for shooting
+//    implements the skip based on the choice of factory resets or configuration copies
+//    then cleans up from being in configuration
+// returns next row to go to
+//
+uint16_t RBG_specialProcCfgCpyRst_skip() {
+  uint16_t myRet = myState.tableRow + myState.cfg_curnum;
+  myState.cfg_maxnum =  myState.cfg_category = myState.cfg_category2save = myState.cfg_type = myState.cfg_type2save = mNONE;
+  return(myRet);
+} // end RBG_specialProcCfgCpyRst_skip()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RBG_specialProcShoot() - do the solenoid for shooting
@@ -1445,25 +1458,29 @@ void eeprom_factory_init(uint8_t configToProc) {
   uint8_t byte2Value;
 
   // check validity, set up which configs we will process
-  if ((EEPROM_PROCESS_ALL_CONFIG != configToProc) && (configToProc >= NUM_EEPROM_CONFIGURATIONS)) {
+  if (EEPROM_PROCESS_ALL_CONFIG == configToProc) {
+    min_config = EEPROM_CONFIG_RUNNING;
+    max_config = EEPROM_SAVED_LAST;
+  } else if (configToProc < NUM_EEPROM_CONFIGURATIONS) {
+    min_config = max_config = configToProc;
+  } else { 
     // recall that configToProc is uint so there is no less than zero
     Serial.print(F("eeprom_factory_init: ERROR bad configToProc ")); Serial.print(configToProc); Serial.print(F(": factory reset to all EEPROM configs"));
     configToProc = EEPROM_PROCESS_ALL_CONFIG;
-  }
-  if (EEPROM_PROCESS_ALL_CONFIG != configToProc) {
     min_config = EEPROM_CONFIG_RUNNING;
     max_config = EEPROM_SAVED_LAST;
-  } else {
-    min_config = max_config = configToProc;
   }
 
-  for (this_config_start = min_config*EEPROM_BYTES_PER_CONFIG; this_config_start <= max_config*EEPROM_BYTES_PER_CONFIG; this_config_start += EEPROM_BYTES_PER_CONFIG) {
+  Serial.print(F("eeprom_factory_init: configToProc ")); Serial.print(configToProc); Serial.print(F(" min_config ")); Serial.print(min_config); Serial.print(F(" max_config ")); Serial.println(max_config);
+
+  for (this_config_start = min_config; this_config_start <= max_config; this_config_start += 1) {
 #if USE_PROGMEM
-    memcpy_P(&effectConfigs, &factory_effect_configs[this_config_start], EEPROM_BYTES_PER_CONFIG);
+    memcpy_P(&effectConfigs, &factory_effect_configs[this_config_start][0], NUMOF(effectConfigs));
 #else // not USE_PROGMEM
-    memcpy(&effectConfigs, &factory_effect_configs[this_config_start], EEPROM_BYTES_PER_CONFIG);
+    memcpy(&effectConfigs, &factory_effect_configs[this_config_start][0], NUMOF(effectConfigs));
 #endif // use, not USE_PROGMEM
-    copy_ram_to_eeprom(effectConfigs, configToProc);
+    Serial.print(F("eeprom_factory_init: this_config_start ")); Serial.print(this_config_start); Serial.print(F(" effectConfigs[0] ")); Serial.print(effectConfigs[0]); Serial.print(F(" effectConfigs[1] ")); Serial.println(effectConfigs[1]);
+    copy_ram_to_eeprom(effectConfigs, this_config_start);
   } // end for all configurations we should factory initialize
 }; // end eeprom_factory_init(configToProc)
 
@@ -1480,11 +1497,15 @@ void copy_ram_to_eeprom(uint8_t *ramAddr, uint8_t configToProc) {
   for (address = 0; address < EEPROM_LAST_NON_CHKSM; address++) { // one less than entire data area minus checksum
     nowValue = EEPROM.read(address+configToProc*EEPROM_BYTES_PER_CONFIG);
     desiredValue = ramAddr[address+configToProc*EEPROM_BYTES_PER_CONFIG];
+    Serial.print(F("copy_ram_to_eeprom: address+ ")); Serial.print(address+configToProc*EEPROM_BYTES_PER_CONFIG); Serial.print(F(" nowValue ")); Serial.print(nowValue); Serial.print(F(" desiredValue ")); Serial.println(desiredValue);
     // avoid EEPROM writes when possible
     if (desiredValue != nowValue) {
       EEPROM.write(address+configToProc*EEPROM_BYTES_PER_CONFIG, desiredValue);
     }
   } // end zero out our EEPROM area except last value
+  nowValue = EEPROM.read(EEPROM_LAST_NON_CHKSM+configToProc*EEPROM_BYTES_PER_CONFIG);
+  desiredValue = ramAddr[EEPROM_LAST_NON_CHKSM+configToProc*EEPROM_BYTES_PER_CONFIG];
+  Serial.print(F("copy_ram_to_eeprom: last address ")); Serial.print(EEPROM_LAST_NON_CHKSM+configToProc*EEPROM_BYTES_PER_CONFIG); Serial.print(F(" nowValue ")); Serial.print(nowValue); Serial.print(F(" desiredValue ")); Serial.println(desiredValue);
   eeprom_store_with_chksum(EEPROM_LAST_NON_CHKSM+configToProc*EEPROM_BYTES_PER_CONFIG, ramAddr[EEPROM_LAST_NON_CHKSM]); // store last value and checksum
 } // end copy_ram_to_eeprom(ramAddr, configToProc)
 

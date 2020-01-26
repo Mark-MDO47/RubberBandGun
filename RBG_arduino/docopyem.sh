@@ -83,9 +83,9 @@ cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0082__mdo47__cfg_efct_led_p
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0083__mdo47_cfg_categ_copy_reset.wav H:/083.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0084__mdo47_cfg_categ_advanced_settings.wav H:/084.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0069__mdo47__silence.wav H:/085.wav
-cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0069__mdo47__silence.wav H:/086.wav
-cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0069__mdo47__silence.wav H:/087.wav
-cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0069__mdo47__silence.wav H:/088.wav
+cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0086__mdo47__cfg_enter_password.wav H:/086.wav
+cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0087__mdo47__cfg_enter_dance.wav H:/087.wav
+cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0088__mdo47__cfg_sorry_no_password.wav H:/088.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0089__mdo47_cfg_credits.wav H:/089.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0069__mdo47__silence.wav H:/090.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0091__mdo47__cfg_mgmt_01.wav H:/091.wav
@@ -103,8 +103,10 @@ cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0102__mdo47__cfg_advanced_0
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0103__mdo47__cfg_advanced_03.wav H:/103.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0104__mdo47__cfg_advanced_04.wav H:/104.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0069__mdo47__silence.wav H:/105.wav
-cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0106__mdo47__cfg_enter_password.wav H:/106.wav
-cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0107__mdo47__cfg_enter_dance.wav H:/107.wav
+cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0069__mdo47__silence.wav H:/106.wav
+cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0069__mdo47__silence.wav H:/107.wav
+cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0108__mdo47__cfg_cpy_rst_intro.wav H:/108.wav
+cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0109__mdo47__cfg_cpy_rst_accept.wav H:/109.wav
  
 mkdir H:/ATTRIBUTIONS
 cp  D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/Attributions.html H:/ATTRIBUTIONS
