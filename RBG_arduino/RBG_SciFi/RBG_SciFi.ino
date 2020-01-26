@@ -1343,7 +1343,7 @@ void DFprintDetail(uint8_t type, int value){
 #endif // DFPRINTDETAIL
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// eeprom_check_init(configToProc) - check if EEPROM has valid values; if not initialize it
+// eeprom_check_init(configToProc) - check if EEPROM has valid values; if not factory reset it
 //    we use a very crude checksum approach
 // configToProc - can be EEPROM_PROCESS_ALL_CONFIG or just one of the configs 0 <= config < NUM_EEPROM_CONFIGURATIONS
 //
@@ -1379,17 +1379,6 @@ void eeprom_check_init(uint8_t configToProc) {
       // checksum does not match; factory reset our EEPROM configuration area
       Serial.print(F("eeprom_check_init: mismatch config num")); Serial.print(this_config_start/EEPROM_BYTES_PER_CONFIG);  Serial.print(F(" inverted chksum 0x")); Serial.print(invChksumValue,HEX); Serial.print(F(" does not match 0x")); Serial.print(byteValue,HEX); Serial.println(F("; INITIALIZING"));
       eeprom_factory_init(this_config_start/EEPROM_BYTES_PER_CONFIG);
-      byteValue = 1;
-      for (address = 0; address < EEPROM_LAST_NON_CHKSM; address++) { // one less than entire data area
-        byte2Value = EEPROM.read(address);
-        // avoid EEPROM writes when possible
-        if ((EEPROM_VOLUME_CONFIG == address) && (mDEFAULT_EFCT_SND_VOL != byte2Value)) {
-          EEPROM.write(address, mDEFAULT_EFCT_SND_VOL);
-        } else if (byte2Value != byteValue) {
-          EEPROM.write(address, byteValue);
-        }
-      } // end zero out our EEPROM area except last value
-      eeprom_store_with_chksum(EEPROM_LAST_NON_CHKSM, byteValue); // store last value and checksum
     } // end if checksum does not match
   } // end for all configurations to process
 } // end eeprom_check_init()
@@ -1445,7 +1434,7 @@ void eeprom_store_with_chksum(int address, uint8_t byteValue) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // eeprom_factory_init(configToProc)
-//   set requested EEPROM configurations to factory reset state
+//   set requested EEPROM configurations to factory reset state - including special case for EEPROM_VOLUME_CONFIG
 // configToProc - can be EEPROM_PROCESS_ALL_CONFIG or just one of the configs 0 <= config < NUM_EEPROM_CONFIGURATIONS
 //
 void eeprom_factory_init(uint8_t configToProc) {
@@ -1454,7 +1443,6 @@ void eeprom_factory_init(uint8_t configToProc) {
   uint16_t this_config_start;
   uint8_t byteValue;
   uint8_t byte2Value;
-  uint16_t address;
 
   // check validity, set up which configs we will process
   if ((EEPROM_PROCESS_ALL_CONFIG != configToProc) && (configToProc >= NUM_EEPROM_CONFIGURATIONS)) {
@@ -1475,21 +1463,54 @@ void eeprom_factory_init(uint8_t configToProc) {
 #else // not USE_PROGMEM
     memcpy(&effectConfigs, &factory_effect_configs[this_config_start], EEPROM_BYTES_PER_CONFIG);
 #endif // use, not USE_PROGMEM
-
-    for (address = 0; address < EEPROM_LAST_NON_CHKSM; address++) { // one less than entire data area minus checksum
-      byte2Value = EEPROM.read(address+this_config_start);
-      byteValue = effectConfigs[address+this_config_start];
-      // avoid EEPROM writes when possible
-      if ((EEPROM_VOLUME_CONFIG == address) && (mDEFAULT_EFCT_SND_VOL != byte2Value)) {
-        EEPROM.write(address, mDEFAULT_EFCT_SND_VOL);
-      } else if (byte2Value != byteValue) {
-        EEPROM.write(address, byteValue);
-      }
-    } // end zero out our EEPROM area except last value
-    eeprom_store_with_chksum(EEPROM_LAST_NON_CHKSM+this_config_start, effectConfigs[EEPROM_LAST_NON_CHKSM]); // store last value and checksum
+    // special case for EEPROM_VOLUME_CONFIG
+    effectConfigs[EEPROM_VOLUME_CONFIG] = mDEFAULT_EFCT_SND_VOL;
+    copy_ram_to_eeprom(&effectConfigs, configToProc);
   } // end for all configurations we should factory initialize
 }; // end eeprom_factory_init(configToProc)
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// copy_ram_to_eeprom(ramAddr, configToProc) -  copy from ramAddr to the configuration in configToProc
+//
+// ramAddr - address of uint8_t array of length EEPROM_BYTES_PER_CONFIG
+// configToProc - must be just one of the configs 0 <= config < NUM_EEPROM_CONFIGURATIONS
+// 
+void copy_ram_to_eeprom(uint8_t *ramAddr, uint8_t configToProc) {
+  uint8_t desiredValue, nowValue;
+  uint16_t address;
+
+  for (address = 0; address < EEPROM_LAST_NON_CHKSM; address++) { // one less than entire data area minus checksum
+    nowValue = EEPROM.read(address+configToProc*EEPROM_BYTES_PER_CONFIG);
+    desiredValue = ramAddr[address+configToProc*EEPROM_BYTES_PER_CONFIG];
+    // avoid EEPROM writes when possible
+    if (desiredValue != nowValue) {
+      EEPROM.write(address+configToProc*EEPROM_BYTES_PER_CONFIG, desiredValue);
+    }
+  } // end zero out our EEPROM area except last value
+  eeprom_store_with_chksum(EEPROM_LAST_NON_CHKSM+configToProc*EEPROM_BYTES_PER_CONFIG, ramAddr[EEPROM_LAST_NON_CHKSM]); // store last value and checksum
+} // end copy_ram_to_eeprom(ramAddr, configToProc)
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// copy_eeprom_to_eeprom(fromConfigToProc, toConfigToProc) -  copy from one EEPROM config to another
+//
+// fromConfigToProc - must be just one of the configs 0 <= config < NUM_EEPROM_CONFIGURATIONS
+// toConfigToProc   - must be just one of the configs 0 <= config < NUM_EEPROM_CONFIGURATIONS
+// 
+void copy_ram_to_eeprom(uint8_t fromConfigToProc, uint8_t toConfigToProc) {
+  uint8_t desiredValue, nowValue;
+  uint16_t address;
+
+  for (address = 0; address < EEPROM_LAST_NON_CHKSM; address++) { // one less than entire data area minus checksum
+    nowValue =      EEPROM.read(address + toConfigToProc*EEPROM_BYTES_PER_CONFIG);
+    desiredValue  = EEPROM.read(address + fromConfigToProc*EEPROM_BYTES_PER_CONFIG);
+    // avoid EEPROM writes when possible
+    if (desiredValue != nowValue) {
+      EEPROM.write(address + toConfigToProc*EEPROM_BYTES_PER_CONFIG, desiredValue);
+    }
+  } // end zero out our EEPROM area except last value
+  desiredValue  = EEPROM.read(EEPROM_LAST_NON_CHKSM + fromConfigToProc*EEPROM_BYTES_PER_CONFIG);
+  eeprom_store_with_chksum(EEPROM_LAST_NON_CHKSM + toConfigToProc*EEPROM_BYTES_PER_CONFIG, desiredValue); // store last value and checksum
+} // end copy_ram_to_eeprom(ramAddr, configToProc)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // printAllMyState() - print (almost) ALL states
