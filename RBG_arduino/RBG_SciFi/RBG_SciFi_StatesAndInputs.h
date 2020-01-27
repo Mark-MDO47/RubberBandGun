@@ -53,7 +53,7 @@ template <typename T> int sgn(T val) {
 #define mSPCL_EFCT_ONETIME    0x4000 // set this bit for onetime sound play then jump while waiting for other input or sound end
 #define mSPCL_EFCT_CONTINUOUS 0x2000 // set this bit for continuous sound play while waiting for other input
 #define mSPCL_EFCT_CONFIGURE  0x1000 // set this bit to use configuration variables instead of EEPROM and do continuous
-#define mSPCL_HANDLER         0x0010 // mask for functions is ((uint16_t) (mSPCL_HANDLER-1))
+#define mSPCL_HANDLER         0x0080 // mask for functions is ((uint16_t) (mSPCL_HANDLER-1))
 #define mSPCL_HANDLER_SHOOT        2 // solenoid ON
 #define mSPCL_HANDLER_SOLENOID     3 // solenoid OFF
 #define mSPCL_HANDLER_CFGSTART     4 // configuration - store value at address
@@ -135,7 +135,7 @@ template <typename T> int sgn(T val) {
 #define mMASK_EFCT_SND_NUM 255  // mask for sound number
 #define mSHIFT_EFCT_SND_VOL 8  // shift for volume
 #define mMASK_EFCT_SND_VOL 31   // mask for volume once shifted in place
-#define mDEFAULT_EFCT_SND_VOL 15  // default volume - 25 is pretty good
+#define mDEFAULT_EFCT_SND_VOL 25  // default volume - 25 is pretty good
 
 /////////////////// end -> INPUTS 1 FROM makeStateTable.py <- //////////////////////////////////
 
