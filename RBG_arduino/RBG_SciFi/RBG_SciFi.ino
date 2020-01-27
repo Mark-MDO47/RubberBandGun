@@ -949,7 +949,7 @@ void RBG_specialProcConfigStart(uint16_t tmpStoreAddr) {
   // initialize numbers for mSPCL_EFCT_CONFIGURE
   myState.cfg_curnum = 1; // current number for configuration list of choices
   if (mADDR_CFG_CATEGORY == tmpStoreAddr) {
-    myState.cfg_maxnum = mCFG_CATEGORY_MAXNUM; // sound or LED pattern
+    myState.cfg_maxnum = mCFG_CATEGORY_MAXNUM; // sound or LED pattern or ...
     myState.cfg_category = mCFG_CATEGORY_SOUND; // so we can speak choices
     myState.cfg_category2save = mNONE;
     myState.cfg_type = EEPOFFSET(mEFCT_UNIQ_CFG_SOUNDS_DESCRIP)*10; // sounds for descriptions of types
@@ -973,6 +973,12 @@ void RBG_specialProcConfigStart(uint16_t tmpStoreAddr) {
     } else {
       myState.cfg_maxnum = cfgMaxLEDForType[myState.cfg_category2save, EEPOFFSET(myState.cfg_type2save)];
     }
+  } else if (mADDR_CFG_CPY_RST == tmpStoreAddr) {
+    myState.cfg_maxnum = EFCT_TYPE_OFFSET(mEFCT_UNIQ_CFG_MGMT_08);
+    myState.cfg_category = mCFG_CATEGORY_SOUND; // so we can speak choices
+    myState.cfg_category2save = mNONE;
+    myState.cfg_type = mEFCT_UNIQ_CFG_MGMT_01 - EFCT_TYPE_OFFSET(mEFCT_UNIQ_CFG_MGMT_01);
+    myState.cfg_type2save = mNONE;
   } else {
     Serial.print(F("ERROR RBG_specialProcConfigStart tmpStoreAddr is ")); Serial.print(tmpStoreAddr); Serial.print(F(" on row ")); Serial.println(myState.tableRow);
   }
@@ -1044,7 +1050,7 @@ uint16_t RBG_specialProcConfig2Storage() {
       break;
     case mADDR_CFG_CPY_RST:
       myState.cfg_category = mCFG_CATEGORY_SOUND; // so we can speak choices
-      myState.cfg_type = myState.cfg_type2save = mEFCT_UNIQ_CFG_MGMT_01 - (mEFCT_UNIQ_CFG_MGMT_01 % 10); // do the config copies and factory reset choices
+      myState.cfg_type = myState.cfg_type2save = mEFCT_UNIQ_CFG_MGMT_01 - EFCT_TYPE_OFFSET(mEFCT_UNIQ_CFG_MGMT_01); // do the config copies and factory reset choices
       myRet = myState.tableRow + myState.cfg_curnum; // we could skip by the choice number
       break;
     default:
@@ -1062,7 +1068,7 @@ uint16_t RBG_specialProcConfig2Storage() {
 //
 uint16_t RBG_specialProcCfgCpyRst_skip() {
   uint16_t myRet = myState.tableRow + myState.cfg_curnum;
-  myState.cfg_maxnum =  myState.cfg_category = myState.cfg_category2save = myState.cfg_type = myState.cfg_type2save = mNONE;
+  myState.cfg_maxnum =  myState.cfg_category = myState.cfg_category2save = myState.cfg_type = myState.cfg_type2save = myState.cfg_addr = mNONE;
   return(myRet);
 } // end RBG_specialProcCfgCpyRst_skip()
 
@@ -1475,9 +1481,9 @@ void eeprom_factory_init(uint8_t configToProc) {
 
   for (this_config_start = min_config; this_config_start <= max_config; this_config_start += 1) {
 #if USE_PROGMEM
-    memcpy_P(&effectConfigs, &factory_effect_configs[this_config_start][0], NUMOF(effectConfigs));
+    memcpy_P(&effectConfigs, &factory_effect_configs[this_config_start*EEPROM_BYTES_PER_CONFIG], NUMOF(effectConfigs));
 #else // not USE_PROGMEM
-    memcpy(&effectConfigs, &factory_effect_configs[this_config_start][0], NUMOF(effectConfigs));
+    memcpy(&effectConfigs, &factory_effect_configs[this_config_start*EEPROM_BYTES_PER_CONFIG], NUMOF(effectConfigs));
 #endif // use, not USE_PROGMEM
     Serial.print(F("eeprom_factory_init: this_config_start ")); Serial.print(this_config_start); Serial.print(F(" effectConfigs[0] ")); Serial.print(effectConfigs[0]); Serial.print(F(" effectConfigs[1] ")); Serial.println(effectConfigs[1]);
     copy_ram_to_eeprom(effectConfigs, this_config_start);
@@ -1496,7 +1502,7 @@ void copy_ram_to_eeprom(uint8_t *ramAddr, uint8_t configToProc) {
 
   for (address = 0; address < EEPROM_LAST_NON_CHKSM; address++) { // one less than entire data area minus checksum
     nowValue = EEPROM.read(address+configToProc*EEPROM_BYTES_PER_CONFIG);
-    desiredValue = ramAddr[address+configToProc*EEPROM_BYTES_PER_CONFIG];
+    desiredValue = ramAddr[address];
     Serial.print(F("copy_ram_to_eeprom: address+ ")); Serial.print(address+configToProc*EEPROM_BYTES_PER_CONFIG); Serial.print(F(" nowValue ")); Serial.print(nowValue); Serial.print(F(" desiredValue ")); Serial.println(desiredValue);
     // avoid EEPROM writes when possible
     if (desiredValue != nowValue) {
@@ -1504,7 +1510,7 @@ void copy_ram_to_eeprom(uint8_t *ramAddr, uint8_t configToProc) {
     }
   } // end zero out our EEPROM area except last value
   nowValue = EEPROM.read(EEPROM_LAST_NON_CHKSM+configToProc*EEPROM_BYTES_PER_CONFIG);
-  desiredValue = ramAddr[EEPROM_LAST_NON_CHKSM+configToProc*EEPROM_BYTES_PER_CONFIG];
+  desiredValue = ramAddr[EEPROM_LAST_NON_CHKSM];
   Serial.print(F("copy_ram_to_eeprom: last address ")); Serial.print(EEPROM_LAST_NON_CHKSM+configToProc*EEPROM_BYTES_PER_CONFIG); Serial.print(F(" nowValue ")); Serial.print(nowValue); Serial.print(F(" desiredValue ")); Serial.println(desiredValue);
   eeprom_store_with_chksum(EEPROM_LAST_NON_CHKSM+configToProc*EEPROM_BYTES_PER_CONFIG, ramAddr[EEPROM_LAST_NON_CHKSM]); // store last value and checksum
 } // end copy_ram_to_eeprom(ramAddr, configToProc)

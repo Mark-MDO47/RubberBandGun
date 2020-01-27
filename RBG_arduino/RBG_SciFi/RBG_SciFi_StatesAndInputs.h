@@ -161,7 +161,8 @@ template <typename T> int sgn(T val) {
 //    The choices for effects are in ranges of 10 decimal (example: mEFCT_SHOOT is 10, but choices of shoot must be 11 <= choice <= 19)
 //    These #defs will convert or test these ranges
 #define EEPOFFSET(parm)   ((uint16_t) (parm / 10)) // example: EEPOFFSET(mEFCT_SHOOT) = 1
-#define EFCT_IS_EEP(parm) (0 == ((uint16_t) parm) % 10) // if (EFCT_IS_EEP(mEFCT_PWRON)) will be true
+#define EFCT_TYPE_OFFSET(parm) (((uint16_t) parm) % 10) // offset from the type (which is multiple of 10). example: EFCT_TYPE_OFFSET(91) = 1
+#define EFCT_IS_EEP(parm) (0 == EFCT_TYPE_OFFSET(parm)) // if (EFCT_IS_EEP(mEFCT_PWRON)) will be true
 //
 // EEPROM addresses within a single configuration
 // EEPROM[EEPROM_START_SOUND_CONFIGS+idx] idx: 0 WindUp, 1 Shoot, 2 Open, 3 Load, 4 PowerUp, 5 Wait
@@ -179,7 +180,7 @@ template <typename T> int sgn(T val) {
 // Factory Settings: see tab "FactorySettings" in StateTable_minimal.xlsx
 #define NUM_EEPROM_EFFECT_TYPES (1 + EEPOFFSET(mEFCT_LAST_EEP_CONFIG)) // at this time, total of six EEPROM configurable effect types
 
-static const uint8_t factory_effect_configs[NUM_EEPROM_CONFIGURATIONS][EEPROM_BYTES_PER_CONFIG]
+static const uint8_t factory_effect_configs[NUM_EEPROM_CONFIGURATIONS*EEPROM_BYTES_PER_CONFIG]
 #if USE_PROGMEM
   PROGMEM
 #endif // end USE_PROGMEM
@@ -442,8 +443,8 @@ static const RBGStateTable_t myStateTable[76]
       { /* row 53 mROW_CFG_EFFECT_LOOP */  .blkFlags=mBLOCKEND, .SPECIAL=mNONE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mINP_TRIG|mINP_B04, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_MENU, .gotoWithoutInput=mNONE, },
       { /* row 54 mROW_CFG_EFFECT_NEXT */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFGNEXT, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_EFFECT_LOOP, },
       { /* row 55 mROW_CFG_EFFECT_CHOICE */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFG2STORAGE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_ACCEPTED, },
-      { /* row 56 mROW_CFG_ACCEPTED */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_UNIQ_CFG_ACCEPT, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_CATEGORY, .gotoWithoutInput=mNONE, },
-      { /* row 57 mROW_CFG_ACCEPTED */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_UNIQ_CFG_ACCEPT, .efctLED=mEFCT_WAIT, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_CATEGORY, },
+      { /* row 56 mROW_CFG_ACCEPTED */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_UNIQ_CFG_ACCEPT, .efctLED=mEFCT_WAIT, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_CATEGORY, },
+      { /* row 57 mROW_CFG_ACCEPTED */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_UNIQ_CFG_ACCEPT, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_CATEGORY, .gotoWithoutInput=mNONE, },
       { /* row 58 mROW_CFG_CPY_RST */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFGSTART, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=0.0, .storeAddr=mADDR_CFG_CPY_RST, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_CPY_RST_LOOPSTART, },
       { /* row 59 mROW_CFG_CPY_RST_LOOPSTART */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_CFG_CPY_RST, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_CPY_RST_LOOP, .gotoWithoutInput=mNONE, },
       { /* row 60 mROW_CFG_CPY_RST_LOOP */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_CONFIGURE, .efctSound=mNONE, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_CFG_CPY_RST_NEXT, .gotoWithoutInput=mNONE, },
@@ -459,7 +460,7 @@ static const RBGStateTable_t myStateTable[76]
       { /* row 70 mROW_CFG_CPY_RST_SKIP6 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_ONE2RUN, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CPY_RST_ACCEPTED, },
       { /* row 71 mROW_CFG_CPY_RST_SKIP7 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_TWO2RUN, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CPY_RST_ACCEPTED, },
       { /* row 72 mROW_CFG_CPY_RST_SKIP8 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_THREE2RUN, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CPY_RST_ACCEPTED, },
-      { /* row 73 mROW_CPY_RST_ACCEPTED */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_UNIQ_CFG_CPY_RST_ACCEPT, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_POWERON, .gotoWithoutInput=mNONE, },
-      { /* row 74 mROW_CPY_RST_ACCEPTED */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_UNIQ_CFG_CPY_RST_ACCEPT, .efctLED=mEFCT_WAIT, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_POWERON, },
+      { /* row 73 mROW_CPY_RST_ACCEPTED */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_UNIQ_CFG_CPY_RST_ACCEPT, .efctLED=mEFCT_WAIT, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_POWERON, },
+      { /* row 74 mROW_CPY_RST_ACCEPTED */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_UNIQ_CFG_CPY_RST_ACCEPT, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_POWERON, .gotoWithoutInput=mNONE, },
       { /* row 75 mROW_CFG_ADVANCED */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_UNIQ_NOT_IMPL, .efctLED=mEFCT_WAIT, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_MENU, },
 }; // end definition of myStateTable[]
