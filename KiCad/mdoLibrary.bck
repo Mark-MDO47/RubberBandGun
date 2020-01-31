@@ -1,3 +1,7 @@
 EESchema-DOCLIB  Version 2.0
 #
+$CMP YX5200
+D Audio Player
+$ENDCMP
+#
 #End Doc Library

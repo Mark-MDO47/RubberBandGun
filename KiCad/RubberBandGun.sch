@@ -41,7 +41,7 @@ $Descr A 11000 8500
 encoding utf-8
 Sheet 1 2
 Title "FOOF Rubber Band Gun"
-Date "2020-01-27"
+Date "2020-01-30"
 Rev "---"
 Comp ""
 Comment1 ""
@@ -258,16 +258,96 @@ $EndComp
 $Comp
 L L L?
 U 1 1 5D7D3BAD
-P 8350 3150
-F 0 "L?" V 8300 3150 50  0000 C CNN
-F 1 "L" V 8425 3150 50  0000 C CNN
-F 2 "" H 8350 3150 50  0001 C CNN
-F 3 "" H 8350 3150 50  0001 C CNN
-	1    8350 3150
+P 8150 5200
+F 0 "L?" V 8100 5200 50  0000 C CNN
+F 1 "L" V 8225 5200 50  0000 C CNN
+F 2 "" H 8150 5200 50  0001 C CNN
+F 3 "" H 8150 5200 50  0001 C CNN
+	1    8150 5200
 	1    0    0    -1  
 $EndComp
-Text Notes 7950 3250 3    118  ~ 0
+Text Notes 7950 4850 3    118  ~ 0
 solenoid\ndriver
+Text Notes 900  3500 0    118  ~ 0
+7.4 Volts
+$Comp
+L R R?
+U 1 1 5D915A72
+P 4950 3500
+F 0 "R?" V 5030 3500 50  0000 C CNN
+F 1 "1K" V 4950 3500 50  0000 C CNN
+F 2 "" V 4880 3500 50  0001 C CNN
+F 3 "" H 4950 3500 50  0001 C CNN
+	1    4950 3500
+	1    0    0    -1  
+$EndComp
+Text Notes 2200 2300 0    60   ~ 0
+D04 = Trigger
+Text Notes 2200 2400 0    59   ~ 0
+D05 = Yellow
+Text Notes 2200 2500 0    59   ~ 0
+D06 = Green
+Text Notes 2200 2600 0    59   ~ 0
+D07 = Red
+Text Notes 2200 2900 0    59   ~ 0
+D09 = Barrel\n    grounded = closed
+$Comp
+L SW_SPST SW?
+U 1 1 5E2283C4
+P 4600 4500
+F 0 "SW?" H 4600 4625 50  0000 C CNN
+F 1 "SW_SPST" H 4600 4400 50  0000 C CNN
+F 2 "" H 4600 4500 50  0001 C CNN
+F 3 "" H 4600 4500 50  0001 C CNN
+	1    4600 4500
+	1    0    0    -1  
+$EndComp
+$Comp
+L SW_Push SW?
+U 1 1 5E22B63A
+P 4200 5000
+F 0 "SW?" H 4350 5110 50  0000 C CNN
+F 1 "SW_PUSH" H 4200 4920 50  0000 C CNN
+F 2 "" H 4200 5000 60  0000 C CNN
+F 3 "" H 4200 5000 60  0000 C CNN
+	1    4200 5000
+	0    -1   -1   0   
+$EndComp
+Text Notes 4850 5600 0    59   ~ 0
+D09 = Barrel\n    grounded = closed
+$Comp
+L YX5200 A?
+U 1 1 5D90CF9F
+P 6400 4600
+F 0 "A?" H 6400 4500 60  0000 C CNN
+F 1 "YX5200" H 6400 4400 60  0000 C TNN
+F 2 "" H 6400 4600 60  0000 C CNN
+F 3 "" H 6400 4600 60  0000 C CNN
+	1    6400 4600
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R?
+U 1 1 5E2FCC72
+P 4600 1250
+F 0 "R?" V 4680 1250 50  0000 C CNN
+F 1 "10K" V 4600 1250 50  0000 C CNN
+F 2 "" V 4530 1250 30  0000 C CNN
+F 3 "" H 4600 1250 30  0000 C CNN
+	1    4600 1250
+	1    0    0    -1  
+$EndComp
+$Comp
+L SN74HCT125N A?
+U 1 1 5E333EFD
+P 8450 2850
+F 0 "A?" H 8450 2750 60  0000 C CNN
+F 1 "SN74HCT125N" H 8450 2650 60  0000 C TNN
+F 2 "" H 8450 2850 60  0000 C CNN
+F 3 "" H 8450 2850 60  0000 C CNN
+	1    8450 2850
+	1    0    0    -1  
+$EndComp
 Connection ~ 3050 6400
 Wire Wire Line
 	1250 6000 1250 5550
@@ -340,18 +420,12 @@ Wire Wire Line
 Wire Wire Line
 	9950 6000 9950 1800
 Wire Wire Line
-	8950 1950 10050 1950
-Wire Wire Line
-	10050 1950 10050 1800
-Wire Wire Line
 	9750 1800 9750 1850
 Wire Wire Line
 	9750 1850 9850 1850
 Connection ~ 9850 1850
 Wire Wire Line
 	6550 2000 7400 2000
-Wire Wire Line
-	3200 950  7400 950 
 Connection ~ 7400 2000
 Wire Wire Line
 	4200 1100 4200 950 
@@ -365,15 +439,13 @@ Connection ~ 4400 950
 Wire Wire Line
 	4400 1400 4400 4500
 Wire Notes Line
-	7650 2850 7650 3150
+	7650 4450 7650 4750
 Wire Notes Line
-	7650 3150 7950 3150
+	7650 4750 7950 4750
 Wire Notes Line
-	7950 3150 7950 2850
+	7950 4750 7950 4450
 Wire Notes Line
-	7950 2850 7650 2850
-Text Notes 900  3500 0    118  ~ 0
-7.4 Volts
+	7950 4450 7650 4450
 Wire Wire Line
 	4750 3900 5800 3900
 Wire Wire Line
@@ -393,17 +465,6 @@ Wire Wire Line
 	5700 4500 5700 4400
 Wire Wire Line
 	5700 4400 5800 4400
-$Comp
-L R R?
-U 1 1 5D915A72
-P 4950 3500
-F 0 "R?" V 5030 3500 50  0000 C CNN
-F 1 "1K" V 4950 3500 50  0000 C CNN
-F 2 "" V 4880 3500 50  0001 C CNN
-F 3 "" H 4950 3500 50  0001 C CNN
-	1    4950 3500
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	4850 2900 4850 4100
 Wire Wire Line
@@ -420,115 +481,93 @@ Wire Wire Line
 	7000 3700 5350 3700
 Wire Wire Line
 	5350 3700 5350 3100
-Text Notes 2200 2300 0    60   ~ 0
-D04 = Trigger
-Text Notes 2200 2400 0    59   ~ 0
-D05 = Yellow
-Text Notes 2200 2500 0    59   ~ 0
-D06 = Green
-Text Notes 2200 2600 0    59   ~ 0
-D07 = Red
-Text Notes 2200 2900 0    59   ~ 0
-D09 = Barrel\n    grounded = closed
 Wire Wire Line
 	5350 2800 4400 2800
 Connection ~ 4400 2800
-$Comp
-L SW_SPST SW?
-U 1 1 5E2283C4
-P 4600 4500
-F 0 "SW?" H 4600 4625 50  0000 C CNN
-F 1 "SW_SPST" H 4600 4400 50  0000 C CNN
-F 2 "" H 4600 4500 50  0001 C CNN
-F 3 "" H 4600 4500 50  0001 C CNN
-	1    4600 4500
-	1    0    0    -1  
-$EndComp
 Connection ~ 4200 6400
 Wire Wire Line
 	4800 4500 4800 6400
 Connection ~ 4800 6400
-$Comp
-L SW_Push SW?
-U 1 1 5E22B63A
-P 4200 5000
-F 0 "SW?" H 4350 5110 50  0000 C CNN
-F 1 "SW_PUSH" H 4200 4920 50  0000 C CNN
-F 2 "" H 4200 5000 60  0000 C CNN
-F 3 "" H 4200 5000 60  0000 C CNN
-	1    4200 5000
-	0    -1   -1   0   
-$EndComp
 Wire Wire Line
 	4200 1400 4200 4800
 Wire Wire Line
 	4200 5200 4200 6400
-Text Notes 4850 5600 0    59   ~ 0
-D09 = Barrel\n    grounded = closed
-$Comp
-L YX5200 A?
-U 1 1 5D90CF9F
-P 6400 4600
-F 0 "A?" H 6400 4500 60  0000 C CNN
-F 1 "YX5200" H 6400 4400 60  0000 C TNN
-F 2 "" H 6400 4600 60  0000 C CNN
-F 3 "" H 6400 4600 60  0000 C CNN
-	1    6400 4600
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	4750 3900 4750 950 
 Connection ~ 4750 950 
 Wire Wire Line
-	7400 950  7400 2900
-$Comp
-L Q_NPN_CBE Q?
-U 1 1 5E2FC953
-P 8850 2150
-F 0 "Q?" H 9050 2200 50  0000 L CNN
-F 1 "Q_NPN_CBE" H 9050 2100 50  0000 L CNN
-F 2 "" H 9050 2250 50  0001 C CNN
-F 3 "" H 8850 2150 50  0001 C CNN
-	1    8850 2150
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	8950 2350 8950 6400
-Connection ~ 8950 6400
-Wire Wire Line
-	7950 3000 8350 3000
-Wire Wire Line
-	6550 3100 7650 3100
-Wire Wire Line
-	7400 2900 7650 2900
-Wire Wire Line
-	8350 3300 8350 6400
-Connection ~ 8350 6400
+	7400 950  7400 4500
 Connection ~ 4600 950 
 Wire Wire Line
 	4600 1100 4600 950 
-$Comp
-L R R?
-U 1 1 5E2FCC72
-P 4600 1250
-F 0 "R?" V 4680 1250 50  0000 C CNN
-F 1 "10K" V 4600 1250 50  0000 C CNN
-F 2 "" V 4530 1250 30  0000 C CNN
-F 3 "" H 4600 1250 30  0000 C CNN
-	1    4600 1250
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	4600 1400 8950 1400
-Wire Wire Line
-	8950 1400 8950 1950
 Wire Wire Line
 	4950 2200 4950 1500
 Wire Wire Line
-	4950 1500 8650 1500
-Wire Wire Line
-	8650 1500 8650 2150
-Connection ~ 8950 1950
-Wire Wire Line
 	4950 2200 5050 2200
+Wire Wire Line
+	7400 4500 7650 4500
+Wire Wire Line
+	7650 4500 7650 4700
+Wire Wire Line
+	7650 4700 7400 4700
+Wire Wire Line
+	7400 4700 7400 6400
+Connection ~ 7400 6400
+Wire Wire Line
+	7950 4600 8150 4600
+Wire Wire Line
+	8150 4600 8150 5050
+Wire Wire Line
+	8150 5350 8150 6400
+Connection ~ 8150 6400
+Wire Wire Line
+	9050 2750 10050 2750
+Wire Wire Line
+	10050 2750 10050 1800
+Wire Wire Line
+	7600 3400 9850 3400
+Connection ~ 9850 3400
+Wire Wire Line
+	7600 1400 7600 2550
+Connection ~ 7600 2150
+Wire Wire Line
+	9050 2550 9850 2550
+Connection ~ 9850 2550
+Connection ~ 7600 1900
+Connection ~ 7600 2450
+Connection ~ 7600 2250
+Wire Wire Line
+	4600 1400 7600 1400
+Connection ~ 7400 950 
+Wire Wire Line
+	7850 2150 7600 2150
+Wire Wire Line
+	7850 2250 7600 2250
+Wire Wire Line
+	7850 2450 7600 2450
+Wire Wire Line
+	7600 2550 7850 2550
+Wire Wire Line
+	7600 3400 7600 2750
+Wire Wire Line
+	7600 2750 7850 2750
+Wire Wire Line
+	3200 950  9050 950 
+Wire Wire Line
+	9050 950  9050 2150
+Wire Wire Line
+	9050 2250 9200 2250
+Wire Wire Line
+	9200 1900 9200 2350
+Wire Wire Line
+	9200 2350 9050 2350
+Connection ~ 9200 2250
+Wire Wire Line
+	7600 1900 9200 1900
+Wire Wire Line
+	9350 2650 9350 1500
+Wire Wire Line
+	9350 2650 9050 2650
+Wire Wire Line
+	9350 1500 4950 1500
 $EndSCHEMATC
