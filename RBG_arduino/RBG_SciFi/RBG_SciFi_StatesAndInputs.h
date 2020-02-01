@@ -138,8 +138,9 @@ template <typename T> int sgn(T val) {
 #define mDEFAULT_EFCT_SND_VOL 25  // default volume - 25 is pretty good
 
 /////////////////// end -> INPUTS 1 FROM makeStateTable.py <- //////////////////////////////////
-
+//
 // Storage of configuration into EEPROM
+//    EEPROM gets copied to RAM to facilitate cycling through EEPROM configurations
 //
 // There are four EEPROM configurations:
 //    0: running configuration
@@ -170,16 +171,21 @@ template <typename T> int sgn(T val) {
 // EEPROM[EEPROM_INVERTED_CHKSM] is checksum byte
 //
 // Important global offsets within a single configuration
+//
 #define EEPROM_START_SOUND_CONFIGS    0x0000 // EEPROM starting address for sound configuration
 #define EEPROM_VOLUME_CONFIG          0x000e // EEPROM address for volume default FIXME not implemented
 #define EEPROM_START_LED_CONFIGS      0x0010 // EEPROM starting address for LED pattern configuration
 #define EEPROM_LAST_NON_CHKSM           0x1E // EEPROM address of last non-checksum data
 #define EEPROM_INVERTED_CHKSM           0x1F // EEPROM address of checksum data
 #define EEPROM_BYTES_PER_CONFIG (EEPROM_INVERTED_CHKSM+1)
-//
-// Factory Settings: see tab "FactorySettings" in StateTable_minimal.xlsx
 #define NUM_EEPROM_EFFECT_TYPES (1 + EEPOFFSET(mEFCT_LAST_EEP_CONFIG)) // at this time, total of six EEPROM configurable effect types
 
+//
+// RAM copy of EEPROM settings; these are the active ones right now
+//
+static uint8_t EEPROM_RAMcopy[EEPROM_BYTES_PER_CONFIG];
+//
+// Factory Settings: see tab "FactorySettings" in StateTable_minimal.xlsx
 static const uint8_t factory_effect_configs[NUM_EEPROM_CONFIGURATIONS*EEPROM_BYTES_PER_CONFIG]
 #if USE_PROGMEM
   PROGMEM

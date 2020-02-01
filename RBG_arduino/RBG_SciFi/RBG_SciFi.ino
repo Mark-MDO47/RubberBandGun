@@ -170,6 +170,7 @@ void setup() {
 
   // if needed, initialize EEPROM variables
   eeprom_check_init(EEPROM_PROCESS_ALL_CONFIG);
+  copy_eeprom_to_ram_running_config(EEPROM_CONFIG_RUNNING);
   // eeprom_factory_init(EEPROM_PROCESS_ALL_CONFIG);
 
   printAllMyState();
@@ -257,7 +258,8 @@ void doPattern(uint16_t tmpEfctLED, uint16_t tmpSpecial, uint8_t tmpInit) {
     nowEfctLED = myState.cfg_curnum + myState.cfg_type2save;
   } else if ((mNONE != nowEfctLED) && (EFCT_IS_EEP(nowEfctLED)) && (nowEfctLED <= mEFCT_LAST_EEP_CONFIG)) {
     // configurable LED patterns are zero mod 10; we get config from EEPROM
-    nowEfctLED += EEPROM.read(EEPOFFSET(nowEfctLED)+EEPROM_START_LED_CONFIGS);
+    // nowEfctLED += EEPROM.read(EEPOFFSET(nowEfctLED)+EEPROM_START_LED_CONFIGS); old way; now using EEPROM_RAMcopy
+    nowEfctLED += EEPROM_RAMcopy[EEPOFFSET(nowEfctLED)+EEPROM_START_LED_CONFIGS];
   } // end if configurable LED pattern
 
   // now convert "configuration" effect number to pattern effect number
@@ -1182,7 +1184,8 @@ void  RBG_startEffectSound(uint16_t tmpEfctSound, uint16_t tmpSpecial) {
     // configurable sounds are zero mod 10; we get config from EEPROM
     if ((EFCT_IS_EEP(mySound)) && (mySound <= mEFCT_LAST_EEP_CONFIG)) {
       // configurable sound using EEPROM
-      mySound += EEPROM.read(EEPOFFSET(mySound)+EEPROM_START_SOUND_CONFIGS);
+      // mySound += EEPROM.read(EEPOFFSET(mySound)+EEPROM_START_SOUND_CONFIGS); old way; now using EEPROM_RAMcopy
+      mySound += EEPROM_RAMcopy[EEPOFFSET(mySound)+EEPROM_START_SOUND_CONFIGS];
     }
     #if DEBUG_STATE_MACHINE
     Serial.print(F(" RBG_startEffectSound ln ")); Serial.print((uint16_t) __LINE__); Serial.print(F(" EFCT num ")); Serial.print(tmpEfctSound); Serial.print(F(" final num ")); Serial.print(mySound); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
@@ -1384,7 +1387,7 @@ void eeprom_check_init(uint8_t configToProc) {
   uint8_t invChksumValue;
   uint8_t nowValue;
   uint8_t min_config, max_config;
-  uint16_t this_config_start;
+  uint16_t thisConfigStart;
 
   // check validity, set up which configs we will process
   if ((EEPROM_PROCESS_ALL_CONFIG != configToProc) && (configToProc >= NUM_EEPROM_CONFIGURATIONS)) {
@@ -1399,16 +1402,16 @@ void eeprom_check_init(uint8_t configToProc) {
     min_config = max_config = configToProc;
   }
 
-  for (this_config_start = min_config*EEPROM_BYTES_PER_CONFIG; this_config_start <= max_config*EEPROM_BYTES_PER_CONFIG; this_config_start += EEPROM_BYTES_PER_CONFIG) {
+  for (thisConfigStart = min_config*EEPROM_BYTES_PER_CONFIG; thisConfigStart <= max_config*EEPROM_BYTES_PER_CONFIG; thisConfigStart += EEPROM_BYTES_PER_CONFIG) {
     // read RBG non-checksum bytes from EEPROM and calculate checksum; compare with stored checksum
-    invChksumValue = eeprom_calc_inverted_checksum(this_config_start/EEPROM_BYTES_PER_CONFIG);
-    nowValue = EEPROM.read(EEPROM_INVERTED_CHKSM+this_config_start);
+    invChksumValue = eeprom_calc_inverted_checksum(thisConfigStart/EEPROM_BYTES_PER_CONFIG);
+    nowValue = EEPROM.read(EEPROM_INVERTED_CHKSM+thisConfigStart);
     // nowValue = invChksumValue+1; // FIXME force a checksum error
     // Serial.print(F("eeprom_check_init: stored inverted chksum 0x"); Serial.print(EEPROM_INVERTED_CHKSM,HEX); Serial.print(F(" value 0x")); Serial.print(nowValue,HEX); Serial.print(F(", calculated inverted chksum 0x")); Serial.println(((uint8_t) ~chksumValue),HEX);
     if (nowValue != invChksumValue) {
       // checksum does not match; factory reset our EEPROM configuration area
-      Serial.print(F("eeprom_check_init: mismatch config num")); Serial.print(this_config_start/EEPROM_BYTES_PER_CONFIG);  Serial.print(F(" inverted chksum 0x")); Serial.print(invChksumValue,HEX); Serial.print(F(" does not match 0x")); Serial.print(nowValue,HEX); Serial.println(F("; INITIALIZING"));
-      eeprom_factory_init(this_config_start/EEPROM_BYTES_PER_CONFIG);
+      Serial.print(F("eeprom_check_init: mismatch config num")); Serial.print(thisConfigStart/EEPROM_BYTES_PER_CONFIG);  Serial.print(F(" inverted chksum 0x")); Serial.print(invChksumValue,HEX); Serial.print(F(" does not match 0x")); Serial.print(nowValue,HEX); Serial.println(F("; INITIALIZING"));
+      eeprom_factory_init(thisConfigStart/EEPROM_BYTES_PER_CONFIG);
     } // end if checksum does not match
   } // end for all configurations to process
 } // end eeprom_check_init()
@@ -1422,7 +1425,7 @@ uint8_t eeprom_calc_inverted_checksum(uint8_t configToProc) {
   int address;
   uint8_t chksumValue; // non-inverted checksum
   uint8_t byteValue;
-  uint16_t this_config_start;
+  uint16_t thisConfigStart;
 
   // check validity, set up which configs we will process
   if ((EEPROM_PROCESS_ALL_CONFIG != configToProc) && (configToProc >= NUM_EEPROM_CONFIGURATIONS)) {
@@ -1430,10 +1433,10 @@ uint8_t eeprom_calc_inverted_checksum(uint8_t configToProc) {
     Serial.print(F("eeprom_check_init: ERROR bad configToProc ")); Serial.print(configToProc); Serial.print(F(": checking all EEPROM configs"));
     configToProc = NUM_EEPROM_CONFIGURATIONS-1;
   }
-  this_config_start = configToProc*EEPROM_BYTES_PER_CONFIG;
+  thisConfigStart = configToProc*EEPROM_BYTES_PER_CONFIG;
   // read RBG non-checksum bytes from EEPROM and calculate checksum
   for (address = chksumValue = 0; address <= EEPROM_LAST_NON_CHKSM; address++) {
-    byteValue = EEPROM.read(address+this_config_start);
+    byteValue = EEPROM.read(address+thisConfigStart);
     chksumValue += byteValue;
     // Serial.print(F("INIT EEP: address 0x")); Serial.print(address,HEX); Serial.print(F(" value 0x")); Serial.print(byteValue,HEX); Serial.print(F(" calc chksum 0x")); Serial.println(chksumValue,HEX);
   } // end caclulate checksum
@@ -1449,16 +1452,21 @@ uint8_t eeprom_calc_inverted_checksum(uint8_t configToProc) {
 void eeprom_store_with_chksum(int address, uint8_t byteValue) {
   uint8_t nowValue;
   uint8_t invChksumValue;
-  uint16_t this_config_start = (address/EEPROM_BYTES_PER_CONFIG)*EEPROM_BYTES_PER_CONFIG;
+  uint8_t thisConfig = address/EEPROM_BYTES_PER_CONFIG;
+  uint16_t thisConfigStart = thisConfig*EEPROM_BYTES_PER_CONFIG;
 
   nowValue = EEPROM.read(address);
   if (nowValue != byteValue) { // avoid EEPROM writes when possible
     EEPROM.write(address, byteValue);
   }
-  invChksumValue = eeprom_calc_inverted_checksum(this_config_start/EEPROM_BYTES_PER_CONFIG);
-  nowValue = EEPROM.read(EEPROM_INVERTED_CHKSM + this_config_start);
+  invChksumValue = eeprom_calc_inverted_checksum(thisConfigStart/EEPROM_BYTES_PER_CONFIG);
+  nowValue = EEPROM.read(EEPROM_INVERTED_CHKSM + thisConfigStart);
   if (nowValue != invChksumValue) { // avoid EEPROM writes when possible
-    EEPROM.write(EEPROM_INVERTED_CHKSM + this_config_start, invChksumValue);
+    EEPROM.write(EEPROM_INVERTED_CHKSM + thisConfigStart, invChksumValue);
+  }
+
+  if (EEPROM_CONFIG_RUNNING == thisConfig) {
+    copy_eeprom_to_ram_running_config(EEPROM_CONFIG_RUNNING);
   }
 } // end eeprom_store_with_chksum()
 
@@ -1470,7 +1478,7 @@ void eeprom_store_with_chksum(int address, uint8_t byteValue) {
 void eeprom_factory_init(uint8_t configToProc) {
   static uint8_t effectConfigs[EEPROM_BYTES_PER_CONFIG]; // don't want mysterious stack/heap collisions
   uint8_t min_config, max_config;
-  uint16_t this_config_start;
+  uint16_t thisConfigStart;
 
   // check validity, set up which configs we will process
   if (EEPROM_PROCESS_ALL_CONFIG == configToProc) {
@@ -1488,16 +1496,39 @@ void eeprom_factory_init(uint8_t configToProc) {
 
   Serial.print(F("eeprom_factory_init: configToProc ")); Serial.print(configToProc); Serial.print(F(" min_config ")); Serial.print(min_config); Serial.print(F(" max_config ")); Serial.println(max_config);
 
-  for (this_config_start = min_config; this_config_start <= max_config; this_config_start += 1) {
+  for (thisConfigStart = min_config; thisConfigStart <= max_config; thisConfigStart += 1) {
 #if USE_PROGMEM
-    memcpy_P(&effectConfigs, &factory_effect_configs[this_config_start*EEPROM_BYTES_PER_CONFIG], NUMOF(effectConfigs));
+    memcpy_P(&effectConfigs, &factory_effect_configs[thisConfigStart*EEPROM_BYTES_PER_CONFIG], NUMOF(effectConfigs));
 #else // not USE_PROGMEM
-    memcpy(&effectConfigs, &factory_effect_configs[this_config_start*EEPROM_BYTES_PER_CONFIG], NUMOF(effectConfigs));
+    memcpy(&effectConfigs, &factory_effect_configs[thisConfigStart*EEPROM_BYTES_PER_CONFIG], NUMOF(effectConfigs));
 #endif // use, not USE_PROGMEM
-    Serial.print(F("eeprom_factory_init: this_config_start ")); Serial.print(this_config_start); Serial.print(F(" effectConfigs[0] ")); Serial.print(effectConfigs[0]); Serial.print(F(" effectConfigs[1] ")); Serial.println(effectConfigs[1]);
-    copy_ram_to_eeprom(effectConfigs, this_config_start);
+    Serial.print(F("eeprom_factory_init: thisConfigStart ")); Serial.print(thisConfigStart); Serial.print(F(" effectConfigs[0] ")); Serial.print(effectConfigs[0]); Serial.print(F(" effectConfigs[1] ")); Serial.println(effectConfigs[1]);
+    copy_ram_to_eeprom(effectConfigs, thisConfigStart);
   } // end for all configurations we should factory initialize
 }; // end eeprom_factory_init(configToProc)
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// copy_eeprom_to_ram(configToProc, ramArray)
+//
+// configToProc - just one of the configs 0 <= config < NUM_EEPROM_CONFIGURATIONS
+//
+void copy_eeprom_to_ram(uint8_t configToProc, uint8_t* ramArray) {
+  uint16_t address;
+  uint16_t thisConfigStart = configToProc*EEPROM_BYTES_PER_CONFIG;
+
+  for (address = 0; address < EEPROM_BYTES_PER_CONFIG; address += 1) {
+    ramArray[address] = EEPROM.read(address+thisConfigStart);
+  } // end for all addresses in a single configuration
+} // end copy_eeprom_to_ram(configToProc)
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// copy_eeprom_to_ram_running_config(configToProc)
+//
+// configToProc - just one of the configs 0 <= config < NUM_EEPROM_CONFIGURATIONS
+//
+void copy_eeprom_to_ram_running_config(uint8_t configToProc) {
+  copy_eeprom_to_ram(configToProc, EEPROM_RAMcopy);
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // copy_ram_to_eeprom(ramAddr, configToProc) -  copy from ramAddr to the configuration in configToProc
@@ -1547,6 +1578,10 @@ void copy_eeprom_to_eeprom(uint8_t fromConfigToProc, uint8_t toConfigToProc) {
   desiredValue  = EEPROM.read(EEPROM_LAST_NON_CHKSM + fromConfigToProc*EEPROM_BYTES_PER_CONFIG);
   Serial.print(F("copy_eeprom_to_eeprom: last address ")); Serial.print(EEPROM_LAST_NON_CHKSM); Serial.print(F(" nowValue ")); Serial.print(nowValue); Serial.print(F(" desiredValue ")); Serial.println(desiredValue);
   eeprom_store_with_chksum(EEPROM_LAST_NON_CHKSM + toConfigToProc*EEPROM_BYTES_PER_CONFIG, desiredValue); // store last value and checksum
+
+  if (EEPROM_CONFIG_RUNNING == toConfigToProc) {
+    copy_eeprom_to_ram_running_config(EEPROM_CONFIG_RUNNING);
+  } // end if need to copy to RAM Running Config
 } // end copy_eeprom_to_eeprom(ramAddr, configToProc)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////

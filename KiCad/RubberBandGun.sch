@@ -1,41 +1,5 @@
-EESchema Schematic File Version 2
-LIBS:RubberBandGun-rescue
-LIBS:power
-LIBS:device
-LIBS:switches
-LIBS:relays
-LIBS:motors
-LIBS:transistors
-LIBS:conn
-LIBS:linear
-LIBS:regul
-LIBS:74xx
-LIBS:cmos4000
-LIBS:adc-dac
-LIBS:memory
-LIBS:xilinx
-LIBS:microcontrollers
-LIBS:dsp
-LIBS:microchip
-LIBS:analog_switches
-LIBS:motorola
-LIBS:texas
-LIBS:intel
-LIBS:audio
-LIBS:interface
-LIBS:digital-audio
-LIBS:philips
-LIBS:display
-LIBS:cypress
-LIBS:siliconi
-LIBS:opto
-LIBS:atmel
-LIBS:contrib
-LIBS:valves
-LIBS:mdoLibrary
-LIBS:Arduino_Nano-cache
-LIBS:RubberBandGun-cache
-EELAYER 25 0
+EESchema Schematic File Version 4
+EELAYER 30 0
 EELAYER END
 $Descr A 11000 8500
 encoding utf-8
@@ -50,7 +14,7 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L +12V #PWR?
+L power:+12V #PWR?
 U 1 1 5A3DEBB7
 P 1250 3850
 F 0 "#PWR?" H 1250 3700 50  0001 C CNN
@@ -61,7 +25,7 @@ F 3 "" H 1250 3850 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR?
+L power:GND #PWR?
 U 1 1 5A3DEBCE
 P 1250 4950
 F 0 "#PWR?" H 1250 4700 50  0001 C CNN
@@ -72,7 +36,7 @@ F 3 "" H 1250 4950 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L LEDring Z?
+L mdoLibrary:LEDring Z?
 U 1 1 5A458774
 P 9900 1100
 F 0 "Z?" H 9900 1100 60  0000 C CNN
@@ -83,7 +47,7 @@ F 3 "" H 9900 1250 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R R?
+L Device:R R?
 U 1 1 5A459198
 P 5200 2200
 F 0 "R?" V 5280 2200 50  0000 C CNN
@@ -94,7 +58,7 @@ F 3 "" H 5200 2200 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L UBEC J?
+L mdoLibrary:UBEC J?
 U 1 1 5A459C5D
 P 2050 4450
 F 0 "J?" H 2050 4450 60  0000 C CNN
@@ -105,7 +69,7 @@ F 3 "" H 2050 4450 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L UBEC J?
+L mdoLibrary:UBEC J?
 U 1 1 5A459D02
 P 2050 6250
 F 0 "J?" H 2050 6250 60  0000 C CNN
@@ -116,7 +80,7 @@ F 3 "" H 2050 6250 60  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR?
+L power:GND #PWR?
 U 1 1 5A45A4D2
 P 1250 6950
 F 0 "#PWR?" H 1250 6700 50  0001 C CNN
@@ -127,7 +91,7 @@ F 3 "" H 1250 6950 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L +12V #PWR?
+L power:+12V #PWR?
 U 1 1 5A45A52D
 P 1250 5550
 F 0 "#PWR?" H 1250 5400 50  0001 C CNN
@@ -138,7 +102,7 @@ F 3 "" H 1250 5550 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Arduino A?
+L mdoLibrary:Arduino A?
 U 1 1 5A480803
 P 5950 2400
 F 0 "A?" H 5950 2400 60  0000 C CNN
@@ -149,7 +113,7 @@ F 3 "" H 5950 2400 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L SW_Push SW?
+L switches:SW_Push SW?
 U 1 1 5A4908F2
 P 3600 4300
 F 0 "SW?" H 3750 4410 50  0000 C CNN
@@ -160,7 +124,7 @@ F 3 "" H 3600 4300 60  0000 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L SW_Push SW?
+L switches:SW_Push SW?
 U 1 1 5A490A22
 P 4000 4300
 F 0 "SW?" H 4150 4410 50  0000 C CNN
@@ -171,7 +135,7 @@ F 3 "" H 4000 4300 60  0000 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L SW_Push SW?
+L switches:SW_Push SW?
 U 1 1 5A490A65
 P 3800 5000
 F 0 "SW?" H 3950 5110 50  0000 C CNN
@@ -182,7 +146,7 @@ F 3 "" H 3800 5000 60  0000 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L R R?
+L Device:R R?
 U 1 1 5A49671E
 P 3600 1250
 F 0 "R?" V 3680 1250 50  0000 C CNN
@@ -193,7 +157,7 @@ F 3 "" H 3600 1250 30  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R R?
+L Device:R R?
 U 1 1 5A496756
 P 3800 1250
 F 0 "R?" V 3880 1250 50  0000 C CNN
@@ -204,7 +168,7 @@ F 3 "" H 3800 1250 30  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R R?
+L Device:R R?
 U 1 1 5A496794
 P 4000 1250
 F 0 "R?" V 4080 1250 50  0000 C CNN
@@ -217,7 +181,7 @@ $EndComp
 Text Notes 5650 3300 0    60   ~ 0
 Arduino Nano
 $Comp
-L R R?
+L Device:R R?
 U 1 1 5A767559
 P 4200 1250
 F 0 "R?" V 4280 1250 50  0000 C CNN
@@ -234,7 +198,7 @@ F0 "RubberBandWiring" 197
 F1 "RubberBandWiring.sch" 197
 $EndSheet
 $Comp
-L Speaker LS?
+L Device:Speaker LS?
 U 1 1 5D7C69A9
 P 5400 4500
 F 0 "LS?" H 5450 4725 50  0000 R CNN
@@ -245,7 +209,7 @@ F 3 "" H 5390 4450 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L R R?
+L Device:R R?
 U 1 1 5D7D3856
 P 4400 1250
 F 0 "R?" V 4480 1250 50  0000 C CNN
@@ -256,7 +220,7 @@ F 3 "" H 4400 1250 30  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L L L?
+L Device:L L?
 U 1 1 5D7D3BAD
 P 8150 5200
 F 0 "L?" V 8100 5200 50  0000 C CNN
@@ -271,7 +235,7 @@ solenoid\ndriver
 Text Notes 900  3500 0    118  ~ 0
 7.4 Volts
 $Comp
-L R R?
+L Device:R R?
 U 1 1 5D915A72
 P 4950 3500
 F 0 "R?" V 5030 3500 50  0000 C CNN
@@ -292,7 +256,7 @@ D07 = Red
 Text Notes 2200 2900 0    59   ~ 0
 D09 = Barrel\n    grounded = closed
 $Comp
-L SW_SPST SW?
+L switches:SW_SPST SW?
 U 1 1 5E2283C4
 P 4600 4500
 F 0 "SW?" H 4600 4625 50  0000 C CNN
@@ -303,7 +267,7 @@ F 3 "" H 4600 4500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L SW_Push SW?
+L switches:SW_Push SW?
 U 1 1 5E22B63A
 P 4200 5000
 F 0 "SW?" H 4350 5110 50  0000 C CNN
@@ -316,7 +280,7 @@ $EndComp
 Text Notes 4850 5600 0    59   ~ 0
 D09 = Barrel\n    grounded = closed
 $Comp
-L YX5200 A?
+L mdoLibrary:YX5200 A?
 U 1 1 5D90CF9F
 P 6400 4600
 F 0 "A?" H 6400 4500 60  0000 C CNN
@@ -327,7 +291,7 @@ F 3 "" H 6400 4600 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L R R?
+L Device:R R?
 U 1 1 5E2FCC72
 P 4600 1250
 F 0 "R?" V 4680 1250 50  0000 C CNN
@@ -338,7 +302,7 @@ F 3 "" H 4600 1250 30  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L SN74HCT125N A?
+L mdoLibrary:SN74HCT125N A?
 U 1 1 5E333EFD
 P 8450 2850
 F 0 "A?" H 8450 2750 60  0000 C CNN
@@ -358,9 +322,9 @@ Wire Wire Line
 Wire Wire Line
 	1550 6400 1250 6400
 Wire Wire Line
-	9850 6400 2750 6400
+	9850 6400 8150 6400
 Wire Wire Line
-	9850 1800 9850 6400
+	9850 1800 9850 1850
 Wire Wire Line
 	3050 4600 3050 6400
 Wire Wire Line
@@ -385,15 +349,15 @@ Wire Wire Line
 Wire Wire Line
 	5350 2300 3600 2300
 Wire Wire Line
-	3600 1400 3600 4100
+	3600 1400 3600 2300
 Wire Wire Line
 	5350 2400 3800 2400
 Wire Wire Line
-	3800 1400 3800 4800
+	3800 1400 3800 2400
 Wire Wire Line
 	5350 2500 4000 2500
 Wire Wire Line
-	4000 1400 4000 4100
+	4000 1400 4000 2500
 Wire Wire Line
 	3600 4500 3600 6400
 Connection ~ 3600 6400
@@ -437,7 +401,7 @@ Wire Wire Line
 	4400 1100 4400 950 
 Connection ~ 4400 950 
 Wire Wire Line
-	4400 1400 4400 4500
+	4400 1400 4400 2800
 Wire Notes Line
 	7650 4450 7650 4750
 Wire Notes Line
@@ -489,14 +453,14 @@ Wire Wire Line
 	4800 4500 4800 6400
 Connection ~ 4800 6400
 Wire Wire Line
-	4200 1400 4200 4800
+	4200 1400 4200 2600
 Wire Wire Line
 	4200 5200 4200 6400
 Wire Wire Line
 	4750 3900 4750 950 
 Connection ~ 4750 950 
 Wire Wire Line
-	7400 950  7400 4500
+	7400 950  7400 2000
 Connection ~ 4600 950 
 Wire Wire Line
 	4600 1100 4600 950 
@@ -528,7 +492,7 @@ Wire Wire Line
 	7600 3400 9850 3400
 Connection ~ 9850 3400
 Wire Wire Line
-	7600 1400 7600 2550
+	7600 1400 7600 1900
 Connection ~ 7600 2150
 Wire Wire Line
 	9050 2550 9850 2550
@@ -552,13 +516,13 @@ Wire Wire Line
 Wire Wire Line
 	7600 2750 7850 2750
 Wire Wire Line
-	3200 950  9050 950 
+	3200 950  3600 950 
 Wire Wire Line
 	9050 950  9050 2150
 Wire Wire Line
 	9050 2250 9200 2250
 Wire Wire Line
-	9200 1900 9200 2350
+	9200 1900 9200 2250
 Wire Wire Line
 	9200 2350 9050 2350
 Connection ~ 9200 2250
@@ -570,4 +534,68 @@ Wire Wire Line
 	9350 2650 9050 2650
 Wire Wire Line
 	9350 1500 4950 1500
+Wire Wire Line
+	3050 6400 2750 6400
+Wire Wire Line
+	3400 6400 3050 6400
+Wire Wire Line
+	3600 6400 3400 6400
+Wire Wire Line
+	3800 6400 3600 6400
+Wire Wire Line
+	4000 6400 3800 6400
+Wire Wire Line
+	3600 950  3800 950 
+Wire Wire Line
+	3800 950  4000 950 
+Wire Wire Line
+	4000 950  4200 950 
+Wire Wire Line
+	3600 2300 3600 4100
+Wire Wire Line
+	3800 2400 3800 4800
+Wire Wire Line
+	4000 2500 4000 4100
+Wire Wire Line
+	9850 1850 9850 2550
+Wire Wire Line
+	7400 2000 7400 4500
+Wire Wire Line
+	4200 950  4400 950 
+Wire Wire Line
+	4200 2600 4200 4800
+Wire Wire Line
+	4400 950  4600 950 
+Wire Wire Line
+	7050 6400 4800 6400
+Wire Wire Line
+	4400 2800 4400 4500
+Wire Wire Line
+	4200 6400 4000 6400
+Wire Wire Line
+	4800 6400 4200 6400
+Wire Wire Line
+	4750 950  7400 950 
+Wire Wire Line
+	4600 950  4750 950 
+Wire Wire Line
+	7400 6400 7050 6400
+Wire Wire Line
+	8150 6400 7400 6400
+Wire Wire Line
+	9850 3400 9850 6400
+Wire Wire Line
+	7600 2150 7600 2250
+Wire Wire Line
+	9850 2550 9850 3400
+Wire Wire Line
+	7600 1900 7600 2150
+Wire Wire Line
+	7600 2450 7600 2550
+Wire Wire Line
+	7600 2250 7600 2450
+Wire Wire Line
+	7400 950  9050 950 
+Wire Wire Line
+	9200 2250 9200 2350
 $EndSCHEMATC
