@@ -919,7 +919,8 @@ uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSpecial, uint1
       myRet = RBG_specialProcConfig2Storage();
       break;
     case mSPCL_HANDLER_CFG2CPYRST:
-      myRet = RBG_specialProcCfgCpyRst_skip();
+    case mSPCL_HANDLER_CFG2ADVNCD:
+      myRet = RBG_specialProcCfgCpyRst_skip(tmpStoreVal);
       break;
     case mSPCL_HANDLER_FACT2RUN:
       eeprom_factory_init(EEPROM_CONFIG_RUNNING);
@@ -944,6 +945,12 @@ uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSpecial, uint1
       break;
     case mSPCL_HANDLER_THREE2RUN:
       copy_eeprom_to_eeprom(EEPROM_SAVED_THREE, EEPROM_CONFIG_RUNNING);
+      break;
+    case mSPCL_HANDLER_DEMOMODE:
+      myState.demoMode = 0;
+      break;
+    case mSPCL_HANDLER_ADVFEATURES:
+      // nothing needed
       break;
     default:
       Serial.print(F(" RBG_specialProcessing ERROR ln ")); Serial.print((uint16_t) __LINE__);  Serial.print(F(" mySpec ")); Serial.print(mySpec);  Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
@@ -1075,13 +1082,15 @@ uint16_t RBG_specialProcConfig2Storage() {
 } // end RBG_specialProcConfig2Storage()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// RBG_specialProcCfgCpyRst_skiprocShoot() - do the solenoid for shooting
+// RBG_specialProcCfgCpyRst_skip(maxSkip) - skip based on the choice
 //    implements the skip based on the choice of factory resets or configuration copies
 //    then cleans up from being in configuration
+// maxSkip - from the row data .storeVal - this is the maximum number of rows we should skip
+//           minimum we should skip is 1 row
 // returns next row to go to
 //
-uint16_t RBG_specialProcCfgCpyRst_skip() {
-  uint16_t myRet = myState.tableRow + myState.cfg_curnum;
+uint16_t RBG_specialProcCfgCpyRst_skip(uint8_t maxSkip) {
+  uint16_t myRet = myState.tableRow + min(max(1, myState.cfg_curnum), maxSkip); // don't let it get crazy
   myState.cfg_maxnum =  myState.cfg_category = myState.cfg_category2save = myState.cfg_type = myState.cfg_type2save = myState.cfg_addr = mNONE;
   return(myRet);
 } // end RBG_specialProcCfgCpyRst_skip()

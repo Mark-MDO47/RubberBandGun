@@ -226,7 +226,7 @@ def make_state_table():
           + "\n#define mSPCL_EFCT_ONETIME    0x4000 // set this bit for onetime sound play then jump while waiting for other input or sound end"
           + "\n#define mSPCL_EFCT_CONTINUOUS 0x2000 // set this bit for continuous sound play while waiting for other input"
           + "\n#define mSPCL_EFCT_CONFIGURE  0x1000 // set this bit to use configuration variables instead of EEPROM and do continuous"
-          + "\n#define mSPCL_HANDLER         0x0010 // mask for functions is ((uint16_t) (mSPCL_HANDLER-1))"
+          + "\n#define mSPCL_HANDLER         0x0080 // mask for functions is ((uint16_t) (mSPCL_HANDLER-1))"
           + "\n#define mSPCL_HANDLER_SHOOT        2 // solenoid ON"
           + "\n#define mSPCL_HANDLER_SOLENOID     3 // solenoid OFF"
           + "\n#define mSPCL_HANDLER_CFGSTART     4 // configuration - store value at address"
