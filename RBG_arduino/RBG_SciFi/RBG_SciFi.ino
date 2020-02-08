@@ -68,6 +68,8 @@
 // | by/3.0/    | Creative Commons Attribution License               | https://creativecommons.org/licenses/by/3.0/ |
 // | by-nc/3.0/ | Creative Commons Attribution Noncommercial License | https://creativecommons.org/licenses/by-nc/3.0/ |
 //
+// The robotic voice sounds were generated using the eSpeak text to speech program found on eSpeak.SourceForge.net.
+//
 
 #include "Arduino.h"
 #include "SoftwareSerial.h"                  // to talk to myDFPlayer without using up debug serial port

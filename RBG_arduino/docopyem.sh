@@ -103,8 +103,8 @@ cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0102__mdo47__cfg_advanced_0
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0103__mdo47__cfg_advanced_03.wav H:/103.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0069__mdo47__silence.wav H:/104.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0069__mdo47__silence.wav H:/105.wav
-cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0069__mdo47__silence.wav H:/106.wav
-cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0107__mdo47__cfg_demo_started.wav H:/107.wav
+cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0106__mdo47__cfg_advanced.wav H:/106.wav
+cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0107__mdo47__cfg_advanced.wav H:/107.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0108__mdo47__cfg_cpy_rst_intro.wav H:/108.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0109__mdo47__cfg_cpy_rst_accept.wav H:/109.wav
  
