@@ -74,4 +74,4 @@ Note that eSpeak project is inactive since disappearance of Jonathan Duddington.
 Active development and support now happens in eSpeak NG project https://github.com/espeak-ng/espeak-ng, maintained by Reece H. Dunn.
 - Kudos to Reece H. Dunn for continuing the good work
 
-A web implementation of eSpeak can be found as below; it is great fun, and just one of many STT engines on the site. https://lingojam.com/RobotVoiceGenerator
+A web implementation of eSpeak can be found as below; it is great fun, and just one of many text-to-text and text-to-speech engines on the site. https://lingojam.com/RobotVoiceGenerator
