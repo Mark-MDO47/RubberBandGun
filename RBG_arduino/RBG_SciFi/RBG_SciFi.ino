@@ -904,7 +904,7 @@ uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSpecial, uint1
       RBG_specialProcShoot();
       break;
     case mSPCL_HANDLER_SOLENOID:
-      RBG_specialProcSolenoid();
+      RBG_specialProcSolenoid(); // we also switch for demo mode here
       break;
     case mSPCL_HANDLER_CFGSTART:
       RBG_specialProcConfigStart(tmpStoreAddr);
@@ -947,7 +947,8 @@ uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSpecial, uint1
       copy_eeprom_to_eeprom(EEPROM_SAVED_THREE, EEPROM_CONFIG_RUNNING);
       break;
     case mSPCL_HANDLER_DEMOMODE:
-      myState.demoMode = 0;
+      myState.demoMode = EEPROM_CONFIG_RUNNING;
+      copy_eeprom_to_ram_running_config(myState.demoMode);
       break;
     case mSPCL_HANDLER_ADVFEATURES:
       // nothing needed
@@ -1113,7 +1114,11 @@ void RBG_specialProcShoot() {
 //
 void RBG_specialProcSolenoid() {
   digitalWrite(DPIN_SOLENOID, LOW);
-  Serial.print(F(" RBG_specialProcSolenoid LOW timerForceSolenoidLow ")); Serial.print(myState.timerForceSolenoidLow); Serial.print(F(" timerNow ")); Serial.print(myState.timerNow); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
+  if (myState.demoMode != mNONE) {
+    myState.demoMode = (myState.demoMode+1) % NUM_EEPROM_CONFIGURATIONS;
+    copy_eeprom_to_ram_running_config(myState.demoMode);
+  }
+  Serial.print(F(" RBG_specialProcSolenoid LOW timerForceSolenoidLow ")); Serial.print(myState.timerForceSolenoidLow); Serial.print(F(" timerNow ")); Serial.print(myState.timerNow); Serial.print(F(" demoMode ")); Serial.print(myState.demoMode); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
   myState.timerForceSolenoidLow = 0;
 } // end RBG_specialProcSolenoid()
 
@@ -1474,9 +1479,11 @@ void eeprom_store_with_chksum(int address, uint8_t byteValue) {
     EEPROM.write(EEPROM_INVERTED_CHKSM + thisConfigStart, invChksumValue);
   }
 
-  if (EEPROM_CONFIG_RUNNING == thisConfig) {
-    copy_eeprom_to_ram_running_config(EEPROM_CONFIG_RUNNING);
-  }
+  if (mNONE == myState.demoMode) {
+    if (EEPROM_CONFIG_RUNNING == thisConfig) {
+      copy_eeprom_to_ram_running_config(EEPROM_CONFIG_RUNNING);
+    }
+  } // end if not demo mode; just wait till we cycle around to that EEPROM if demo mode
 } // end eeprom_store_with_chksum()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1588,9 +1595,11 @@ void copy_eeprom_to_eeprom(uint8_t fromConfigToProc, uint8_t toConfigToProc) {
   Serial.print(F("copy_eeprom_to_eeprom: last address ")); Serial.print(EEPROM_LAST_NON_CHKSM); Serial.print(F(" nowValue ")); Serial.print(nowValue); Serial.print(F(" desiredValue ")); Serial.println(desiredValue);
   eeprom_store_with_chksum(EEPROM_LAST_NON_CHKSM + toConfigToProc*EEPROM_BYTES_PER_CONFIG, desiredValue); // store last value and checksum
 
-  if (EEPROM_CONFIG_RUNNING == toConfigToProc) {
-    copy_eeprom_to_ram_running_config(EEPROM_CONFIG_RUNNING);
-  } // end if need to copy to RAM Running Config
+  if (mNONE == myState.demoMode) {
+    if (EEPROM_CONFIG_RUNNING == toConfigToProc) {
+      copy_eeprom_to_ram_running_config(EEPROM_CONFIG_RUNNING);
+    } // end if need to copy to RAM Running Config
+  } // end if not demo mode; just wait till we cycle around to that EEPROM if demo mode
 } // end copy_eeprom_to_eeprom(ramAddr, configToProc)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
