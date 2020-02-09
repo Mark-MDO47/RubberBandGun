@@ -70,6 +70,10 @@
 //
 // The robotic voice sounds were generated using the eSpeak text to speech program found on eSpeak.SourceForge.net.
 //
+// Note: I am not making any claims that this software is well written or a good example for anyone.
+//       I am just having fun with it.
+//       Mark
+
 
 #include "Arduino.h"
 #include "SoftwareSerial.h"                  // to talk to myDFPlayer without using up debug serial port
@@ -77,7 +81,7 @@
 
 #define USE_PROGMEM true                     // set true to keep big const items in FLASH (PROGMEM keyword)
 
-#include "FastLED.h"                         // to manipulate WS2812b 5050 RGB LED Rings
+#include "FastLED.h"                         // to manipulate WS2812b (NeoPixel) 5050 RGB LED Rings
 #include "DFRobotDFPlayerMini.h"             // to communicate with the YX5200 audio player
 
 #include "RBG_SciFi_StatesAndInputs.h"       // state tables and input definitions
@@ -89,16 +93,19 @@
 #define DEBUG_SHOW_MSEC 1                    // use globalLoopCount for millis() display not loopcount
 #define DONOTEXPLAINBITS 1                   // don't explain the bits - existing routine uses too much RAM
 
-#define DEBUGALL_GLOBAL 1                    // sets many of the following
+#define DEBUGALL_GLOBAL 0                    // sets many of the following
 #define DEBUG_STATE_MACHINE (0 | DEBUGALL_GLOBAL) // 1 to show state machine internals for transitions
 #define DEBUG_INPUTS (0 | DEBUGALL_GLOBAL)        // 1 to show all inputs
 #define DEBUG_CONFIG (0 | DEBUGALL_GLOBAL)        // 1 to show all CONFIGURATION special activity
 
+static uint32_t globalLoopCount = 0;  // based on DEBUG_SHOW_MSEC: this is either the milliseconds since startup or a count of times through loop()
 
 SoftwareSerial mySoftwareSerial(DPIN_SWSRL_RX, DPIN_SWSRL_TX); // to talk to YX5200 audio player
 DFRobotDFPlayerMini myDFPlayer;                                // to talk to YX5200 audio player
 void DFsetup();                                                // how to initialize myDFPlayer
 
+// sure glad we are done with debugging the YX5200 and its code!!!
+//
 #define DFPRINTDETAIL (1&SERIALDEBUG)     // if need detailed status from myDFPlayer
 // #define DFPRINTDETAIL 0                      // will not print detailed status from myDFPlayer
 #if DFPRINTDETAIL // routine to do detailed debugging
@@ -107,18 +114,19 @@ void DFsetup();                                                // how to initial
   #define DFprintDetail(type, value) // nothing at all
 #endif // #if DFPRINTDETAIL
 
-static uint32_t globalLoopCount = 0;
 
 static uint8_t gHue = 0; // rotating "base color" used by Demo Reel 100
 CRGBPalette16 gPal; // palette for Fire2012WithPalette()
 static uint16_t gSeed = ((uint16_t) 42); // my favorite is 47 but the whole world loves 42 and HHG2TG
+// we are not using the fire pattern
 #if FASTLED_FIRE_PATTERN // only used for Fire pattern
 CRGB dark_color_palette[1]  = { CRGB::DarkGreen, CRGB::Red,    CRGB::Blue, CRGB::DarkOrange };
 CRGB light_color_palette[1] = { CRGB::LimeGreen, CRGB::Yellow, CRGB::Aqua, CRGB::Gold };
 #endif // FASTLED_FIRE_PATTERN
+
 static uint16_t nowVinputRBG; // latest button inputs, to compare with previous in myState
 
-static RBGStateTable_t loopRow; // for use in setup() and loop()
+static RBGStateTable_t loopRow; // for use in setup() and loop() - since USE_PROGMEM, must copy to RAM 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // setup()
@@ -369,11 +377,18 @@ uint16_t lookupLEDpattern(uint16_t nowEfctLED) {
   if (nowEfctLED == mEFCT_PTRNLED_OFF) {
     myRetVal = mEFCT_PTRNLED_OFF;
   } else if ((nowEfctLED >= mEFCT_UNIQ) || (0 == nowEfctLED)) {
-    Serial.print(F("ERROR - lookupLEDpattern() out of range - ")); Serial.println(nowEfctLED);
+    if (mNONE != nowEfctLED) {
+      Serial.print(F("ERROR - lookupLEDpattern() out of range - ")); Serial.println(nowEfctLED);
+    }
     myRetVal = mEFCT_PTRNLED_OFF;
   } else {
 #if USE_PROGMEM
-    memcpy_P(&myRetVal, &lookupLEDpatternTbl[nowEfctLED-1], sizeof(lookupLEDpatternTbl[0]));
+    if (sizeof(myRetVal) - sizeof(lookupLEDpatternTbl[0])) { // cannot use sizeof in #if statement
+      Serial.print(F("ERROR FIXME SIZE MISMATCH TYPEOF_lookupLEDpatternTbl ")); Serial.print(sizeof(myRetVal)); Serial.println(sizeof(lookupLEDpatternTbl[0]));
+      myRetVal = mEFCT_PTRNLED_OFF;
+    } else {
+      memcpy_P(&myRetVal, &lookupLEDpatternTbl[nowEfctLED-1], sizeof(myRetVal));
+    }
 #else // not USE_PROGMEM
     myRetVal = lookupLEDpatternTbl[nowEfctLED-1];
 #endif // USE_PROGMEM
