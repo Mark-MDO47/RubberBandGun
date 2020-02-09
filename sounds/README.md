@@ -22,7 +22,12 @@ Here are some good articles and overview of LIGO and gravity waves:
 I particularly like GW170817-template.wav; it has the ramp-up and then the kick at the end, which can be found at https://www.gw-openscience.org/audiogwtc1/. Of course, I would make it just like itself but even more so!!!
 
 Another one I like: Gravitational Waves from a Neutron Star Merger Produced a Signal Detected by LIGO
-https://www.youtube.com/watch?v=CH9JSqUfnSw
+- https://www.youtube.com/watch?v=CH9JSqUfnSw
+
+Here is where you can get audio from the Cassini mission representing radio emissions from Saturn:
+- http://www-pw.physics.uiowa.edu/space-audio/cassini/SKR1/
+- http://www-pw.physics.uiowa.edu/space-audio/cassini/SKR1/SKR-03-324.wav
+
 
 Here are the Creative Commons licenses in the sound files I used:
 
