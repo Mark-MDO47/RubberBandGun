@@ -89,7 +89,7 @@
 #define DEBUG_SHOW_MSEC 1                    // use globalLoopCount for millis() display not loopcount
 #define DONOTEXPLAINBITS 1                   // don't explain the bits - existing routine uses too much RAM
 
-#define DEBUGALL_GLOBAL 0                    // sets many of the following
+#define DEBUGALL_GLOBAL 1                    // sets many of the following
 #define DEBUG_STATE_MACHINE (0 | DEBUGALL_GLOBAL) // 1 to show state machine internals for transitions
 #define DEBUG_INPUTS (0 | DEBUGALL_GLOBAL)        // 1 to show all inputs
 #define DEBUG_CONFIG (0 | DEBUGALL_GLOBAL)        // 1 to show all CONFIGURATION special activity
@@ -906,10 +906,14 @@ uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSpecial, uint1
       RBG_specialProcShoot();
       break;
     case mSPCL_HANDLER_SOLENOID:
+      if (myState.demoMode != mNONE) { // only update demoMode if end of shooting effects
+        myState.demoMode = (myState.demoMode+1) % NUM_EEPROM_CONFIGURATIONS;
+        copy_eeprom_to_ram_running_config(myState.demoMode);
+      }
       RBG_specialProcSolenoid(); // we also switch for demo mode here
       break;
     case mSPCL_HANDLER_CFGSTART:
-      RBG_specialProcConfigStart(tmpStoreAddr);
+      RBG_specialProcConfigStart(tmpStoreAddr, tmpStoreVal);
       break;
     case mSPCL_HANDLER_CFGNEXT:
       RBG_specialProcConfigNext();
@@ -963,13 +967,13 @@ uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSpecial, uint1
 } // end RBG_specialProcessing(uint16_t tmpVinputRBG)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// RBG_specialProcConfigStart(tmpStoreAddr) - prepare for configuration list
+// RBG_specialProcConfigStart(tmpStoreAddr, tmpStoreVal) - prepare for configuration list
 //
-// tmpStoreAddr - code: mADDR_CFG_CATEGORY, mADDR_CFG_TYPE, mADDR_CFG_EFFECT 
+// tmpStoreAddr - code: mADDR_CFG_CATEGORY, mADDR_CFG_TYPE, mADDR_CFG_EFFECT, etc.
 //
 //   All RBG_specialProcXxx routines get called exactly one time then move to .gotoWithoutInput
 //
-void RBG_specialProcConfigStart(uint16_t tmpStoreAddr) {
+void RBG_specialProcConfigStart(uint16_t tmpStoreAddr, uint16_t tmpStoreVal) {
   // initialize numbers for mSPCL_EFCT_CONFIGURE
   myState.cfg_curnum = 1; // current number for configuration list of choices
   if (mADDR_CFG_CATEGORY == tmpStoreAddr) {
@@ -998,10 +1002,16 @@ void RBG_specialProcConfigStart(uint16_t tmpStoreAddr) {
       myState.cfg_maxnum = cfgMaxLEDForType[myState.cfg_category2save, EEPOFFSET(myState.cfg_type2save)];
     }
   } else if (mADDR_CFG_CPY_RST == tmpStoreAddr) {
-    myState.cfg_maxnum = EFCT_TYPE_OFFSET(mEFCT_UNIQ_CFG_MGMT_08);
+    myState.cfg_maxnum = tmpStoreVal; // EFCT_TYPE_OFFSET(mEFCT_UNIQ_CFG_MGMT_08);
     myState.cfg_category = mCFG_CATEGORY_SOUND; // so we can speak choices
     myState.cfg_category2save = mNONE;
     myState.cfg_type = mEFCT_UNIQ_CFG_MGMT_01 - EFCT_TYPE_OFFSET(mEFCT_UNIQ_CFG_MGMT_01);
+    myState.cfg_type2save = mNONE;
+  } else if (mADDR_CFG_ADVANCED == tmpStoreAddr) {
+    myState.cfg_maxnum = tmpStoreVal;
+    myState.cfg_category = mCFG_CATEGORY_SOUND; // so we can speak choices
+    myState.cfg_category2save = mNONE;
+    myState.cfg_type = mEFCT_UNIQ_CFG_ADVANCED_01 - EFCT_TYPE_OFFSET(mEFCT_UNIQ_CFG_ADVANCED_01);
     myState.cfg_type2save = mNONE;
   } else {
     Serial.print(F("ERROR RBG_specialProcConfigStart tmpStoreAddr is ")); Serial.print(tmpStoreAddr); Serial.print(F(" on row ")); Serial.println(myState.tableRow);
@@ -1116,10 +1126,6 @@ void RBG_specialProcShoot() {
 //
 void RBG_specialProcSolenoid() {
   digitalWrite(DPIN_SOLENOID, LOW);
-  if (myState.demoMode != mNONE) {
-    myState.demoMode = (myState.demoMode+1) % NUM_EEPROM_CONFIGURATIONS;
-    copy_eeprom_to_ram_running_config(myState.demoMode);
-  }
   Serial.print(F(" RBG_specialProcSolenoid LOW timerForceSolenoidLow ")); Serial.print(myState.timerForceSolenoidLow); Serial.print(F(" timerNow ")); Serial.print(myState.timerNow); Serial.print(F(" demoMode ")); Serial.print(myState.demoMode); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
   myState.timerForceSolenoidLow = 0;
 } // end RBG_specialProcSolenoid()
