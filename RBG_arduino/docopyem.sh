@@ -56,7 +56,7 @@ cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0055_169292__lazr2012__hayw
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0056_88635__uair01__bicycle-picture-in-spectrum_mdo47.wav H:/056.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0057_417131__cuddlenucks__science-fiction-noise-3_mdo47.wav H:/057.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0058_221875__hero-of-the-winds__spring-boing_mdo47.wav H:/058.wav
-cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0069__mdo47__silence.wav H:/059.wav
+cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0059__nasa__skr-03-324.wav H:/059.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0069__mdo47__silence.wav H:/060.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0069__mdo47__silence.wav H:/061.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0062__mdo47__cfg_introtoconfig.wav H:/062.wav

@@ -205,7 +205,7 @@ static const uint8_t factory_effect_configs[NUM_EEPROM_CONFIGURATIONS*EEPROM_BYT
   = {
 /* 0 SOUND */    1, 1, 6, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, mDEFAULT_EFCT_SND_VOL, 1, // EEPROM_VOLUME_CONFIG is 0x000e FIXME not implemented 
 /* 0 LED PTRN */ 3, 1, 5, 1, 1, 7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-/* 1 SOUND */    4, 4, 5, 4, 2, 3, 1, 1, 1, 1, 1, 1, 1, 1, mDEFAULT_EFCT_SND_VOL, 1, // EEPROM_VOLUME_CONFIG is 0x000e FIXME not implemented
+/* 1 SOUND */    4, 4, 5, 4, 2, 9, 1, 1, 1, 1, 1, 1, 1, 1, mDEFAULT_EFCT_SND_VOL, 1, // EEPROM_VOLUME_CONFIG is 0x000e FIXME not implemented
 /* 1 LED PTRN */ 6, 2, 4, 6, 2, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 /* 2 SOUND */    5, 7, 4, 5, 3, 2, 1, 1, 1, 1, 1, 1, 1, 1, mDEFAULT_EFCT_SND_VOL, 1, // EEPROM_VOLUME_CONFIG is 0x000e FIXME not implemented
 /* 2 LED PTRN */ 1, 3, 1, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -351,7 +351,7 @@ static struct _myState_t {
 #define mCFG_CATEGORY_MAXNUM  mCFG_CATEGORY_ADVANCED // for myState.cfg_category
 // too lazy to use doubly-dimensioned arrays
 static uint8_t cfgMaxSoundForType[EEPOFFSET(mEFCT_UNIQ)] = {
-  6, 9, 6, 6, 4, 8 // sound - mEFCT_WIND_UP mEFCT_SHOOT mEFCT_OPEN_BARREL mEFCT_LOCK_LOAD mEFCT_PWRON mEFCT_WAIT
+  6, 9, 6, 6, 4, 9 // sound - mEFCT_WIND_UP mEFCT_SHOOT mEFCT_OPEN_BARREL mEFCT_LOCK_LOAD mEFCT_PWRON mEFCT_WAIT
 };
 static uint8_t cfgMaxLEDForType[EEPOFFSET(mEFCT_UNIQ)] = {
   7, 8, 6, 6, 7, 7 // LED - mEFCT_WIND_UP mEFCT_SHOOT mEFCT_OPEN_BARREL mEFCT_LOCK_LOAD mEFCT_PWRON mEFCT_WAIT
