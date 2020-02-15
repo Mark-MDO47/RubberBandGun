@@ -208,17 +208,6 @@ F 3 "" H 4400 1250 30  0000 C CNN
 	1    4400 1250
 	1    0    0    -1  
 $EndComp
-$Comp
-L Device:L L?
-U 1 1 5D7D3BAD
-P 8150 5200
-F 0 "L?" V 8100 5200 50  0000 C CNN
-F 1 "L" V 8225 5200 50  0000 C CNN
-F 2 "" H 8150 5200 50  0001 C CNN
-F 3 "" H 8150 5200 50  0001 C CNN
-	1    8150 5200
-	1    0    0    -1  
-$EndComp
 Text Notes 7950 4850 3    118  ~ 0
 solenoid\ndriver
 Text Notes 900  3500 0    118  ~ 0
@@ -589,6 +578,17 @@ F 1 "LEDring" H 9900 1250 60  0000 C CNN
 F 2 "" H 9900 1250 60  0001 C CNN
 F 3 "" H 9900 1250 60  0001 C CNN
 	1    9900 1100
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:L L?
+U 1 1 5D7D3BAD
+P 8150 5200
+F 0 "L?" V 8100 5200 50  0000 C CNN
+F 1 "L" V 8225 5200 50  0000 C CNN
+F 2 "" H 8150 5200 50  0001 C CNN
+F 3 "" H 8150 5200 50  0001 C CNN
+	1    8150 5200
 	1    0    0    -1  
 $EndComp
 $EndSCHEMATC
