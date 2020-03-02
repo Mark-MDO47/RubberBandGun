@@ -232,7 +232,7 @@ D06 = Green
 Text Notes 2200 2600 0    59   ~ 0
 D07 = Red
 Text Notes 2200 2900 0    59   ~ 0
-D09 = Barrel\n    grounded = closed
+D08 = Barrel (Yellow)\n    grounded = closed
 $Comp
 L switches:SW_SPST SW?
 U 1 1 5E2283C4
@@ -255,8 +255,8 @@ F 3 "" H 4200 5000 60  0000 C CNN
 	1    4200 5000
 	0    -1   -1   0   
 $EndComp
-Text Notes 4850 5600 0    59   ~ 0
-D09 = Barrel\n    grounded = closed
+Text Notes 7250 4200 0    59   ~ 0
+Barrel White +5V\n    Solenoid
 $Comp
 L mdoLibrary:YX5200 A?
 U 1 1 5D90CF9F
@@ -371,8 +371,6 @@ Connection ~ 4200 2600
 Wire Wire Line
 	4400 1100 4400 950 
 Connection ~ 4400 950 
-Wire Wire Line
-	4400 1400 4400 2800
 Wire Notes Line
 	7650 4450 7650 4750
 Wire Notes Line
@@ -416,9 +414,6 @@ Wire Wire Line
 	7000 3700 5350 3700
 Wire Wire Line
 	5350 3700 5350 3100
-Wire Wire Line
-	5350 2800 4400 2800
-Connection ~ 4400 2800
 Connection ~ 4200 6400
 Wire Wire Line
 	4800 4500 4800 6400
@@ -442,7 +437,7 @@ Wire Wire Line
 Wire Wire Line
 	7400 4500 7650 4500
 Wire Wire Line
-	7650 4500 7650 4700
+	7650 4500 7650 4600
 Wire Wire Line
 	7650 4700 7400 4700
 Wire Wire Line
@@ -538,8 +533,6 @@ Wire Wire Line
 Wire Wire Line
 	7050 6400 4800 6400
 Wire Wire Line
-	4400 2800 4400 4500
-Wire Wire Line
 	4200 6400 4000 6400
 Wire Wire Line
 	4800 6400 4200 6400
@@ -591,4 +584,24 @@ F 3 "" H 8150 5200 50  0001 C CNN
 	1    8150 5200
 	1    0    0    -1  
 $EndComp
+Wire Wire Line
+	4400 1400 4400 2700
+Wire Wire Line
+	5350 2700 4400 2700
+Connection ~ 4400 2700
+Wire Wire Line
+	4400 2700 4400 4500
+Text Notes 6600 3100 0    59   ~ 0
+D13 = Solenoid\n   (Blue)
+Text Notes 7250 5850 0    59   ~ 0
+Barrel Black Gnd\n    Solenoid
+Wire Wire Line
+	6550 3100 7200 3100
+Wire Wire Line
+	7200 3100 7200 4600
+Wire Wire Line
+	7200 4600 7650 4600
+Connection ~ 7650 4600
+Wire Wire Line
+	7650 4600 7650 4700
 $EndSCHEMATC

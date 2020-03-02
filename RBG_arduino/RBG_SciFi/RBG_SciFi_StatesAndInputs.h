@@ -150,6 +150,7 @@ template <typename T> int sgn(T val) {
 #define mDEFAULT_EFCT_SND_VOL 25  // default volume - 25 is pretty good
 
 /////////////////// end -> INPUTS 1 FROM makeStateTable.py <- //////////////////////////////////
+
 //
 // Storage of configuration into EEPROM
 //    EEPROM gets copied to RAM to facilitate cycling through EEPROM configurations
@@ -169,8 +170,9 @@ template <typename T> int sgn(T val) {
 #define EEPROM_SAVED_LAST  EEPROM_SAVED_THREE //
 #define NUM_EEPROM_CONFIGURATIONS    4   // total number of EEPROM configurations: 0 to 3
 //
-// At this time, the EEPROM configurations only implement choices for the effects: SOUNDS or LED PATTERNS.
-//       I am reserving EEPROM_VOLUME_CONFIG for later volume configuration FIXME
+// At this time, the EEPROM configurations implement choices for the effects: SOUNDS or LED PATTERNS.
+//       FIXME - maybe future - EEPROM_DEMO_CONFIG is non-zero to be in demo mode
+//       FIXME - I am reserving EEPROM_VOLUME_CONFIG for later volume configuration
 //    The choices for effects are in ranges of 10 decimal (example: mEFCT_SHOOT is 10, but choices of shoot must be 11 <= choice <= 19)
 //    These #defs will convert or test these ranges
 #define EEPOFFSET(parm)   ((uint16_t) (parm / 10)) // example: EEPOFFSET(mEFCT_SHOOT) = 1
