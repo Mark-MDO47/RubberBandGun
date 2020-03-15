@@ -5,7 +5,7 @@ $Descr A 11000 8500
 encoding utf-8
 Sheet 1 2
 Title "FOOF Rubber Band Gun"
-Date "2020-01-30"
+Date "2020-03-14"
 Rev "---"
 Comp ""
 Comment1 ""
@@ -55,39 +55,6 @@ F 1 "UBEC" H 2050 4550 60  0000 C CNN
 F 2 "" H 2050 4450 60  0001 C CNN
 F 3 "" H 2050 4450 60  0001 C CNN
 	1    2050 4450
-	1    0    0    -1  
-$EndComp
-$Comp
-L mdoLibrary:UBEC #J0102
-U 1 1 5A459D02
-P 2050 6250
-F 0 "#J0102" H 2050 6250 60  0000 C CNN
-F 1 "UBEC" H 2050 6350 60  0000 C CNN
-F 2 "" H 2050 6250 60  0001 C CNN
-F 3 "" H 2050 6250 60  0001 C CNN
-	1    2050 6250
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:GND #PWR0103
-U 1 1 5A45A4D2
-P 1250 6950
-F 0 "#PWR0103" H 1250 6700 50  0001 C CNN
-F 1 "GND" H 1250 6800 50  0000 C CNN
-F 2 "" H 1250 6950 50  0001 C CNN
-F 3 "" H 1250 6950 50  0001 C CNN
-	1    1250 6950
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:+12V #PWR0104
-U 1 1 5A45A52D
-P 1250 5550
-F 0 "#PWR0104" H 1250 5400 50  0001 C CNN
-F 1 "+12V" H 1250 5690 50  0000 C CNN
-F 2 "" H 1250 5550 50  0001 C CNN
-F 3 "" H 1250 5550 50  0001 C CNN
-	1    1250 5550
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -210,7 +177,7 @@ F 3 "" H 4400 1250 30  0000 C CNN
 $EndComp
 Text Notes 7950 4850 3    118  ~ 0
 solenoid\ndriver
-Text Notes 900  3500 0    118  ~ 0
+Text Notes 1450 3850 0    118  ~ 0
 7.4 Volts
 $Comp
 L Device:R R?
@@ -255,8 +222,8 @@ F 3 "" H 4200 5000 60  0000 C CNN
 	1    4200 5000
 	0    -1   -1   0   
 $EndComp
-Text Notes 7250 4200 0    59   ~ 0
-Barrel White +5V\n    Solenoid
+Text Notes 7450 4150 0    59   ~ 0
+Barrel White +7.4V\n    Solenoid
 $Comp
 L mdoLibrary:YX5200 A?
 U 1 1 5D90CF9F
@@ -290,29 +257,20 @@ F 3 "" H 8450 2850 60  0000 C CNN
 	1    8450 2850
 	1    0    0    -1  
 $EndComp
-Connection ~ 3050 6400
-Wire Wire Line
-	1250 6000 1250 5550
-Wire Wire Line
-	1550 6000 1250 6000
-Wire Wire Line
-	1250 6400 1250 6950
-Wire Wire Line
-	1550 6400 1250 6400
 Wire Wire Line
 	9850 6400 8150 6400
 Wire Wire Line
-	3050 4600 3050 6400
+	3050 4600 3050 4900
 Wire Wire Line
 	2750 4600 3050 4600
 Wire Wire Line
 	1250 4200 1550 4200
 Wire Wire Line
-	1250 3850 1250 4200
+	1250 3850 1250 3950
 Wire Wire Line
 	1250 4600 1550 4600
 Wire Wire Line
-	1250 4950 1250 4600
+	1250 4950 1250 4900
 Wire Wire Line
 	3200 4200 2750 4200
 Wire Wire Line
@@ -356,12 +314,9 @@ Connection ~ 3600 2300
 Connection ~ 3800 2400
 Connection ~ 4000 2500
 Wire Wire Line
-	2750 6000 9950 6000
-Wire Wire Line
 	9950 6000 9950 1800
 Wire Wire Line
-	6550 2000 7400 2000
-Connection ~ 7400 2000
+	6550 2000 6950 2000
 Wire Wire Line
 	4200 1100 4200 950 
 Connection ~ 4200 950 
@@ -425,8 +380,6 @@ Wire Wire Line
 Wire Wire Line
 	4750 3900 4750 950 
 Connection ~ 4750 950 
-Wire Wire Line
-	7400 950  7400 2000
 Connection ~ 4600 950 
 Wire Wire Line
 	4600 1100 4600 950 
@@ -468,7 +421,6 @@ Connection ~ 7600 2450
 Connection ~ 7600 2250
 Wire Wire Line
 	4600 1400 7600 1400
-Connection ~ 7400 950 
 Wire Wire Line
 	7850 2150 7600 2150
 Wire Wire Line
@@ -501,8 +453,6 @@ Wire Wire Line
 Wire Wire Line
 	9350 1500 4950 1500
 Wire Wire Line
-	3050 6400 2750 6400
-Wire Wire Line
 	3400 6400 3050 6400
 Wire Wire Line
 	3600 6400 3400 6400
@@ -523,8 +473,6 @@ Wire Wire Line
 Wire Wire Line
 	4000 2500 4000 4100
 Wire Wire Line
-	7400 2000 7400 4500
-Wire Wire Line
 	4200 950  4400 950 
 Wire Wire Line
 	4200 2600 4200 4800
@@ -537,7 +485,7 @@ Wire Wire Line
 Wire Wire Line
 	4800 6400 4200 6400
 Wire Wire Line
-	4750 950  7400 950 
+	4750 950  6950 950 
 Wire Wire Line
 	4600 950  4750 950 
 Wire Wire Line
@@ -556,8 +504,6 @@ Wire Wire Line
 	7600 2450 7600 2550
 Wire Wire Line
 	7600 2250 7600 2450
-Wire Wire Line
-	7400 950  9050 950 
 Wire Wire Line
 	9200 2250 9200 2350
 Wire Wire Line
@@ -598,10 +544,56 @@ Barrel Black Gnd\n    Solenoid
 Wire Wire Line
 	6550 3100 7200 3100
 Wire Wire Line
-	7200 3100 7200 4600
-Wire Wire Line
 	7200 4600 7650 4600
 Connection ~ 7650 4600
 Wire Wire Line
 	7650 4600 7650 4700
+Wire Wire Line
+	7200 3100 7200 3300
+Wire Wire Line
+	7200 3600 7200 4600
+$Comp
+L Device:R R?
+U 1 1 5E6E688B
+P 7200 3450
+F 0 "R?" V 7280 3450 50  0000 C CNN
+F 1 "1.6K" V 7200 3450 50  0000 C CNN
+F 2 "" V 7130 3450 50  0001 C CNN
+F 3 "" H 7200 3450 50  0001 C CNN
+	1    7200 3450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3200 4200 3200 6000
+Connection ~ 3200 4200
+Wire Wire Line
+	3200 6000 9950 6000
+Wire Wire Line
+	1250 4900 3050 4900
+Connection ~ 1250 4900
+Wire Wire Line
+	1250 4900 1250 4600
+Connection ~ 3050 4900
+Wire Wire Line
+	3050 4900 3050 6400
+Text Notes 1750 5000 0    59   ~ 0
+Yes - connect GND
+Wire Wire Line
+	6950 950  6950 2000
+Connection ~ 6950 950 
+Wire Wire Line
+	6950 950  9050 950 
+Wire Wire Line
+	1250 3950 1400 3950
+Wire Wire Line
+	1400 3950 1400 750 
+Wire Wire Line
+	1400 750  7400 750 
+Wire Wire Line
+	7400 750  7400 4500
+Connection ~ 1250 3950
+Wire Wire Line
+	1250 3950 1250 4200
+Text Notes 8300 4800 0    59   ~ 0
+USB Breakout\n   Black - GND\n   White - +7.4 V\n   Blue - Trig (HI = active)\n   Yellow - Sense (GND = cnct)
 $EndSCHEMATC

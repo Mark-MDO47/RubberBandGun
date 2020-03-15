@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 1 2
+Sheet 2 2
 Title "Rubber Band Gun"
 Date "2019-09-13"
 Rev "---"
