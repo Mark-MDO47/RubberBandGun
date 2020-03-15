@@ -3,6 +3,7 @@ A high-tech imagining of the rubber band gun
 
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/IMG_2090.png "Jim has been busy on the hardware side of the Science Fiction Rubber Band Gun without LED rings")
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/P1010685.png "Mark has been busy on the software side of the Science Fiction Rubber Band Gun on a prototype")
+![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/RBG_wiring_20200314_184839_800_600.png "Mark has also been wiring up the RBG")
 
 
 Jim and I are working on a Science-Fiction Rubber Band Gun!
