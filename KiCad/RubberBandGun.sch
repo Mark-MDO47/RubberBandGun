@@ -147,12 +147,6 @@ F 3 "" H 4200 1250 30  0000 C CNN
 	1    4200 1250
 	1    0    0    -1  
 $EndComp
-$Sheet
-S 2150 7250 500  150 
-U 5B063CC5
-F0 "RubberBandWiring" 197
-F1 "RubberBandWiring.sch" 197
-$EndSheet
 $Comp
 L Device:Speaker LS?
 U 1 1 5D7C69A9
@@ -175,8 +169,6 @@ F 3 "" H 4400 1250 30  0000 C CNN
 	1    4400 1250
 	1    0    0    -1  
 $EndComp
-Text Notes 7950 4850 3    118  ~ 0
-solenoid\ndriver
 Text Notes 1450 3850 0    118  ~ 0
 7.4 Volts
 $Comp
@@ -201,17 +193,6 @@ D07 = Red
 Text Notes 2200 2900 0    59   ~ 0
 D08 = Barrel (Yellow)\n    grounded = closed
 $Comp
-L switches:SW_SPST SW?
-U 1 1 5E2283C4
-P 4600 4500
-F 0 "SW?" H 4600 4625 50  0000 C CNN
-F 1 "SW_SPST" H 4600 4400 50  0000 C CNN
-F 2 "" H 4600 4500 50  0001 C CNN
-F 3 "" H 4600 4500 50  0001 C CNN
-	1    4600 4500
-	1    0    0    -1  
-$EndComp
-$Comp
 L switches:SW_Push SW?
 U 1 1 5E22B63A
 P 4200 5000
@@ -222,8 +203,6 @@ F 3 "" H 4200 5000 60  0000 C CNN
 	1    4200 5000
 	0    -1   -1   0   
 $EndComp
-Text Notes 7450 4150 0    59   ~ 0
-Barrel White +7.4V\n    Solenoid
 $Comp
 L mdoLibrary:YX5200 A?
 U 1 1 5D90CF9F
@@ -235,30 +214,6 @@ F 3 "" H 6400 4600 60  0000 C CNN
 	1    6400 4600
 	1    0    0    -1  
 $EndComp
-$Comp
-L Device:R R?
-U 1 1 5E2FCC72
-P 4600 1250
-F 0 "R?" V 4680 1250 50  0000 C CNN
-F 1 "10K" V 4600 1250 50  0000 C CNN
-F 2 "" V 4530 1250 30  0000 C CNN
-F 3 "" H 4600 1250 30  0000 C CNN
-	1    4600 1250
-	1    0    0    -1  
-$EndComp
-$Comp
-L mdoLibrary:SN74HCT125N A?
-U 1 1 5E333EFD
-P 8450 2850
-F 0 "A?" H 8450 2750 60  0000 C CNN
-F 1 "SN74HCT125N" H 8450 2650 60  0000 C TNN
-F 2 "" H 8450 2850 60  0000 C CNN
-F 3 "" H 8450 2850 60  0000 C CNN
-	1    8450 2850
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	9850 6400 8150 6400
 Wire Wire Line
 	3050 4600 3050 4900
 Wire Wire Line
@@ -326,14 +281,6 @@ Connection ~ 4200 2600
 Wire Wire Line
 	4400 1100 4400 950 
 Connection ~ 4400 950 
-Wire Notes Line
-	7650 4450 7650 4750
-Wire Notes Line
-	7650 4750 7950 4750
-Wire Notes Line
-	7950 4750 7950 4450
-Wire Notes Line
-	7950 4450 7650 4450
 Wire Wire Line
 	4750 3900 5800 3900
 Wire Wire Line
@@ -371,38 +318,16 @@ Wire Wire Line
 	5350 3700 5350 3100
 Connection ~ 4200 6400
 Wire Wire Line
-	4800 4500 4800 6400
-Connection ~ 4800 6400
-Wire Wire Line
 	4200 1400 4200 2600
 Wire Wire Line
 	4200 5200 4200 6400
 Wire Wire Line
 	4750 3900 4750 950 
 Connection ~ 4750 950 
-Connection ~ 4600 950 
-Wire Wire Line
-	4600 1100 4600 950 
 Wire Wire Line
 	4950 2200 4950 1500
 Wire Wire Line
 	4950 2200 5050 2200
-Wire Wire Line
-	7400 4500 7650 4500
-Wire Wire Line
-	7650 4500 7650 4600
-Wire Wire Line
-	7650 4700 7400 4700
-Wire Wire Line
-	7400 4700 7400 6400
-Connection ~ 7400 6400
-Wire Wire Line
-	7950 4600 8150 4600
-Wire Wire Line
-	8150 4600 8150 5050
-Wire Wire Line
-	8150 5350 8150 6400
-Connection ~ 8150 6400
 Wire Wire Line
 	9050 2750 10050 2750
 Wire Wire Line
@@ -411,24 +336,8 @@ Wire Wire Line
 	7600 3400 9850 3400
 Connection ~ 9850 3400
 Wire Wire Line
-	7600 1400 7600 1900
-Connection ~ 7600 2150
-Wire Wire Line
 	9050 2550 9850 2550
 Connection ~ 9850 2550
-Connection ~ 7600 1900
-Connection ~ 7600 2450
-Connection ~ 7600 2250
-Wire Wire Line
-	4600 1400 7600 1400
-Wire Wire Line
-	7850 2150 7600 2150
-Wire Wire Line
-	7850 2250 7600 2250
-Wire Wire Line
-	7850 2450 7600 2450
-Wire Wire Line
-	7600 2550 7850 2550
 Wire Wire Line
 	7600 3400 7600 2750
 Wire Wire Line
@@ -437,15 +346,6 @@ Wire Wire Line
 	3200 950  3600 950 
 Wire Wire Line
 	9050 950  9050 2150
-Wire Wire Line
-	9050 2250 9200 2250
-Wire Wire Line
-	9200 1900 9200 2250
-Wire Wire Line
-	9200 2350 9050 2350
-Connection ~ 9200 2250
-Wire Wire Line
-	7600 1900 9200 1900
 Wire Wire Line
 	9350 2650 9350 1500
 Wire Wire Line
@@ -477,35 +377,13 @@ Wire Wire Line
 Wire Wire Line
 	4200 2600 4200 4800
 Wire Wire Line
-	4400 950  4600 950 
-Wire Wire Line
-	7050 6400 4800 6400
-Wire Wire Line
 	4200 6400 4000 6400
-Wire Wire Line
-	4800 6400 4200 6400
 Wire Wire Line
 	4750 950  6950 950 
 Wire Wire Line
-	4600 950  4750 950 
-Wire Wire Line
-	7400 6400 7050 6400
-Wire Wire Line
-	8150 6400 7400 6400
-Wire Wire Line
 	9850 3400 9850 6400
 Wire Wire Line
-	7600 2150 7600 2250
-Wire Wire Line
 	9850 2550 9850 3400
-Wire Wire Line
-	7600 1900 7600 2150
-Wire Wire Line
-	7600 2450 7600 2550
-Wire Wire Line
-	7600 2250 7600 2450
-Wire Wire Line
-	9200 2250 9200 2350
 Wire Wire Line
 	9850 1800 9850 2550
 $Comp
@@ -519,39 +397,17 @@ F 3 "" H 9900 1250 60  0001 C CNN
 	1    9900 1100
 	1    0    0    -1  
 $EndComp
-$Comp
-L Device:L L?
-U 1 1 5D7D3BAD
-P 8150 5200
-F 0 "L?" V 8100 5200 50  0000 C CNN
-F 1 "L" V 8225 5200 50  0000 C CNN
-F 2 "" H 8150 5200 50  0001 C CNN
-F 3 "" H 8150 5200 50  0001 C CNN
-	1    8150 5200
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	4400 1400 4400 2700
 Wire Wire Line
 	5350 2700 4400 2700
 Connection ~ 4400 2700
-Wire Wire Line
-	4400 2700 4400 4500
 Text Notes 6600 3100 0    59   ~ 0
 D13 = Solenoid\n   (Blue)
-Text Notes 7250 5850 0    59   ~ 0
-Barrel Black Gnd\n    Solenoid
 Wire Wire Line
 	6550 3100 7200 3100
 Wire Wire Line
-	7200 4600 7650 4600
-Connection ~ 7650 4600
-Wire Wire Line
-	7650 4600 7650 4700
-Wire Wire Line
 	7200 3100 7200 3300
-Wire Wire Line
-	7200 3600 7200 4600
 $Comp
 L Device:R R?
 U 1 1 5E6E688B
@@ -590,10 +446,64 @@ Wire Wire Line
 Wire Wire Line
 	1400 750  7400 750 
 Wire Wire Line
-	7400 750  7400 4500
+	7400 750  7400 4400
 Connection ~ 1250 3950
 Wire Wire Line
 	1250 3950 1250 4200
-Text Notes 8300 4800 0    59   ~ 0
-USB Breakout\n   Black - GND\n   White - +7.4 V\n   Blue - Trig (HI = active)\n   Yellow - Sense (GND = cnct)
+Text Label 7550 4400 0    59   ~ 0
+White
+$Sheet
+S 7950 4200 950  900 
+U 5B063CC5
+F0 "Solenoid" 79
+F1 "SOL.sch" 79
+F2 "+7.4V" I L 7950 4400 59 
+F3 "GND" I L 7950 4900 59 
+F4 "Solenoid" I L 7950 4650 59 
+F5 "Cnct" O R 8900 4650 59 
+$EndSheet
+Wire Wire Line
+	7200 3600 7200 4650
+Wire Wire Line
+	4200 6400 7050 6400
+Wire Wire Line
+	7050 6400 7350 6400
+Wire Wire Line
+	7400 4400 7950 4400
+Wire Wire Line
+	7200 4650 7950 4650
+Wire Wire Line
+	7350 6400 7350 4900
+Wire Wire Line
+	7350 4900 7950 4900
+Connection ~ 7350 6400
+Wire Wire Line
+	7350 6400 9850 6400
+Wire Wire Line
+	4400 5500 9750 5500
+Wire Wire Line
+	9750 5500 9750 4650
+Wire Wire Line
+	4400 2700 4400 5500
+Wire Wire Line
+	8900 4650 9750 4650
+Text Label 7550 4900 0    59   ~ 0
+Black
+Text Label 7550 4650 0    59   ~ 0
+Blue
+Text Label 9000 4650 0    59   ~ 0
+Yellow
+$Comp
+L mdoLibrary:SN74HCT125N A?
+U 1 1 5E333EFD
+P 8450 2850
+F 0 "A?" H 8450 2750 60  0000 C CNN
+F 1 "SN74HCT125N" H 8450 2650 60  0000 C TNN
+F 2 "" H 8450 2850 60  0000 C CNN
+F 3 "" H 8450 2850 60  0000 C CNN
+	1    8450 2850
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4400 950  4750 950 
 $EndSCHEMATC

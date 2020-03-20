@@ -5,10 +5,10 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 2 2
 Title "Rubber Band Gun"
-Date "2019-09-13"
+Date "2020-03-20"
 Rev "---"
 Comp ""
-Comment1 ""
+Comment1 "Solenoid Circuit"
 Comment2 ""
 Comment3 ""
 Comment4 ""
@@ -20,7 +20,7 @@ GND
 Text HLabel 1600 4150 0    118  Input ~ 0
 Solenoid
 Text HLabel 10150 3500 2    118  Output ~ 0
-SConnect
+Cnct
 $Comp
 L dk_Transistors-Bipolar-BJT-Single:TIP120 Q?
 U 1 1 5E74F659
@@ -63,8 +63,6 @@ F 3 "~" H 5450 3250 50  0001 C CNN
 	1    5450 3250
 	1    0    0    -1  
 $EndComp
-Text Notes 2750 1550 0    118  ~ 0
-NOTE: resistor
 Wire Wire Line
 	1600 2050 5450 2050
 Wire Wire Line
@@ -111,4 +109,6 @@ Wire Wire Line
 	4550 4150 5150 4150
 Wire Wire Line
 	4250 4150 1600 4150
+Text Notes 2400 1350 0    118  ~ 0
+Derived from https://cdn-shop.adafruit.com/product-files/412/solenoid_driver.pdf
 $EndSCHEMATC
