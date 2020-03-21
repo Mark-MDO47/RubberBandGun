@@ -28,9 +28,8 @@ We are still in the design stages but expect to use these parts or similar:
 - 1 @ V3.0 ATmega328P 5V 16M CH340 Compatible to Arduino Nano V3 with 32Kbyte Flash (program storage), 2Kbyte SRAM, 1Kbyte EEPROM: ***source TBS***
 - 1 @ SN74HCT125N quadruple bus buffer so one clone Arduino Nano can drive both sets of WS2812B rings: https://www.digikey.com/product-detail/en/texas-instruments/SN74HCT125N/296-8386-5-ND/376860
 - 1 @ small solenoid for rubber-band release coordinated with sound/light effects: perhaps https://www.adafruit.com/product/2776 or https://www.aliexpress.com/item/33016945460.html
-- 1 @ driver circuit for selenoid: ***source TBS*** maybe https://www.adafruit.com/product/2448
-https://learn.adafruit.com/adafruit-tb6612-h-bridge-dc-stepper-motor-driver-breakout or maybe https://smile.amazon.com/Youngneer-Raspberry-Arduino-Channel-Opto-Isolated/dp/B07M88JRFY
-- 1 @ UBEC 3Amp: ***source TBS***
+- 1 @ driver circuit for selenoid: TIP120-based https://www.adafruit.com/product/976 see https://cdn-shop.adafruit.com/product-files/412/solenoid_driver.pdf
+- 1 @ UBEC 3Amp: https://smile.amazon.com/2-Pieces-Hobbywing-Switch-mode-UBEC-Helicopter-Quadcopter/dp/B01GHMW0C0/ref=sr_1_4?keywords=3+amp+ubec&qid=1584751195&sr=8-4
 - 2 @ Button top 18650 Rechargeable Batteries: https://smile.amazon.com/gp/product/B07VGC84Q6/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1
 - 1 @ YX5200 sound player: https://smile.amazon.com/Anmbest-YX5200-DFPlayer-Supporting-Arduino/dp/B07JGWMPTF/
 - 1 @ small speaker: https://smile.amazon.com/Uxcell-a15080600ux0275-Internal-Magnet-Speaker/dp/B0177ABRQ6/
