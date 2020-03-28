@@ -25,7 +25,7 @@ We are still in the design stages but expect to use these parts or similar:
 - 1 @ clothespin in homage to rubber band guns everywhere
 - 1 @ power switch: ***source TBS***
 - 2 @ sets of 5050 WS2812B LED rings, one facing forward and one facing back: https://smile.amazon.com/gp/product/B07437X7SL/ref=ppx_yo_dt_b_asin_title_o03_s00?ie=UTF8&psc=1
-- 1 @ V3.0 ATmega328P 5V 16M CH340 Compatible to Arduino Nano V3 with 32Kbyte Flash (program storage), 2Kbyte SRAM, 1Kbyte EEPROM: ***source TBS***
+- 1 @ V3.0 ATmega328P 5V 16M CH340 Compatible to Arduino Nano V3 with 32Kbyte Flash (program storage), 2Kbyte SRAM, 1Kbyte EEPROM: source: my spare parts bin, so some very old ones...
 - 1 @ SN74HCT125N quadruple bus buffer so one clone Arduino Nano can drive both sets of WS2812B rings: https://www.digikey.com/product-detail/en/texas-instruments/SN74HCT125N/296-8386-5-ND/376860
 - 1 @ small solenoid for rubber-band release coordinated with sound/light effects: perhaps https://www.adafruit.com/product/2776 or https://www.aliexpress.com/item/33016945460.html
 - 1 @ driver circuit for selenoid: TIP120-based https://www.adafruit.com/product/976 see https://cdn-shop.adafruit.com/product-files/412/solenoid_driver.pdf
