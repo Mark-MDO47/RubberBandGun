@@ -7,6 +7,6 @@ Jim is doing the 3-D Modeling using a personal version of Autocad Fusion 360. Th
 - medium LED ring attachment: 
 - large LED ring attachment: 
 
-Still to come: solenoid body
+Still to come: solenoid body, speaker mount
 
-I must admit that the web viewer is quite excellent!
+I must admit that the web viewer for Autocad Fusion 360 is quite excellent!
