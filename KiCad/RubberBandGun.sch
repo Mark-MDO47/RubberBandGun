@@ -5,7 +5,7 @@ $Descr A 11000 8500
 encoding utf-8
 Sheet 1 2
 Title "FOOF Rubber Band Gun"
-Date "2020-03-14"
+Date "2020-04-02"
 Rev "---"
 Comp ""
 Comment1 ""
@@ -407,19 +407,6 @@ D13 = Solenoid\n   (Blue)
 Wire Wire Line
 	6550 3100 7200 3100
 Wire Wire Line
-	7200 3100 7200 3300
-$Comp
-L Device:R R?
-U 1 1 5E6E688B
-P 7200 3450
-F 0 "R?" V 7280 3450 50  0000 C CNN
-F 1 "1.6K" V 7200 3450 50  0000 C CNN
-F 2 "" V 7130 3450 50  0001 C CNN
-F 3 "" H 7200 3450 50  0001 C CNN
-	1    7200 3450
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
 	3200 4200 3200 6000
 Connection ~ 3200 4200
 Wire Wire Line
@@ -463,8 +450,6 @@ F4 "Solenoid" I L 7950 4650 59
 F5 "Cnct" O R 8900 4650 59 
 $EndSheet
 Wire Wire Line
-	7200 3600 7200 4650
-Wire Wire Line
 	4200 6400 7050 6400
 Wire Wire Line
 	7050 6400 7350 6400
@@ -506,4 +491,6 @@ F 3 "" H 8450 2850 60  0000 C CNN
 $EndComp
 Wire Wire Line
 	4400 950  4750 950 
+Wire Wire Line
+	7200 3100 7200 4650
 $EndSCHEMATC
