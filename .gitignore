@@ -55,3 +55,7 @@ dkms.conf
 
 #PyCharm - mdo
 .idea
+
+#KiCad - mdo
+.sch-bak 
+rescue-backup
