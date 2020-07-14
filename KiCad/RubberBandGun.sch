@@ -3,9 +3,9 @@ EELAYER 30 0
 EELAYER END
 $Descr A 11000 8500
 encoding utf-8
-Sheet 1 2
+Sheet 1 1
 Title "FOOF Rubber Band Gun"
-Date "2020-04-02"
+Date "2020-07-13"
 Rev "---"
 Comp ""
 Comment1 ""
@@ -13,17 +13,6 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
-$Comp
-L power:+12V #PWR0101
-U 1 1 5A3DEBB7
-P 1250 3850
-F 0 "#PWR0101" H 1250 3700 50  0001 C CNN
-F 1 "+12V" H 1250 3990 50  0000 C CNN
-F 2 "" H 1250 3850 50  0001 C CNN
-F 3 "" H 1250 3850 50  0001 C CNN
-	1    1250 3850
-	1    0    0    -1  
-$EndComp
 $Comp
 L power:GND #PWR0102
 U 1 1 5A3DEBCE
@@ -170,7 +159,7 @@ F 3 "" H 4400 1250 30  0000 C CNN
 	1    0    0    -1  
 $EndComp
 Text Notes 1450 3850 0    118  ~ 0
-7.4 Volts
+8.3 Volts
 $Comp
 L Device:R R?
 U 1 1 5D915A72
@@ -218,10 +207,6 @@ Wire Wire Line
 	3050 4600 3050 4900
 Wire Wire Line
 	2750 4600 3050 4600
-Wire Wire Line
-	1250 4200 1550 4200
-Wire Wire Line
-	1250 3850 1250 3950
 Wire Wire Line
 	1250 4600 1550 4600
 Wire Wire Line
@@ -427,57 +412,13 @@ Connection ~ 6950 950
 Wire Wire Line
 	6950 950  9050 950 
 Wire Wire Line
-	1250 3950 1400 3950
-Wire Wire Line
-	1400 3950 1400 750 
-Wire Wire Line
 	1400 750  7400 750 
 Wire Wire Line
-	7400 750  7400 4400
-Connection ~ 1250 3950
-Wire Wire Line
-	1250 3950 1250 4200
-Text Label 7550 4400 0    59   ~ 0
-White
-$Sheet
-S 7950 4200 950  900 
-U 5B063CC5
-F0 "Solenoid" 79
-F1 "SOL.sch" 79
-F2 "+7.4V" I L 7950 4400 59 
-F3 "GND" I L 7950 4900 59 
-F4 "Solenoid" I L 7950 4650 59 
-F5 "Cnct" O R 8900 4650 59 
-$EndSheet
+	7400 750  7400 4300
 Wire Wire Line
 	4200 6400 7050 6400
 Wire Wire Line
-	7050 6400 7350 6400
-Wire Wire Line
-	7400 4400 7950 4400
-Wire Wire Line
-	7200 4650 7950 4650
-Wire Wire Line
-	7350 6400 7350 4900
-Wire Wire Line
-	7350 4900 7950 4900
-Connection ~ 7350 6400
-Wire Wire Line
-	7350 6400 9850 6400
-Wire Wire Line
-	4400 5500 9750 5500
-Wire Wire Line
-	9750 5500 9750 4650
-Wire Wire Line
 	4400 2700 4400 5500
-Wire Wire Line
-	8900 4650 9750 4650
-Text Label 7550 4900 0    59   ~ 0
-Black
-Text Label 7550 4650 0    59   ~ 0
-Blue
-Text Label 9000 4650 0    59   ~ 0
-Yellow
 $Comp
 L mdoLibrary:SN74HCT125N A?
 U 1 1 5E333EFD
@@ -492,5 +433,76 @@ $EndComp
 Wire Wire Line
 	4400 950  4750 950 
 Wire Wire Line
-	7200 3100 7200 4650
+	7200 3100 7200 4500
+Wire Wire Line
+	1400 750  1400 4200
+Wire Wire Line
+	1550 4200 1400 4200
+$Comp
+L power:+8V #PWR?
+U 1 1 5F0E58C5
+P 650 3950
+F 0 "#PWR?" H 650 3800 50  0001 C CNN
+F 1 "+8V" H 665 4123 50  0000 C CNN
+F 2 "" H 650 3950 50  0001 C CNN
+F 3 "" H 650 3950 50  0001 C CNN
+	1    650  3950
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	650  4200 650  3950
+$Comp
+L mdoLibrary:SolenoidDriver U?
+U 1 1 5F10689D
+P 9400 4100
+F 0 "U?" H 9400 4100 59  0001 C CNN
+F 1 "SolenoidDriver" H 9100 4100 59  0000 L CNN
+F 2 "" H 9400 4100 59  0001 C CNN
+F 3 "" H 9400 4100 59  0001 C CNN
+	1    9400 4100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4400 5500 7600 5500
+Wire Wire Line
+	7600 5500 7600 5000
+Wire Wire Line
+	7600 5000 8650 5000
+Wire Wire Line
+	7050 6400 7950 6400
+Wire Wire Line
+	7950 6400 7950 4850
+Wire Wire Line
+	7950 4850 8650 4850
+Connection ~ 7950 6400
+Wire Wire Line
+	7950 6400 9850 6400
+Wire Wire Line
+	8650 4300 7400 4300
+Wire Wire Line
+	8650 4500 7200 4500
+Text Notes 8300 4300 0    59   ~ 0
+White
+Text Notes 8300 4500 0    59   ~ 0
+Blue
+Text Notes 8300 4850 0    59   ~ 0
+Black
+Text Notes 8300 5000 0    59   ~ 0
+Yellow
+$Comp
+L switches:SW_SPST SW?
+U 1 1 5F12E089
+P 1000 4200
+F 0 "SW?" H 1000 4450 50  0001 C CNN
+F 1 "ToggleSW" H 1000 4344 50  0000 C CNN
+F 2 "" H 1000 4200 50  0001 C CNN
+F 3 "" H 1000 4200 50  0001 C CNN
+	1    1000 4200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	650  4200 800  4200
+Wire Wire Line
+	1200 4200 1400 4200
+Connection ~ 1400 4200
 $EndSCHEMATC

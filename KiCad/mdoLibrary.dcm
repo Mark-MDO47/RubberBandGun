@@ -4,6 +4,11 @@ $CMP SN74HCT125N
 D Quad Buffer Tri-State
 $ENDCMP
 #
+$CMP SW_SPST
+D Single Pole Single Throw (SPST) switch
+K switch lever
+$ENDCMP
+#
 $CMP YX5200
 D Audio Player
 $ENDCMP

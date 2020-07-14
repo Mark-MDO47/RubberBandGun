@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 2 2
+Sheet 2 3
 Title "Rubber Band Gun"
 Date "2020-03-20"
 Rev "---"
@@ -25,6 +25,9 @@ $Comp
 L dk_Transistors-Bipolar-BJT-Single:TIP120 Q?
 U 1 1 5E74F659
 P 5350 4150
+AR Path="/5B063CC5/5E74F659" Ref="Q?"  Part="1" 
+AR Path="/5F0F1D10/5E74F659" Ref="Q?"  Part="1" 
+AR Path="/5F10EF4E/5E74F659" Ref="Q?"  Part="1" 
 F 0 "Q?" H 5538 4203 60  0000 L CNN
 F 1 "TIP120" H 5538 4097 60  0000 L CNN
 F 2 "digikey-footprints:TO-220-3" H 5550 4350 60  0001 L CNN
@@ -45,6 +48,9 @@ $Comp
 L Diode:1N4004 D?
 U 1 1 5E75324C
 P 4850 3250
+AR Path="/5B063CC5/5E75324C" Ref="D?"  Part="1" 
+AR Path="/5F0F1D10/5E75324C" Ref="D?"  Part="1" 
+AR Path="/5F10EF4E/5E75324C" Ref="D?"  Part="1" 
 F 0 "D?" V 4804 3329 50  0000 L CNN
 F 1 "1N4004" V 4895 3329 50  0000 L CNN
 F 2 "Diode_THT:D_DO-41_SOD81_P10.16mm_Horizontal" H 4850 3075 50  0001 C CNN
@@ -56,6 +62,9 @@ $Comp
 L Device:L L?
 U 1 1 5E754503
 P 5450 3250
+AR Path="/5B063CC5/5E754503" Ref="L?"  Part="1" 
+AR Path="/5F0F1D10/5E754503" Ref="L?"  Part="1" 
+AR Path="/5F10EF4E/5E754503" Ref="L?"  Part="1" 
 F 0 "L?" H 5503 3296 50  0000 L CNN
 F 1 "L" H 5503 3205 50  0000 L CNN
 F 2 "" H 5450 3250 50  0001 C CNN
@@ -98,6 +107,9 @@ $Comp
 L Device:R R?
 U 1 1 5E75A301
 P 4400 4150
+AR Path="/5B063CC5/5E75A301" Ref="R?"  Part="1" 
+AR Path="/5F0F1D10/5E75A301" Ref="R?"  Part="1" 
+AR Path="/5F10EF4E/5E75A301" Ref="R?"  Part="1" 
 F 0 "R?" V 4193 4150 50  0000 C CNN
 F 1 "2.2K" V 4284 4150 50  0000 C CNN
 F 2 "" V 4330 4150 50  0001 C CNN
