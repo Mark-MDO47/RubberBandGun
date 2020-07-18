@@ -34,7 +34,7 @@ template <typename T> int sgn(T val) {
 #define DPIN_BTN_YELLOW   5  // digital input - yellow configuration button
 #define DPIN_BTN_GREEN    6  // digital input - green configuration button
 #define DPIN_BTN_RED      7  // digital input - blue configuration button
-#define DPIN_LOCK_LOAD    9  // digital input - grounded when in lock and load position
+#define DPIN_LOCK_LOAD    8  // digital input - grounded when in lock and load position
 #define DPIN_SWSRL_RX    10  // serial in  - talk to DFPlayer audio player (YX5200)
 #define DPIN_SWSRL_TX    11  // serial out - talk to DFPlayer audio player (YX5200)
 #define DPIN_AUDIO_BUSY  12  // digital input - signals when audio finishes
