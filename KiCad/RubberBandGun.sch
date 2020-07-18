@@ -3,9 +3,9 @@ EELAYER 30 0
 EELAYER END
 $Descr A 11000 8500
 encoding utf-8
-Sheet 1 1
+Sheet 1 3
 Title "FOOF Rubber Band Gun"
-Date "2020-07-13"
+Date "2020-07-18"
 Rev "---"
 Comp ""
 Comment1 ""
@@ -371,17 +371,6 @@ Wire Wire Line
 	9850 2550 9850 3400
 Wire Wire Line
 	9850 1800 9850 2550
-$Comp
-L mdoLibrary:LEDring Z?
-U 1 1 5A458774
-P 9900 1100
-F 0 "Z?" H 9900 1100 60  0000 C CNN
-F 1 "LEDring" H 9900 1250 60  0000 C CNN
-F 2 "" H 9900 1250 60  0001 C CNN
-F 3 "" H 9900 1250 60  0001 C CNN
-	1    9900 1100
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	4400 1400 4400 2700
 Wire Wire Line
@@ -451,17 +440,6 @@ F 3 "" H 650 3950 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	650  4200 650  3950
-$Comp
-L mdoLibrary:SolenoidDriver U?
-U 1 1 5F10689D
-P 9400 4100
-F 0 "U?" H 9400 4100 59  0001 C CNN
-F 1 "SolenoidDriver" H 9100 4100 59  0000 L CNN
-F 2 "" H 9400 4100 59  0001 C CNN
-F 3 "" H 9400 4100 59  0001 C CNN
-	1    9400 4100
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	4400 5500 7600 5500
 Wire Wire Line
@@ -505,4 +483,32 @@ Wire Wire Line
 Wire Wire Line
 	1200 4200 1400 4200
 Connection ~ 1400 4200
+Text Notes 8700 5000 0    157  ~ 31
+U\nS\nB
+$Sheet
+S 8950 4200 700  900 
+U 5F12AD06
+F0 "Solenoid" 59
+F1 "Solenoid.sch" 59
+$EndSheet
+Text HLabel 8950 4300 2    59   Input ~ 0
+White_8V
+Text HLabel 8950 4500 2    59   Input ~ 0
+Blue_CTL
+Text HLabel 8950 4850 2    59   Input ~ 0
+Black_GND
+Text HLabel 8950 5000 2    59   Output ~ 0
+Yellow_SENSE
+$Sheet
+S 9500 900  850  900 
+U 5F14546D
+F0 "LEDrings" 79
+F1 "LEDrings.sch" 0
+$EndSheet
+Text HLabel 9850 1800 1    59   Input ~ 0
+GND
+Text HLabel 9950 1800 1    59   Input ~ 0
+5V
+Text HLabel 10050 1800 1    59   Input ~ 0
+DIN
 $EndSCHEMATC
