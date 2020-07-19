@@ -57,5 +57,9 @@ dkms.conf
 .idea
 
 #KiCad - mdo
-.sch-bak 
+*.sch-bak 
 rescue-backup
+
+#normal things I don't want to see
+*.tmp
+*~$*.*
