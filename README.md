@@ -42,7 +42,8 @@ We are close to prototype stage using these parts:
 - 3 @ colored push-buttons for configuration of effects: https://www.amazon.com/gp/product/B07C7211PJ/ref=ppx_yo_dt_b_asin_image_o08_s00?ie=UTF8&psc=1
 - 1 @ trigger button: ***source TBS***
 - 1 @ DigiKey (https://digikey.com) 4610X-AP1-103LFCT-ND RES ARRAY 9 RES 10K OHM 10SIP
-- 1 @ 220 Ohm resistor, 1/4 watt
+- 1 @ 220 Ohm resistor, 1/4 watt (optional)
+- 1 @ 1K Ohm resistor, 1/4/watt (absolutely needed)
 
 The barrel of the Rubber Band Gun is made from wood, with a sliding barrel attachment to assist in stringing the rubber band through the LED rings. The rest including the handgrip is 3-D printed.
 
