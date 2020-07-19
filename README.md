@@ -27,6 +27,7 @@ Here is a video of the software running on a prototype: https://youtu.be/HhxDTWO
 We are close to prototype stage using these parts:
 - 1 @ clothespin in homage to rubber band guns everywhere
 - 1 @ power switch: ***source TBS***
+- 1 @ trigger button: ***source TBS***
 - 2 @ sets of 5050 WS2812B LED rings, one facing forward and one facing back: https://smile.amazon.com/gp/product/B07437X7SL/ref=ppx_yo_dt_b_asin_title_o03_s00?ie=UTF8&psc=1
 - 1 @ V3.0 ATmega328P 5V 16M CH340 Compatible to Arduino Nano V3 with 32Kbyte Flash (program storage), 2Kbyte SRAM, 1Kbyte EEPROM: source: my spare parts bin, so some very old ones...
 - 1 @ SN74HCT125N quadruple bus buffer so one clone Arduino Nano can drive both sets of WS2812B rings: https://www.digikey.com/product-detail/en/texas-instruments/SN74HCT125N/296-8386-5-ND/376860
@@ -40,7 +41,6 @@ We are close to prototype stage using these parts:
 - 1 @ YX5200 sound player: https://smile.amazon.com/Anmbest-YX5200-DFPlayer-Supporting-Arduino/dp/B07JGWMPTF/
 - 1 @ small speaker: https://smile.amazon.com/Uxcell-a15080600ux0275-Internal-Magnet-Speaker/dp/B0177ABRQ6/
 - 3 @ colored push-buttons for configuration of effects: https://www.amazon.com/gp/product/B07C7211PJ/ref=ppx_yo_dt_b_asin_image_o08_s00?ie=UTF8&psc=1
-- 1 @ trigger button: ***source TBS***
 - 1 @ DigiKey (https://digikey.com) 4610X-AP1-103LFCT-ND RES ARRAY 9 RES 10K OHM 10SIP
 - 1 @ 220 Ohm resistor, 1/4 watt (optional)
 - 1 @ 1K Ohm resistor, 1/4/watt (absolutely needed)
