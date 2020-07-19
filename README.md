@@ -33,9 +33,9 @@ We are close to prototype stage using these parts:
 - 1 @ SN74HCT125N quadruple bus buffer so one clone Arduino Nano can drive both sets of WS2812B rings: https://www.digikey.com/product-detail/en/texas-instruments/SN74HCT125N/296-8386-5-ND/376860
 - 1 @ small solenoid for rubber-band release coordinated with sound/light effects: https://www.adafruit.com/product/2776 or https://www.aliexpress.com/item/33016945460.html
 - 1 @ driver circuit for selenoid: see https://cdn-shop.adafruit.com/product-files/412/solenoid_driver.pdf
-- - 1 @ TIP120 Power Darlington Transistor https://www.adafruit.com/product/976
-- - 1 @ 1N4004 diode 1A 400V https://www.digikey.com/products/en?keywords=1n4004&utm_adgroup=Multiple%20Suppliers&utm_source=google&utm_medium=cpc&utm_campaign=EN_Product_SKU_E&utm_term=1n4004&utm_content=Multiple%20Suppliers&gclid=Cj0KCQjwu8r4BRCzARIsAA21i_DFDfoGLLpHX4K-k49QZr31T8fjfTEeH7rxbAJlpK54-oPjMCnOPTAaArCGEALw_wcB
-- - 1 @ 2.2K Ohm resistor, 1/4 watt
+  - 1 @ TIP120 Power Darlington Transistor https://www.adafruit.com/product/976
+  - 1 @ 1N4004 diode 1A 400V https://www.digikey.com/products/en?keywords=1n4004&utm_adgroup=Multiple%20Suppliers&utm_source=google&utm_medium=cpc&utm_campaign=EN_Product_SKU_E&utm_term=1n4004&utm_content=Multiple%20Suppliers&gclid=Cj0KCQjwu8r4BRCzARIsAA21i_DFDfoGLLpHX4K-k49QZr31T8fjfTEeH7rxbAJlpK54-oPjMCnOPTAaArCGEALw_wcB
+  - 1 @ 2.2K Ohm resistor, 1/4 watt
 - 1 @ UBEC 3Amp: https://smile.amazon.com/2-Pieces-Hobbywing-Switch-mode-UBEC-Helicopter-Quadcopter/dp/B01GHMW0C0/ref=sr_1_4?keywords=3+amp+ubec&qid=1584751195&sr=8-4
 - 2 @ Button top 18650 Rechargeable Batteries: https://smile.amazon.com/gp/product/B07VGC84Q6/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1
 - 1 @ YX5200 sound player: https://smile.amazon.com/Anmbest-YX5200-DFPlayer-Supporting-Arduino/dp/B07JGWMPTF/
