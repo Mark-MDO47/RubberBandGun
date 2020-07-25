@@ -130,7 +130,6 @@ def make_state_table():
     symbtable_current = ""  # zero length means not processing any state decision block
     for row_num, row in df.iterrows():
         # the first row (row_num == 0) is the one after the column titles
-        # rowIndexSymb = str(row[df_col_names["index"]]).strip
         row_index_symb = str(row["index"]).strip()
         if "nan" == row_index_symb:  # rows with nothing in "index" column are ignored
             err = mark_end_block(symbtable_current, statetable_idx)

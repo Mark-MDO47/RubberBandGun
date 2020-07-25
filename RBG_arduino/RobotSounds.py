@@ -12,13 +12,14 @@
 #
 #
 # After creating text file(s), this is how I processed them:
-#    open file in Audacity
+#    open file in Audacity, set to mono if not already set
 #    duplicate the track (select track, then Edit->Duplicate)
 #    reverse one of the tracks (select track, then Effect->Reverse)
 #    select reversed track and change pitch (Effect->ChangePitch, choose -2 semitones)
 #    for both tracks one at a time, echo effect (Effect->Echo, choose DelayTime about 0.01 sec and DecayFactor about 0.5)
 #    select reversed track and reverse it back to normal order (select track, then Effect->Reverse)
 #    select both tracks (ctrl-A) then render (Tracks->Mix->MixAndRender)
+#    save as 22050Hz mono, "WAV (microsoft) signed 16-bit PCM"
 #
 # The following resources are available as shown; they are not included in the RBG repository.
 #
