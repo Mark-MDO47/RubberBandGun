@@ -1,5 +1,6 @@
 #
 # copyem.py - copy files to newly formatted SD drive for YX5200
+#    FAT32 formatted drive
 #    note: filenames are of form ####_anything.wav
 #          root directory needs ###.wav with no gaps
 #
@@ -11,7 +12,6 @@ maxNum = 127  # beyond that is not currently used
 fnameSilence = "0069__mdo47__silence.wav"  # to fill in gaps
 theFrom = "D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut"
 theSD = "H:"
-specialFN = "0059__NASA__SKR-03-324" # this one does not work as a *.wav
 
 for fname in os.listdir(theFrom):
     if (fname.lower().endswith(".wav")) and (maxNum >= int(fname[:4])):
