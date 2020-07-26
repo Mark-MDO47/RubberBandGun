@@ -5,8 +5,7 @@ A high-tech imagining of the rubber band gun
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/IMG_2209_orange.png "Jim has been busy on the hardware side of the Science Fiction Rubber Band Gun without LED rings")
 
 
-![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/P1010685.png "Mark has been busy on the software side of the Science Fiction Rubber Band Gun on a prototype")
-![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/RBG_wiring_20200314_184839_800_600.png "Mark has also been wiring up the RBG")
+![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/RBG_wiring_20200314_184839_800_600.png "Mark has been busy on the software side of the Science Fiction Rubber Band Gun and has also been wiring up the RBG")
 
 
 Jim and I are working on a Science-Fiction Rubber Band Gun!
@@ -21,7 +20,7 @@ or a simulation of this. We will shamelessly Hollywoodify this sound to make it 
 
 At the same time as the sound, the LED rings will be doing trippy patterns to make it look like they are being charged up followed by a sequential pulsing that would convince anyone who knows absolutely less than nothing about such things that a rail-gun effect is propelling the rubber band down the central tube.
 
-Here is a video of the software running on a prototype: https://youtu.be/HhxDTWORpCo
+Here is a video of the software running on a prototype: https://youtu.be/luf1rrovRuw
 
 # Parts List
 We are close to prototype stage using these parts:
