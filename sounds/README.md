@@ -72,7 +72,7 @@ The Rubber Band Gun speaks to you when you want to configure the sounds or LED p
 I used the "original" eSpeak text-to-speak program version 1.48.04. This produces sounds with a robotic flavor, which I wanted.
 
 The original eSpeak text to speech code and compiled versions can be found at http://espeak.sourceforge.net/
-- Kudos to (email) jonsd at users dot sourceforge.net for creating eSpeak
+- Kudos to (email) jonsd at users dot sourceforge dot net for creating eSpeak
 
 Note that eSpeak project is inactive since disappearance of Jonathan Duddington.
 
