@@ -10,6 +10,8 @@ A high-tech imagining of the rubber band gun
 
 Jim and I are working on a Science-Fiction Rubber Band Gun!
 
+Here is a video of the software running on a prototype: https://youtu.be/luf1rrovRuw
+
 It will have three rings of WS2812b 5050 RGB LED Ring proceeding up the barrel, each one larger than the previous in a "blunderbuss" shape. Note: this shape when applied to a handgun was known as a dragon, from which the term dragoon; see https://en.m.wikipedia.org/wiki/Blunderbuss
 
 When fired, it will play a sequence similar to the "soundified" rendition of two neutron stars colliding in 2017
@@ -20,13 +22,11 @@ or a simulation of this. We will shamelessly Hollywoodify this sound to make it 
 
 At the same time as the sound, the LED rings will be doing trippy patterns to make it look like they are being charged up followed by a sequential pulsing that would convince anyone who knows absolutely less than nothing about such things that a rail-gun effect is propelling the rubber band down the central tube.
 
-Here is a video of the software running on a prototype: https://youtu.be/luf1rrovRuw
-
 # Parts List
 We are close to prototype stage using these parts:
 - 1 @ clothespin in homage to rubber band guns everywhere
-- 1 @ power switch: ***source TBS***
-- 1 @ trigger button: ***source TBS***
+- 1 @ power switch: https://www.futureelectronics.com/p/electromechanical--switches--rocker/rr511d1121-e-switch-1057563?gclid=CjwKCAjw0_T4BRBlEiwAwoEiAfkWpvhOQagYMTVyKc4ma6_OFOIgz5Bhmu-VlO1f9wLoA81T26VAmBoCnt0QAvD_BwE or equivalent
+- 1 @ trigger button: https://smile.amazon.com/Pieces-Waterproof-Momentary-Button-Switch/dp/B07PG8YYWK/ref=sr_1_18?dchild=1&keywords=pushbutton+momentary+mushroom&qid=1595794081&s=industrial&sr=1-18 or equivalent
 - 2 @ sets of 5050 WS2812B LED rings, one facing forward and one facing back: https://smile.amazon.com/gp/product/B07437X7SL/ref=ppx_yo_dt_b_asin_title_o03_s00?ie=UTF8&psc=1
 - 1 @ V3.0 ATmega328P 5V 16M CH340 Compatible to Arduino Nano V3 with 32Kbyte Flash (program storage), 2Kbyte SRAM, 1Kbyte EEPROM: source: my spare parts bin, so some very old ones...
 - 1 @ SN74HCT125N quadruple bus buffer so one clone Arduino Nano can drive both sets of WS2812B rings: https://www.digikey.com/product-detail/en/texas-instruments/SN74HCT125N/296-8386-5-ND/376860
