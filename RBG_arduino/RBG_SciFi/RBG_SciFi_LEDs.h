@@ -1,4 +1,4 @@
-// Mark Olson 2019-11
+// Mark Olson 2020-08
 //
 // Major kudos to Daniel Garcia and Mark Kriegsman for the FANTASTIC FastLED library and examples!!!
 //    A sad note that Daniel Garcia, co-author of FastLED library, was on the dive boat that caught fire and has passed. 
@@ -23,6 +23,9 @@
 // The Arduino pattern code here is pretty much done from scratch by me using the FastLED library.
 //    I also tried a few items from Mark Kriegsman's classic DemoReel100.ino https://gist.github.com/kriegsman/062e10f7f07ba8518af6
 //
+// Also using SimpleNeopixelDemo.ino (renamed *.cpp) from https://github.com/bigjosh/SimpleNeoPixelDemo
+//    to run the single 2812B LED in the handle.
+//
 // These LEDs use power that adds up. Can use this to estimate the power
 //   http://fastled.io/docs/3.1/group___power.html
 //     calculate_max_brightness_for_power_vmA(lots of parameters)
@@ -37,7 +40,8 @@
 //    https://electronics.stackexchange.com/questions/148648/minimum-wire-gauge-for-5-volt-5-amp-system
 //
 // connections:
-//    Data Pin 3 is used for serial communications with the LEDs
+//    Data Pin 3 is used for serial communications with the LEDs for the three rings of LEDs using FastLED
+//    Data Pin 2 is used for serial communications with the single LED in the handle
 // 
 // Recommendations -  ;^)
 //    Before connecting the WS2812 to a power source, connect a big capacitor from power to ground.
@@ -46,6 +50,7 @@
 //    Placing a small-ish resistor between your Arduino's data output and the WS2812's data input will help protect the data pin. A resistor between 220 and 470 O should do nicely. Try to place the resistor as close to the WS2812 as possible.
 //    Keep Wires Short!
 //    https://github.com/FastLED/FastLED/wiki/Wiring-leds
+//
 //
 
 #define BRIGHTMAX 40 // set to 250 for final version
@@ -105,3 +110,13 @@ void rainbowWithGlitter();
 void confetti();
 void bpm();
 void juggle();
+
+// the API for https://github.com/bigjosh/SimpleNeoPixelDemo - name modified to add SimpleNeo
+#define SIMPLENEOPTRNLEN 32 // number of shades to cycle through
+#define SIMPLENEODWELL  100 // number of loops to dwell
+void SimpleNeoLedSetup();
+void SimpleNeoSendPixel( unsigned char r, unsigned char g , unsigned char b );
+void SimpleNeoShow();
+static CRGB led_SimpleNeo[SIMPLENEOPTRNLEN]; // pattern for handle colors
+static uint8_t which_SimpleNeo = 0;
+static uint16_t dwell_SimpleNeo = 0; // forces first call to output LED value

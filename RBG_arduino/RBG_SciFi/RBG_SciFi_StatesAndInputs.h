@@ -1,4 +1,4 @@
-// Mark Olson 2019-11
+// Mark Olson 2020-08
 //
 // Major kudos to Daniel Garcia and Mark Kriegsman for the FANTASTIC FastLED library and examples!!!
 //    A sad note that Daniel Garcia, co-author of FastLED library, was on the dive boat that caught fire and has passed. 
@@ -29,12 +29,14 @@ template <typename T> int sgn(T val) {
     return (T(0) < val) - (val < T(0));
 } // returns -1, 0, 1 for (T < 0), (T == 0), (T > 0) respectively. returns warning if used on uintx_t
 
+#define DPIN_SIMPLENEO    2  // serial out - talk to single LED in handle
 #define DPIN_FASTLED      3  // serial out - talk to LED rings
 #define DPIN_BTN_TRIGGER  4  // digital input - the trigger (we only count once per trigger press)
 #define DPIN_BTN_YELLOW   5  // digital input - yellow configuration button
 #define DPIN_BTN_GREEN    6  // digital input - green configuration button
 #define DPIN_BTN_RED      7  // digital input - blue configuration button
 #define DPIN_LOCK_LOAD    8  // digital input - grounded when in lock and load position
+#define DPIN_BLUETOOTH    9  // digital output - pair the BlueTooth Audio Transmitter
 #define DPIN_SWSRL_RX    10  // serial in  - talk to DFPlayer audio player (YX5200)
 #define DPIN_SWSRL_TX    11  // serial out - talk to DFPlayer audio player (YX5200)
 #define DPIN_AUDIO_BUSY  12  // digital input - signals when audio finishes
