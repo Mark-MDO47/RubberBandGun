@@ -14,7 +14,10 @@ Mapping the ports to the internal registers is described here
 Information on the YX5200 sound module and my experience with it is found here
 * https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsInfo/YX5200.md
 
-Information on the BlueTooth audio transmitter is found here, along with ordering info
+Best datasheet I could find on the YX5200 chip is found here
+* https://github.com/Mark-MDO47/RubberBandGun/blob/master/RBG_arduino/YX5200_info/FN-M16P%2BEmbedded%2BMP3%2BAudio%2BModule%2BDatasheet.pdf
+
+Information on the BlueTooth audio transmitter is found here (along with ordering info)
 * https://www.aliexpress.com/item/33058710334.html
 
 ## WS2812 LED and serial communications
