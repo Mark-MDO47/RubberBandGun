@@ -1,19 +1,25 @@
 # Parts Info
 
+## Arduino Nano and ATMEGA 328P
 The ATMEGA 328P chip used in the Arduino Nano is described here
 * http://ww1.microchip.com/downloads/en/DeviceDoc/ATmega48A-PA-88A-PA-168A-PA-328-P-DS-DS40002061A.pdf
 
 Mapping the ports to the internal registers is described here
 * https://www.arduino.cc/en/Reference/PortManipulation
 
+## Sound and BlueTooth Modules
 Information on the YX5200 sound module and my experience with it is found here
 * https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsInfo/YX5200.md
 
 Information on the BlueTooth audio transmitter is found here, along with ordering info
 * https://www.aliexpress.com/item/33058710334.html
 
+## WS2812 LED and 
 Information on the WS2812B is found here
 * https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf
+
+The dimensions of the particular ring we used is found here
+* https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsInfo/LED_Dimensions.png
 
 A top-level description of the WS2812B serial protocol (per spec) is found here
 * https://www.arrow.com/en/research-and-events/articles/protocol-for-the-ws2812b-programmable-led
