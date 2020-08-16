@@ -14,7 +14,7 @@ Information on the YX5200 sound module and my experience with it is found here
 Information on the BlueTooth audio transmitter is found here, along with ordering info
 * https://www.aliexpress.com/item/33058710334.html
 
-## WS2812 LED and 
+## WS2812 LED and serial communications
 Information on the WS2812B is found here
 * https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf
 
