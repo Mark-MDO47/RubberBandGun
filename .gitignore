@@ -57,9 +57,16 @@ dkms.conf
 .idea
 
 #KiCad - mdo
-*.sch-bak 
+*.sch-bak
 rescue-backup
 
 #normal things I don't want to see
 *.tmp
 *~$*.*
+mdo*.txt
+debug*.txt
+.vscode/
+PartsInfo/*.docx
+PartsInfo/*.pdf
+tmp*/
+video/
