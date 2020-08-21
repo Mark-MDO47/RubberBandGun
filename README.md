@@ -60,6 +60,12 @@ https://https://github.com/PowerBroker2/DFPlayerMini_Fast
 
 For a description of my experiences with using this module (I had some challenges), see the Readme.md in https://github.com/Mark-MDO47/RubberBandGun/tree/master/RBG_arduino.
 
+# BlueTooth (possibly)
+
+The BlueTooth audio transmitter is found here (along with ordering info)
+
+https://www.aliexpress.com/item/33058710334.html
+
 # Sounds
 
 See the Readme.md in https://github.com/Mark-MDO47/RubberBandGun/tree/master/sounds for attribution and other information about the sounds that are used in this project.
