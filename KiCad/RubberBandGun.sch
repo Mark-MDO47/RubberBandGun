@@ -5,7 +5,7 @@ $Descr A 11000 8500
 encoding utf-8
 Sheet 1 3
 Title "FOOF Rubber Band Gun"
-Date "2020-07-06"
+Date "2020-08-21"
 Rev "---"
 Comp ""
 Comment1 ""
@@ -27,13 +27,13 @@ $EndComp
 $Comp
 L Device:R R?
 U 1 1 5A459198
-P 5200 2200
-F 0 "R?" V 5280 2200 50  0000 C CNN
-F 1 "220 ohm" V 5100 2200 50  0000 C CNN
-F 2 "" V 5130 2200 50  0001 C CNN
-F 3 "" H 5200 2200 50  0001 C CNN
-	1    5200 2200
-	0    1    1    0   
+P 5000 1600
+F 0 "R?" V 5080 1600 50  0000 C CNN
+F 1 "220 ohm" V 4900 1600 50  0000 C CNN
+F 2 "" V 4930 1600 50  0001 C CNN
+F 3 "" H 5000 1600 50  0001 C CNN
+	1    5000 1600
+	-1   0    0    1   
 $EndComp
 $Comp
 L mdoLibrary:UBEC #J0101
@@ -139,12 +139,12 @@ $EndComp
 $Comp
 L Device:Speaker LS?
 U 1 1 5D7C69A9
-P 5400 4500
-F 0 "LS?" H 5450 4725 50  0000 R CNN
-F 1 "Speaker" H 5450 4650 50  0000 R CNN
-F 2 "" H 5400 4300 50  0001 C CNN
-F 3 "" H 5390 4450 50  0001 C CNN
-	1    5400 4500
+P 4600 4200
+F 0 "LS?" H 4650 4425 50  0000 R CNN
+F 1 "Speaker" H 4650 4350 50  0000 R CNN
+F 2 "" H 4600 4000 50  0001 C CNN
+F 3 "" H 4590 4150 50  0001 C CNN
+	1    4600 4200
 	-1   0    0    -1  
 $EndComp
 $Comp
@@ -212,7 +212,7 @@ Wire Wire Line
 Wire Wire Line
 	1250 4950 1250 4900
 Wire Wire Line
-	3200 4200 2750 4200
+	3200 4200 3050 4200
 Wire Wire Line
 	3200 950  3200 4200
 Connection ~ 3400 6400
@@ -267,8 +267,6 @@ Wire Wire Line
 	4400 1100 4400 950 
 Connection ~ 4400 950 
 Wire Wire Line
-	4750 3900 5800 3900
-Wire Wire Line
 	7000 4500 7050 4500
 Wire Wire Line
 	7050 4500 7050 6400
@@ -277,14 +275,6 @@ Wire Wire Line
 	4950 4000 5800 4000
 Wire Wire Line
 	4850 4100 5800 4100
-Wire Wire Line
-	5800 4600 5600 4600
-Wire Wire Line
-	5600 4500 5700 4500
-Wire Wire Line
-	5700 4500 5700 4400
-Wire Wire Line
-	5700 4400 5800 4400
 Wire Wire Line
 	4850 2900 4850 4100
 Wire Wire Line
@@ -307,13 +297,6 @@ Wire Wire Line
 Wire Wire Line
 	4200 5200 4200 6400
 Wire Wire Line
-	4750 3900 4750 950 
-Connection ~ 4750 950 
-Wire Wire Line
-	4950 2200 4950 1500
-Wire Wire Line
-	4950 2200 5050 2200
-Wire Wire Line
 	9050 2750 10050 2750
 Wire Wire Line
 	10050 2750 10050 1800
@@ -332,11 +315,7 @@ Wire Wire Line
 Wire Wire Line
 	9050 950  9050 2150
 Wire Wire Line
-	9350 2650 9350 1500
-Wire Wire Line
 	9350 2650 9050 2650
-Wire Wire Line
-	9350 1500 4950 1500
 Wire Wire Line
 	3400 6400 3050 6400
 Wire Wire Line
@@ -364,8 +343,6 @@ Wire Wire Line
 Wire Wire Line
 	4200 6400 4000 6400
 Wire Wire Line
-	4750 950  6950 950 
-Wire Wire Line
 	9850 3400 9850 6400
 Wire Wire Line
 	9850 2550 9850 3400
@@ -384,7 +361,7 @@ Wire Wire Line
 	3200 4200 3200 6000
 Connection ~ 3200 4200
 Wire Wire Line
-	3200 6000 9950 6000
+	3200 6000 5150 6000
 Wire Wire Line
 	1250 4900 3050 4900
 Connection ~ 1250 4900
@@ -399,15 +376,9 @@ Wire Wire Line
 	6950 950  6950 2000
 Connection ~ 6950 950 
 Wire Wire Line
-	6950 950  9050 950 
+	6950 950  7750 950 
 Wire Wire Line
-	1400 750  7400 750 
-Wire Wire Line
-	7400 750  7400 4300
-Wire Wire Line
-	4200 6400 7050 6400
-Wire Wire Line
-	4400 2700 4400 5500
+	4200 6400 5250 6400
 $Comp
 L mdoLibrary:SN74HCT125N A?
 U 1 1 5E333EFD
@@ -419,8 +390,6 @@ F 3 "" H 8450 2850 60  0000 C CNN
 	1    8450 2850
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	4400 950  4750 950 
 Wire Wire Line
 	7200 3100 7200 4500
 Wire Wire Line
@@ -441,13 +410,9 @@ $EndComp
 Wire Wire Line
 	650  4200 650  3950
 Wire Wire Line
-	4400 5500 7600 5500
-Wire Wire Line
-	7600 5500 7600 5000
-Wire Wire Line
 	7600 5000 8650 5000
 Wire Wire Line
-	7050 6400 7950 6400
+	7050 6400 7400 6400
 Wire Wire Line
 	7950 6400 7950 4850
 Wire Wire Line
@@ -456,7 +421,7 @@ Connection ~ 7950 6400
 Wire Wire Line
 	7950 6400 9850 6400
 Wire Wire Line
-	8650 4300 7400 4300
+	8650 4300 7500 4300
 Wire Wire Line
 	8650 4500 7200 4500
 Text Notes 8300 4300 0    59   ~ 0
@@ -511,4 +476,168 @@ Text HLabel 9950 1800 1    59   Input ~ 0
 5V
 Text HLabel 10050 1800 1    59   Input ~ 0
 DIN
+Wire Wire Line
+	4400 950  4550 950 
+Wire Wire Line
+	4550 3900 4550 950 
+Wire Wire Line
+	4550 3900 5800 3900
+Connection ~ 4550 950 
+Wire Wire Line
+	4700 1100 9350 1100
+Wire Wire Line
+	9350 1100 9350 2650
+$Comp
+L mdoLibrary:WS2812bSingle U?
+U 1 1 5F417DD5
+P 8350 1300
+F 0 "U?" H 8350 1300 79  0001 C CNN
+F 1 "WS2812bSingle" H 8528 1250 79  0000 L CNN
+F 2 "" H 8350 1300 79  0001 C CNN
+F 3 "" H 8350 1300 79  0001 C CNN
+	1    8350 1300
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 5F41D9F7
+P 4700 1600
+F 0 "R?" V 4780 1600 50  0000 C CNN
+F 1 "220 ohm" V 4600 1600 50  0000 C CNN
+F 2 "" V 4630 1600 50  0001 C CNN
+F 3 "" H 4700 1600 50  0001 C CNN
+	1    4700 1600
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	5350 2200 4700 2200
+Wire Wire Line
+	4700 2200 4700 1750
+Wire Wire Line
+	4700 1450 4700 1100
+Wire Wire Line
+	5350 2100 5000 2100
+Wire Wire Line
+	5000 2100 5000 1750
+Wire Wire Line
+	5000 1450 5000 1250
+Wire Wire Line
+	7500 4300 7500 750 
+Wire Wire Line
+	1400 750  7500 750 
+Connection ~ 7400 6400
+Wire Wire Line
+	7400 6400 7950 6400
+Wire Wire Line
+	5800 4400 5600 4400
+Wire Wire Line
+	5600 4400 5600 4200
+Wire Wire Line
+	5600 4200 4800 4200
+Wire Wire Line
+	5800 4500 5500 4500
+Wire Wire Line
+	5500 4500 5500 4300
+Wire Wire Line
+	5500 4300 4800 4300
+$Comp
+L mdoLibrary:BlueToothAudioR U?
+U 1 1 5F4589F3
+P 4700 4650
+F 0 "U?" H 4700 4650 79  0001 C CNN
+F 1 "BlueToothAudioR" H 4758 4755 79  0000 C CNN
+F 2 "" H 4700 4650 79  0001 C CNN
+F 3 "" H 4700 4650 79  0001 C CNN
+	1    4700 4650
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7600 5900 4400 5900
+Wire Wire Line
+	4400 2700 4400 5900
+Wire Wire Line
+	7600 5000 7600 5900
+Wire Wire Line
+	5000 5000 5500 5000
+Wire Wire Line
+	5500 5000 5500 4500
+Connection ~ 5500 4500
+Wire Wire Line
+	5600 4400 5600 5100
+Wire Wire Line
+	5600 5100 5000 5100
+Connection ~ 5600 4400
+Wire Wire Line
+	5600 5100 5600 5200
+Wire Wire Line
+	5600 5200 5000 5200
+Connection ~ 5600 5100
+Wire Wire Line
+	5000 5700 5150 5700
+Wire Wire Line
+	5150 5700 5150 6000
+Connection ~ 5150 6000
+Wire Wire Line
+	5150 6000 9950 6000
+Wire Wire Line
+	5000 5600 5250 5600
+Wire Wire Line
+	5250 5600 5250 6400
+Connection ~ 5250 6400
+Wire Wire Line
+	5250 6400 5350 6400
+Wire Wire Line
+	5000 1250 8000 1250
+Wire Wire Line
+	8000 1450 7400 1450
+Wire Wire Line
+	7400 1450 7400 6400
+Wire Wire Line
+	4550 950  6950 950 
+Wire Wire Line
+	7750 950  7750 1350
+Connection ~ 7750 950 
+Wire Wire Line
+	7750 950  9050 950 
+Wire Wire Line
+	7750 1350 8000 1350
+$Comp
+L switches:SW_Push SW?
+U 1 1 5F4922EE
+P 5350 5500
+F 0 "SW?" H 5500 5610 50  0000 C CNN
+F 1 "SW_PUSH" H 5350 5420 50  0000 C CNN
+F 2 "" H 5350 5500 60  0000 C CNN
+F 3 "" H 5350 5500 60  0000 C CNN
+	1    5350 5500
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	5000 4700 5350 4700
+Wire Wire Line
+	5350 4700 5350 5300
+Wire Wire Line
+	5350 5700 5350 6400
+Connection ~ 5350 6400
+Wire Wire Line
+	5350 6400 7050 6400
+$Comp
+L Device:C C?
+U 1 1 5F4A44E0
+P 3050 4400
+F 0 "C?" H 3165 4446 50  0000 L CNN
+F 1 "100uF" H 3165 4355 50  0000 L CNN
+F 2 "" H 3088 4250 50  0001 C CNN
+F 3 "~" H 3050 4400 50  0001 C CNN
+	1    3050 4400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3050 4250 3050 4200
+Connection ~ 3050 4200
+Wire Wire Line
+	3050 4200 2750 4200
+Wire Wire Line
+	3050 4550 3050 4600
+Connection ~ 3050 4600
 $EndSCHEMATC
