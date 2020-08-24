@@ -20,6 +20,9 @@ Best datasheet I could find on the YX5200 chip is found here
 Information on the BlueTooth audio transmitter is found here (along with ordering info)
 * https://www.aliexpress.com/item/33058710334.html
 
+Some usage info on the BlueTooth module, especially on controlling with serial AT commands
+https://www.electro-tech-online.com/threads/kcx_bt_emitter-low-cost-bluetooth-bt-audio-module.158156/
+
 ## WS2812 LED and serial communications
 Information on the WS2812B is found here
 * https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf
