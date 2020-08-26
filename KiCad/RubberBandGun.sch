@@ -5,7 +5,7 @@ $Descr A 11000 8500
 encoding utf-8
 Sheet 1 3
 Title "FOOF Rubber Band Gun"
-Date "2020-08-21"
+Date "2020-08-26"
 Rev "---"
 Comp ""
 Comment1 ""
@@ -530,10 +530,6 @@ Wire Wire Line
 Wire Wire Line
 	5600 4200 4800 4200
 Wire Wire Line
-	5800 4500 5500 4500
-Wire Wire Line
-	5500 4500 5500 4300
-Wire Wire Line
 	5500 4300 4800 4300
 $Comp
 L mdoLibrary:BlueToothAudioR U?
@@ -554,9 +550,6 @@ Wire Wire Line
 	7600 5000 7600 5900
 Wire Wire Line
 	5000 5000 5500 5000
-Wire Wire Line
-	5500 5000 5500 4500
-Connection ~ 5500 4500
 Wire Wire Line
 	5600 4400 5600 5100
 Wire Wire Line
@@ -638,4 +631,11 @@ Wire Wire Line
 Connection ~ 7600 2750
 Wire Wire Line
 	7050 6400 7950 6400
+Wire Wire Line
+	5500 4300 5500 4600
+Wire Wire Line
+	5800 4600 5500 4600
+Connection ~ 5500 4600
+Wire Wire Line
+	5500 4600 5500 5000
 $EndSCHEMATC
