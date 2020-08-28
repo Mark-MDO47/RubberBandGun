@@ -17,11 +17,14 @@ Information on the YX5200 sound module and my experience with it is found here
 Best datasheet I could find on the YX5200 chip is found here
 * https://github.com/Mark-MDO47/RubberBandGun/blob/master/RBG_arduino/YX5200_info/FN-M16P%2BEmbedded%2BMP3%2BAudio%2BModule%2BDatasheet.pdf
 
-Information on the BlueTooth audio transmitter is found here (along with ordering info)
+Information on the BlueTooth audio transmitter module is found here (along with ordering info)
 * https://www.aliexpress.com/item/33058710334.html
 
-Some usage info on the BlueTooth module, especially on controlling with serial AT commands
-https://www.electro-tech-online.com/threads/kcx_bt_emitter-low-cost-bluetooth-bt-audio-module.158156/
+Best information on the BlueTooth module I could find is here; need to translate from Chinese
+* https://item.taobao.com/item.htm?spm=a21wu.12321156-tw.0.0.7e76d1c7xEOcFZ&id=570274835710
+
+Some more usage info on the BlueTooth module, especially English information on controlling with serial AT commands
+* https://www.electro-tech-online.com/threads/kcx_bt_emitter-low-cost-bluetooth-bt-audio-module.158156/
 
 ## WS2812 LED and serial communications
 Information on the WS2812B is found here
