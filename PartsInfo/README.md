@@ -10,20 +10,21 @@ The ATMEGA 328P chip used in the Arduino Nano is described here
 Mapping the ports to the internal registers is described here
 * https://www.arduino.cc/en/Reference/PortManipulation
 
-## Sound and BlueTooth Modules
+## Sound Module
 Information on the YX5200 sound module and my experience with it is found here
 * https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsInfo/YX5200.md
 
 Best datasheet I could find on the YX5200 chip is found here
 * https://github.com/Mark-MDO47/RubberBandGun/blob/master/RBG_arduino/YX5200_info/FN-M16P%2BEmbedded%2BMP3%2BAudio%2BModule%2BDatasheet.pdf
 
-Information on the BlueTooth audio transmitter module is found here (along with ordering info)
+## Bluetooth Module
+Information on the Bluetooth audio transmitter module is found here (along with ordering info)
 * https://www.aliexpress.com/item/33058710334.html
 
-Best information on the BlueTooth module I could find is here; need to translate from Chinese
+Best information on the Bluetooth module I could find is here; need to translate from Chinese
 * https://item.taobao.com/item.htm?spm=a21wu.12321156-tw.0.0.7e76d1c7xEOcFZ&id=570274835710
 
-Some more usage info on the BlueTooth module, especially English information on controlling with serial AT commands
+Some more usage info on the Bluetooth module, especially English information on controlling with serial AT commands
 * https://www.electro-tech-online.com/threads/kcx_bt_emitter-low-cost-bluetooth-bt-audio-module.158156/
 
 ## WS2812 LED and serial communications
