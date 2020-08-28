@@ -11,17 +11,26 @@ Mapping the ports to the internal registers is described here
 * https://www.arduino.cc/en/Reference/PortManipulation
 
 ## Sound Module
+The YX5200 uses FAT32-formatted TF or microSD card up to 32 GByte
+
 Information on the YX5200 sound module and my experience with it is found here
 * https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsInfo/YX5200.md
 
 Best datasheet I could find on the YX5200 chip is found here
 * https://github.com/Mark-MDO47/RubberBandGun/blob/master/RBG_arduino/YX5200_info/FN-M16P%2BEmbedded%2BMP3%2BAudio%2BModule%2BDatasheet.pdf
 
+These look like a helpful sites for the YX5200:
+* https://wiki.dfrobot.com/DFPlayer_Mini_SKU_DFR0299
+* https://github.com/DFRobot/DFRobotDFPlayerMini
+
+This one is a re-write of the DFRobot library; also includes an English language spec sheet in the "extras" directory.
+* https://https://github.com/PowerBroker2/DFPlayerMini_Fast
+
 ## Bluetooth Module
 Information on the Bluetooth audio transmitter module is found here (along with ordering info)
 * https://www.aliexpress.com/item/33058710334.html
 
-Best information on the Bluetooth module I could find is here; need to translate from Chinese
+Best information on the Bluetooth module I could find is here; need to translate from Chinese (see next link)
 * https://item.taobao.com/item.htm?spm=a21wu.12321156-tw.0.0.7e76d1c7xEOcFZ&id=570274835710
 
 Some more usage info on the Bluetooth module, especially English information on controlling with serial AT commands
