@@ -7,7 +7,6 @@ A high-tech imagining of the rubber band gun
 
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/RBG_wiring_20200314_184839_800_600.png "Mark has been busy on the software side of the Science Fiction Rubber Band Gun and has also been wiring up the RBG internals")
 
-
 Jim and I are working on a Science-Fiction Rubber Band Gun!
 
 Here is a video of the software running on a prototype: https://youtu.be/luf1rrovRuw
@@ -15,9 +14,9 @@ Here is a video of the software running on a prototype: https://youtu.be/luf1rro
 It will have three rings of WS2812b 5050 RGB LED Ring proceeding up the barrel, each one larger than the previous in a "blunderbuss" shape. Note: this shape when applied to a handgun was known as a dragon, from which the term dragoon; see https://en.m.wikipedia.org/wiki/Blunderbuss
 
 When fired, it will play a sequence similar to the "soundified" rendition of two neutron stars colliding in 2017
-https://qz.com/1103444/ligo-listen-to-a-kilonova-the-sound-of-two-stars-colliding-in-space/
+* https://qz.com/1103444/ligo-listen-to-a-kilonova-the-sound-of-two-stars-colliding-in-space/
 or maybe from the two black holes colliding in 2015
-https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.116.061102
+* https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.116.061102
 or a simulation of this. We will shamelessly Hollywoodify this sound to make it ridiculously cool!
 
 At the same time as the sound, the LED rings will be doing trippy patterns to make it look like they are being charged up followed by a sequential pulsing that would convince anyone who knows absolutely less than nothing about such things that a rail-gun effect is propelling the rubber band down the central tube.
@@ -50,21 +49,21 @@ The barrel of the Rubber Band Gun is made from wood, with a sliding barrel attac
 The YX5200 uses FAT32-formatted TF or microSD card up to 32 GByte
 
 These look like a helpful sites for the YX5200:
-
-https://wiki.dfrobot.com/DFPlayer_Mini_SKU_DFR0299
-
-https://github.com/DFRobot/DFRobotDFPlayerMini
+* https://wiki.dfrobot.com/DFPlayer_Mini_SKU_DFR0299
+* https://github.com/DFRobot/DFRobotDFPlayerMini
 
 This one is a re-write of the DFRobot library; also includes an English language spec sheet in the "extras" directory.
-https://https://github.com/PowerBroker2/DFPlayerMini_Fast
+* https://https://github.com/PowerBroker2/DFPlayerMini_Fast
 
 For a description of my experiences with using this module (I had some challenges), see the Readme.md in https://github.com/Mark-MDO47/RubberBandGun/tree/master/RBG_arduino.
 
 # BlueTooth (possibly)
 
 The BlueTooth audio transmitter is found here (along with ordering info)
+* https://www.aliexpress.com/item/33058710334.html
 
-https://www.aliexpress.com/item/33058710334.html
+A potential bluetooth speaker for the RBG:
+* https://smile.amazon.com/gp/product/B088H56DNY/
 
 # Sounds
 
