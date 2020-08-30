@@ -53,7 +53,7 @@ These look like a helpful sites for the YX5200:
 * https://github.com/DFRobot/DFRobotDFPlayerMini
 
 This one is a re-write of the DFRobot library; also includes an English language spec sheet in the "extras" directory.
-* https://https://github.com/PowerBroker2/DFPlayerMini_Fast
+* https://github.com/PowerBroker2/DFPlayerMini_Fast
 
 For a description of my experiences with using this module (I had some challenges), see the Readme.md in https://github.com/Mark-MDO47/RubberBandGun/tree/master/RBG_arduino.
 
