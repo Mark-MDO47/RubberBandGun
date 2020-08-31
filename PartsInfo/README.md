@@ -17,7 +17,7 @@ Information on the YX5200 sound module and my experience with it is found here
 * https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsInfo/YX5200.md
 
 Best datasheet I could find on the YX5200 chip is found here
-* https://github.com/Mark-MDO47/RubberBandGun/blob/master/RBG_arduino/YX5200_info/FN-M16P%2BEmbedded%2BMP3%2BAudio%2BModule%2BDatasheet.pdf
+* https://github.com/PowerBroker2/DFPlayerMini_Fast/blob/master/extras/FN-M16P%2BEmbedded%2BMP3%2BAudio%2BModule%2BDatasheet.pdf
 
 These look like a helpful sites for the YX5200:
 * https://wiki.dfrobot.com/DFPlayer_Mini_SKU_DFR0299
