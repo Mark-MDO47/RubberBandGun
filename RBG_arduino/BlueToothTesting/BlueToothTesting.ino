@@ -19,6 +19,12 @@
 #define NUMWAIT  1000
 
 SoftwareSerial myBlueSerial(DPIN_BLUESRL_RX, DPIN_BLUESRL_TX); // to talk to Bluetooth 
+
+SoftwareSerial myYX5200Serial(DPIN_SWSRL_RX, DPIN_SWSRL_TX);   // to talk to YX5200 audio player
+DFRobotDFPlayerMini myDFPlayer;                                // to talk to YX5200 audio player
+void DFsetup();                                                // how to initialize myDFPlayer
+
+
 char inByte[1024];
 unsigned int idx = 0;
 unsigned int odx = 0;
@@ -45,6 +51,45 @@ void setup() {
 }  // end setup()
 
 void loop() {
+
+  testRx();
+
+} // end loop()
+
+void testRx() {
+  static uint8_t zero_if_first = 0;
+
+  if (0 == zero_if_first) {
+    myBlueSerial.begin(9600); // this is control for Bluetooth module (KCX_BT_EMITTER)
+    zero_if_first += 1;
+  }
+  reportBlueCom();
+
+}
+void test1() {
+  /*
+  myBlueSerial.begin(9600); // this is control for Bluetooth module (KCX_BT_EMITTER)
+  
+  idx = 0;
+  while (Serial.available()) {
+    inByte[idx++] = Serial.read(); // this side is faster
+  }
+  if (idx > 0) {
+    odx = 0;
+    for (odx = 0; odx < idx; odx += 1) {
+      myBlueSerial.print(inByte[odx]);
+      Serial.print(inByte[odx]);
+    }
+    idx = 0;
+  } // if anything to send to Bluetooth chip
+  
+  reportBlueCom();
+  */
+
+} // end test1()
+
+void testBauds() {
+
   int cmdIdx;
 
   Serial.println("");
@@ -63,25 +108,8 @@ void loop() {
   idxBaud += 1;
   if (idxBaud >= NUMBAUDS) { idxBaud = 0; }
   delay(100);
-/*
-  idx = 0;
-  while (Serial.available()) {
-    inByte[idx++] = Serial.read(); // this side is faster
-  }
-  if (idx > 0) {
-    odx = 0;
-    for (odx = 0; odx < idx; odx += 1) {
-      myBlueSerial.print(inByte[odx]);
-      Serial.print(inByte[odx]);
-    }
-    idx = 0;
-  } // if anything to send to Bluetooth chip
-  
-  reportBlueCom();
-  */
 
-} // end loop()
-
+}
 unsigned int reportBlueCom() {
   unsigned int idx = 0;
   while (myBlueSerial.available()) {

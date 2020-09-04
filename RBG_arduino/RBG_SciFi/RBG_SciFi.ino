@@ -1,4 +1,5 @@
 // Author: Mark Olson 2019-11-03
+//    rework pins for Bluetooth addition 2020-08-04
 //
 // Rubber Band Gun - https://github.com/Mark-MDO47/RubberBandGun
 // RBG - A high-tech imagining of the rubber band gun
@@ -100,7 +101,7 @@
 
 static uint32_t globalLoopCount = 0;  // based on DEBUG_SHOW_MSEC: this is either the milliseconds since startup or a count of times through loop()
 
-SoftwareSerial mySoftwareSerial(DPIN_SWSRL_RX, DPIN_SWSRL_TX); // to talk to YX5200 audio player
+SoftwareSerial myYX5200Serial(DPIN_SWSRL_RX, DPIN_SWSRL_TX); // to talk to YX5200 audio player
 DFRobotDFPlayerMini myDFPlayer;                                // to talk to YX5200 audio player
 void DFsetup();                                                // how to initialize myDFPlayer
 
@@ -156,7 +157,7 @@ void setup() {
   Serial.println();
   Serial.println(F("FOOF SciFi RBG init...")); 
 
-  mySoftwareSerial.begin(9600); // this is control to DFPlayer audio player
+  myYX5200Serial.begin(9600); // this is control to DFPlayer audio player
 
   // initialize the input pins. Not sure if my Nano actually has a pullup...
   //    fortunately the RBG controller board has a 10K pullup resistor
@@ -1343,7 +1344,7 @@ uint16_t getButtonInput() {
 void DFsetup() {
   Serial.println(F("Initializing DFPlayer ... (May take 3~5 seconds)"));
   
-  if (!myDFPlayer.begin(mySoftwareSerial, false, true)) {  // Use softwareSerial to communicate with mp3 player
+  if (!myDFPlayer.begin(myYX5200Serial, false, true)) {  // Use softwareSerial to communicate with mp3 player
     Serial.println(F("Unable to begin DFPlayer:"));
     Serial.println(F("1.Please recheck the connection!"));
     Serial.println(F("2.Please insert the SD card!"));
