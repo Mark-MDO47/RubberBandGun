@@ -5,7 +5,7 @@ $Descr A 11000 8500
 encoding utf-8
 Sheet 1 3
 Title "FOOF Rubber Band Gun"
-Date "2020-08-26"
+Date "2020-09-04"
 Rev "---"
 Comp ""
 Comment1 ""
@@ -573,8 +573,6 @@ Wire Wire Line
 	5250 5600 5250 6400
 Connection ~ 5250 6400
 Wire Wire Line
-	5250 6400 5350 6400
-Wire Wire Line
 	5000 1250 8000 1250
 Wire Wire Line
 	8000 1450 7600 1450
@@ -587,26 +585,6 @@ Wire Wire Line
 	7750 950  9050 950 
 Wire Wire Line
 	7750 1350 8000 1350
-$Comp
-L switches:SW_Push SW?
-U 1 1 5F4922EE
-P 5350 5500
-F 0 "SW?" H 5500 5610 50  0000 C CNN
-F 1 "SW_PUSH" H 5350 5420 50  0000 C CNN
-F 2 "" H 5350 5500 60  0000 C CNN
-F 3 "" H 5350 5500 60  0000 C CNN
-	1    5350 5500
-	0    -1   -1   0   
-$EndComp
-Wire Wire Line
-	5000 4700 5350 4700
-Wire Wire Line
-	5350 4700 5350 5300
-Wire Wire Line
-	5350 5700 5350 6400
-Connection ~ 5350 6400
-Wire Wire Line
-	5350 6400 7050 6400
 $Comp
 L Device:C C?
 U 1 1 5F4A44E0
@@ -638,4 +616,28 @@ Wire Wire Line
 Connection ~ 5500 4600
 Wire Wire Line
 	5500 4600 5500 5000
+Wire Wire Line
+	5250 6400 7050 6400
+$Comp
+L conn:Conn_01x03_Female J?
+U 1 1 5F539118
+P 5850 5400
+F 0 "J?" H 5878 5426 50  0000 L CNN
+F 1 "Conn_01x03_Female" H 5600 5150 50  0000 L CNN
+F 2 "" H 5850 5400 50  0001 C CNN
+F 3 "~" H 5850 5400 50  0001 C CNN
+	1    5850 5400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5000 5300 5650 5300
+Wire Wire Line
+	5000 5400 5650 5400
+Wire Wire Line
+	5250 5600 5250 5500
+Wire Wire Line
+	5250 5500 5650 5500
+Connection ~ 5250 5600
+Text Notes 6150 5550 0    79   ~ 0
+Programming\nJumper\nWires
 $EndSCHEMATC
