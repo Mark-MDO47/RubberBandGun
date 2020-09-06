@@ -167,8 +167,9 @@ void setup() {
   pinMode(DPIN_AUDIO_BUSY,  INPUT_PULLUP); // tells when audio stops
   pinMode(DPIN_LOCK_LOAD,   INPUT_PULLUP); // tells if barrel is locked and loaded
   // and the other output pin
-  pinMode(DPIN_BLUETOOTH,  OUTPUT);        // pairs the BlueTooth Audio Transmitter
-  digitalWrite(DPIN_BLUETOOTH, HIGH);      // LOW to pair bluetooth
+  pinMode(DPIN_UNUSED,      INPUT_PULLUP); // matches with BlueToothTesting.ino
+  pinMode(DPIN_SIMPLENEO,   OUTPUT);
+  digitalWrite(DPIN_SIMPLENEO, LOW);
 
   // initialize the DFPlayer audio player
   DFsetup();
@@ -1742,12 +1743,16 @@ void printOneInput(uint8_t dpin, const char * printAsText) {
 
 // These values are for the pin that connects to the Data Input pin on the LED strip. They correspond to...
 
-// Mark Olson - I am using Arduino Nano V3 Atmega328p pin D2 DDRD PORTD mask 0x04 bit number 2 (2 ** bitnumber)
+// Mark Olson - I am using Arduino Nano V3 Atmega328p pin D2 DDRD PORTD mask 0x04 bit number 2 (2 ** bitnumber) - DPIN_SIMPLENEO is 2
 
 // You'll need to look up the port/bit combination for other boards. 
 
 // Note that you could also include the DigitalWriteFast header file to not need to to this lookup.
 
+// defines below are chosen for #define DPIN_SIMPLENEO 2; need changing otherewise
+#if (DPIN_SIMPLENEO - 2)
+FATAL "DPIN_SIMPLENEO must be pin 2! Redefine PIXEL_PORT, PIXEL_DDR, PIXEL_BIT to match different DPIN_SIMPLENEO"
+#endif
 #define PIXEL_PORT  PORTD  // Port of the pin the pixels are connected to
 #define PIXEL_DDR   DDRD   // Port of the pin the pixels are connected to
 #define PIXEL_BIT   2      // Bit of the pin the pixels are connected to (2 ** PIXEL_BIT)
@@ -1775,7 +1780,7 @@ void printOneInput(uint8_t dpin, const char * printAsText) {
 
 #define NS_TO_CYCLES(n) ( (n) / NS_PER_CYCLE )
 
-// Actually send a bit to the string. We must to drop to asm to enusre that the compiler does
+// Actually send a bit to the string. We must drop to asm to ensure that the compiler does
 // not reorder things and make it so the delay happens in the wrong place.
 
 inline void sendBit( bool bitVal ) {
@@ -1854,6 +1859,13 @@ inline void sendByte( unsigned char byte ) {
   
 */
 
+#if NO_SIMPLENEO // for testing with BlueToothTesting.ino compatibility, don't do SIMPLENEO
+void SimpleNeoLedSetup() { return; }
+void SimpleNeoSendPixel( unsigned char r, unsigned char g , unsigned char b )  { return; }
+void SimpleNeoShow() { return; }
+
+
+#else // NO_SIMPLENEO is zero, do SIMPLENEO
 
 // Set the specified pin up as digital out
 
@@ -1863,7 +1875,7 @@ void SimpleNeoLedSetup() {
   
 }
 
-void SimpleNeoSendPixel( unsigned char r, unsigned char g , unsigned char b )  {  
+void SimpleNeoSendPixel( unsigned char r, unsigned char g , unsigned char b )  {
   
   sendByte(g);          // Neopixel wants colors in green then red then blue order
   sendByte(r);
@@ -1877,6 +1889,8 @@ void SimpleNeoSendPixel( unsigned char r, unsigned char g , unsigned char b )  {
 void SimpleNeoShow() {
   _delay_us( (RES / 1000UL) + 1);       // Round up since the delay must be _at_least_ this long (too short might not work, too long not a problem)
 }
+
+#endif // NO_SIMPLENEO
 
 
 /*

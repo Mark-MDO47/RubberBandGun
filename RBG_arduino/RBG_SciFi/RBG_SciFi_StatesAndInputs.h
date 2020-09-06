@@ -30,13 +30,15 @@ template <typename T> int sgn(T val) {
 } // returns -1, 0, 1 for (T < 0), (T == 0), (T > 0) respectively. returns warning if used on uintx_t
 
 #define DPIN_SIMPLENEO    2  // serial out - talk to single LED in handle
+#define NO_SIMPLENEO 1 // do not actually write - temp for compat programming via BlueToothTesting.ino
+
 #define DPIN_FASTLED      3  // serial out - talk to LED rings
 #define DPIN_BTN_TRIGGER  4  // digital input - the trigger (we only count once per trigger press)
 #define DPIN_BTN_YELLOW   5  // digital input - yellow configuration button
 #define DPIN_BTN_GREEN    6  // digital input - green configuration button
 #define DPIN_BTN_RED      7  // digital input - blue configuration button
 #define DPIN_LOCK_LOAD    8  // digital input - grounded when in lock and load position
-#define DPIN_BLUETOOTH    9  // digital output - pair the BlueTooth Audio Transmitter
+#define DPIN_UNUSED       9  // digital input - pair the BlueTooth Audio Transmitter
 #define DPIN_SWSRL_RX    10  // serial in  - talk to DFPlayer audio player (YX5200)
 #define DPIN_SWSRL_TX    11  // serial out - talk to DFPlayer audio player (YX5200)
 #define DPIN_AUDIO_BUSY  12  // digital input - signals when audio finishes
@@ -149,7 +151,7 @@ template <typename T> int sgn(T val) {
 #define mMASK_EFCT_SND_NUM 255  // mask for sound number
 #define mSHIFT_EFCT_SND_VOL 8  // shift for volume
 #define mMASK_EFCT_SND_VOL 31   // mask for volume once shifted in place
-#define mDEFAULT_EFCT_SND_VOL 25  // default volume - 25 is pretty good
+#define mDEFAULT_EFCT_SND_VOL 10  // default volume - 25 is pretty good
 
 /////////////////// end -> INPUTS 1 FROM makeStateTable.py <- //////////////////////////////////
 
