@@ -5,7 +5,7 @@ $Descr A 11000 8500
 encoding utf-8
 Sheet 1 3
 Title "FOOF Rubber Band Gun"
-Date "2020-09-04"
+Date "2020-09-05"
 Rev "---"
 Comp ""
 Comment1 ""
@@ -638,6 +638,6 @@ Wire Wire Line
 Wire Wire Line
 	5250 5500 5650 5500
 Connection ~ 5250 5600
-Text Notes 6150 5550 0    79   ~ 0
-Programming\nJumper\nWires
+Text Notes 6050 5550 0    79   ~ 0
+9 TX Yellow\n2 RX Green\nGND Black
 $EndSCHEMATC
