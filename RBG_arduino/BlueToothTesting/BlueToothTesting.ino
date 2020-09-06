@@ -9,7 +9,7 @@
 SoftwareSerial myBlueSerial(DPIN_BLUESRL_RX, DPIN_BLUESRL_TX); // to talk to Bluetooth 
 
 
-char inByte[100];
+char inBytes[100];
 char const * cmd1 = "AT+";
 char const * cmd2 = "AT+REST";
 char const * cmd3 = "AT+GMR";
@@ -63,39 +63,55 @@ void testRx() {
 }
 void testEcho() {
 
-  static char inByte[100];
+  static char eolBytes[10];
   static unsigned char mychar;
   static unsigned int idx = 0;
   static unsigned int odx = 0;
+  static unsigned int edx = 0;
+  int loopIdx;
 
   while (Serial.available()) {
     mychar = Serial.read(); // this side is faster
     if (((int) mychar) >= 0x20) { // if it is space or higher
-      inByte[idx++] = mychar;
+      inBytes[idx++] = mychar;
       delay(5);
     } else {
-      printf("\neol char 0x%02X\n", (int) mychar);
+      eolBytes[edx++] = mychar;
+      delay(5);
       while (Serial.available()) {
         mychar = Serial.read(); // this side is faster
-        printf("\neol char 0x%02X\n", (int) mychar);
+        eolBytes[edx++] = mychar;
         delay(5);
       }
       break;
     }
   } // end try to read input to the end of line
-  if (idx > 0) {
-    odx = 0;
-    for (odx = 0; odx < idx; odx += 1) {
-      if (inByte[odx] > ' ') {
-        myBlueSerial.print(inByte[odx]);
-      }
-      Serial.print(inByte[odx]);
-    }
-    idx = 0;
-  } // if anything to send to Bluetooth chip
-  
-  reportBlueCom();
 
+  if (idx > 0) { // if anything to send to Bluetooth chip
+    // display the input
+    for (odx = 0; odx < idx; odx++) {
+      Serial.print("char 0x");
+      Serial.print((int) inBytes[odx], HEX);
+      Serial.print(" ");
+      Serial.println(inBytes[odx]);
+      // printf("\neol char 0x%02X %c\n", (int) inBytes[odx], inBytes[odx]);
+    }
+    for (odx = 0; odx < edx; odx++) {
+      Serial.print("\neol char 0x");
+      Serial.println((int) eolBytes[odx], HEX);
+      // printf("\neol char 0x%02X\n", (int) eolBytes[odx]);
+    }
+    // send input (without EOL) to Bluetooth module
+    inBytes[idx] = 0;
+    sendBlueCmd(inBytes);
+    // Clean up
+    idx = edx = 0;
+  } else { // just display what there is if anything
+    if (myBlueSerial.available()) {
+      reportBlueCom();
+    }
+  }
+  
 } // end test1()
 
 void testCmds() {
@@ -121,12 +137,12 @@ unsigned int reportBlueCom() {
   unsigned int odx = 0;
 
   while (myBlueSerial.available()) {
-    inByte[idx++] = myBlueSerial.read();
+    inBytes[idx++] = myBlueSerial.read();
   }
   if (idx > 0) {
     odx = 0;
     for (odx = 0; odx < idx; odx += 1) {
-      Serial.print(inByte[odx]);
+      Serial.print(inBytes[odx]);
     }
   } // if anything received from Bluetooth chip
   return(idx);
