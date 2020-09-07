@@ -3,9 +3,9 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 3 3
+Sheet 3 4
 Title "Detail: LED Ring Wiring"
-Date "2020-08-26"
+Date "2020-09-07"
 Rev ""
 Comp ""
 Comment1 ""

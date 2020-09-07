@@ -3,9 +3,9 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 2 3
+Sheet 2 4
 Title "Detail: Solenoid Driver"
-Date "2020-08-26"
+Date "2020-09-07"
 Rev ""
 Comp ""
 Comment1 ""
@@ -116,4 +116,6 @@ Wire Wire Line
 	2500 2500 6150 2500
 Text Notes 10850 1650 2    157  ~ 31
 Derived from https://cdn-shop-adafruit.com/product-files/412/solenoid_driver.pdf
+Text Notes 2950 6400 0    79   ~ 16
+Solenoid circuit connects when ready to fire,\n   disconnects when pulled out for loading.
 $EndSCHEMATC

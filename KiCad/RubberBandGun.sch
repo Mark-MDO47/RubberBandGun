@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A 11000 8500
 encoding utf-8
-Sheet 1 3
+Sheet 1 4
 Title "FOOF Rubber Band Gun"
 Date "2020-09-05"
 Rev "---"
@@ -536,7 +536,7 @@ L mdoLibrary:BlueToothAudioR U?
 U 1 1 5F4589F3
 P 4700 4650
 F 0 "U?" H 4700 4650 79  0001 C CNN
-F 1 "BlueToothAudioR" H 4758 4755 79  0000 C CNN
+F 1 "BluetoothAudioModule" H 5100 3500 79  0000 C CNN
 F 2 "" H 4700 4650 79  0001 C CNN
 F 3 "" H 4700 4650 79  0001 C CNN
 	1    4700 4650
@@ -621,23 +621,64 @@ Wire Wire Line
 $Comp
 L conn:Conn_01x03_Female J?
 U 1 1 5F539118
-P 5850 5400
-F 0 "J?" H 5878 5426 50  0000 L CNN
-F 1 "Conn_01x03_Female" H 5600 5150 50  0000 L CNN
-F 2 "" H 5850 5400 50  0001 C CNN
-F 3 "~" H 5850 5400 50  0001 C CNN
-	1    5850 5400
+P 5450 5400
+F 0 "J?" H 5478 5426 50  0001 L CNN
+F 1 "Conn_Female" H 5000 5250 50  0000 L CNN
+F 2 "" H 5450 5400 50  0001 C CNN
+F 3 "~" H 5450 5400 50  0001 C CNN
+	1    5450 5400
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	5000 5300 5650 5300
-Wire Wire Line
-	5000 5400 5650 5400
-Wire Wire Line
 	5250 5600 5250 5500
-Wire Wire Line
-	5250 5500 5650 5500
 Connection ~ 5250 5600
 Text Notes 6050 5550 0    79   ~ 0
 9 TX Yellow\n2 RX Green\nGND Black
+$Sheet
+S 3700 6950 500  500 
+U 5F557D0B
+F0 "Programming Arduino" 79
+F1 "ProgArd.sch" 79
+$EndSheet
+Wire Wire Line
+	5000 5300 5250 5300
+Wire Wire Line
+	5000 5400 5250 5400
+Text HLabel 4200 7350 0    79   Input ~ 16
+9_TX
+Text HLabel 4200 7200 0    79   Input ~ 16
+2_RX
+Text HLabel 4200 7050 0    79   Input ~ 16
+GND
+$Comp
+L conn:Conn_01x03_Male J?
+U 1 1 5F5917B1
+P 5600 5400
+F 0 "J?" H 5708 5681 50  0001 C CNN
+F 1 "Conn_Male" H 5800 5250 50  0000 C CNN
+F 2 "" H 5600 5400 50  0001 C CNN
+F 3 "~" H 5600 5400 50  0001 C CNN
+	1    5600 5400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4200 7050 5850 7050
+Wire Wire Line
+	4200 7200 5950 7200
+Wire Wire Line
+	5950 7200 5950 5400
+Wire Wire Line
+	5950 5400 5800 5400
+Text Notes 1500 7400 0    79   ~ 16
+Only connect Programming Arduino\nwhen programming KCX_BT_EMITTER\nBluetooth Audio Module
+Wire Wire Line
+	5850 7050 5850 5500
+Wire Wire Line
+	6050 5300 6050 7350
+Wire Wire Line
+	4200 7350 6050 7350
+Wire Wire Line
+	6050 5300 5800 5300
+Wire Wire Line
+	5800 5500 5850 5500
 $EndSCHEMATC
