@@ -11,6 +11,8 @@ Jim and I are working on a Science-Fiction Rubber Band Gun!
 
 Here is a video of the software running on a prototype: https://youtu.be/luf1rrovRuw
 
+Just got Bluetooth audio working! Here is a demo of the breadboard firing on an S1 Pro Bluetooth speaker: https://youtu.be/NL99PbIK0Ms
+
 It will have three rings of WS2812b 5050 RGB LED Ring proceeding up the barrel, each one larger than the previous in a "blunderbuss" shape. Note: this shape when applied to a handgun was known as a dragon, from which the term dragoon; see https://en.m.wikipedia.org/wiki/Blunderbuss
 
 When fired, it will play a sequence similar to the "soundified" rendition of two neutron stars colliding in 2017
