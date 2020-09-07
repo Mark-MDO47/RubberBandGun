@@ -151,7 +151,7 @@ template <typename T> int sgn(T val) {
 #define mMASK_EFCT_SND_NUM 255  // mask for sound number
 #define mSHIFT_EFCT_SND_VOL 8  // shift for volume
 #define mMASK_EFCT_SND_VOL 31   // mask for volume once shifted in place
-#define mDEFAULT_EFCT_SND_VOL 10  // default volume - 25 is pretty good
+#define mDEFAULT_EFCT_SND_VOL 30  // default volume - 25 is pretty good
 
 /////////////////// end -> INPUTS 1 FROM makeStateTable.py <- //////////////////////////////////
 

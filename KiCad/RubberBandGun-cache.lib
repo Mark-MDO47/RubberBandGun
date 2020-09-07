@@ -1203,6 +1203,22 @@ X Vcc_14 ~ 600 700 200 L 50 50 64 1 I
 ENDDRAW
 ENDDEF
 #
+# mdoLibrary_SW_SPST
+#
+DEF mdoLibrary_SW_SPST SW 0 0 Y N 1 F N
+F0 "SW" 0 125 50 H V C CNN
+F1 "mdoLibrary_SW_SPST" 0 -100 50 H V C CNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+DRAW
+C -80 0 20 0 0 0 N
+C 80 0 20 0 0 0 N
+P 2 0 0 0 -60 10 60 70 N
+X A ~ -200 0 100 R 50 50 1 1 P
+X B ~ 200 0 100 L 50 50 1 1 P
+ENDDRAW
+ENDDEF
+#
 # mdoLibrary_UBEC
 #
 DEF mdoLibrary_UBEC J 0 40 Y Y 1 F P

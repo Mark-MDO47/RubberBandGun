@@ -142,13 +142,13 @@ char const * cmd10 = "AT+";
 // #define NUMBAUDS 10
 // int long bauds[NUMBAUDS] = { 1200, 2400, 4800, 9600, 14400, 19200, 28800, 31250, 38400, 57600 };
 
+char const * cmds[10] = { cmd1, cmd2, cmd3, cmd4, cmd5, cmd6, cmd7, cmd8, cmd9, cmd10 };
+
 // program
-// #define NUMCMDS  10
-// char const * cmds[NUMCMDS] = { cmd1, cmd2, cmd3, cmd4, cmd5, cmd6, cmd7, cmd8, cmd9, cmd10 };
+#define NUMCMDS  10
 
 // examine
-#define NUMCMDS 5
-char const * cmds[NUMCMDS] = { cmd1, cmd2, cmd3, cmd4, cmd5 };
+// #define NUMCMDS 5
 
 unsigned int reportBlueCom();
 void sendBlueCmd( char * cmd );
@@ -169,8 +169,8 @@ void setup() {
 void loop() {
 
   // testRx();
-  testEcho();
-  // testCmds();
+  // testEcho();
+  testCmds();
 
 } // end loop()
 

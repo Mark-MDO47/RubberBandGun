@@ -523,14 +523,6 @@ Wire Wire Line
 	7500 4300 7500 750 
 Wire Wire Line
 	1400 750  7500 750 
-Wire Wire Line
-	5800 4400 5600 4400
-Wire Wire Line
-	5600 4400 5600 4200
-Wire Wire Line
-	5600 4200 4800 4200
-Wire Wire Line
-	5500 4300 4800 4300
 $Comp
 L mdoLibrary:BlueToothAudioR U?
 U 1 1 5F4589F3
@@ -548,18 +540,6 @@ Wire Wire Line
 	4400 2700 4400 5900
 Wire Wire Line
 	7600 5000 7600 5900
-Wire Wire Line
-	5000 5000 5500 5000
-Wire Wire Line
-	5600 4400 5600 5100
-Wire Wire Line
-	5600 5100 5000 5100
-Connection ~ 5600 4400
-Wire Wire Line
-	5600 5100 5600 5200
-Wire Wire Line
-	5600 5200 5000 5200
-Connection ~ 5600 5100
 Wire Wire Line
 	5000 5700 5150 5700
 Wire Wire Line
@@ -609,13 +589,6 @@ Wire Wire Line
 Connection ~ 7600 2750
 Wire Wire Line
 	7050 6400 7950 6400
-Wire Wire Line
-	5500 4300 5500 4600
-Wire Wire Line
-	5800 4600 5500 4600
-Connection ~ 5500 4600
-Wire Wire Line
-	5500 4600 5500 5000
 Wire Wire Line
 	5250 6400 7050 6400
 $Comp
@@ -681,4 +654,47 @@ Wire Wire Line
 	6050 5300 5800 5300
 Wire Wire Line
 	5800 5500 5850 5500
+Wire Wire Line
+	4900 4600 4900 4300
+Wire Wire Line
+	4900 4300 4800 4300
+Wire Wire Line
+	5800 4200 5700 4200
+Wire Wire Line
+	5800 4300 5750 4300
+Wire Wire Line
+	5800 4500 5650 4500
+Wire Wire Line
+	5700 5100 5700 4200
+Wire Wire Line
+	5000 5100 5700 5100
+Wire Wire Line
+	5750 5200 5750 4300
+Wire Wire Line
+	5000 5200 5750 5200
+Wire Wire Line
+	5650 5000 5650 4500
+Wire Wire Line
+	5000 5000 5650 5000
+$Comp
+L mdoLibrary:SW_SPST SW?
+U 1 1 5F5ADEC3
+P 5250 4600
+F 0 "SW?" H 5250 4835 50  0000 C CNN
+F 1 "SW_SPST" H 5250 4744 50  0000 C CNN
+F 2 "" H 5250 4600 50  0001 C CNN
+F 3 "" H 5250 4600 50  0001 C CNN
+	1    5250 4600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5800 4600 5450 4600
+Wire Wire Line
+	5050 4600 4900 4600
+Wire Wire Line
+	5800 4400 5600 4400
+Wire Wire Line
+	5600 4400 5600 4200
+Wire Wire Line
+	4800 4200 5600 4200
 $EndSCHEMATC
