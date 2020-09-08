@@ -160,31 +160,31 @@ SoftwareSerial myBlueSerial(DPIN_BLUESRL_RX, DPIN_BLUESRL_TX); // to talk to Blu
 
 #define NUMWAIT  3000 // loopcount waiting for response from Bluetooth module
 
+#define NUMOF(a) (sizeof((a)) / sizeof(*(a)))
+
 char inBytes[100];
-char const * cmd1 = "AT+";
-char const * cmd2 = "AT+REST";
-char const * cmd3 = "AT+GMR";
-char const * cmd4 = "AT+STATUS";
-char const * cmd5 = "AT+VMLINK?";
-char const * cmd6 = "AT+DISCON";
-char const * cmd7 = "AT+ADDLINKADD=0xf44efdecd39d"; // NOTE: must be exactly 12 characters for hex string
-char const * cmd8 = "AT+ADDLINKNAME=S1 Pro MDO";
-char const * cmd9 = "AT+VMLINK?";
-char const * cmd10 = "AT+";
+char const * cmd_AT          = "AT+";
+char const * cmd_REST        = "AT+REST";
+char const * cmd_GMR         = "AT+GMR";
+char const * cmd_STATUS      = "AT+STATUS";
+char const * cmd_DISCON      = "AT+DISCON";
+char const * cmd_SCAN        = "AT+SCAN";
+char const * cmd_ADDLINKADD  = "AT+ADDLINKADD=0x"; // NOTE: must be exactly 12 characters for hex string
+char const * cmd_ADDLINKNAME = "AT+ADDLINKNAME=";
+char const * cmd_VMLINK      = "AT+VMLINK?";
+char const * cmd_DELVMLINK   = "AT+DELVMLINK";
 
-// #define NUMBAUDS 10
-// int long bauds[NUMBAUDS] = { 1200, 2400, 4800, 9600, 14400, 19200, 28800, 31250, 38400, 57600 };
-
-// program
-// #define NUMCMDS  10
-// char const * cmds[NUMCMDS] = { cmd1, cmd2, cmd3, cmd4, cmd5, cmd6, cmd7, cmd8, cmd9, cmd10 };
-
-// examine
-#define NUMCMDS 5
-char const * cmds[NUMCMDS] = { cmd1, cmd2, cmd3, cmd4, cmd5 };
+char const * cmdsScan[]     = {cmd_AT, cmd_SCAN};
+char const * cmdsDispRAM[]  = {cmd_AT, cmd_VMLINK};
+char const * cmdsAddRAM1[]  = {cmd_AT, cmd_DISCON, cmd_VMLINK};
+char const * cmdsAddRAM2[]  = {cmd_ADDLINKADD, cmd_ADDLINKNAME}; // must build these in RAM
+char const * cmdsAddRAM3[]  = {cmd_VMLINK};
+char const * cmdsClearRAM[] = {cmd_AT, cmd_REST, cmd_DISCON, cmd_DELVMLINK, cmd_VMLINK};
 
 unsigned int reportBlueCom();
 void sendBlueCmd( char * cmd );
+void processCommand(uint8_t theChoice);
+uint8_t getSerial_uint8_t();
 
 void setup() {
 
@@ -193,25 +193,93 @@ void setup() {
     ; // wait for serial port to connect. Needed for native USB port only
   }
   Serial.println();
-  Serial.println("Bluetooth testing init...");
+  Serial.println("Bluetooth testing init...\n");
 
   myBlueSerial.begin(9600); // this is control for Bluetooth module (KCX_BT_EMITTER)
 
 }  // end setup()
 
 void loop() {
+  static uint8_t menuPrinted = 0;
 
-  // testRx();
-  testEcho();
-  // testCmds();
+  if (0 == menuPrinted) {
+    menuPrinted = 1;
+    Serial.println("");
+    Serial.println("   1 - Scan for Bluetooth receiver devices (such as speaker, headphones, etc.)");
+    Serial.println("   2 - Display stored auto-connect Bluetooth receiver devices");
+    Serial.println("   3 - Add one auto-connect Bluetooth receiver device to storage");
+    Serial.println("   4 - Delete all auto-connect Bluetooth receiver devices from storage");
+    Serial.print("--> ");
+  }
+
+  if (Serial.available()) {
+    uint8_t myChoice = 0;
+
+    menuPrinted = 0;
+    myChoice = getSerial_uint8_t();
+    if ((0 == myChoice) || (myChoice > 4)) {
+      Serial.println("ERROR - choice must be 1 through 4");
+    } else {
+      processCommand(myChoice);
+    }
+  }
+
+  // testEcho();
 
 } // end loop()
 
-void testRx() {
-
-  reportBlueCom();
-
+uint8_t getSerial_uint8_t() {
+  getSerial_chars();
+  return(uint8_t (inBytes[0]-'0'));
 }
+
+// no code to flag input over-run
+// stores zero-terminated string in inBytes
+uint8_t getSerial_chars() {
+  static unsigned char mychar;
+  static unsigned int idx = 0;
+  static unsigned int odx = 0;
+
+  while (Serial.available()) {
+    mychar = Serial.read();
+    if (((int) mychar) >= 0x20) { // if it is space or higher
+      if (NUMOF(inBytes) <= (idx+2)) {
+        inBytes[idx++] = mychar;
+      }
+      delay(5);
+    } else {
+      inBytes[idx++] = 0;
+      delay(5);
+      while (Serial.available()) {
+        mychar = Serial.read();
+        delay(5);
+      }
+      break;
+    }
+  } // end try to read input to the end of line
+
+  return(idx);
+}
+
+void processCommand(uint8_t theChoice) {
+  switch (theChoice) {
+    case 1: // 1 - Scan for Bluetooth receiver devices (such as speaker, headphones, etc.)");
+      testCmds(cmdsScan, (uint8_t) NUMOF(cmdsScan));
+      break;
+    case 2: // 2 - Display stored auto-connect Bluetooth receiver devices");
+      testCmds(cmdsDispRAM, (uint8_t) NUMOF(cmdsDispRAM));
+      break;
+    case 3: // 3 - Add one auto-connect Bluetooth receiver device to storage");
+      testCmds(cmdsAddRAM1, (uint8_t) NUMOF(cmdsAddRAM1));
+      testCmds(cmdsAddRAM2, (uint8_t) NUMOF(cmdsAddRAM2)); FIXME - need to do this part
+      testCmds(cmdsAddRAM3, (uint8_t) NUMOF(cmdsAddRAM3));
+      break;
+    case 4: // 4 - Delete all auto-connect Bluetooth receiver devices from storage");
+      testCmds(cmdsClearRAM, (uint8_t) NUMOF(cmdsClearRAM));
+      break;
+  }
+} // end processCommand()
+
 void testEcho() {
 
   static char eolBytes[10];
@@ -265,17 +333,15 @@ void testEcho() {
   
 } // end test1()
 
-void testCmds() {
+void testCmds(const char * cmdArray[], const uint8_t numCmds) {
 
-  int cmdIdx;
-
-  for (cmdIdx = 0; cmdIdx < NUMCMDS; cmdIdx += 1) {
+  for (int cmdIdx = 0; cmdIdx < numCmds; cmdIdx += 1) {
     Serial.println("");
     Serial.print("--CMD ");
     Serial.print(cmdIdx);
     Serial.print(" ");
-    Serial.println(cmds[cmdIdx]);
-    sendBlueCmd((char *) cmds[cmdIdx]);
+    Serial.println(cmdArray[cmdIdx]);
+    sendBlueCmd((char *) cmdArray[cmdIdx]);
   }
 
   delay(100);
