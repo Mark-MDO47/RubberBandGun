@@ -6,8 +6,7 @@
 // The purpose of ProgrammingArduino.ino is to program the Bluetooth module to auto-connect
 //     to a specific set of bluetooth speakers, headphones, etc.  Once this is done, the list will be retained
 //     by the Bluetooth module and the Programming Arduino can be disconnected.
-// NOTE: at the moment this is just a copy of BlueToothTesting.ino with different comments;
-//       it is not yet ready for use.
+// NOTE: at the moment it is not yet ready for use.
 
 // When running the sketch, you can select steps in any order as follows:
 //     1. Scan for Bluetooth receiver devices (such as speaker, headphones, etc.)
@@ -174,17 +173,20 @@ char const * cmd_ADDLINKNAME = "AT+ADDLINKNAME=";
 char const * cmd_VMLINK      = "AT+VMLINK?";
 char const * cmd_DELVMLINK   = "AT+DELVMLINK";
 
+char cmd_bld_ADDLINKADD[32];  // must build these in RAM from user input
+char cmd_bld_ADDLINKNAME[64]; // must build these in RAM from user input
+
 char const * cmdsScan[]     = {cmd_AT, cmd_SCAN};
 char const * cmdsDispRAM[]  = {cmd_AT, cmd_VMLINK};
-char const * cmdsAddRAM1[]  = {cmd_AT, cmd_DISCON, cmd_VMLINK};
-char const * cmdsAddRAM2[]  = {cmd_ADDLINKADD, cmd_ADDLINKNAME}; // must build these in RAM
-char const * cmdsAddRAM3[]  = {cmd_VMLINK};
+char const * cmdsAddRAM[]   = {cmd_AT, cmd_DISCON, cmd_VMLINK, cmd_bld_ADDLINKADD, cmd_bld_ADDLINKADD, cmd_VMLINK};
 char const * cmdsClearRAM[] = {cmd_AT, cmd_REST, cmd_DISCON, cmd_DELVMLINK, cmd_VMLINK};
 
 unsigned int reportBlueCom();
 void sendBlueCmd( char * cmd );
 void processCommand(uint8_t theChoice);
 uint8_t getSerial_uint8_t();
+uint8_t buildADDLINKADD(char * cmd, uint16_t numChrs);
+uint8_t buildADDLINKNAME(char * cmd, uint16_t numChrs);
 
 void setup() {
 
@@ -262,6 +264,7 @@ uint8_t getSerial_chars() {
 }
 
 void processCommand(uint8_t theChoice) {
+  uint8_t addlinkOk = 0;
   switch (theChoice) {
     case 1: // 1 - Scan for Bluetooth receiver devices (such as speaker, headphones, etc.)");
       testCmds(cmdsScan, (uint8_t) NUMOF(cmdsScan));
@@ -270,15 +273,78 @@ void processCommand(uint8_t theChoice) {
       testCmds(cmdsDispRAM, (uint8_t) NUMOF(cmdsDispRAM));
       break;
     case 3: // 3 - Add one auto-connect Bluetooth receiver device to storage");
-      testCmds(cmdsAddRAM1, (uint8_t) NUMOF(cmdsAddRAM1));
-      testCmds(cmdsAddRAM2, (uint8_t) NUMOF(cmdsAddRAM2)); FIXME - need to do this part
-      testCmds(cmdsAddRAM3, (uint8_t) NUMOF(cmdsAddRAM3));
+      addlinkOk = buildADDLINKADD(cmd_bld_ADDLINKADD, NUMOF(cmd_bld_ADDLINKADD) - strlen(cmd_ADDLINKADD)-2);
+      if (0 != addlinkOk) {
+        addlinkOk = buildADDLINKNAME(cmd_bld_ADDLINKNAME, NUMOF(cmd_bld_ADDLINKNAME) - strlen(cmd_ADDLINKNAME)-2);
+      }
+      if (0 != addlinkOk) {
+        testCmds(cmdsAddRAM, (uint8_t) NUMOF(cmdsAddRAM));
+      } else {
+        Serial.println("");
+        Serial.println("User aborted storing MAC address for the Bluetooth speaker or headphones\n");
+      }
       break;
     case 4: // 4 - Delete all auto-connect Bluetooth receiver devices from storage");
       testCmds(cmdsClearRAM, (uint8_t) NUMOF(cmdsClearRAM));
       break;
   }
 } // end processCommand()
+
+uint8_t buildADDLINKADD(char * cmdAddr, uint16_t cmdMaxLen) {
+  uint8_t myNumChars = 0;
+  uint8_t myStart = 0;
+  char const * zeroFill = "000000000000";
+  Serial.println("");
+  Serial.println("Enter the unique MAC address for the Bluetooth speaker or headphones; it starts with 0x");
+  Serial.println("    upper or lower case does not matter; maximum of 12 characters after the 0x");
+  Serial.println("To abort adding an auto-connect Bluetooth receiver device to storage, just enter an empty line");
+  Serial.print("--> ");
+  myNumChars = getSerial_chars();
+  if (0 == myNumChars) {
+    return(0); // abort
+  }
+  if (('0' == inBytes[0]) && ('x' == tolower(inBytes[1]))) {
+    myStart = 2;
+  }
+  myNumChars -= myStart;
+  if (myNumChars > 12) {
+    Serial.println("Abort - more than 12 characters");
+    return(0); // abort
+  }
+  for (int j = myStart; 0 != inBytes[j]; j++) {
+    if (0 == isxdigit(inBytes[j])) {
+      Serial.print("Abort - non-hex digit ");
+      Serial.println(inBytes[j]);
+      return(0); // abort
+    }
+    inBytes[j] = tolower(inBytes[j]);
+  }
+  strcpy(cmdAddr, cmd_ADDLINKADD);
+  strcat(cmdAddr, &zeroFill[myNumChars]);
+  strcat(cmdAddr, &inBytes[myStart]);
+  return(1); // successful command build
+} // end buildADDLINKADD()
+
+uint8_t buildADDLINKNAME(char * cmdAddr, uint16_t cmdMaxLen) {
+  uint8_t myNumChars = 0;
+  char const * zeroFill = "000000000000";
+  Serial.println("");
+  Serial.println("Enter the name you choose for this device; it is OK to place spaces between words");
+  Serial.println("    maximum of 20 characters total");
+  Serial.println("To abort adding an auto-connect Bluetooth receiver device to storage, just enter an empty line");
+  Serial.print("--> ");
+  myNumChars = getSerial_chars();
+  if (0 == myNumChars) {
+    return(0); // abort
+  }
+  if (myNumChars > 20) {
+    Serial.println("Abort - more than 20 characters");
+    return(0); // abort
+  }
+  strcpy(cmdAddr, cmd_ADDLINKNAME);
+  strcat(cmdAddr, inBytes);
+  return(1); // successful command build
+} // end buildADDLINKNAME()
 
 void testEcho() {
 
