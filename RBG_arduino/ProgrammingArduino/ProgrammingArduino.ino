@@ -7,7 +7,6 @@
 //     to a specific set of bluetooth speakers, headphones, etc.  Once this is done, the list will be retained
 //     by the Bluetooth module and the Programming Arduino can be disconnected.
 // The KCX_BT_EMITTER module (and some information on it) can be found here: https://www.aliexpress.com/item/33058710334.html
-// NOTE: at the moment it is not yet ready for use.
 
 // When running the sketch, you can select steps in any order as follows:
 //     1. Scan for Bluetooth receiver devices (such as speaker, headphones, etc.)
