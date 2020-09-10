@@ -238,8 +238,9 @@ void loop() {
 
 void processCommand(uint8_t theChoice) {
   uint8_t addlinkOk = 0;
+
+  reportBlueCom();
   switch (theChoice) {
-    reportBlueCom();
     case 1: // 1 - Scan for Bluetooth receiver devices (such as speaker, headphones, etc.)");
       testCmds(cmdsScan, (uint8_t) NUMOF(cmdsScan));
       // need to hang around a little more
@@ -274,6 +275,7 @@ void processCommand(uint8_t theChoice) {
 } // end processCommand()
 
 uint8_t buildADDLINKADD(char * cmdAddr, uint16_t cmdMaxLen) {
+  char myLowerCase[15]; // never want to over-run
   uint8_t myNumChars = 0;
   uint8_t myStart = 0;
   char const * zeroFill = "000000000000";
@@ -315,11 +317,15 @@ uint8_t buildADDLINKADD(char * cmdAddr, uint16_t cmdMaxLen) {
       Serial.println(j);
       return(0); // abort
     }
-    inBytes[j] = tolower(inBytes[j]);
+    myLowerCase[j] = tolower(inBytes[j]);
   }
+  myLowerCase[myNumChars+myStart] = 0;
+  Serial.print("\nYour entry \"");
+  Serial.print(inBytes);
+  Serial.println("\" was accepted");
   strcpy(cmdAddr, cmd_ADDLINKADD);
   strcat(cmdAddr, &zeroFill[myNumChars]);
-  strcat(cmdAddr, &inBytes[myStart]);
+  strcat(cmdAddr, &myLowerCase[myStart]);
   return(1); // successful command build
 } // end buildADDLINKADD()
 
@@ -344,6 +350,9 @@ uint8_t buildADDLINKNAME(char * cmdAddr, uint16_t cmdMaxLen) {
     Serial.println("Abort - more than 20 characters");
     return(0); // abort
   }
+  Serial.print("\nYour entry \"");
+  Serial.print(inBytes);
+  Serial.println("\" was accepted");
   strcpy(cmdAddr, cmd_ADDLINKNAME);
   strcat(cmdAddr, inBytes);
   return(1); // successful command build
