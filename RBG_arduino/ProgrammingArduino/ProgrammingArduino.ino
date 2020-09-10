@@ -163,7 +163,7 @@ SoftwareSerial myBlueSerial(DPIN_BLUESRL_RX, DPIN_BLUESRL_TX); // to talk to Blu
 
 #define NUMOF(a) (sizeof((a)) / sizeof(*(a)))
 
-uint8_t DEBUG_SERIAL_IN = 1; // 1 to debug the serial input code
+uint8_t DEBUG_SERIAL_IN = 0; // 1 to debug the serial input code
 
 char inBytes[100];
 char const * cmd_AT          = "AT+";
@@ -191,6 +191,8 @@ void processCommand(uint8_t theChoice);
 uint8_t getSerial_uint8_t();
 uint8_t buildADDLINKADD(char * cmd, uint16_t numChrs);
 uint8_t buildADDLINKNAME(char * cmd, uint16_t numChrs);
+
+char const * menuOptions[4] = { "\n1=SCAN", "\n2=DISPLAY", "\n3=ADD", "\n4=DELETE ALL" };
 
 void setup() {
 
@@ -226,7 +228,7 @@ void loop() {
     if ((0 == myChoice) || (myChoice > 4)) {
       Serial.println("ERROR - choice must be 1 through 4");
     } else {
-      Serial.println(" ");
+      Serial.println(menuOptions[myChoice-1]);
       processCommand(myChoice);
     }
   }
@@ -305,10 +307,12 @@ uint8_t buildADDLINKADD(char * cmdAddr, uint16_t cmdMaxLen) {
     Serial.println("Abort - more than 12 characters");
     return(0); // abort
   }
-  for (int j = myStart; 0 != inBytes[j]; j++) {
+  for (int j = myStart; (j < (myNumChars+myStart)) && (0 != inBytes[j]); j++) {
     if (0 == isxdigit(inBytes[j])) {
-      Serial.print("Abort - non-hex digit ");
-      Serial.println(inBytes[j]);
+      Serial.print("Abort - non-hex digit: ");
+      Serial.print(inBytes[j]);
+      Serial.print(" j ");
+      Serial.println(j);
       return(0); // abort
     }
     inBytes[j] = tolower(inBytes[j]);
@@ -377,7 +381,6 @@ uint8_t getSerial_chars() {
       }
       delay(5);
     } else {
-      inBytes[idx+1] = 0;
       delay(5);
         if (DEBUG_SERIAL_IN) {
           Serial.print(" --- not stored! Count of inBytes #");
@@ -391,6 +394,16 @@ uint8_t getSerial_chars() {
     }
   } // end try to read input to the end of line
 
+  inBytes[idx] = 0;
+  if (DEBUG_SERIAL_IN) {
+    Serial.print("\n  getSerial_chars idx ");
+    Serial.print(idx);
+    Serial.print(" inBytes[idx] 0x");
+    Serial.print(inBytes[idx], HEX);
+    Serial.print(" inBytes |");
+    Serial.print(inBytes);
+    Serial.println("|");
+  } // end if(DEBUG_SERIAL_IN)
   return(idx);
 }
 
