@@ -269,7 +269,7 @@ void doSimpleNeo_ledHandle() {
     SimpleNeoSendPixel(led_tmp1.r, led_tmp1.g, led_tmp1.b); // send first color to handle
     SimpleNeoShow(); // show LED in handle
   } // end if dwell complete
-} // end doHandleSimpleNeo()
+} // end doSimpleNeo_ledHandle()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // doPattern(tmpEfctLED, tmpSpecial, tmpInit) - start or step the pattern
@@ -1873,7 +1873,7 @@ void SimpleNeoLedSetup() {
   
   bitSet( PIXEL_DDR , PIXEL_BIT );
   
-}
+} // end SimpleNeoLedSetup()
 
 void SimpleNeoSendPixel( unsigned char r, unsigned char g , unsigned char b )  {
   
@@ -1881,14 +1881,14 @@ void SimpleNeoSendPixel( unsigned char r, unsigned char g , unsigned char b )  {
   sendByte(r);
   sendByte(b);
   
-}
+} // end SimpleNeoSendPixel()
 
 
 // Just wait long enough without sending any bots to cause the pixels to latch and display the last sent frame
 
 void SimpleNeoShow() {
   _delay_us( (RES / 1000UL) + 1);       // Round up since the delay must be _at_least_ this long (too short might not work, too long not a problem)
-}
+} // end SimpleNeoShow()
 
 #endif // NO_SIMPLENEO
 
