@@ -46,7 +46,7 @@
 //          2 RX       GREEN
 //          9 TX       YELLOW
 //   On separate programming Arduino (using +5V interfaces)
-//     Power off programming Arduino
+//     Power off programming Arduino by disconnecting from USB
 //     Connect jumper wires with male ends as follows
 //          Pin      color of wire
 //          GND        BLACK
@@ -183,13 +183,6 @@ char const * cmdsDispRAM[]  = {cmd_AT, cmd_REST, cmd_VMLINK};
 char const * cmdsAddRAM[]   = {cmd_AT, cmd_DISCON, cmd_VMLINK, cmd_bld_ADDLINKADD, cmd_bld_ADDLINKNAME, cmd_REST, cmd_VMLINK};
 char const * cmdsClearRAM[] = {cmd_AT, cmd_REST, cmd_DISCON, cmd_DELVMLINK, cmd_REST, cmd_VMLINK};
 
-unsigned int reportBlueCom();
-void sendBlueCmd( char * cmd );
-void processCommand(uint8_t theChoice);
-uint8_t getSerial_uint8_t();
-uint8_t buildADDLINKADD(char * cmd, uint16_t numChrs);
-uint8_t buildADDLINKNAME(char * cmd, uint16_t numChrs);
-
 char const * menuOptions[4] = { "\n1=SCAN", "\n2=DISPLAY", "\n3=ADD", "\n4=DELETE ALL" };
 
 void setup() {
@@ -231,21 +224,27 @@ void loop() {
     }
   }
 
-  // testEcho();
+  // testEcho(); // this one is useful for debugging command sequences
 } // end loop()
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// processCommand(uint8_t theChoice)
+//    performs one of the four menu options
+//    as needed, reports scan info from Bluetooth
+//
 void processCommand(uint8_t theChoice) {
   uint8_t addlinkOk = 0;
 
   reportBlueCom();
   switch (theChoice) {
     case 1: // 1 - Scan for Bluetooth receiver devices (such as speaker, headphones, etc.)");
-      testCmds(cmdsScan, (uint8_t) NUMOF(cmdsScan));
+      sendBlueCmds(cmdsScan, (uint8_t) NUMOF(cmdsScan));
       // need to hang around a little more
       loopReportBlueCom();
       break;
     case 2: // 2 - Display stored auto-connect Bluetooth receiver devices");
-      testCmds(cmdsDispRAM, (uint8_t) NUMOF(cmdsDispRAM));
+      sendBlueCmds(cmdsDispRAM, (uint8_t) NUMOF(cmdsDispRAM));
       break;
     case 3: // 3 - Add one auto-connect Bluetooth receiver device to storage");
       addlinkOk = buildADDLINKADD(cmd_bld_ADDLINKADD, NUMOF(cmd_bld_ADDLINKADD) - strlen(cmd_ADDLINKADD)-2);
@@ -255,7 +254,7 @@ void processCommand(uint8_t theChoice) {
       }
       if (0 != addlinkOk) {
         reportBlueCom();
-        testCmds(cmdsAddRAM, (uint8_t) NUMOF(cmdsAddRAM));
+        sendBlueCmds(cmdsAddRAM, (uint8_t) NUMOF(cmdsAddRAM));
         // need to hang around a little more
         loopReportBlueCom();
       } else {
@@ -265,13 +264,19 @@ void processCommand(uint8_t theChoice) {
       }
       break;
     case 4: // 4 - Delete all auto-connect Bluetooth receiver devices from storage");
-      testCmds(cmdsClearRAM, (uint8_t) NUMOF(cmdsClearRAM));
+      sendBlueCmds(cmdsClearRAM, (uint8_t) NUMOF(cmdsClearRAM));
       loopReportBlueCom();
       break;
   } // end switch()
   Serial.println("\n--- KCX_BT_EMITTER PROGRAMMING STEP COMPLETE ---");
 } // end processCommand()
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// buildADDLINKADD(char * cmdAddr, uint16_t cmdMaxLen)
+//    builds a RAM AT+ADDLINKADD command from user input
+//
+// NOTE: the hex MAC Address sent in the AT command must be exactly 12 characters
+//
 uint8_t buildADDLINKADD(char * cmdAddr, uint16_t cmdMaxLen) {
   char myLowerCase[15]; // never want to over-run
   uint8_t myNumChars = 0;
@@ -327,6 +332,10 @@ uint8_t buildADDLINKADD(char * cmdAddr, uint16_t cmdMaxLen) {
   return(1); // successful command build
 } // end buildADDLINKADD()
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// buildADDLINKNAME(char * cmdAddr, uint16_t cmdMaxLen)
+//    builds a RAM AT+ADDLINKNAME command from user input
+//
 uint8_t buildADDLINKNAME(char * cmdAddr, uint16_t cmdMaxLen) {
   uint8_t myNumChars = 0;
   char const * zeroFill = "000000000000";
@@ -357,8 +366,15 @@ uint8_t buildADDLINKNAME(char * cmdAddr, uint16_t cmdMaxLen) {
 } // end buildADDLINKNAME()
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// getSerial_chars()
+//    gets character string from USB serial; removes EOL chars; stores in inBytes[] zero terminated
+//
+//    returns number of characters in inBytes
+//
 // no code to flag input over-run
 // stores zero-terminated string in inBytes
+//
 uint8_t getSerial_chars() {
   static unsigned char myChar;
   static uint8_t idx = 0;
@@ -412,8 +428,12 @@ uint8_t getSerial_chars() {
     Serial.println("|");
   } // end if(DEBUG_SERIAL_IN)
   return(idx);
-}
+} // end getSerial_chars()
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// getSerial_uint8_t()
+//    gets single-digit decimal number from USB serial; returns the number itself (not ASCII)
+//
 uint8_t getSerial_uint8_t() {
   getSerial_chars();
   if (DEBUG_SERIAL_IN) {
@@ -423,8 +443,15 @@ uint8_t getSerial_uint8_t() {
     Serial.println(uint8_t (inBytes[0]-0x30), HEX);
   } // end if(DEBUG_SERIAL_IN)
   return(uint8_t (inBytes[0]-0x30)); // subtract ASCII 0
-}
+} // end getSerial_uint8_t()
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// testEcho()
+//    Surprisingly tricky routine to echo chars back and forth between the USB serial port
+//       and the KCX_BT_EMITTER serial port.
+//    Not super hard but there are some things to watch out for like different baud rates
+//
 void testEcho() {
 
   static char eolBytes[10];
@@ -476,9 +503,14 @@ void testEcho() {
     }
   }
   
-} // end test1()
+} // end testEcho()
 
-void testCmds(const char * cmdArray[], const uint8_t numCmds) {
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// sendBlueCmds(const char * cmdArray[], const uint8_t numCmds)
+//    Sends a number of AT commands to KCX_BT_EMITTER module
+//    Will report back any response or scan output from the module
+//
+void sendBlueCmds(const char * cmdArray[], const uint8_t numCmds) {
 
   for (int cmdIdx = 0; cmdIdx < numCmds; cmdIdx += 1) {
     Serial.println("");
@@ -491,8 +523,23 @@ void testCmds(const char * cmdArray[], const uint8_t numCmds) {
 
   delay(100);
 
-} // end testCmds()
+} // end sendBlueCmds()
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// sendBlueCmd( char * cmd )
+//    Sends one AT-style zero-terminated string to the Bluetooth module
+//
+void sendBlueCmd( char * cmd ) {
+  // Serial.println(cmd); // send this before sending to device
+  myBlueSerial.print(cmd);
+  loopReportBlueCom();
+} // end sendBlueCmd()
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// reportBlueCom()
+//    Reports back any response or scan output from the Bluetooth module
+//    Returns number of characters seen
+//
 unsigned int reportBlueCom() {
   unsigned int idx = 0;
   unsigned int odx = 0;
@@ -509,6 +556,11 @@ unsigned int reportBlueCom() {
   return(idx);
 } // end reportBlueCom()
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// loopReportBlueCom()
+//    Loops reporting back any response or scan output from the Bluetooth module
+//    Returns number of characters seen on the last loop
+//
 unsigned int loopReportBlueCom() {
   int loopIdx;
   unsigned int numBytes;
@@ -518,9 +570,3 @@ unsigned int loopReportBlueCom() {
   }
   return(numBytes);
 } // end loopReportBlueCom()
-
-void sendBlueCmd( char * cmd ) {
-  // Serial.println(cmd); // send this before sending to device
-  myBlueSerial.print(cmd);
-  loopReportBlueCom();
-} // end sendBlueCmd
