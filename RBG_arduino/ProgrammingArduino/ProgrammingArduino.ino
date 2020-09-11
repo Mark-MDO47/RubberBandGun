@@ -29,7 +29,7 @@
 //     Connect programming Arduino to USB for PC running the Arduino software
 //     Upload the sketch from this file into the programming Arduino
 //     Open Serial Monitor by selecting menu "Tools" -> "Serial Monitor" and follow instructions
-//        After each selected step, wait for the string "*** KCX_BT_EMITTER PROGRAMMING STEP COMPLETE ***"
+//        After each selected step, wait for the string "--- KCX_BT_EMITTER PROGRAMMING STEP COMPLETE ---"
 //     Disconnect programming Arduino from USB for PC running the Arduino software
 //
 //   Disconnect the Programming Arduino (see below)
@@ -53,7 +53,6 @@
 //          2 RX       GREEN  (Arduino TX)
 //          9 TX       YELLOW (Arduino RX)
 //     Connect the programming Arduino jumper wires to the RBG jumper wires using color as the guide.
-//     Edit this sketch with MAC address(es) and name(s) of your Bluetooth speakers, headphones, etc.
 //////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -200,9 +199,9 @@ void setup() {
     ; // wait for serial port to connect. Needed for native USB port only
   }
   Serial.println();
-  Serial.println("Bluetooth testing init...\n");
-
+  Serial.print("Bluetooth Programming Arduino init...");
   myBlueSerial.begin(9600); // this is control for Bluetooth module (KCX_BT_EMITTER)
+  Serial.println(" completed!");
 
 }  // end setup()
 
@@ -216,7 +215,7 @@ void loop() {
     Serial.println("   2 - Display stored auto-connect Bluetooth receiver devices");
     Serial.println("   3 - Add one auto-connect Bluetooth receiver device to storage");
     Serial.println("   4 - Delete all auto-connect Bluetooth receiver devices from storage");
-    Serial.print("--> ");
+    Serial.print("==> ");
   }
 
   if (Serial.available()) {
@@ -270,7 +269,7 @@ void processCommand(uint8_t theChoice) {
       loopReportBlueCom();
       break;
   } // end switch()
-  Serial.println("\n*** KCX_BT_EMITTER PROGRAMMING STEP COMPLETE ***");
+  Serial.println("\n--- KCX_BT_EMITTER PROGRAMMING STEP COMPLETE ---");
 } // end processCommand()
 
 uint8_t buildADDLINKADD(char * cmdAddr, uint16_t cmdMaxLen) {
@@ -282,7 +281,7 @@ uint8_t buildADDLINKADD(char * cmdAddr, uint16_t cmdMaxLen) {
   Serial.println("Enter the unique MAC address for the Bluetooth speaker or headphones; it starts with 0x");
   Serial.println("    upper or lower case does not matter; maximum of 12 characters after the 0x");
   Serial.println("To abort adding an auto-connect Bluetooth receiver device to storage, just enter an empty line");
-  Serial.print("--> ");
+  Serial.print("==> ");
   while (!Serial.available()) {
     ; // wait
   }
@@ -335,7 +334,7 @@ uint8_t buildADDLINKNAME(char * cmdAddr, uint16_t cmdMaxLen) {
   Serial.println("Enter the name you choose for this device; it is OK to place spaces between words");
   Serial.println("    maximum of 20 characters total");
   Serial.println("To abort adding an auto-connect Bluetooth receiver device to storage, just enter an empty line");
-  Serial.print("--> ");
+  Serial.print("==> ");
   while (!Serial.available()) {
     ; // wait
   }
