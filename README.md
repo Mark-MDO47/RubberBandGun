@@ -40,14 +40,17 @@ We are close to prototype stage using these parts:
 - 2 @ Button top 18650 Rechargeable Batteries: https://smile.amazon.com/gp/product/B07VGC84Q6/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1
 - 1 @ YX5200 sound player: https://smile.amazon.com/Anmbest-YX5200-DFPlayer-Supporting-Arduino/dp/B07JGWMPTF/
 - 1 @ small speaker: https://smile.amazon.com/Uxcell-a15080600ux0275-Internal-Magnet-Speaker/dp/B0177ABRQ6/
+- 1 @ KCX_BT_EMITTER BlueTooth audio transmitter: https://www.aliexpress.com/item/33058710334.html
+- 1 @ S1 Pro bluetooth speaker for the RBG: https://smile.amazon.com/gp/product/B088H56DNY/
+- 1 @ Mini On/Off Push-Button Switch: https://www.adafruit.com/product/3870
 - 3 @ colored push-buttons for configuration of effects: https://www.amazon.com/gp/product/B07C7211PJ/ref=ppx_yo_dt_b_asin_image_o08_s00?ie=UTF8&psc=1
 - 1 @ DigiKey (https://digikey.com) 4610X-AP1-103LFCT-ND RES ARRAY 9 RES 10K OHM 10SIP
-- 1 @ 220 Ohm resistor, 1/4 watt (optional)
+- 2 @ 220 Ohm resistor, 1/4 watt (optional)
 - 1 @ 1K Ohm resistor, 1/4/watt (absolutely needed)
 
 The barrel of the Rubber Band Gun is made from wood, with a sliding barrel attachment to assist in stringing the rubber band through the LED rings. The rest including the handgrip is 3-D printed.
 
-# Other Parts
+# Audio Player Part
 The YX5200 uses FAT32-formatted TF or microSD card up to 32 GByte
 
 These look like a helpful sites for the YX5200:
@@ -59,13 +62,11 @@ This one is a re-write of the DFRobot library; also includes an English language
 
 For a description of my experiences with using this module (I had some challenges), see the Readme.md in https://github.com/Mark-MDO47/RubberBandGun/tree/master/RBG_arduino.
 
-# BlueTooth (possibly)
+# Bluetooth Transmitter Part
+The KCX_BT_EMITTER Bluetooth Audio Transmitter Module receives line-level (not speaker-level) stereo audio in and transmits to a Bluetooth receiver (speaker, headphones, etc.). Be sure to connect the analog ground and do not connect analog ground to digital ground. Also due to latency in packetizing/depacketizing the Bluetooth audio, it is best to turn off the built-in speaker on the RBG if using the Bluetooth audio.
 
-The BlueTooth audio transmitter is found here (along with ordering info)
-* https://www.aliexpress.com/item/33058710334.html
-
-A potential bluetooth speaker for the RBG:
-* https://smile.amazon.com/gp/product/B088H56DNY/
+The Bluetooth Module uses an "AT" command set to program it to connect to your speaker and not others. Included in this repository is an Arduino sketch for a 2nd Arduino that is used to program the KCX_BT_EMITTER in-place. The following document describes using this capability:
+* https://github.com/Mark-MDO47/RubberBandGun/blob/master/ProgrammingArduino_SerialMonitor_SampleOutput.pdf
 
 # Sounds
 
