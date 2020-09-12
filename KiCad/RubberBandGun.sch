@@ -5,7 +5,7 @@ $Descr A 11000 8500
 encoding utf-8
 Sheet 1 4
 Title "FOOF Rubber Band Gun"
-Date "2020-09-05"
+Date "2020-09-12"
 Rev "---"
 Comp ""
 Comment1 ""
@@ -423,9 +423,9 @@ Wire Wire Line
 Wire Wire Line
 	8650 4500 7200 4500
 Text Notes 8300 4300 0    59   ~ 0
-White
+Red
 Text Notes 8300 4500 0    59   ~ 0
-Blue
+Green
 Text Notes 8300 4850 0    59   ~ 0
 Black
 Text Notes 8300 5000 0    59   ~ 0
@@ -455,9 +455,9 @@ F0 "Solenoid" 59
 F1 "Solenoid.sch" 59
 $EndSheet
 Text HLabel 8950 4300 2    59   Input ~ 0
-White_8V
+Red_8V
 Text HLabel 8950 4500 2    59   Input ~ 0
-Blue_CTL
+Green_CTL
 Text HLabel 8950 4850 2    59   Input ~ 0
 Black_GND
 Text HLabel 8950 5000 2    59   Output ~ 0

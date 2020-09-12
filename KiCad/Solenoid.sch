@@ -5,7 +5,7 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 2 4
 Title "Detail: Solenoid Driver"
-Date "2020-09-07"
+Date "2020-09-12"
 Rev ""
 Comp ""
 Comment1 ""
@@ -96,9 +96,9 @@ Connection ~ 6150 3800
 Wire Wire Line
 	6150 3800 6150 4300
 Text HLabel 2500 2500 0    59   Input ~ 0
-White_8V
+Red_8V
 Text HLabel 2500 4500 0    59   Input ~ 0
-Blue_CTL
+Green_CTL
 Text HLabel 2500 5500 0    59   Input ~ 0
 Black_GND
 Text HLabel 8050 5500 2    59   Output ~ 0
