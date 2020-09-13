@@ -46,6 +46,6 @@ The dimensions of the particular ring we used is found here
 A top-level description of the WS2812B serial protocol (per spec) is found here
 * https://www.arrow.com/en/research-and-events/articles/protocol-for-the-ws2812b-programmable-led
 
-Information on doing quick WS2812B I/O is found here (I used this for the single internal LED)
+Information on doing quick WS2812B I/O is found here (I didn't wind up using it but it was fascinating)
 * https://wp.josh.com/2014/05/13/ws2812-neopixels-are-not-so-finicky-once-you-get-to-know-them/
 * https://github.com/bigjosh/SimpleNeoPixelDemo
