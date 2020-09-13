@@ -109,8 +109,8 @@ void bpm();
 void juggle();
 
 #define FASTLED_SNGLPTRNLEN 32 // number of shades to cycle through
-#define FASTLED_SNGLDWELL  100 // number of loops to dwell
+#define FASTLED_SNGLDWELL  10000 // number of loops to dwell
 static CRGB led_sngl_array[FASTLED_SNGLPTRNLEN]; // pattern for handle colors
 static CRGB led_sngl = CRGB::Blue; // storage for current color for single LED
 static uint8_t which_led_sngl = 0;
-static uint16_t dwell_led_sngl = 0; // forces first call to output LED value
+static int16_t dwell_led_sngl = 0; // forces first call to output LED

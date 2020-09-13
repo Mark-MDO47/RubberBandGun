@@ -183,6 +183,7 @@ void setup() {
 
   // initialize FASTLED_SNGL to do the single LED inside the handle
   fill_rainbow( led_sngl_array, FASTLED_SNGLPTRNLEN, gHue, 21); // this just fills up the colors to send later
+  led_sngl = led_sngl_array[0]; // load first color
   
   // if needed, initialize EEPROM variables
   eeprom_check_init(EEPROM_PROCESS_ALL_CONFIG);
@@ -237,6 +238,13 @@ void loop() {
   } // end wait for next State activity
 
   // see if time to run the LED patterns
+  dwell_led_sngl -= 1; // process the single LED in the handle
+  if (dwell_led_sngl < 0) {
+    dwell_led_sngl = FASTLED_SNGLDWELL;
+    led_sngl = led_sngl_array[which_led_sngl];
+    which_led_sngl += 1;
+    if (which_led_sngl >= FASTLED_SNGLPTRNLEN) { which_led_sngl = 0; }
+  }
   if ((myState.timerNow-myState.timerPrevLEDstep) >= myState.ptrnDelayLEDstep) {
     gHue += 3; // rotating "base color" used by Demo Reel 100 patterns
     checkDataGuard();
