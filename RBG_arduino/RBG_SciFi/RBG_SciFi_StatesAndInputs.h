@@ -29,8 +29,8 @@ template <typename T> int sgn(T val) {
     return (T(0) < val) - (val < T(0));
 } // returns -1, 0, 1 for (T < 0), (T == 0), (T > 0) respectively. returns warning if used on uintx_t
 
-#define DPIN_SIMPLENEO    2  // serial out - talk to single LED in handle
-#define NO_SIMPLENEO 1 // do not actually write - temp for compat programming via BlueToothTesting.ino
+#define DPIN_FASTLED_SNGL 2  // serial out - talk to single LED in handle
+#define NO_FASTLED_SNGL   0  // 1=do not actually write to pin 2, 0=normal
 
 #define DPIN_FASTLED      3  // serial out - talk to LED rings
 #define DPIN_BTN_TRIGGER  4  // digital input - the trigger (we only count once per trigger press)

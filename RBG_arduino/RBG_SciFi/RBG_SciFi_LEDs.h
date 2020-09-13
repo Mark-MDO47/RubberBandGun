@@ -23,9 +23,6 @@
 // The Arduino pattern code here is pretty much done from scratch by me using the FastLED library.
 //    I also tried a few items from Mark Kriegsman's classic DemoReel100.ino https://gist.github.com/kriegsman/062e10f7f07ba8518af6
 //
-// Also using SimpleNeopixelDemo.ino (renamed *.cpp) from https://github.com/bigjosh/SimpleNeoPixelDemo
-//    to run the single 2812B LED in the handle.
-//
 // These LEDs use power that adds up. Can use this to estimate the power
 //   http://fastled.io/docs/3.1/group___power.html
 //     calculate_max_brightness_for_power_vmA(lots of parameters)
@@ -111,12 +108,9 @@ void confetti();
 void bpm();
 void juggle();
 
-// the API for https://github.com/bigjosh/SimpleNeoPixelDemo - name modified to add SimpleNeo
-#define SIMPLENEOPTRNLEN 32 // number of shades to cycle through
-#define SIMPLENEODWELL  100 // number of loops to dwell
-void SimpleNeoLedSetup();
-void SimpleNeoSendPixel( unsigned char r, unsigned char g , unsigned char b );
-void SimpleNeoShow();
-static CRGB led_SimpleNeo[SIMPLENEOPTRNLEN]; // pattern for handle colors
-static uint8_t which_SimpleNeo = 0;
-static uint16_t dwell_SimpleNeo = 0; // forces first call to output LED value
+#define FASTLED_SNGLPTRNLEN 32 // number of shades to cycle through
+#define FASTLED_SNGLDWELL  100 // number of loops to dwell
+static CRGB led_sngl_array[FASTLED_SNGLPTRNLEN]; // pattern for handle colors
+static CRGB led_sngl = CRGB::Blue; // storage for current color for single LED
+static uint8_t which_led_sngl = 0;
+static uint16_t dwell_led_sngl = 0; // forces first call to output LED value
