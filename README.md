@@ -2,8 +2,8 @@
 A high-tech imagining of the rubber band gun
 
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/image_orange.png "Jim has been busy on the hardware side of the Science Fiction Rubber Band Gun without LED rings")
-![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/IMG_2209_orange.png "Jim has been busy on the hardware side of the Science Fiction Rubber Band Gun without LED rings")
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/IMG_2294_480_640.png "Jim has all the LED rings working")
+![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsInfo/RBG_googly_eyes_20200919_210308.png "Mark is debugging the brains and the RBG has sprouted googly-eyes and a mouth!")
 
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/RBG_wiring_20200314_184839_800_600.png "Mark has been busy on the software side of the Science Fiction Rubber Band Gun and has also been wiring up the RBG internals")
 
