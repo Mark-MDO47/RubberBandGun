@@ -1,4 +1,14 @@
-When fired, the rubber band gun will play a sequence similar to the "soundified" rendition of two neutron stars colliding in 2017
+# Thoughts on Sounds from SPACE!
+
+Some of my favorite sounds for Rubber Band Gun firing are a sequence similar to the soundified neutron star collisions or black hole collisions.
+
+I particularly like GW170817-template.wav; it has the ramp-up and then the kick at the end, which can be found at https://www.gw-openscience.org/audiogwtc1/. Of course, I would make it just like itself but even more so!!!
+
+Another one I like: Gravitational Waves from a Neutron Star Merger Produced a Signal Detected by LIGO
+- https://www.youtube.com/watch?v=CH9JSqUfnSw
+
+
+Here is a "soundified" rendition of two neutron stars colliding in 2017
 
 - https://qz.com/1103444/ligo-listen-to-a-kilonova-the-sound-of-two-stars-colliding-in-space/
 
@@ -6,8 +16,7 @@ When fired, the rubber band gun will play a sequence similar to the "soundified"
 
 - https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.116.061102
 
-or a simulation of this. I will shamelessly Hollywoodify this sound to make it ridiculously cool!
-
+or a simulation of this. I shamelessly Hollywoodify these sounds to make them ridiculously cool!
 
 Thank you LIGO folks for making the fun sounds available to non-researchers!
 
@@ -19,15 +28,11 @@ Here are some good articles and overview of LIGO and gravity waves:
 - https://www.ligo.org/detections/O1O2catalog.php
 - https://www.gw-openscience.org/audiogwtc1/
 
-I particularly like GW170817-template.wav; it has the ramp-up and then the kick at the end, which can be found at https://www.gw-openscience.org/audiogwtc1/. Of course, I would make it just like itself but even more so!!!
-
-Another one I like: Gravitational Waves from a Neutron Star Merger Produced a Signal Detected by LIGO
-- https://www.youtube.com/watch?v=CH9JSqUfnSw
-
-Here is where you can get audio from the Cassini mission representing radio emissions from Saturn:
+Some great science-fictiony sounds came from the Cassini space mission. Here is where you can get audio from the Cassini mission representing radio emissions from Saturn:
 - http://www-pw.physics.uiowa.edu/space-audio/cassini/SKR1/
 - http://www-pw.physics.uiowa.edu/space-audio/cassini/SKR1/SKR-03-324.wav
 
+# Attributions and Licensing
 
 Here are the Creative Commons licenses in the sound files I used:
 
@@ -69,6 +74,8 @@ Here are the sound files I used, modified, and combined for the prototype sounds
 | by-nc/3.0/ | 165483__timbre__glitch-voice-ep-mp3.mp3 | https://freesound.org/s/165483/ | timbre |
 | zero/1.0/ | 162814__timgormly__spaceship-4.aiff | https://freesound.org/s/162814/ | timgormly |
 | by-nc/3.0/ | 91296__timbre__bwaang-2-reverb.mp3 | https://freesound.org/s/91296/ | timbre |
+
+# Text-to-Speech Robotic Sounds
 
 The Rubber Band Gun speaks to you when you want to configure the sounds or LED patterns. 
 I used the "original" eSpeak text-to-speak program version 1.48.04. This produces sounds with a robotic flavor, which I wanted.
