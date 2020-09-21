@@ -37,10 +37,12 @@ Here are the Creative Commons licenses in the sound files I used:
 | by/3.0/	| Creative Commons Attribution License | https://creativecommons.org/licenses/by/3.0/ |
 | by-nc/3.0/ | Creative Commons Attribution Noncommercial License | https://creativecommons.org/licenses/by-nc/3.0/ |
 
-Here are the sound files I used, modified, and combined for the prototype sounds (other than GW170817-template.wav)
+Here are the sound files I used, modified, and combined for the prototype sounds:
 
 | Tag | File Name | URL | Who |
 | --- | --- | --- | --- |
+| N/A | GW170817-template.wav | https://www.gw-openscience.org/audiogwtc1/ | LIGO detectors |
+| N/A |	SKR-03-324.wav |	http://www-pw.physics.uiowa.edu/space-audio/cassini/SKR1/ |	NASA Cassini mission Radio and Plasma Wave Science |
 | zero/1.0/ | 407052__sojan__power-charge.flac | https://freesound.org/s/193610/ | crashoverride61088 |
 | zero/1.0/ |	397254__screamstudio__loading.wav |	https://freesound.org/s/397254/ | ScreamStudio |
 | zero/1.0/	| 145209__lensflare8642__shotgun-sounds.mp3	| https://freesound.org/s/145209/ | lensflare8642 |
