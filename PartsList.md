@@ -1,5 +1,4 @@
 # Parts List
-We are close to prototype stage using these parts:
 - 1 @ clothespin in homage to rubber band guns everywhere
 - 1 @ power switch: https://www.futureelectronics.com/p/electromechanical--switches--rocker/rr511d1121-e-switch-1057563?gclid=CjwKCAjw0_T4BRBlEiwAwoEiAfkWpvhOQagYMTVyKc4ma6_OFOIgz5Bhmu-VlO1f9wLoA81T26VAmBoCnt0QAvD_BwE or equivalent
 - 1 @ trigger button: https://smile.amazon.com/Pieces-Waterproof-Momentary-Button-Switch/dp/B07PG8YYWK/ref=sr_1_18?dchild=1&keywords=pushbutton+momentary+mushroom&qid=1595794081&s=industrial&sr=1-18 or equivalent
