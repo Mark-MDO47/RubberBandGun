@@ -14,6 +14,7 @@
 - 2 @ Button top 18650 Rechargeable Batteries: https://smile.amazon.com/gp/product/B07VGC84Q6/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1
 - 1 @ YX5200 sound player: https://smile.amazon.com/Anmbest-YX5200-DFPlayer-Supporting-Arduino/dp/B07JGWMPTF/
 - 1 @ small speaker: https://smile.amazon.com/Uxcell-a15080600ux0275-Internal-Magnet-Speaker/dp/B0177ABRQ6/
+- 1 @ 16Gbyte SD card for YX5200: https://smile.amazon.com/Patriot-16GB-Micro-SDHC-PSF16GMCSDHC5PK/dp/B013P27MDW
 - 1 @ KCX_BT_EMITTER BlueTooth audio transmitter: https://www.aliexpress.com/item/33058710334.html
 - 1 @ S1 Pro bluetooth speaker for the RBG: https://smile.amazon.com/gp/product/B088H56DNY/
 - 1 @ Mini On/Off Push-Button Switch: https://www.adafruit.com/product/3870
