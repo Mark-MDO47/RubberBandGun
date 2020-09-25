@@ -21,7 +21,7 @@ COLTOSTRUCT = {
                "inputRBG":         "    uint16_t inputRBG;         // mask for input expected",
                "storeVal":         "    uint16_t storeVal;         // value to store, 8 bit uint",
                "storeAddr":        "    uint16_t storeAddr;        // address to store; includes mask for mFUNC, mVAL,\n" \
-                                 + "                               //   eeSoundSave|mFUNC: idx= 3 WindUp, 2 Shoot, 4 Open, 7 Load",
+                                 + "                               //   EEPROM_START_SOUND_CONFIGS|mFUNC: idx= 3 WindUp, 2 Shoot, 4 Open, 7 Load",
                "gotoOnInput":      "    uint16_t gotoOnInput;      // index within table to go with matching input",
                "gotoWithoutInput": "    uint16_t gotoWithoutInput; // index within table to go without waiting for input",
                "index":            "    uint16_t index;            // input column <<<unused in this table>>>"
@@ -55,7 +55,7 @@ translateToMasks = {
         "trigYellow": "mINP_TRIG|mINP_B01",
         "trigGreen":  "mINP_TRIG|mINP_B02",
         "trigRed":    "mINP_TRIG|mINP_B04",
-        "trigAny2":   "mINP_TRIG|mINP_BANY|mINP_B01|mINP_B02",
+        "trigAny2":   "mINP_TRIG|mINP_BANY|mINP_B01|mINP_B04",
         "trigAll3":   "mINP_TRIG|mINP_B01|mINP_B02|mINP_B04",
         "trigAny3":   "mINP_TRIG|mINP_BANY|mINP_B01|mINP_B02|mINP_B04",
     },
@@ -85,7 +85,7 @@ mEFCT_UNIQ = 60 # 61 to 127 - unique effects used to navigate menus or other uni
 mMASK_EFCT_SND_NUM = 0xFF # mask for sound number
 mSHIFT_EFCT_SND_VOL = 8 # shift for volume
 mMASK_EFCT_SND_VOL = 0x1F # mask for volume once shifted in place
-mDEFAULT_EFCT_SND_VOL = 25 # default volume
+mDEFAULT_EFCT_SND_VOL = 30 # default volume
 #
 EFFECT_MAP = {
     "mEFCT_WIND_UP": [mEFCT_WIND_UP, " // 001 to 009 - wind-up effects"],
