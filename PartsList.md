@@ -1,12 +1,11 @@
 # Parts List
-We are close to prototype stage using these parts:
 - 1 @ clothespin in homage to rubber band guns everywhere
 - 1 @ power switch: https://www.futureelectronics.com/p/electromechanical--switches--rocker/rr511d1121-e-switch-1057563?gclid=CjwKCAjw0_T4BRBlEiwAwoEiAfkWpvhOQagYMTVyKc4ma6_OFOIgz5Bhmu-VlO1f9wLoA81T26VAmBoCnt0QAvD_BwE or equivalent
 - 1 @ trigger button: https://smile.amazon.com/Pieces-Waterproof-Momentary-Button-Switch/dp/B07PG8YYWK/ref=sr_1_18?dchild=1&keywords=pushbutton+momentary+mushroom&qid=1595794081&s=industrial&sr=1-18 or equivalent
 - 2 @ sets of 5050 WS2812B LED rings, one facing forward and one facing back: https://smile.amazon.com/gp/product/B07437X7SL/ref=ppx_yo_dt_b_asin_title_o03_s00?ie=UTF8&psc=1
-- 1 @ V3.0 ATmega328P 5V 16M CH340 Compatible to Arduino Nano V3 with 32Kbyte Flash (program storage), 2Kbyte SRAM, 1Kbyte EEPROM: source: my spare parts bin, so some very old ones...
+- 1 @ V3.0 ATmega328P 5V 16M CH340 Compatible to Arduino Nano V3 with 32Kbyte Flash (program storage), 2Kbyte SRAM, 1Kbyte EEPROM: source: my spare parts bin, so some very old ones... but available many places including https://www.aliexpress.com/item/32242048437.html
 - 1 @ SN74HCT125N quadruple bus buffer so one clone Arduino Nano can drive both sets of WS2812B rings: https://www.digikey.com/product-detail/en/texas-instruments/SN74HCT125N/296-8386-5-ND/376860
-- 1 @ small solenoid for rubber-band release coordinated with sound/light effects: https://www.adafruit.com/product/2776 or https://www.aliexpress.com/item/33016945460.html
+- 1 @ small solenoid for rubber-band release coordinated with sound/light effects: https://www.amazon.com/gp/product/B07TKTG3BH/ref=ox_sc_act_title_1?smid=A1THAZDOWP300U&psc=1
 - 1 @ driver circuit for selenoid: see https://cdn-shop.adafruit.com/product-files/412/solenoid_driver.pdf
   - 1 @ TIP120 Power Darlington Transistor https://www.adafruit.com/product/976
   - 1 @ 1N4004 diode 1A 400V https://www.digikey.com/products/en?keywords=1n4004&utm_adgroup=Multiple%20Suppliers&utm_source=google&utm_medium=cpc&utm_campaign=EN_Product_SKU_E&utm_term=1n4004&utm_content=Multiple%20Suppliers&gclid=Cj0KCQjwu8r4BRCzARIsAA21i_DFDfoGLLpHX4K-k49QZr31T8fjfTEeH7rxbAJlpK54-oPjMCnOPTAaArCGEALw_wcB
@@ -15,6 +14,7 @@ We are close to prototype stage using these parts:
 - 2 @ Button top 18650 Rechargeable Batteries: https://smile.amazon.com/gp/product/B07VGC84Q6/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1
 - 1 @ YX5200 sound player: https://smile.amazon.com/Anmbest-YX5200-DFPlayer-Supporting-Arduino/dp/B07JGWMPTF/
 - 1 @ small speaker: https://smile.amazon.com/Uxcell-a15080600ux0275-Internal-Magnet-Speaker/dp/B0177ABRQ6/
+- 1 @ 16Gbyte SD card for YX5200: https://smile.amazon.com/Patriot-16GB-Micro-SDHC-PSF16GMCSDHC5PK/dp/B013P27MDW
 - 1 @ KCX_BT_EMITTER BlueTooth audio transmitter: https://www.aliexpress.com/item/33058710334.html
 - 1 @ S1 Pro bluetooth speaker for the RBG: https://smile.amazon.com/gp/product/B088H56DNY/
 - 1 @ Mini On/Off Push-Button Switch: https://www.adafruit.com/product/3870
