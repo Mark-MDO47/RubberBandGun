@@ -9,17 +9,15 @@ Jim and I are working on a Science-Fiction Rubber Band Gun!
 
 Here is a NEW (2020-09-25) video of the software running on a prototype: https://youtu.be/njpYX-5Zv9Y
 
-Just got Bluetooth audio working! Here is a demo of the breadboard firing on an S1 Pro Bluetooth speaker: https://youtu.be/NL99PbIK0Ms
+It has three rings of WS2812b 5050 RGB LED Ring proceeding up the barrel, each one larger than the previous in a "blunderbuss" shape. Note: this shape when applied to a handgun was known as a dragon, from which the term dragoon; see https://en.m.wikipedia.org/wiki/Blunderbuss
 
-It will have three rings of WS2812b 5050 RGB LED Ring proceeding up the barrel, each one larger than the previous in a "blunderbuss" shape. Note: this shape when applied to a handgun was known as a dragon, from which the term dragoon; see https://en.m.wikipedia.org/wiki/Blunderbuss
-
-When fired, it will play a sequence similar to the "soundified" rendition of two neutron stars colliding in 2017
+When fired, it plays a chosen sound. Sometimes a sequence similar to the "soundified" rendition of two neutron stars colliding in 2017
 * https://qz.com/1103444/ligo-listen-to-a-kilonova-the-sound-of-two-stars-colliding-in-space/
 or maybe from the two black holes colliding in 2015
 * https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.116.061102
 or a simulation of this. We will shamelessly Hollywoodify this sound to make it ridiculously cool!
 
-At the same time as the sound, the LED rings will be doing trippy patterns to make it look like they are being charged up followed by a sequential pulsing that would convince anyone who knows absolutely less than nothing about such things that a rail-gun effect is propelling the rubber band down the central tube.
+At the same time as the sound, the LED rings do patterns to make it look like they are being charged up followed by a sequential pulsing that would convince anyone who knows absolutely less than nothing about such things that a rail-gun effect is propelling the rubber band down the central tube.
 
 # Parts List
 We are close to prototype stage using these parts:
