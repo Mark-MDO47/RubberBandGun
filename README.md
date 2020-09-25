@@ -7,7 +7,7 @@ A high-tech imagining of the rubber band gun
 
 Jim and I are working on a Science-Fiction Rubber Band Gun!
 
-Here is a video of the software running on a prototype: https://youtu.be/luf1rrovRuw
+Here is a NEW (2020-09-25) video of the software running on a prototype: https://youtu.be/njpYX-5Zv9Y
 
 Just got Bluetooth audio working! Here is a demo of the breadboard firing on an S1 Pro Bluetooth speaker: https://youtu.be/NL99PbIK0Ms
 
