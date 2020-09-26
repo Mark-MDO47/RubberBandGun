@@ -15,20 +15,24 @@ When fired, it plays a chosen sound. This could be a sequence similar to a "soun
 * https://www.gw-openscience.org/audiogwtc1/GW170817-template.wav
 
 See the Sounds section for more info.
+* https://github.com/Mark-MDO47/RubberBandGun/blob/master/sounds/README.md
 
-At the same time as the sound, the LED rings do patterns to make it look like they are being charged up followed by a sequential pulsing that would convince anyone who knows absolutely less than nothing about such things that a rail-gun effect is propelling the rubber band down the central tube.
+At the same time as the sound, the LED rings do patterns to make it look like they are being charged up followed by a sequential pulsing that would convince anyone who knows absolutely less than nothing about such things that a rail-gun effect is propelling the rubber band down the central tube. These rings are composed of WS2812B individually addressable color LEDs controlled by the fantastic FastLED library. See the PartsInfo section for more info.
+* https://github.com/Mark-MDO47/RubberBandGun/edit/master/PartsInfo/README.md
 
 # Parts List
-We are close to prototype stage using these parts:
-- https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsList.md
+We are close to working prototype stage using these parts:
+* https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsList.md
 
 The barrel of the Rubber Band Gun is made from wood, with a sliding barrel attachment to assist in stringing the rubber band through the LED rings. The rest including the handgrip is 3-D printed.
+
+The remaining work will mostly be the solenoid release mechanism for the rubber band.
 
 # Sounds
 
 See the Readme.md in https://github.com/Mark-MDO47/RubberBandGun/tree/master/sounds for attribution and other information about the sounds that are used in this project.
 
-The sounds reside on a 16Gbyte SD card inserted in the YX5200 module. Also on that SD card is an ATTRIBUTION directory containing an HTML file with attributions for the sounds used in this project.
+The sounds reside on a 16Gbyte SD card inserted in the YX5200 audio module. Also on that SD card is an ATTRIBUTION directory containing an HTML file with attributions for the sounds used in this project.
 
 Note that the sounds were de-stereo'd, chopped up, and in many cases modified and/or combined with other sounds. There is not a one-to-one onto relationship between the source of the sounds and the sounds as played by the Rubber Band Gun.
 
