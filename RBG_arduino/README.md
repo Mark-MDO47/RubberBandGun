@@ -1,26 +1,32 @@
+# Arduino Code for the Rubber Band Gun (RBG)
+The Arduino handily manages all the tasks including voice menus, storage of user configuration, LED rings, and sound generation. It can do this because it has pre-computed tables built in that guide it, especially for state transitions and special effects.
 
+## Generating Tables for the Code
+See the following for an overview of generating the tables for the code:
+* https://github.com/Mark-MDO47/RubberBandGun/blob/master/BuildRubberBandGunSoftware.pdf
 
-The YX5200 audio module works well; does not require a separate programmer and can play MP3 files although WAV files might start faster
+The file StateTable_minimal.xlsx has multiple tabs that are used to generate the code for the RBG:
+* StateTable: the main tab, used in generating the myStateTable struct and associated #define's. This is done by running makeStateTable.py.
+* RULES: a list of things to keep in mind when changing the StateTable tab. Sorry, not a tutorial, just notes.
+* debugging: where I capture serial port debugging info to diagnose why my stupid code doesn't do what I want and not what I say.
+* * There is a list of "grep" commands used to filter this down; then I load the mdo2.txt into a spreadsheet in column B, put the Excel formula after the grep's in A1, and copy down the length. I then sort and remove duplicates.
+* YX5200 info: a bunch of info from other sources referenced in the parts directory. Could delete this tab now but it took me a while to make things work reliably.
+* Sounds: this includes the text for use in text-to-speech synthesis for the robotic sounds. This is done by running RobotSounds.py. The sound numbers are used in the StateTable tab.
+* LEDpatterns: this helps me organize the LED patterns by number and generate lookupLEDpatternTbl.
+* FactorySettings: the EEPROM stores four configurable settings for all the sounds and LED effects. In PROGMEM storage is the factory configuration for these four configurable settings. This tab organizes the factory settings and helps me generate the factory_effect_configs table.
 
-You definitely want to use the 1K resistor on the TX line or you can distinctly hear clicks during serial communication.
+## Libraries and Capabilities Used
+Once all those tables and #defines are generated and installed in the Arduino code, we still have the rest of the code.
 
-Files to help with using YX5200 can be found here:
+Major libraries used are mostly described in the following:
+* https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsInfo/README.md
 
-https://wiki.dfrobot.com/DFPlayer_Mini_SKU_DFR0299
+One other important general thing I uses is PROGMEM and associated F() macro to store constants (strings and various numbers) in program storage instead of RAM.
 
-https://github.com/DFRobot/DFRobotDFPlayerMini
-
-![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsInfo/YX5200_MP3player.png "Top view pin arrangement on YX5200 module")
-![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsInfo/YX5200_MP3player_pinouts.png "Description of pins on YX5200 module")
-
-My experience:
-- Using .playMp3Folder() worked on the first few calls but I had trouble making it work when interrupting a playing sound. I tried a bunch of things (but not every combination) and finally gave it up and now use the most basic of functions .play().
-- While doing the above experiments I had the impression that turning ACK on (default at this time) made it more likely to have the trouble above. I turned ACK off in the .begin(mySoftwareSerial, false, true) call.
-- Sometimes there was a delay in the BUSY pin registering after starting a sound. So far all the delays I have documented were <= 40 milliseconds. Since my code wants to do things (LED-related) faster than that, I put in code to force a fake BUSY for the first 250 milliseconds after starting a sound. Probably overkill.
-- Some of my readings indicate that there are knock-off clones of the YX5200 module that may not implement all the functions properly. My guess would be that they have an out-of-date set of firmware. At least some of these clones used a red LED to indicate sound playing instead of the blue LED used on the genuine YX5200. My modules did have a blue LED, but this is not necessarily a guarantee that they were genuine, so it is possible the problems I had were due to using a knock-off clone.
-
-Extras:
-
-Check out https://https://github.com/PowerBroker2/DFPlayerMini_Fast for a re-write (much simplified) of the DFRobot routines. I continued using the DFRobot routines for this project since by the time I found the other I had a lot of experience with the DFRobot routines.
-
-That area also includes the PDF file I copied into my YX5200_info/ directory above; that is the best information on the chip that forms the basis of the YX5200 module that I have seen.
+## The Code Itself
+I won't go into too much detail here, but this is a bit of a roadmap to RBG_SciFi.ino .
+* getButtonInput() retrieves a bit mask for all the buttons and a few other states like end-of-sound and lock-and-load-status
+* RBG_processStateTable() is used to go through the state table in the myStateTable struct
+* * it may call RBG_startEffectLED() and/or RBG_startEffectSound()
+* doPattern() is used to continue an LED time-sequence pattern. Sounds continue by themselves to completion, so no such routine for sounds
+* eeprom_check_init() is used to verify we have a valid EEPROM configuration and if not to load the factory configuration
