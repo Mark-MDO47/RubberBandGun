@@ -16,7 +16,7 @@ Here is a "soundified" rendition of two neutron stars colliding in 2017
 
 - https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.116.061102
 
-or a simulation of this. I shamelessly Hollywoodify these sounds to make them ridiculously cool!
+or a simulation of this. I shamelessly Hollywoodify these sounds!
 
 Thank you LIGO folks for making the fun sounds available to non-researchers!
 
@@ -89,3 +89,24 @@ Active development and support now happens in eSpeak NG project https://github.c
 - Kudos to Reece H. Dunn for continuing the good work
 
 A web implementation of eSpeak can be found as below; it is great fun, and just one of many text-to-text and text-to-speech engines on the site. https://lingojam.com/RobotVoiceGenerator
+
+## Processing Text-to-Speech Robotic Sounds
+
+I used the program RobotSounds.py to read StateTable_minimal.xlsx (which contains the text to generate) and make a Linux "bash" script that makes the sounds.
+- The bash script generates all the individual *.wav sound files and also a combined totString.wav.
+- - totString.wav separates the sounds by having "Ah. Ah. Ah." between each one so I could find the boundaries.
+- - You can do the Audacity processing either one at a time or using the totString.wav file
+- - The bash file invokes the "original" eSpeak program version 1.48.04.
+- I think the bash file could easily be converted to a Windows *.bat file.
+
+After creating the text-to-speech audio file(s), this is how I processed them to make them even more robotic:
+- open file in Audacity, set to mono if not already set
+- duplicate the track (select track, then Edit->Duplicate)
+- reverse one of the tracks (select track, then Effect->Reverse)
+- select reversed track and change pitch (Effect->ChangePitch, choose -2 semitones)
+- for both tracks one at a time, echo effect (Effect->Echo, choose DelayTime about 0.01 sec and DecayFactor about 0.5)
+- select reversed track and reverse it back to normal order (select track, then Effect->Reverse)
+- select both tracks (ctrl-A) then render (Tracks->Mix->MixAndRender)
+- save as 22050Hz mono, "WAV (microsoft) signed 16-bit PCM"
+
+Audacity can be found at https://www.audacityteam.org/
