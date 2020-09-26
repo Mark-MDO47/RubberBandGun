@@ -11,7 +11,7 @@
 # I used eSpeak version 1.48.04
 #
 #
-# After creating text file(s), this is how I processed them:
+# After creating text-to-speech audio file(s), this is how I processed them:
 #    open file in Audacity, set to mono if not already set
 #    duplicate the track (select track, then Edit->Duplicate)
 #    reverse one of the tracks (select track, then Effect->Reverse)
