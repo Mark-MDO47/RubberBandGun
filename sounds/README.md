@@ -34,6 +34,7 @@ Some great science-fictiony sounds came from the Cassini space mission. Here is 
 - http://www-pw.physics.uiowa.edu/space-audio/cassini/SKR1/
 - http://www-pw.physics.uiowa.edu/space-audio/cassini/SKR1/SKR-03-324.wav
 
+## A few of the Sounds are Recordings of my Family  Members
 
 ## Text-to-Speech Robotic Sounds
 
@@ -73,7 +74,7 @@ Audacity can be found at https://www.audacityteam.org/
 
 ## Attributions and Licensing
 
-Here are the Creative Commons licenses in the sound files I used:
+Here are the Creative Commons licenses in the non-speach sound files I used:
 
 | Tag | Name | URL |
 | --- | --- | --- |
