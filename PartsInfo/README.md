@@ -11,10 +11,11 @@ Mapping the ports to the internal registers is described here
 * https://www.arduino.cc/en/Reference/PortManipulation
 
 ## Sound Module
-The YX5200 uses FAT32-formatted TF or microSD card up to 32 GByte
+The YX5200 uses FAT32-formatted TF or microSD card up to 32 GByte. It can play multiple sound file formats including *.wav and *.mp3
 
-Information on the YX5200 sound module and my experience with it is found here
+Information on the YX5200 sound module and my experience with it can be found in either of these places
 * https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsInfo/YX5200.md
+* https://github.com/Mark-MDO47/AudioPlayer-YX5200
 
 Best datasheet I could find on the YX5200 chip is found here
 * https://github.com/PowerBroker2/DFPlayerMini_Fast/blob/master/extras/FN-M16P%2BEmbedded%2BMP3%2BAudio%2BModule%2BDatasheet.pdf
@@ -27,6 +28,9 @@ This one is a re-write of the DFRobot library; also includes an English language
 * https://https://github.com/PowerBroker2/DFPlayerMini_Fast
 
 ## Bluetooth Module
+Get tips and some code for programming the KCX_BT_EMITTER Bluetooth Audio Transmitter module
+* https://github.com/Mark-MDO47/BluetoothAudioTransmitter_KCX_BT_EMITTER
+
 Information on the Bluetooth audio transmitter module is found here (along with ordering info)
 * https://www.aliexpress.com/item/33058710334.html
 
@@ -37,6 +41,13 @@ Some more usage info on the Bluetooth module, especially English information on 
 * https://www.electro-tech-online.com/threads/kcx_bt_emitter-low-cost-bluetooth-bt-audio-module.158156/
 
 ## WS2812 LED and serial communications
+FastLED is the library I use for controlling these color addressable LEDs
+* https://www.arduino.cc/reference/en/libraries/fastled/
+* https://github.com/FastLED/FastLED
+
+If you are new to FastLED, look at this famous demo code to see how easy it can be
+* https://github.com/FastLED/FastLED/blob/master/examples/DemoReel100/DemoReel100.ino
+
 Information on the WS2812B is found here
 * https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf
 
