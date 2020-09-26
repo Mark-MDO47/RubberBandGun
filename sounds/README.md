@@ -82,7 +82,7 @@ Once you have the individual numbered *.wav files collected (both text to speech
 
 ## Attributions and Licensing
 
-Here are the Creative Commons licenses in the non-speach sound files I used:
+Here are the Creative Commons licenses in the non-speech sound files I used:
 
 | Tag | Name | URL |
 | --- | --- | --- |
