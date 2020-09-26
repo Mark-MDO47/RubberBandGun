@@ -21,7 +21,7 @@ Once all those tables and #defines are generated and installed in the Arduino co
 Major libraries used are mostly described in the following:
 * https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsInfo/README.md
 
-One other important general thing I uses is PROGMEM and associated F() macro to store constants (strings and various numbers) in program storage instead of RAM.
+One other important general thing I use is PROGMEM and associated F() macro to store constants (strings and various numbers) in program storage instead of RAM.
 
 ## The Code Itself
 I won't go into too much detail here, but this is a bit of a roadmap to **RBG_SciFi.ino**.
