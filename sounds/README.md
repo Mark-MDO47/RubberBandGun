@@ -1,6 +1,6 @@
 # Sounds for the Rubber Band Gun
 
-## Thoughts on Sounds from SPACE!
+## Sounds from SPACE!!! Colliding Celestial Bodies!
 
 Some of my favorite sounds for Rubber Band Gun firing are a sequence similar to the soundified neutron star collisions or black hole collisions.
 
@@ -30,9 +30,14 @@ Here are some good articles and overview of LIGO and gravity waves:
 - https://www.ligo.org/detections/O1O2catalog.php
 - https://www.gw-openscience.org/audiogwtc1/
 
+## Sounds from SPACE!!! Saturn is SO COOL!
+
 Some great science-fictiony sounds came from the Cassini space mission. Here is where you can get audio from the Cassini mission representing radio emissions from Saturn:
 - http://www-pw.physics.uiowa.edu/space-audio/cassini/SKR1/
 - http://www-pw.physics.uiowa.edu/space-audio/cassini/SKR1/SKR-03-324.wav
+
+You can find more about the Cassini mission here
+- https://solarsystem.nasa.gov/missions/cassini/overview/
 
 ## A few of the Sounds are Recordings of my Family  Members
 
