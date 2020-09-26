@@ -584,7 +584,7 @@ void RBG_ringRotateOrDrain(int8_t direction, CRGB* pColor, uint8_t whichRing) {
 //
 // myInit - nonzero for initialization
 //
-// do 9 cycles; be long enough for any of the SHOOT sounds
+// do 27 cycles; be long enough for any of the SHOOT sounds
 //
 #define DEBUG_RBG_RailGunEffect 0
 void RBG_RailGunEffect(uint8_t myInit, CRGB* pColor) {
@@ -601,7 +601,7 @@ void RBG_RailGunEffect(uint8_t myInit, CRGB* pColor) {
     lastState = -1; // DEBUG
     for (idx = 0; idx < NUM_LEDS_PER_DISK; idx++) { led_display[idx] = led_BLACK; }
   } else {
-    if (myStep < 8*4*9) { // 9 cycles
+    if (myStep < 8*4*27) { // 27 cycles
       switch ((myStep / 8) % 4) {
         case 0: // after some black, set ring[2] to the color
           for (idx = start_per_ring[2]; idx < start_per_ring[2]+leds_per_ring[2]; idx++) {
@@ -640,7 +640,7 @@ void RBG_RailGunEffect(uint8_t myInit, CRGB* pColor) {
           break;
       } // end switch every eight intervals
       myStep += 1;
-      // end for 9 cycles
+      // end for 27 cycles
     } else {
       // then just effect
       RBG_confetti_fadeby(128);
