@@ -209,7 +209,7 @@ static const uint8_t factory_effect_configs[NUM_EEPROM_CONFIGURATIONS*EEPROM_BYT
   PROGMEM
 #endif // end USE_PROGMEM
   = {
-/* 0 SOUND */    1, 1, 6, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, mDEFAULT_EFCT_SND_VOL, 1, // EEPROM_VOLUME_CONFIG is 0x000e FIXME not implemented 
+/* 0 SOUND */    1, 1, 7, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, mDEFAULT_EFCT_SND_VOL, 1, // EEPROM_VOLUME_CONFIG is 0x000e FIXME not implemented 
 /* 0 LED PTRN */ 3, 1, 5, 1, 1, 7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 /* 1 SOUND */    4, 4, 5, 4, 2, 9, 1, 1, 1, 1, 1, 1, 1, 1, mDEFAULT_EFCT_SND_VOL, 1, // EEPROM_VOLUME_CONFIG is 0x000e FIXME not implemented
 /* 1 LED PTRN */ 6, 2, 4, 6, 2, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
