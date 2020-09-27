@@ -28,6 +28,7 @@ I won't go into too much detail here, but this is a bit of a roadmap to **RBG_Sc
 * **getButtonInput()** retrieves a bit mask for all the buttons and a few other states like end-of-sound and lock-and-load-status
 * **RBG_processStateTable()** is used to go through the state table in the myStateTable struct
 * * it may call **RBG_startEffectLED()** and/or **RBG_startEffectSound()**
+* **RBG_waitForInput()** is where we wait for results of getButtonInput() to match something that would cause a state transition; also some logic for what we would do in certain circumstances.
 * **doPattern()** is used to continue an LED time-sequence pattern. Sounds continue by themselves to completion, so no such routine for sounds
 * **eeprom_check_init()** is used to verify we have a valid EEPROM configuration and if not to load the factory configuration
 
