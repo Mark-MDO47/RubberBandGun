@@ -19,7 +19,7 @@
 - 1 @ S1 Pro bluetooth speaker for the RBG: https://smile.amazon.com/gp/product/B088H56DNY/
 - 1 @ Mini On/Off Push-Button Switch: https://www.adafruit.com/product/3870
 - 3 @ colored push-buttons for configuration of effects: https://www.amazon.com/gp/product/B07C7211PJ/ref=ppx_yo_dt_b_asin_image_o08_s00?ie=UTF8&psc=1
-- 1 @ DigiKey (https://digikey.com) 4610X-AP1-103LFCT-ND RES ARRAY 9 RES 10K OHM 10SIP
+- 1 @ DigiKey (https://digikey.com) 4610X-AP1-103LFCT-ND RES ARRAY 9 RES 10K OHM 10SIP - for pull-up resistors
 - 2 @ 220 Ohm resistor, 1/4 watt (optional)
 - 1 @ 1K Ohm resistor, 1/4/watt (absolutely needed)
 
