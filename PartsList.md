@@ -23,7 +23,7 @@
 - 2 @ 220 Ohm resistor, 1/4 watt (optional)
 - 1 @ 1K Ohm resistor, 1/4/watt (absolutely needed)
 
-The barrel of the Rubber Band Gun is made from wood, with a sliding barrel attachment to assist in stringing the rubber band through the LED rings. The rest including the handgrip is 3-D printed.
+The barrel of the Rubber Band Gun is made from wood, with a sliding barrel attachment to assist in stringing the rubber band through the LED rings. The rest including the handgrip is 3-D printed. The clear cover for the handgrip is laser-cut acrylic; there is another acrylic board inside.
 
 # Audio Player Part
 The YX5200 uses FAT32-formatted TF or microSD card up to 32 GByte
