@@ -357,7 +357,7 @@ static struct _myState_t {
 #define mCFG_CATEGORY_MAXNUM  mCFG_CATEGORY_ADVANCED // for myState.cfg_category
 // too lazy to use doubly-dimensioned arrays
 static uint8_t cfgMaxSoundForType[EEPOFFSET(mEFCT_UNIQ)] = {
-  6, 9, 6, 6, 4, 9 // sound - mEFCT_WIND_UP mEFCT_SHOOT mEFCT_OPEN_BARREL mEFCT_LOCK_LOAD mEFCT_PWRON mEFCT_WAIT
+  7, 9, 7, 7, 4, 9 // sound - mEFCT_WIND_UP mEFCT_SHOOT mEFCT_OPEN_BARREL mEFCT_LOCK_LOAD mEFCT_PWRON mEFCT_WAIT
 };
 static uint8_t cfgMaxLEDForType[EEPOFFSET(mEFCT_UNIQ)] = {
   7, 8, 6, 6, 7, 7 // LED - mEFCT_WIND_UP mEFCT_SHOOT mEFCT_OPEN_BARREL mEFCT_LOCK_LOAD mEFCT_PWRON mEFCT_WAIT
