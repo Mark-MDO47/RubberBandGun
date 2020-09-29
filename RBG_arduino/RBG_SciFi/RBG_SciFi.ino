@@ -721,19 +721,19 @@ void RBG_juggle_numdot_ring(int8_t numDots) { // pattern from Demo Reel 100
 void rainbow() { // pattern from Demo Reel 100
   // FastLED's built-in rainbow generator
   fill_rainbow( led_display, NUM_LEDS_PER_DISK, gHue, 7);
-}
+} // end rainbow()
 
 void rainbowWithGlitter() { // pattern from Demo Reel 100
   // built-in FastLED rainbow, plus some random sparkly glitter
   rainbow();
   addGlitter(100);
-} // end rainbowWithGlitter
+} // end rainbowWithGlitter()
 
 void addGlitter( fract8 chanceOfGlitter) { // helper routine from Demo Reel 100
   if( random8() < chanceOfGlitter) {
     led_display[ random16(NUM_LEDS_PER_DISK) ] += CRGB::White;
   }
-} // end rainbowWithGlitter()
+} // end addGlitter()
 
 void confetti() { // pattern from Demo Reel 100
   // random colored speckles that blink in and fade smoothly
@@ -1583,7 +1583,7 @@ void copy_eeprom_to_ram(uint8_t configToProc, uint8_t* ramArray) {
 //
 void copy_eeprom_to_ram_running_config(uint8_t configToProc) {
   copy_eeprom_to_ram(configToProc, EEPROM_RAMcopy);
-}
+} // end copy_eeprom_to_ram_running_config()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // copy_ram_to_eeprom(ramAddr, configToProc) -  copy from ramAddr to the configuration in configToProc
