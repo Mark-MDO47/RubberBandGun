@@ -15,6 +15,17 @@ The file **StateTable_minimal.xlsx** is the heart of RBG_SciFi.ino. It has multi
 * **LEDpatterns:** this helps me organize the LED patterns by number and generate lookupLEDpatternTbl.
 * **FactorySettings:** the EEPROM stores four configurable settings for all the sounds and LED effects. In PROGMEM storage is the factory configuration for these four configurable settings. This tab organizes the factory settings and helps me generate the factory_effect_configs table.
 
+## RBG_SciFi_StatesAndInputs.h
+If StateTable_minimal.xlsx is the heart of RBG_SciFi.ino, then... OK, I won't continue down that path.
+
+### RBG_SciFi_StatesAndInputs.h - Effect Types and Ranges
+Search for **mEFCT_** until you find mEFCT_WIND_UP and you will see a list of effect types in groups of 10. There are up to 9 (sorry, I wasted one for convenience) LED and Sound effects for each one of these effect groups. cfgMaxSoundForType and cfgMaxLEDForType show the end range for these effects per type. The effect type max ranges are: 001 to 009 - wind-up effects; 011 to 019 - shoot effects; 021 to 029 - open barrel effects; 031 to 039 - lock and load barrel effects; 041 to 049 - initial power-up effects; 051 to 059 - waiting for trigger. The last one is different: 061 to 127 - unique effects used to navigate menus or other activities.
+* For each of the configurable settings, there is a number in that range stored in EEPROM for both LED and Sound effects for each of the effect groups (except for the unique effects). These are changeable via voice menu as seen in the "Operations" chart in https://github.com/Mark-MDO47/RubberBandGun/blob/master/BuildRubberBandGunSoftware.pdf. To change one of the settings for one of the configurations, make that configuration the current configuration then choose the path **Config**, **Sound or LED**, and **When, What, Choose**. The "When" refers to one of the ranges, for instance "wind-up effects". The "What" refers to either the **Sound** effect or the **LED** effect. After that you choose among the effects through the range stored in cfgMaxSoundForType or cfgMaxLEDForType as appropriate.
+
+### RBG_SciFi_StatesAndInputs.h - Factory Reset Configurations
+Search for factory_effect_configs and you will find the table with the Factory Reset configurations for Sound and LED patterns for all four configurable settings. These are organized with 32 bytes per configurable setting, both for convenience and for expansion. 16 bytes are for Sound effects and 16 bytes are for LED effects. The first 6 of these 16-byte regions are used for the Effect Types we discussed above. The number stored is in the range [1-9], the effect type is implicit in the position of the byte.
+* If you do lots of configuration changes to the RBG and then just want to go back to the factory reset configuration, follow the "Operations" chart in https://github.com/Mark-MDO47/RubberBandGun/blob/master/BuildRubberBandGunSoftware.pdf and choose the path **Config**, **Cfg Reset Copy**, and **Fctry Rst Copy**. The option to choose would be "Erase the running setting and erase all saved auxilliary settings and reset to the factory settings".
+
 ## Libraries and Capabilities Used
 Once all those tables and #defines are generated and installed in the Arduino code, we still have the rest of the code.
 
