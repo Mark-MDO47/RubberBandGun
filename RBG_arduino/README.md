@@ -5,8 +5,8 @@ The Arduino and its sketch RBG_SciFi.ino handily manage all the tasks including 
 See the following for an overview of generating the tables for the RBG_SciFi.ino code:
 * https://github.com/Mark-MDO47/RubberBandGun/blob/master/BuildRubberBandGunSoftware.pdf
 
-The file **StateTable_minimal.xlsx** has multiple tabs that are used to generate the code for the RBG:
-* **StateTable:** the main tab, used in generating the myStateTable struct and associated #define's. This is done by running makeStateTable.py.
+The file **StateTable_minimal.xlsx** is the heart of RBG_SciFi.ino. It has multiple tabs that are used to generate the code for the RBG.
+* **StateTable:** the main tab, used in generating the myStateTable struct and associated #define's. This is done by running makeStateTable.py. This tab controls the overall action of the RBG.
 * **RULES:** a list of things to keep in mind when changing the StateTable tab. Sorry, not a tutorial, just notes.
 * **debugging:** where I capture serial port debugging info to diagnose why my stupid code doesn't do what I want and not what I say.
 * * There is a list of "grep" commands used to filter this down; then I load the mdo2.txt into a spreadsheet in column B, put the Excel formula after the grep's in A1, and copy down the length. I then sort and remove duplicates. This uses my tiny mdoUniq.py routine to get rid of lines that are duplicate between a start and end string.
