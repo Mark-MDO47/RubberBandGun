@@ -933,61 +933,61 @@ uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSpecial, uint1
   uint16_t myRet = mNONE;
 
   switch (mySpec) {
-    case mSPCL_HANDLER_SHOOT:
+    case mSPCL_HANDLER_SHOOT: // SHOOT
       RBG_specialProcShoot();
       break;
-    case mSPCL_HANDLER_SOLENOID:
+    case mSPCL_HANDLER_SOLENOID: // SOLENOID HANDLING
       if (myState.demoMode != mNONE) { // only update demoMode if end of shooting effects
         myState.demoMode = (myState.demoMode+1) % NUM_EEPROM_CONFIGURATIONS;
         copy_eeprom_to_ram_running_config(myState.demoMode);
       }
       RBG_specialProcSolenoid(); // we also switch for demo mode here
       break;
-    case mSPCL_HANDLER_CFGSTART:
+    case mSPCL_HANDLER_CFGSTART: // START CONFIGURATION CHOICES AT FIRST CHOICE
       RBG_specialProcConfigStart(tmpStoreAddr, tmpStoreVal);
       break;
-    case mSPCL_HANDLER_CFGNEXT:
+    case mSPCL_HANDLER_CFGNEXT: // GO TO NEXT CONFIGURATION CHOICE
       RBG_specialProcConfigNext();
       break;
-    case mSPCL_HANDLER_CFG2STORAGE:
+    case mSPCL_HANDLER_CFG2STORAGE: // COPY A CONFIGURATION CHOICE TO EEPROM
       RBG_specialProcConfig2Storage();
       break;
     case mSPCL_HANDLER_CFG2STORAGESKIP:
-      myRet = RBG_specialProcConfig2Storage();
+      myRet = RBG_specialProcConfig2Storage(); // RETURN THE SKIP FOR USER CHOICE
       break;
-    case mSPCL_HANDLER_CFG2CPYRST:
-    case mSPCL_HANDLER_CFG2ADVNCD:
+    case mSPCL_HANDLER_CFG2CPYRST: // RETURN THE SKIP FOR FACTORY RESET OR CONFIGURATION COPY
+    case mSPCL_HANDLER_CFG2ADVNCD: // RETURN THE SKIP FOR ADVANCE SETTINGS
       myRet = RBG_specialProcCfgCpyRst_skip(tmpStoreVal);
       break;
-    case mSPCL_HANDLER_FACT2RUN:
+    case mSPCL_HANDLER_FACT2RUN: // FACTORY RESET RUNNING CONFIG ONLY
       eeprom_factory_init(EEPROM_CONFIG_RUNNING);
       break;
-    case mSPCL_HANDLER_FACT2ALL:
+    case mSPCL_HANDLER_FACT2ALL: // FACTORY RESET ALL CONFIGS
       eeprom_factory_init(EEPROM_PROCESS_ALL_CONFIG);
       break;
-    case mSPCL_HANDLER_RUN2ONE:
+    case mSPCL_HANDLER_RUN2ONE: // COPY RUNNING CONFIG -> ONE
       copy_eeprom_to_eeprom(EEPROM_CONFIG_RUNNING, EEPROM_SAVED_ONE);
       break;
-    case mSPCL_HANDLER_RUN2TWO:
+    case mSPCL_HANDLER_RUN2TWO: // COPY RUNNING CONFIG -> TWO
       copy_eeprom_to_eeprom(EEPROM_CONFIG_RUNNING, EEPROM_SAVED_TWO);
       break;
-    case mSPCL_HANDLER_RUN2THREE:
+    case mSPCL_HANDLER_RUN2THREE: // COPY RUNNING CONFIG -> THREE
       copy_eeprom_to_eeprom(EEPROM_CONFIG_RUNNING, EEPROM_SAVED_THREE);
       break;
-    case mSPCL_HANDLER_ONE2RUN:
+    case mSPCL_HANDLER_ONE2RUN: // COPY CONFIG ONE -> RUNNING
       copy_eeprom_to_eeprom(EEPROM_SAVED_ONE, EEPROM_CONFIG_RUNNING);
       break;
-    case mSPCL_HANDLER_TWO2RUN:
+    case mSPCL_HANDLER_TWO2RUN: // COPY CONFIG TWO -> RUNNING
       copy_eeprom_to_eeprom(EEPROM_SAVED_TWO, EEPROM_CONFIG_RUNNING);
       break;
-    case mSPCL_HANDLER_THREE2RUN:
+    case mSPCL_HANDLER_THREE2RUN: // COPY CONFIG THREE -> RUNNING
       copy_eeprom_to_eeprom(EEPROM_SAVED_THREE, EEPROM_CONFIG_RUNNING);
       break;
-    case mSPCL_HANDLER_DEMOMODE:
+    case mSPCL_HANDLER_DEMOMODE: // SET DEMO MODE - Cycle Through Configurations
       myState.demoMode = EEPROM_CONFIG_RUNNING;
       copy_eeprom_to_ram_running_config(myState.demoMode);
       break;
-    case mSPCL_HANDLER_ADVFEATURES:
+    case mSPCL_HANDLER_ADVFEATURES: // ENABLE TIME TRAVEL AND TELEPORTATION CAPABILITIES (REQUIRES PASSWORD)
       // nothing needed
       break;
     default:
