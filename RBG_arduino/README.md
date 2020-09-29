@@ -1,5 +1,5 @@
 # Arduino Code for the Rubber Band Gun (RBG): RBG_SciFi.ino
-The Arduino and its sketch RBG_SciFi.ino handily manages all the tasks including voice menus, storage of user configuration, LED rings, and sound generation. It can do this because RBG_SciFi.ino has pre-computed tables built in that guide it, especially for state transitions and special effects.
+The Arduino and its sketch RBG_SciFi.ino handily manage all the tasks including voice menus, storage of user configuration, LED rings, and sound generation. It can do this because RBG_SciFi.ino has pre-computed tables built in that guide it, especially for state transitions and special effects.
 
 ## Generating Tables for the Code
 See the following for an overview of generating the tables for the RBG_SciFi.ino code:
