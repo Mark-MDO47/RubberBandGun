@@ -144,7 +144,7 @@ template <typename T> int sgn(T val) {
 #define mEFCT_LOCK_LOAD    30  // 031 to 039 - lock and load barrel effects
 #define mEFCT_PWRON        40  // 041 to 049 - initial power-up effects
 #define mEFCT_WAIT         50  // 051 to 059 - waiting for trigger
-#define mEFCT_UNIQ         60  // 061 to 127 - unique effects used to navigate menus or other unique effects
+#define mEFCT_UNIQ         60  // 061 to 127 - unique effects used to navigate menus or other activities
 
 #define mEFCT_LAST_EEP_CONFIG 50  // this is the last EEPROM-configurable set of effects
 
@@ -357,7 +357,7 @@ static struct _myState_t {
 #define mCFG_CATEGORY_MAXNUM  mCFG_CATEGORY_ADVANCED // for myState.cfg_category
 // too lazy to use doubly-dimensioned arrays
 static uint8_t cfgMaxSoundForType[EEPOFFSET(mEFCT_UNIQ)] = {
-  7, 9, 7, 7, 4, 9 // sound - mEFCT_WIND_UP mEFCT_SHOOT mEFCT_OPEN_BARREL mEFCT_LOCK_LOAD mEFCT_PWRON mEFCT_WAIT
+  8, 9, 8, 8, 4, 9 // sound - mEFCT_WIND_UP mEFCT_SHOOT mEFCT_OPEN_BARREL mEFCT_LOCK_LOAD mEFCT_PWRON mEFCT_WAIT
 };
 static uint8_t cfgMaxLEDForType[EEPOFFSET(mEFCT_UNIQ)] = {
   7, 8, 6, 6, 7, 7 // LED - mEFCT_WIND_UP mEFCT_SHOOT mEFCT_OPEN_BARREL mEFCT_LOCK_LOAD mEFCT_PWRON mEFCT_WAIT
