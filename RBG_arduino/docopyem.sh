@@ -5,7 +5,7 @@ cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0004_407052__sojan__power-c
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0005__mdo47__gravitational-waves-from-a-neutron-star-merger-produced-a-signal-detected-by-ligo_mdo47.wav I:/005.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0006_275537__wjoojoo__contact-mic-on-satellite-dish04_mdo47.wav I:/006.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0007_388276__csnmedia__la-cucaracha-car-horn.wav I:/007.wav
-cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0069__mdo47__silence.wav I:/008.wav
+cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0008_118807__lmbubec__17-1985-ford-mustang-horn.wav I:/008.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0069__mdo47__silence.wav I:/009.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0069__mdo47__silence.wav I:/010.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0011_352852__josepharaoh99__game-style-laser-beam_mdo47.wav I:/011.wav
@@ -25,7 +25,7 @@ cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0024_96964__gabisaraceni__p
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0025_145209__lensflare8642__shotgun-sounds_mdo47.wav I:/025.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0026_380886__morganpurkis__doom-shotgun-2017_mdo47.wav I:/026.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0027_388276__csnmedia__la-cucaracha-car-horn.wav I:/027.wav
-cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0069__mdo47__silence.wav I:/028.wav
+cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0028_118807__lmbubec__17-1985-ford-mustang-horn.wav I:/028.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0069__mdo47__silence.wav I:/029.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0069__mdo47__silence.wav I:/030.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0031_431117__inspectorj__door-front-opening-a_mdo47.wav I:/031.wav
@@ -35,7 +35,7 @@ cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0034_96964__gabisaraceni__p
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0035_145209__lensflare8642__shotgun-sounds_mdo47.wav I:/035.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0036_380886__morganpurkis__doom-shotgun-2017_mdo47.wav I:/036.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0037_388276__csnmedia__la-cucaracha-car-horn.wav I:/037.wav
-cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0069__mdo47__silence.wav I:/038.wav
+cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0038_118807__lmbubec__17-1985-ford-mustang-horn.wav I:/038.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0069__mdo47__silence.wav I:/039.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0069__mdo47__silence.wav I:/040.wav
 cp D:/svnNew/SoundsSciFi/SoundsRecordedMDO/secondCut/0041__mdo47__lfoof_darling.wav I:/041.wav

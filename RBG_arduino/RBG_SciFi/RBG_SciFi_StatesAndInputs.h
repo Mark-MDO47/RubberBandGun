@@ -143,7 +143,7 @@ template <typename T> int sgn(T val) {
 #define mEFCT_OPEN_BARREL  20  // 021 to 029 - open barrel effects
 #define mEFCT_LOCK_LOAD    30  // 031 to 039 - lock and load barrel effects
 #define mEFCT_PWRON        40  // 041 to 049 - initial power-up effects
-#define mEFCT_WAIT         50  // 051 to 059 - waiting for trigger
+#define mEFCT_WAIT         50  //   
 #define mEFCT_UNIQ         60  // 061 to 127 - unique effects used to navigate menus or other activities
 
 #define mEFCT_LAST_EEP_CONFIG 50  // this is the last EEPROM-configurable set of effects
@@ -379,7 +379,14 @@ static const TYPEOF_lookupLEDpatternTbl lookupLEDpatternTbl[]
 #if USE_PROGMEM
   PROGMEM
 #endif // end USE_PROGMEM
-  = { 7, 5, 2, 1, 6, 11, 12, 254, 254, 254, 8, 9, 10, 11, 1, 7, 5, 12, 254, 254, 4, 11, 2, 7, 5, 13, 254, 254, 254, 254, 4, 11, 2, 7, 5, 13, 254, 254, 254, 254, 5, 6, 3, 1, 11, 2, 7, 254, 254, 254, 6, 3, 5, 1, 11, 2, 7, 254, 254 };
+  = { 
+        7,  5,  2,  1,  6, 11,  12, 254, 254, 254,  // 000 to 009 - wind-up effects
+        8,  9, 10, 11,  1,  7,   5,  12, 254, 254,  // 010 to 019 - shoot effects
+        4, 11,  2,  7,  5, 13, 254, 254, 254, 254,  // 020 to 029 - open barrel effects
+        4, 11,  2,  7,  5, 13, 254, 254, 254, 254,  // 030 to 039 - lock and load barrel effects
+        5,  6,  3,  1, 11,  2,   7, 254, 254, 254,  // 040 to 049 - initial power-up effects
+        6,  3,  5,  1, 11,  2,   7, 254, 254, 254   // 050 to 059 - waiting for trigger
+  };
 
 // STATE TABLE
 //  EEPROM[stateTable_ROW->storeAddr] = addr
