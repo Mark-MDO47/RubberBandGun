@@ -29,12 +29,40 @@ The barrel of the Rubber Band Gun is made from wood, with a sliding barrel attac
 The remaining work will mostly be the solenoid release mechanism for the rubber band.
 
 # Sounds
-
 See the Readme.md in https://github.com/Mark-MDO47/RubberBandGun/tree/master/sounds for attribution and other information about the sounds that are used in this project.
 
 The sounds reside on a 16Gbyte SD card inserted in the YX5200 audio module. Also on that SD card is an ATTRIBUTION directory containing an HTML file with attributions for the sounds used in this project.
 
 Note that the sounds were de-stereo'd, chopped up, and in many cases modified and/or combined with other sounds. There is not a one-to-one onto relationship between the source of the sounds and the sounds as played by the Rubber Band Gun.
+
+# LED Patterns
+FastLED is the library I use for controlling these color addressable LEDs
+
+* https://www.arduino.cc/reference/en/libraries/fastled/
+* https://github.com/FastLED/FastLED
+
+If you are new to FastLED, look at this famous demo code to see how easy it can be
+
+* https://github.com/FastLED/FastLED/blob/master/examples/DemoReel100/DemoReel100.ino
+
+In the RBG I use four unmodified routines from DemoReel100. These routines take no parameters.
+* bpm
+* confetti
+* juggle
+* rainbowWithGlitter
+
+I also use three modified routines from DemoReel100. The first routine takes no parameters, but the other two take a parameter.
+* RBG_bpm_rings
+* RBG_confetti_fadeby
+* RBG_juggle_numdot_ring
+
+I also use two routines of my own invention; these routines take parameter(s).
+* RBG_diskDownTheDrainOrRotate
+* RBG_RailGunEffect
+
+The LED patterns can string these routines together to make one composite pattern.
+
+FYI diskDownTheDrainOrRotate was originally written for the Graduation Cap project https://github.com/Mark-MDO47/GraduationCap2017.
 
 # Extras
 
