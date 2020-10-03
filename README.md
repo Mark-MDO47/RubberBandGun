@@ -27,10 +27,10 @@ It has three rings of WS2812b 5050 RGB LED Ring proceeding up the barrel, each o
 When fired, it plays a chosen sound. This could be a sequence similar to a "soundified" rendition of two neutron stars colliding
 * https://www.gw-openscience.org/audiogwtc1 - search for GW170817
 
-See the **Sounds** section below and the sounds README for more info.
+See the [Sounds](#sounds "Sounds") section below and the sounds README for more info.
 * https://github.com/Mark-MDO47/RubberBandGun/blob/master/sounds/README.md
 
-At the same time as the sound, the LED rings do patterns to make it look like they are being charged up followed by a sequential pulsing that would convince anyone who knows absolutely less than nothing about such things that a rail-gun effect is propelling the rubber band down the central tube. These rings are composed of WS2812B individually addressable color LEDs controlled by the fantastic FastLED library. See the **LED Patterns** section below and the PartsInfo README for more info.
+At the same time as the sound, the LED rings do patterns to make it look like they are being charged up followed by a sequential pulsing that would convince anyone who knows absolutely less than nothing about such things that a rail-gun effect is propelling the rubber band down the central tube. These rings are composed of WS2812B individually addressable color LEDs controlled by the fantastic FastLED library. See the [LED Patterns](#led-patterns "LED Patterns") section below and the PartsInfo README for more info.
 * https://github.com/Mark-MDO47/RubberBandGun/edit/master/PartsInfo/README.md
 
 ## Parts List
