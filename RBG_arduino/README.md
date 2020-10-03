@@ -8,7 +8,7 @@ The Arduino and its sketch RBG_SciFi.ino handily manage all the tasks including 
   * [RBG_SciFi_StatesAndInputs.h - Factory Reset Configurations](#rbg_scifi_statesandinputsh---factory-reset-configurations "RBG_SciFi_StatesAndInputs.h - Factory Reset Configurations")
 * [Libraries and Capabilities Used](#libraries-and-capabilities-used "Libraries and Capabilities Used")
 * [The Code Itself](#the-code-itself "The Code Itself")
-  * [LED Patterns](#led-patterns "LED Patterns")
+  * [Special Code Topic: LED Patterns](#special-code-topic-led-patterns "Special Code Topic: LED Patterns")
 * [Reprogramming in the Completed Rubber Band Gun](#reprogramming-in-the-completed-rubber-band-gun "Reprogramming in the Completed Rubber Band Gun")
   * [RBG_SciFi.ino](#rbg_scifiino "RBG_SciFi.ino")
   * [Sounds](#sounds "Sounds")
