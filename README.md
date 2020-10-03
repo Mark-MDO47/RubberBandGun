@@ -43,6 +43,8 @@ The remaining work will mostly be the solenoid release mechanism for the rubber 
 ## Sounds
 See the Readme.md in https://github.com/Mark-MDO47/RubberBandGun/tree/master/sounds for attribution and other information about the sounds that are used in this project.
 
+See https://github.com/Mark-MDO47/RubberBandGun/blob/master/RBG_arduino/README.md for how sounds are integrated into the Arduino code.
+
 The sounds reside on a 16Gbyte SD card inserted in the YX5200 audio module. Also on that SD card is an ATTRIBUTION directory containing an HTML file with attributions for the sounds used in this project.
 
 Note that the sounds were de-stereo'd, chopped up, and in many cases modified and/or combined with other sounds. There is not a one-to-one onto relationship between the source of the sounds and the sounds as played by the Rubber Band Gun.
@@ -56,6 +58,8 @@ FastLED is the library I use for controlling these color addressable LEDs
 If you are new to FastLED, look at this famous demo code to see how easy it can be
 
 * https://github.com/FastLED/FastLED/blob/master/examples/DemoReel100/DemoReel100.ino
+
+See https://github.com/Mark-MDO47/RubberBandGun/blob/master/RBG_arduino/README.md for how LED Patterns are integrated into the Arduino code.
 
 ## Extras
 
