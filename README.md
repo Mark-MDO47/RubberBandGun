@@ -2,6 +2,12 @@
 A high-tech SciFi imagining of the rubber band gun.
 
 **Table of Contents**
+* [Top](#rubberbandgun "Top")
+* [Introduction](#introduction "Introduction")
+* [Images](#images "Images")
+* [Parts List](#parts-list "Parts List")
+* [Sounds](#sounds "Sounds")
+* [LED Patterns](#led-patterns "LED Patterns")
 * [Extras](#extras "Extras")
 
 ## Images
