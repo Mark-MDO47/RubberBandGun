@@ -3,6 +3,7 @@ A high-tech SciFi imagining of the rubber band gun.
 
 **Table of Contents**
 * [Top](#rubberbandgun "Top")
+* [Images and Videos](#images-and-videos "Images and Videos")
 * [Introduction](#introduction "Introduction")
 * [Images](#images "Images")
 * [Parts List](#parts-list "Parts List")
@@ -10,15 +11,15 @@ A high-tech SciFi imagining of the rubber band gun.
 * [LED Patterns](#led-patterns "LED Patterns")
 * [Extras](#extras "Extras")
 
-## Images
+## Images and Videos
+Here is a NEW (2020-09-25) video of the software running on a prototype: https://youtu.be/njpYX-5Zv9Y
+
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/image_orange.png "Jim has been busy on the hardware side of the Science Fiction Rubber Band Gun without LED rings")
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/IMG_2294_480_640.png "Jim has all the LED rings working")
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsInfo/RBG_googly_eyes_20200919_210308.png "Mark is debugging the brains and the RBG has sprouted googly-eyes and a mouth!")
 
 ## Introduction
 Jim and I are working on a Science-Fiction Rubber Band Gun!
-
-Here is a NEW (2020-09-25) video of the software running on a prototype: https://youtu.be/njpYX-5Zv9Y
 
 It has three rings of WS2812b 5050 RGB LED Ring proceeding up the barrel, each one larger than the previous in a "blunderbuss" shape. Note: this shape when applied to a handgun was known as a dragon, from which the term dragoon; see https://en.m.wikipedia.org/wiki/Blunderbuss
 
