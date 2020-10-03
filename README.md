@@ -1,10 +1,12 @@
 # RubberBandGun
-A high-tech imagining of the rubber band gun
+A high-tech SciFi imagining of the rubber band gun.
+
 
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/image_orange.png "Jim has been busy on the hardware side of the Science Fiction Rubber Band Gun without LED rings")
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/IMG_2294_480_640.png "Jim has all the LED rings working")
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsInfo/RBG_googly_eyes_20200919_210308.png "Mark is debugging the brains and the RBG has sprouted googly-eyes and a mouth!")
 
+## Introduction
 Jim and I are working on a Science-Fiction Rubber Band Gun!
 
 Here is a NEW (2020-09-25) video of the software running on a prototype: https://youtu.be/njpYX-5Zv9Y
@@ -20,7 +22,7 @@ See the **Sounds** section below and the sounds README for more info.
 At the same time as the sound, the LED rings do patterns to make it look like they are being charged up followed by a sequential pulsing that would convince anyone who knows absolutely less than nothing about such things that a rail-gun effect is propelling the rubber band down the central tube. These rings are composed of WS2812B individually addressable color LEDs controlled by the fantastic FastLED library. See the **LED Patterns** section below and the PartsInfo README for more info.
 * https://github.com/Mark-MDO47/RubberBandGun/edit/master/PartsInfo/README.md
 
-# Parts List
+## Parts List
 We are close to working prototype stage using these parts:
 * https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsList.md
 
@@ -28,14 +30,14 @@ The barrel of the Rubber Band Gun is made from wood, with a sliding barrel attac
 
 The remaining work will mostly be the solenoid release mechanism for the rubber band.
 
-# Sounds
+## Sounds
 See the Readme.md in https://github.com/Mark-MDO47/RubberBandGun/tree/master/sounds for attribution and other information about the sounds that are used in this project.
 
 The sounds reside on a 16Gbyte SD card inserted in the YX5200 audio module. Also on that SD card is an ATTRIBUTION directory containing an HTML file with attributions for the sounds used in this project.
 
 Note that the sounds were de-stereo'd, chopped up, and in many cases modified and/or combined with other sounds. There is not a one-to-one onto relationship between the source of the sounds and the sounds as played by the Rubber Band Gun.
 
-# LED Patterns
+## LED Patterns
 FastLED is the library I use for controlling these color addressable LEDs
 
 * https://www.arduino.cc/reference/en/libraries/fastled/
@@ -45,7 +47,7 @@ If you are new to FastLED, look at this famous demo code to see how easy it can 
 
 * https://github.com/FastLED/FastLED/blob/master/examples/DemoReel100/DemoReel100.ino
 
-# Extras
+## Extras
 
 The basic information from the references below is also on this repository, but the repositories below are more standalone and better for using on your own projects.
 
