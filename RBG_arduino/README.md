@@ -49,6 +49,35 @@ I won't go into too much detail here, but this is a bit of a roadmap to **RBG_Sc
 * **doPattern()** is used to continue an LED time-sequence pattern. Sounds continue by themselves to completion, so no such routine for sounds
 * **eeprom_check_init()** is used to verify we have a valid EEPROM configuration and if not to load the factory configuration
 
+#### LED Patterns
+I thought this could use some more explanation.
+
+FastLED is the library I use for controlling these WS2812B color addressable LEDs:
+* https://www.arduino.cc/reference/en/libraries/fastled/
+* https://github.com/FastLED/FastLED
+
+If you are new to FastLED, look at this famous demo code to see how easy it can be
+* https://github.com/FastLED/FastLED/blob/master/examples/DemoReel100/DemoReel100.ino
+
+In the RBG I use four unmodified routines from DemoReel100. These routines take no parameters.
+* **bpm()**
+* **confetti()**
+* **juggle()**
+* **rainbowWithGlitter()**
+
+I also use three modified routines from DemoReel100. The first routine takes no parameters, but the other two take a parameter.
+* **RBG_bpm_rings()**
+* **RBG_confetti_fadeby()**
+* **RBG_juggle_numdot_ring()**
+
+I also use two routines of my own invention; these routines take parameter(s).
+* **RBG_diskDownTheDrainOrRotate()**
+* **RBG_RailGunEffect()**
+
+The LED patterns can string these routines together to make one composite pattern.
+
+FYI diskDownTheDrainOrRotate() was originally written for the Graduation Cap project https://github.com/Mark-MDO47/GraduationCap2017. Some modifications were made for use in the RBG.
+
 ## Reprogramming in the Completed Rubber Band Gun
 
 ### RBG_SciFi.ino
