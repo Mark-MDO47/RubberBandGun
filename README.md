@@ -12,12 +12,12 @@ Here is a NEW (2020-09-25) video of the software running on a prototype: https:/
 It has three rings of WS2812b 5050 RGB LED Ring proceeding up the barrel, each one larger than the previous in a "blunderbuss" shape. Note: this shape when applied to a handgun was known as a dragon, from which the term dragoon; see https://en.m.wikipedia.org/wiki/Blunderbuss
 
 When fired, it plays a chosen sound. This could be a sequence similar to a "soundified" rendition of two neutron stars colliding
-* https://www.gw-openscience.org/audiogwtc1/GW170817-template.wav
+* https://www.gw-openscience.org/audiogwtc1 - search for GW170817
 
-See the Sounds section for more info.
+See the **Sounds** section below and the sounds README for more info.
 * https://github.com/Mark-MDO47/RubberBandGun/blob/master/sounds/README.md
 
-At the same time as the sound, the LED rings do patterns to make it look like they are being charged up followed by a sequential pulsing that would convince anyone who knows absolutely less than nothing about such things that a rail-gun effect is propelling the rubber band down the central tube. These rings are composed of WS2812B individually addressable color LEDs controlled by the fantastic FastLED library. See the PartsInfo section for more info.
+At the same time as the sound, the LED rings do patterns to make it look like they are being charged up followed by a sequential pulsing that would convince anyone who knows absolutely less than nothing about such things that a rail-gun effect is propelling the rubber band down the central tube. These rings are composed of WS2812B individually addressable color LEDs controlled by the fantastic FastLED library. See the **LED Patterns** section below and the PartsInfo README for more info.
 * https://github.com/Mark-MDO47/RubberBandGun/edit/master/PartsInfo/README.md
 
 # Parts List
@@ -44,25 +44,6 @@ FastLED is the library I use for controlling these color addressable LEDs
 If you are new to FastLED, look at this famous demo code to see how easy it can be
 
 * https://github.com/FastLED/FastLED/blob/master/examples/DemoReel100/DemoReel100.ino
-
-In the RBG I use four unmodified routines from DemoReel100. These routines take no parameters.
-* bpm
-* confetti
-* juggle
-* rainbowWithGlitter
-
-I also use three modified routines from DemoReel100. The first routine takes no parameters, but the other two take a parameter.
-* RBG_bpm_rings
-* RBG_confetti_fadeby
-* RBG_juggle_numdot_ring
-
-I also use two routines of my own invention; these routines take parameter(s).
-* RBG_diskDownTheDrainOrRotate
-* RBG_RailGunEffect
-
-The LED patterns can string these routines together to make one composite pattern.
-
-FYI diskDownTheDrainOrRotate was originally written for the Graduation Cap project https://github.com/Mark-MDO47/GraduationCap2017.
 
 # Extras
 
