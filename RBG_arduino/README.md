@@ -49,6 +49,19 @@ I won't go into too much detail here, but this is a bit of a roadmap to **RBG_Sc
 * **doPattern()** is used to continue an LED time-sequence pattern. Sounds continue by themselves to completion, so no such routine for sounds
 * **eeprom_check_init()** is used to verify we have a valid EEPROM configuration and if not to load the factory configuration
 
-## Separate Programming Arduino for Bluetooth Module
-I should mention that there is an Arduino routine **ProgrammingArduino.ino** run on a physically separate Arduino to program the KCX_BT_EMITTER module to recognize your bluetooth speaker or headphones and not just connect to the first one it sees. You can read about it here:
+## Reprogramming in the Completed Rubber Band Gun
+
+### RBG_SciFi.ino
+Take the clear acrylic cover off, **pull back the barrel/solenoid assembly** as if loading, turn the RBG power on, plug in the USB connector, and program. Reverse to disconnect.
+
+NOTE: when the RBG power is on and the USB connector initially gets connected, it continuously resets and pulses the solenoid at an interval of about 1.5 seconds. This might eventually damage the solenoid or its circuitry, so it is important to pull back the barrel/solenoid assembly.
+
+NOTE: I suggest powering on the RBG while programming so the entire RBG is not being powered through our inexpensive clone Arduino Nano.
+
+### Sounds
+Take the clear acrylic cover off, turn the RBG power off, hold the YX5200 on the far end while pushing the SD card in and releasing. The SD card should pop out partway; remove it. Connect to your PC and use the instructions for copyem.py described in https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsInfo/YX5200.md. Eject the SD card, hold the YX5200 on the far end while pushing the SD card back in. The SD card should stay almost all the way in. Put the clear acrylic cover back on.
+
+
+### Separate Programming Arduino for Bluetooth Module
+There is an Arduino routine **ProgrammingArduino.ino** run on a physically separate Arduino to program the KCX_BT_EMITTER module to recognize your bluetooth speaker or headphones and not just connect to the first one it sees. You can read about this process here:
 * https://github.com/Mark-MDO47/RubberBandGun/blob/master/ProgrammingArduino_SerialMonitor_SampleOutput.pdf
