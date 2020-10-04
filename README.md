@@ -10,6 +10,7 @@ A high-tech SciFi imagining of the rubber band gun.
 * [Sounds](#sounds "Sounds")
 * [LED Patterns](#led-patterns "LED Patterns")
 * [Extras](#extras "Extras")
+* [Guide to README and Other Docs](#guide-to-readme-and-other-docs "Guide to README and Other Docs")
 
 ## Images and Videos
 Here is a NEW (2020-09-25) video of the software running on a prototype:
@@ -70,24 +71,21 @@ Get tips and some code for using the YX5200 Audio module: https://github.com/Mar
 
 Get tips and some code for programming the KCX_BT_EMITTER Bluetooth Audio Transmitter module: https://github.com/Mark-MDO47/BluetoothAudioTransmitter_KCX_BT_EMITTER
 
-## Guide To README docs
+## Guide to README and Other Docs
 Here are the README docs available on this repository:
-* README.md
-* PartsList.md
-* 3D_model/ReadME.md
-* KiCad/README.md
-* PartsInfo/README.md
-* PartsInfo/YX5200.md
-* RBG_arduino/README.md
-* sounds/README.md
+* [This README File](https://github.com/Mark-MDO47/RubberBandGun/blob/master/README.md "This README File")
+* [Parts List](https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsList.md "Parts List")
+* [Arduino Code Description](https://github.com/Mark-MDO47/RubberBandGun/blob/master/RBG_arduino/README.md "Arduino Code Description")
+* [Parts Info Overview](https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsInfo/README.md "Parts Info Overview")
+* [YX5200 Audio Module Info](https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsInfo/YX5200.md "YX5200 Audio Module Info")
+* [Sound Sources and Attribution](https://github.com/Mark-MDO47/RubberBandGun/blob/master/sounds/README.md "Sound Sources and Attribution")
+* [KiCad files for Schematic-Style Rubber Band Gun Wiring PDF](https://github.com/Mark-MDO47/RubberBandGun/blob/master/KiCad/README.md "KiCad files for Schematic-Style Rubber Band Gun Wiring PDF")
+* [Autocad Fusion 360 files for 3D Printed Parts](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/ReadME.md "Autocad Fusion 360 files for 3D Printed Parts")
+
 
 Here are the other docs available on this repository:
-* BuildRubberBandGunSoftware.pdf
-* RubberBandGun_wiring.pdf
-* FOOF_RBG_Wiring.pdf
-* ProgrammingArduino_SerialMonitor_SampleOutput.pdf
-* PartsInfo/ATmega48A-PA-88A-PA-168A-PA-328-P-DS-DS40002061A.pdf
-* PartsInfo/Bluetooth Audio Transmitter Module Board 4.1 Stereo Audio GFSK Transceiver Wireless Speaker Headphones KCX_BT_EMITTER 5V_Integrated Circuits_ - AliExpress.pdf
-* PartsInfo/FN-M16P+Embedded+MP3+Audio+Module+Datasheet.pdf
-* PartsInfo/Gravitech_Arduino_Nano3_0.pdf
-* RBG_arduino/YX5200_info/FN-M16P+Embedded+MP3+Audio+Module+Datasheet.pdf
+* [Schematic-Style Rubber Band Gun Wiring PDF](https://github.com/Mark-MDO47/RubberBandGun/blob/master/RubberBandGun_Wiring.pdf "Schematic-Style Rubber Band Gun Wiring PDF")
+* [Overview of Building the Rubber Band Gun Software](https://github.com/Mark-MDO47/RubberBandGun/blob/master/BuildRubberBandGunSoftware.pdf "Overview of Building the Rubber Band Gun Software")
+* [How To Program the KCX-BT-EMITTER BlueTooth Module](https://github.com/Mark-MDO47/RubberBandGun/blob/master/ProgrammingArduino_SerialMonitor_SampleOutput.pdf "How To Program the KCX-BT-EMITTER BlueTooth Module")
+* [Wiring Tips when Building the FOOF RBG (needs updating)](https://github.com/Mark-MDO47/RubberBandGun/blob/master/FOOF_RBG_Wiring.pdf "Wiring Tips when Building the FOOF RBG")
+* [Best Detailed YX5200 Audio Module DataSheet I Could Find](https://github.com/Mark-MDO47/RubberBandGun/blob/master/RBG_arduino/YX5200_info/FN-M16P%2BEmbedded%2BMP3%2BAudio%2BModule%2BDatasheet.pdf "Best Detailed YX5200 Audio Module DataSheet I Could Find")
