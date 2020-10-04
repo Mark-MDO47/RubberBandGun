@@ -89,8 +89,10 @@ Here are some other docs available on this repository:
 * [How To Program the KCX-BT-EMITTER BlueTooth Module](https://github.com/Mark-MDO47/RubberBandGun/blob/master/ProgrammingArduino_SerialMonitor_SampleOutput.pdf "How To Program the KCX-BT-EMITTER BlueTooth Module")
 * [Wiring Tips when Building the FOOF RBG (needs updating)](https://github.com/Mark-MDO47/RubberBandGun/blob/master/FOOF_RBG_Wiring.pdf "Wiring Tips when Building the FOOF RBG")
 
-Here are some other useful docs available on other repositories:
+Here are some other useful docs etc. available on other repositories:
 * [Details of Microchip Technology ATMega Processors including 328P used in Arduino Nano](http://ww1.microchip.com/downloads/en/DeviceDoc/ATmega48A-PA-88A-PA-168A-PA-328-P-DS-DS40002061A.pdf "Details of Microchip Technology ATMega Processors including 328P used in Arduino Nano")
 * [Best Detailed YX5200 Audio Module DataSheet I Could Find](https://github.com/PowerBroker2/DFPlayerMini_Fast/blob/master/extras/FN-M16P%2BEmbedded%2BMP3%2BAudio%2BModule%2BDatasheet.pdf "Best Detailed YX5200 Audio Module DataSheet I Could Find")
+* [AT Commands for KCX-BT-EMITTER Bluetooth Audio Module (use Google Translate)](https://item.taobao.com/item.htm?spm=a21wu.12321156-tw.0.0.7e76d1c7xEOcFZ&id=570274835710 "AT Commands for KCX-BT-EMITTER Bluetooth Audio Module (use Google Translate)")
+* [Electro-Tech-Online.com Forum Discussion on AT Commands for KCX-BT-EMITTER](https://www.electro-tech-online.com/threads/kcx_bt_emitter-low-cost-bluetooth-bt-audio-module.158156/ "Electro-Tech-Online.com Forum Discussion on AT Commands for KCX-BT-EMITTER")
 * [Details of WorldSemi WS2812B LED Operation](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf "Details of WorldSemi WS2812B LED Operation")
 * [Solenoid Driver Circuit](https://cdn-shop.adafruit.com/product-files/412/solenoid_driver.pdf "Solenoid Driver Circuit")
