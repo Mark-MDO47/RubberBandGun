@@ -92,5 +92,5 @@ Here are some other docs available on this repository:
 Here are some other useful docs available on other repositories:
 * [Details of Microchip Technology ATMega Processors including 328P used in Arduino Nano](http://ww1.microchip.com/downloads/en/DeviceDoc/ATmega48A-PA-88A-PA-168A-PA-328-P-DS-DS40002061A.pdf "Details of Microchip Technology ATMega Processors including 328P used in Arduino Nano")
 * [Best Detailed YX5200 Audio Module DataSheet I Could Find](https://github.com/PowerBroker2/DFPlayerMini_Fast/blob/master/extras/FN-M16P%2BEmbedded%2BMP3%2BAudio%2BModule%2BDatasheet.pdf "Best Detailed YX5200 Audio Module DataSheet I Could Find")
-* [Details of WorldSemi WS2812B Operation](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf "Details of WorldSemi WS2812B Operation")
+* [Details of WorldSemi WS2812B LED Operation](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf "Details of WorldSemi WS2812B LED Operation")
 * [Solenoid Driver Circuit](https://cdn-shop.adafruit.com/product-files/412/solenoid_driver.pdf "Solenoid Driver Circuit")
