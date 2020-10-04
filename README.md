@@ -83,9 +83,14 @@ Here are the README docs available on this repository:
 * [Autocad Fusion 360 files for 3D Printed Parts](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/ReadME.md "Autocad Fusion 360 files for 3D Printed Parts")
 
 
-Here are the other docs available on this repository:
+Here are some other docs available on this repository:
 * [Schematic-Style Rubber Band Gun Wiring PDF](https://github.com/Mark-MDO47/RubberBandGun/blob/master/RubberBandGun_Wiring.pdf "Schematic-Style Rubber Band Gun Wiring PDF")
 * [Overview of Building the Rubber Band Gun Software](https://github.com/Mark-MDO47/RubberBandGun/blob/master/BuildRubberBandGunSoftware.pdf "Overview of Building the Rubber Band Gun Software")
 * [How To Program the KCX-BT-EMITTER BlueTooth Module](https://github.com/Mark-MDO47/RubberBandGun/blob/master/ProgrammingArduino_SerialMonitor_SampleOutput.pdf "How To Program the KCX-BT-EMITTER BlueTooth Module")
 * [Wiring Tips when Building the FOOF RBG (needs updating)](https://github.com/Mark-MDO47/RubberBandGun/blob/master/FOOF_RBG_Wiring.pdf "Wiring Tips when Building the FOOF RBG")
-* [Best Detailed YX5200 Audio Module DataSheet I Could Find](https://github.com/Mark-MDO47/RubberBandGun/blob/master/RBG_arduino/YX5200_info/FN-M16P%2BEmbedded%2BMP3%2BAudio%2BModule%2BDatasheet.pdf "Best Detailed YX5200 Audio Module DataSheet I Could Find")
+
+Here are some other useful docs available on other repositories:
+* [Details of Microchip Technology ATMega Processors including 328P used in Arduino Nano](http://ww1.microchip.com/downloads/en/DeviceDoc/ATmega48A-PA-88A-PA-168A-PA-328-P-DS-DS40002061A.pdf "Details of Microchip Technology ATMega Processors including 328P used in Arduino Nano")
+* [Best Detailed YX5200 Audio Module DataSheet I Could Find](https://github.com/PowerBroker2/DFPlayerMini_Fast/blob/master/extras/FN-M16P%2BEmbedded%2BMP3%2BAudio%2BModule%2BDatasheet.pdf "Best Detailed YX5200 Audio Module DataSheet I Could Find")
+* [Details of WorldSemi WS2812B Operation](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf "Details of WorldSemi WS2812B Operation")
+* [Solenoid Driver Circuit](https://cdn-shop.adafruit.com/product-files/412/solenoid_driver.pdf "Solenoid Driver Circuit")
