@@ -69,3 +69,25 @@ The basic information from the references below is also on this repository, but 
 Get tips and some code for using the YX5200 Audio module: https://github.com/Mark-MDO47/AudioPlayer-YX5200
 
 Get tips and some code for programming the KCX_BT_EMITTER Bluetooth Audio Transmitter module: https://github.com/Mark-MDO47/BluetoothAudioTransmitter_KCX_BT_EMITTER
+
+## Guide To README docs
+Here are the README docs available on this repository:
+* README.md
+* PartsList.md
+* 3D_model/ReadME.md
+* KiCad/README.md
+* PartsInfo/README.md
+* PartsInfo/YX5200.md
+* RBG_arduino/README.md
+* sounds/README.md
+
+Here are the other docs available on this repository:
+* BuildRubberBandGunSoftware.pdf
+* RubberBandGun_wiring.pdf
+* FOOF_RBG_Wiring.pdf
+* ProgrammingArduino_SerialMonitor_SampleOutput.pdf
+* PartsInfo/ATmega48A-PA-88A-PA-168A-PA-328-P-DS-DS40002061A.pdf
+* PartsInfo/Bluetooth Audio Transmitter Module Board 4.1 Stereo Audio GFSK Transceiver Wireless Speaker Headphones KCX_BT_EMITTER 5V_Integrated Circuits_ - AliExpress.pdf
+* PartsInfo/FN-M16P+Embedded+MP3+Audio+Module+Datasheet.pdf
+* PartsInfo/Gravitech_Arduino_Nano3_0.pdf
+* RBG_arduino/YX5200_info/FN-M16P+Embedded+MP3+Audio+Module+Datasheet.pdf
