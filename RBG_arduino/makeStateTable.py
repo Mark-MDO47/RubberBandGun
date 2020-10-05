@@ -161,6 +161,8 @@ def make_state_table():
         separator = ""
         if 0 != len(STATETABLE[SYMBTABLE[symb]['blockEnd']]['blkFlags']):
             separator = "|"
+        else:
+            separator = ""
         STATETABLE[SYMBTABLE[symb]['blockEnd']]['blkFlags'] += separator + "mBLOCKEND"
 
     print_debug("Pass 1 SYMBTABLE")
