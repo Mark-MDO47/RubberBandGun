@@ -5,7 +5,6 @@ A high-tech SciFi imagining of the rubber band gun.
 * [Top](#rubberbandgun "Top")
 * [Images and Videos](#images-and-videos "Images and Videos")
 * [Introduction](#introduction "Introduction")
-* [Images](#images "Images")
 * [Parts List](#parts-list "Parts List")
 * [Sounds](#sounds "Sounds")
 * [LED Patterns](#led-patterns "LED Patterns")
