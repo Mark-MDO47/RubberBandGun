@@ -16,9 +16,9 @@ A high-tech SciFi imagining of the rubber band gun.
 Here is a NEW (2020-09-25) video of the software running on a prototype:
 * https://youtu.be/njpYX-5Zv9Y
 
-![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/image_orange.png "Jim has been busy on the hardware side of the Science Fiction Rubber Band Gun without LED rings")
-![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/IMG_2294_480_640.png "Jim has all the LED rings working")
-![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsInfo/RBG_googly_eyes_20200919_210308.png "Mark has the RBG brains working and the RBG has sprouted googly-eyes and a mouth!")
+![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/Vid2020-09_A.png "Front view of Science Fiction Rubber Band Gun without Solenoid attachment")
+![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/Vid2020-09_B.png "Rear view of Science Fiction Rubber Band Gun without Solenoid attachment")
+![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/Vid2020-09_C.png "Side view of electronics in handle of Science Fiction Rubber Band Gun without Solenoid attachment")
 
 ## Introduction
 Jim and I are working on a Science-Fiction Rubber Band Gun!
