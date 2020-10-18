@@ -26,6 +26,7 @@
 | 2 | $0.10 | $0.20 | - 2 @ 220 Ohm resistor, 1/4 watt (optional): | https://www.digikey.com/en/products/detail/stackpole-electronics-inc/CF14JT220R/1741346 |
 | 1 | $0.84 | $0.84 | - 1 @ 1K Ohm resistor, 1/4/watt (absolutely needed): | https://www.digikey.com/en/products/detail/ohmite/OD102JE/823687 |
 
+Total cost (without wood or 3D printer parts or USB connectors or wire) $143
 
 The barrel of the Rubber Band Gun is made from wood, with a sliding barrel attachment to assist in stringing the rubber band through the LED rings. The rest including the handgrip is 3-D printed. The clear cover for the handgrip is laser-cut acrylic; there is another acrylic board inside.
 
