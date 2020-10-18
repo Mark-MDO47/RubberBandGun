@@ -1,6 +1,7 @@
 # Parts List
 
 | Num | CostEach | CostTotal | Description | Source |
+| --- | --- | --- | --- | --- |
 | 1 | $0.00 | $0.00 | - 1 @ clothespin in homage to rubber band guns everywhere | N/A |
 | 1 | $0.80 | $0.80 | - 1 @ power switch, equivalent of: | https://www.futureelectronics.com/p/electromechanical--switches--rocker/rr511d1121-e-switch-1057563 |
 | 1 | $0.70 | $0.70 | - 1 @ trigger button, equivalent of: | https://smile.amazon.com/Pieces-Waterproof-Momentary-Button-Switch/dp/B07PG8YYWK |
