@@ -19,7 +19,7 @@
 | 3 | $0.08 | $0.24 | 3 @ colored push-buttons for configuration of effects: | https://www.amazon.com/gp/product/B07C7211PJ/ref=ppx_yo_dt_b_asin_image_o08_s00 |
 | 1 | $0.69 | $0.69 | 1 @ 4610X-AP1-103LFCT-ND RES ARRAY 9 RES 10K OHM 10SIP - for pull-up resistors: | https://www.digikey.com/en/products/detail/bourns-inc/4610X-AP1-103LF/3741070 |
 | 2 | $0.10 | $0.20 | 2 @ 220 Ohm resistor, 1/4 watt (optional): | https://www.digikey.com/en/products/detail/stackpole-electronics-inc/CF14JT220R/1741346 |
-| 1 | $0.84 | $0.84 | 1 @ 1K Ohm resistor, 1/4/watt (absolutely needed): | https://www.digikey.com/en/products/detail/ohmite/OD102JE/823687 |
+| 1 | $0.84 | $0.84 | 1 @ 1K Ohm resistor, 1/4 watt (absolutely needed): | https://www.digikey.com/en/products/detail/ohmite/OD102JE/823687 |
 | 0 | $0.00 | $0.00 | 1 @ driver circuit for selenoid: | https://cdn-shop.adafruit.com/product-files/412/solenoid_driver.pdf |
 | 1 | $14.29 | $14.29 | 1 @ small solenoid for rubber-band release coordinated with sound/light effects: | https://www.amazon.com/gp/product/B07TKTG3BH/ref=ox_sc_act_title_1?smid=A1THAZDOWP300U&psc=1 |
 | 1 | $0.83 | $0.83 | 1 @ TIP120 Power Darlington Transistor: | https://www.adafruit.com/product/976 |
