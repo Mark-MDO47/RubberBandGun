@@ -28,7 +28,7 @@
 | 1 | $0.71 | $0.71 | 1 @ USB 2.0 Breakout Board type A Female | https://www.amazon.com/Breakout-MELIFE-Adapter-2-54mm-Pinboard/dp/B07W7XMV3W |
 | 1 | $0.71 | $0.71 | 1 @ USB 2.0 Breakout Board type A Male | https://www.amazon.com/MELIFE-Converter-2-54mm-Adapter-Breadboard/dp/B07W6T9KPJ |
 
-Total cost (without wood or 3D printer parts or or wire) $144.38
+Total cost (without wood or 3D printer parts or wire) $144.38
 - but about $36 of that cost is the bluetooth speaker which you may have or not need
 
 The barrel of the Rubber Band Gun is made from wood, with a sliding barrel attachment to assist in stringing the rubber band through the LED rings. The rest including the handgrip is 3-D printed. The clear cover for the handgrip is laser-cut acrylic; there is another acrylic board inside.
