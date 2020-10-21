@@ -25,8 +25,10 @@
 | 1 | $0.83 | $0.83 | 1 @ TIP120 Power Darlington Transistor: | https://www.adafruit.com/product/976 |
 | 1 | $0.10 | $0.10 | 1 @ 1N4004 diode 1A 400V: | https://www.digikey.com/en/products/detail/nte-electronics-inc/1N4004/11645015 |
 | 1 | $0.10 | $0.10 | 1 @ 2.2K Ohm resistor, 1/4 watt: | https://www.digikey.com/en/products/detail/stackpole-electronics-inc/RNMF14FTC2K20/2617325 |
+| 1 | $0.71 | $0.71 | 1 @ USB 2.0 Breakout Board type A Female | https://www.amazon.com/Breakout-MELIFE-Adapter-2-54mm-Pinboard/dp/B07W7XMV3W |
+| 1 | $0.71 | $0.71 | 1 @ USB 2.0 Breakout Board type A Male | https://www.amazon.com/MELIFE-Converter-2-54mm-Adapter-Breadboard/dp/B07W6T9KPJ |
 
-Total cost (without wood or 3D printer parts or USB connectors or wire) $143
+Total cost (without wood or 3D printer parts or or wire) $143
 - but about $36 of that cost is the bluetooth speaker which you may have or not need
 
 The barrel of the Rubber Band Gun is made from wood, with a sliding barrel attachment to assist in stringing the rubber band through the LED rings. The rest including the handgrip is 3-D printed. The clear cover for the handgrip is laser-cut acrylic; there is another acrylic board inside.
