@@ -9,7 +9,7 @@
 | 1 | $2.00 | $2.00 | 1 @ V3.0 ATmega328P 5V 16M CH340 Compatible to Arduino Nano V3 with 32Kbyte Flash (program storage), 2Kbyte SRAM, 1Kbyte EEPROM: source: my spare parts bin, so some very old ones... but available many places including: | https://www.aliexpress.com/item/32242048437.html |
 | 1 | $0.40 | $0.40 | 1 @ SN74HCT125N quadruple bus buffer so one clone Arduino Nano can drive both sets of WS2812B rings: | https://www.digikey.com/product-detail/en/texas-instruments/SN74HCT125N/296-8386-5-ND/376860 |
 | 1 | $4.40 | $4.40 | 1 @ UBEC 3Amp: | https://smile.amazon.com/2-Pieces-Hobbywing-Switch-mode-UBEC-Helicopter-Quadcopter/dp/B01GHMW0C0 |
-| 2 | $10.00 | $20.00 | 2 @ Button top 18650 Rechargeable Batteries: | https://smile.amazon.com/Rechargeable-Lithium-ion-Capacity-Batteries-Flashlight/dp/B08L66TP2D |
+| 2 | $4.50 | $8.99 | 2 @ Button top 18650 Rechargeable Batteries: | https://smile.amazon.com/dp/B08LKP5LPD |
 | 1 | $2.60 | $2.60 | 1 @ YX5200 sound player: | https://smile.amazon.com/Anmbest-YX5200-DFPlayer-Supporting-Arduino/dp/B07JGWMPTF/ |
 | 1 | $2.49 | $2.49 | 1 @ small speaker: | https://smile.amazon.com/Uxcell-a15080600ux0275-Internal-Magnet-Speaker/dp/B0177ABRQ6/ |
 | 1 | $3.80 | $3.80 | 1 @ 16Gbyte SD card for YX5200: | https://smile.amazon.com/Patriot-16GB-Micro-SDHC-PSF16GMCSDHC5PK/dp/B013P27MDW |
@@ -28,7 +28,7 @@
 | 1 | $0.71 | $0.71 | 1 @ USB 2.0 Breakout Board type A Female | https://www.amazon.com/Breakout-MELIFE-Adapter-2-54mm-Pinboard/dp/B07W7XMV3W |
 | 1 | $0.71 | $0.71 | 1 @ USB 2.0 Breakout Board type A Male | https://www.amazon.com/MELIFE-Converter-2-54mm-Adapter-Breadboard/dp/B07W6T9KPJ |
 
-Total cost (without wood or 3D printer parts or wire) $144.38
+Total cost (without wood or 3D printer parts or wire) $133.37
 - but about $36 of that cost is the bluetooth speaker which you may have or not need
 
 The barrel of the Rubber Band Gun is made from wood, with a sliding barrel attachment to assist in stringing the rubber band through the LED rings. The rest including the handgrip is 3-D printed. The clear cover for the handgrip is laser-cut acrylic; there is another acrylic board inside.
