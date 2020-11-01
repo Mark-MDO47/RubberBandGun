@@ -436,17 +436,17 @@ void RBG_diskDownTheDrainOrRotate(int8_t direction) {
 } // end RBG_diskDownTheDrainOrRotate()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// RBG_ringRotateAndFade(whichRing, rotate96, brightSpots) - rotate a single ring, fade to black, add in new bright spots
+// RBG_ringRotateAndFade(whichRing, rotateLcm, brightSpots) - rotate a single ring, fade to black, add in new bright spots
 //
 // whichRing - which ring to rotate, 0 through (NUM_RINGS_PER_DISK-1) {2 for RBG}
 //                value = mNONE (255) means initialize entire disk (actually, anything > 2)
-// rotate96 - fraction of GCD_LEDS_PER_RING to rotate, +/-. With these rings, + is counter-clockwise and - is clockwise
+// rotateLcm - fraction of LCM_LEDS_PER_RING to rotate, +/-. With these rings, + is counter-clockwise and - is clockwise
 // brightSpots - list of positions within ring and color for bright spots
 // 
 // writes over led_tmpRing and led_display
 //
 // #define DEBUG_RRandF 1
-void RBG_ringRotateAndFade(uint8_t whichRing, int8_t rotate96, brightSpots_t* brightSpots) {
+void RBG_ringRotateAndFade(uint8_t whichRing, int8_t rotateLcm, brightSpots_t* brightSpots) {
   int8_t idx;
   static int16_t startLocPerRing[NUM_RINGS_PER_DISK]; // (95 + 95 = 190) > 127 so int8_t will not work
 
@@ -461,19 +461,19 @@ void RBG_ringRotateAndFade(uint8_t whichRing, int8_t rotate96, brightSpots_t* br
       startLocPerRing[idx] = 0;
     }
     // end initialize
-  } else if ((whichRing >= 0) && (whichRing <= (NUM_RINGS_PER_DISK-1)) && (0 != rotate96)) {
+  } else if ((whichRing >= 0) && (whichRing <= (NUM_RINGS_PER_DISK-1)) && (0 != rotateLcm)) {
     // process individual ring
-    int8_t num96PerLED = 96 / leds_per_ring[whichRing];
-    int16_t numHere = startLocPerRing[whichRing] / num96PerLED;
-    int16_t numEnd = (startLocPerRing[whichRing] + rotate96) / num96PerLED;
+    int8_t numLcmPerLED = LCM_LEDS_PER_RING / leds_per_ring[whichRing];
+    int16_t numHere = startLocPerRing[whichRing] / numLcmPerLED;
+    int16_t numEnd = (startLocPerRing[whichRing] + rotateLcm) / numLcmPerLED;
     int8_t moveBy;
     
-    if (rotate96 < 0) {
+    if (rotateLcm < 0) {
       moveBy = -1;
     } else {
       moveBy = 1;
     }
-    startLocPerRing[whichRing] = (startLocPerRing[whichRing] + rotate96) % 96;
+    startLocPerRing[whichRing] = (startLocPerRing[whichRing] + rotateLcm) % LCM_LEDS_PER_RING;
     #ifdef DEBUG_RRandF
     Serial.print(F(" DEBUG_RRandF ERROR CALL whichRing=")); Serial.println(whichRing);
     #endif // DEBUG_RRandF
@@ -552,7 +552,7 @@ void RBG_diskRotateOrDrain(int8_t direction, CRGB* pColor) {
     }
     led_display[0] = led_tmp1;
   }
-} // end RBG_diskRotate()
+} // end RBG_diskRotateOrDrain()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RBG_ringRotateOrDrain(direction, pColor, whichRing) - 

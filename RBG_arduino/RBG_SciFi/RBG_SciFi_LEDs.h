@@ -58,12 +58,12 @@
 #define NUM_RINGS_PER_DISK 3
 #define MAX_LEDS_PER_RING 32
 #define MIN_LEDS_PER_RING 16
-#define GCD_LEDS_PER_RING 96 // they all divide into 96 evenly
+#define LCM_LEDS_PER_RING 96 // they all divide into 96 evenly (least common multiple)
 #define NUM_SHADOWS 0  // number of shadow disks
 
 // LED count - number of LEDs in each ring in order of serial access
 const uint16_t  leds_per_ring[NUM_RINGS_PER_DISK]  = { MAX_LEDS_PER_RING, 24, 16 }; // MAX_LEDS_PER_RING = 32
-const uint8_t   start_per_ring[NUM_RINGS_PER_DISK] = {  0, 32, 56 };
+const uint8_t   start_per_ring[NUM_RINGS_PER_DISK] = {  0, 32, 56 }; // which LED index is the start of each ring
 // const uint16_t  leds_per_ringqrtr[NUM_RINGS_PER_DISK]  = { 8, 6, 4 };
 
 #define LED_TYPE     WS2812B
@@ -98,7 +98,7 @@ static brightSpots_t windup1BrightSpots[] = {
   { .posn=16, .hue=CRGB::Blue },
   { .posn=24, .hue=CRGB::Yellow },
   { .posn=mNONE, .hue=CRGB::Black },
-}; // end windup_ring[] definition
+}; // end windup1BrightSpots[] definition
 
 
 // a few of Mark Kriegsman's classic DemoReel100.ino patterns
