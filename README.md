@@ -17,7 +17,8 @@ Here is a NEW (2020-09-25) video of the software running on a prototype:
 
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/Vid2020-09_A.png "Front view of Science Fiction Rubber Band Gun without Solenoid attachment")
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/Vid2020-09_B.png "Rear view of Science Fiction Rubber Band Gun without Solenoid attachment")
-![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/Vid2020-09_C.png "Side view of electronics in handle of Science Fiction Rubber Band Gun without Solenoid attachment")
+![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/Vid2020-09_C.png "Side view of electronics in handle of Science Fiction Rubber Band Gun without solenoid attachment")
+![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/HandleSolenoid_small_2020-11-22.png "3D model of handle and solenoid attachment")
 
 ## Introduction
 Jim and I are working on a Science-Fiction Rubber Band Gun!
