@@ -65,7 +65,6 @@ template <typename T> int sgn(T val) {
 #define mSPCL_HANDLER_CFG2STORAGE  6 // configuration - install current config num in EEPROM or myState
 #define mSPCL_HANDLER_CFG2STORAGESKIP 7 // configuration - store current config num in EEPROM or myState, skip number based on choice
 #define mSPCL_HANDLER_CFG2CPYRST   8 // configuration - use current config num to manage EEPROM with copy or reset, then clear out configuration states
-
 #define mSPCL_HANDLER_FACT2RUN     9 // configuration - factory setting to running configuration
 #define mSPCL_HANDLER_FACT2ALL    10 // configuration - factory setting to all saved configuration
 #define mSPCL_HANDLER_RUN2ONE     11 // configuration - running configuration to saved config one
@@ -75,7 +74,7 @@ template <typename T> int sgn(T val) {
 #define mSPCL_HANDLER_TWO2RUN     15 // configuration - saved configuration two to running config
 #define mSPCL_HANDLER_THREE2RUN   16 // configuration - saved configuration three to running config
 #define mSPCL_HANDLER_CFG2ADVNCD  17 // configuration - advanced menu: the selection/skip function
-#define mSPCL_HANDLER_DEMOMODE    18 // configuration - advanced menu: demo-mode
+#define mSPCL_HANDLER_STATICMODE  18 // configuration - advanced menu: static-mode
 #define mSPCL_HANDLER_ADVFEATURES 19 // configuration - advanced menu: ADVANCED features
 
 // these are used with mSPCL_HANDLER_START and _NEXT
@@ -131,11 +130,10 @@ template <typename T> int sgn(T val) {
 #define mROW_CFG_ADVNCD_LOOP 77
 #define mROW_CFG_ADVNCD_NEXT 80
 #define mROW_CFG_ADVNCD_CHOICE 81
-#define mROW_ADVNCD_DEMO_ACCEPTED 85
+#define mROW_ADVNCD_STATIC_ACCEPTED 85
 #define mROW_ADVNCD_PASSWD_VERBAL 87
 #define mROW_ADVNCD_PASSWD_DANCE 88
 #define mROW_ADVNCD_PASSWD_NOPASSWD 89
-
 
 // define the effect number ranges - must be divisible by 10
 #define mEFCT_WIND_UP       0  // 001 to 009 - wind-up effects
@@ -143,8 +141,8 @@ template <typename T> int sgn(T val) {
 #define mEFCT_OPEN_BARREL  20  // 021 to 029 - open barrel effects
 #define mEFCT_LOCK_LOAD    30  // 031 to 039 - lock and load barrel effects
 #define mEFCT_PWRON        40  // 041 to 049 - initial power-up effects
-#define mEFCT_WAIT         50  //   
-#define mEFCT_UNIQ         60  // 061 to 127 - unique effects used to navigate menus or other activities
+#define mEFCT_WAIT         50  // 051 to 059 - waiting for trigger
+#define mEFCT_UNIQ         60  // 061 to 127 - unique effects used to navigate menus or other unique effects
 
 #define mEFCT_LAST_EEP_CONFIG 50  // this is the last EEPROM-configurable set of effects
 
@@ -159,11 +157,12 @@ template <typename T> int sgn(T val) {
 // Storage of configuration into EEPROM
 //    EEPROM gets copied to RAM to facilitate cycling through EEPROM configurations
 //
-// There are four EEPROM configurations:
+// In STATIC mode (myState.dynamicMode == mNONE)there are four possible .dynamicMode configurations:
 //    0: running configuration
 //    1: saved auxilliary configuration 1
 //    2: saved auxilliary configuration 2
 //    3: saved auxilliary configuration 3
+// In DYNAMIC mode (myState.dynamicMode == mNONE) we cycle through all four 
 // There is a factory configuration for each of the EEPROM configurations
 #define EEPROM_PROCESS_ALL_CONFIG 0x20 // really it is just an arbitrary number
 #define EEPROM_CONFIG_RUNNING        0 //
@@ -175,7 +174,6 @@ template <typename T> int sgn(T val) {
 #define NUM_EEPROM_CONFIGURATIONS    4   // total number of EEPROM configurations: 0 to 3
 //
 // At this time, the EEPROM configurations implement choices for the effects: SOUNDS or LED PATTERNS.
-//       FIXME - maybe future - EEPROM_DEMO_CONFIG is non-zero to be in demo mode
 //       FIXME - I am reserving EEPROM_VOLUME_CONFIG for later volume configuration
 //    The choices for effects are in ranges of 10 decimal (example: mEFCT_SHOOT is 10, but choices of shoot must be 11 <= choice <= 19)
 //    These #defs will convert or test these ranges
@@ -265,13 +263,12 @@ static const uint8_t factory_effect_configs[NUM_EEPROM_CONFIGURATIONS*EEPROM_BYT
 #define mEFCT_UNIQ_CFG_MGMT_07            97 // Copy the saved auxilliary setting number two and overwrite into the running setting. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow or Green button then press trigger. To exit configuration, hold down Red button then press trigger.
 #define mEFCT_UNIQ_CFG_MGMT_08            98 // Copy the saved auxilliary setting number three and overwrite into the running setting. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow or Green button then press trigger. To exit configuration, hold down Red button then press trigger.
 
-#define mEFCT_UNIQ_CFG_ADVANCED_01       101 // Demo mode: Switch through the saved configurations each time you shoot. Power cycle to exit demo mode. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow or Green button then press trigger. To exit configuration, hold down Red button then press trigger.
+#define mEFCT_UNIQ_CFG_ADVANCED_01       101 // Static mode: Don't switch through the saved configurations each time you shoot. Power cycle to exit Static mode. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow or Green button then press trigger. To exit configuration, hold down Red button then press trigger.
 #define mEFCT_UNIQ_CFG_ADVANCED_02       102 // Enable time travel and teleportation capabilities (requires password). As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow or Green button then press trigger. To exit configuration, hold down Red button then press trigger.
 #define mEFCT_UNIQ_CFG_ADVANCED_03       103 // Hear Rubber Band Gun credits. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow or Green button then press trigger. To exit configuration, hold down Red button then press trigger.
 
-#define mEFCT_UNIQ_CFG_ADVANCED          106 // Demo mode started. Power cycle to exit demo mode.
-#define mEFCT_UNIQ_CFG_DEMO_STARTED      107 // Now choose which ADVANCED configuration category: Demo Mode, Time Travel and Teleportation, or Credits. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow or Green button then press trigger. To exit configuration, hold down Red button then press trigger.
-#define mEFCT_UNIQ_CFG_DEMO_STARTED      107 // Demo mode started. Power cycle to exit demo mode.
+#define mEFCT_UNIQ_CFG_ADVANCED          106 // Now choose which ADVANCED configuration category: Static Mode, Time Travel and Teleportation, or Credits. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow or Green button then press trigger. To exit configuration, hold down Red button then press trigger.
+#define mEFCT_UNIQ_CFG_STATIC_STARTED    107 // Static mode started. Power cycle to exit static mode.
 #define mEFCT_UNIQ_CFG_CPY_RST           108 // Now choose the, factory reset, or, configuration, copy, option. This list cycles through the options one by one. As always, press trigger by itself to go forward to next step or to cycle through choices. To select a choice, first hold down any combination of Yellow or Green button then press trigger. To exit configuration, hold down Red button then press trigger.
 #define mEFCT_UNIQ_CFG_CPY_RST_ACCEPT    109 // Your, factory reset, or, configuration copy, option, has been accepted. Rebooting.
 
@@ -332,23 +329,23 @@ static pins_to_vals_t myPinsToVals[] = {
 };
 
 static struct _myState_t {
-  uint16_t tableRow = 0;            // points to state that we will process or are processing
-  uint16_t VinputRBG = 0;           // bits for input buttons and sound finish: mVINP_*
-  uint8_t  demoMode = mNONE;        // [0-3] for demo mode: wwitch through the saved configurations each time you shoot. Power cycle to exit demo mode.
-  uint16_t currVolume = 0;          // avoid sending volume when not needed - FIXME FUTURE FEATURE
-  uint32_t timerNow = 0;            // timer now
-  uint32_t timerPrevState = 0;      // start timer from previous time through state loop
-  uint32_t timerPrevLEDstep = 0;    // start timer from previous LED activity
-  uint32_t timerForceSoundActv = 0; // end timer for forcing mVINP_SOUNDACTV true
+  uint16_t tableRow = 0;             // points to state that we will process or are processing
+  uint16_t VinputRBG = 0;            // bits for input buttons and sound finish: mVINP_*
+  uint8_t  dynamicMode = EEPROM_CONFIG_RUNNING; // [0-3] for dynamic mode: switch through the saved configurations each time you shoot. Power cycle to exit dynamic mode.
+  uint16_t currVolume = 0;           // avoid sending volume when not needed - FIXME FUTURE FEATURE
+  uint32_t timerNow = 0;             // timer now
+  uint32_t timerPrevState = 0;       // start timer from previous time through state loop
+  uint32_t timerPrevLEDstep = 0;     // start timer from previous LED activity
+  uint32_t timerForceSoundActv = 0;  // end timer for forcing mVINP_SOUNDACTV true
   uint32_t timerForceSolenoidLow = 0; // end timer for forcing solenoid to go back low
-  uint8_t ptrnDelayLEDstep = 7;     // proper delta delay for Mark's patterns
-  uint8_t cfg_curnum = mNONE;       // current number for configuration list of choices
-  uint8_t cfg_maxnum = mNONE;       // maximum number for configuration list of choices
-  uint8_t cfg_category = mNONE;     // either 1 = SOUND or 2 = LED Pattern - used to tell sounds when configuring LEDs
-  uint8_t cfg_category2save = mNONE;// either 1 = SOUND or 2 = LED Pattern
-  uint8_t cfg_type = mNONE;         // example: mEFCT_LOCK_LOAD
-  uint8_t cfg_type2save = mNONE;    // example: mEFCT_LOCK_LOAD
-  uint8_t cfg_addr = mNONE;         // code: mADDR_CFG_CATEGORY, mADDR_CFG_TYPE, mADDR_CFG_EFFECT
+  uint8_t  ptrnDelayLEDstep = 7;     // proper delta delay for Mark's patterns
+  uint8_t  cfg_curnum = mNONE;       // current number for configuration list of choices
+  uint8_t  cfg_maxnum = mNONE;       // maximum number for configuration list of choices
+  uint8_t  cfg_category = mNONE;     // either 1 = SOUND or 2 = LED Pattern - used to tell sounds when configuring LEDs
+  uint8_t  cfg_category2save = mNONE;// either 1 = SOUND or 2 = LED Pattern
+  uint8_t  cfg_type = mNONE;         // example: mEFCT_LOCK_LOAD
+  uint8_t  cfg_type2save = mNONE;    // example: mEFCT_LOCK_LOAD
+  uint8_t  cfg_addr = mNONE;         // code: mADDR_CFG_CATEGORY, mADDR_CFG_TYPE, mADDR_CFG_EFFECT
 } myState;
 #define mCFG_CATEGORY_SOUND    1 // for myState.cfg_category
 #define mCFG_CATEGORY_LEDPTRN  2 // for myState.cfg_category
@@ -502,11 +499,11 @@ static const RBGStateTable_t myStateTable[90]
       { /* row 79 mROW_CFG_ADVNCD_LOOP */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONFIGURE, .efctSound=mNONE, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG|mINP_B02, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_POWERON, .gotoWithoutInput=mNONE, },
       { /* row 80 mROW_CFG_ADVNCD_NEXT */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFGNEXT, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_CFG_ADVNCD_LOOP, },
       { /* row 81 mROW_CFG_ADVNCD_CHOICE */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_CFG2ADVNCD, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=3.0, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_POWERON, },
-      { /* row 82 mROW_CFG_ADVNCD_SKIP1 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_DEMOMODE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_ADVNCD_DEMO_ACCEPTED, },
+      { /* row 82 mROW_CFG_ADVNCD_SKIP1 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_STATICMODE, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_ADVNCD_STATIC_ACCEPTED, },
       { /* row 83 mROW_CFG_ADVNCD_SKIP2 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_HANDLER | mSPCL_HANDLER_ADVFEATURES, .efctSound=mNONE, .efctLED=mNONE, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_ADVNCD_PASSWD_VERBAL, },
       { /* row 84 mROW_CFG_ADVNCD_SKIP3 */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_UNIQ_CFG_CREDITS, .efctLED=mEFCT_WAIT, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_POWERON, },
-      { /* row 85 mROW_ADVNCD_DEMO_ACCEPTED */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_UNIQ_CFG_DEMO_STARTED, .efctLED=mEFCT_WAIT, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_POWERON, },
-      { /* row 86 mROW_ADVNCD_DEMO_ACCEPTED */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_UNIQ_CFG_DEMO_STARTED, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_POWERON, .gotoWithoutInput=mNONE, },
+      { /* row 85 mROW_ADVNCD_STATIC_ACCEPTED */  .blkFlags=mBLOCKSTART, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_UNIQ_CFG_STATIC_STARTED, .efctLED=mEFCT_WAIT, .inputRBG=mNONE, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mNONE, .gotoWithoutInput=mROW_POWERON, },
+      { /* row 86 mROW_ADVNCD_STATIC_ACCEPTED */  .blkFlags=mBLOCKEND, .SPECIAL=mSPCL_EFCT_ONETIME, .efctSound=mEFCT_UNIQ_CFG_STATIC_STARTED, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_POWERON, .gotoWithoutInput=mNONE, },
       { /* row 87 mROW_ADVNCD_PASSWD_VERBAL */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_CFG_ENTER_PASSWORD, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_ADVNCD_PASSWD_DANCE, .gotoWithoutInput=mNONE, },
       { /* row 88 mROW_ADVNCD_PASSWD_DANCE */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_CFG_ENTER_DANCE, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_ADVNCD_PASSWD_NOPASSWD, .gotoWithoutInput=mNONE, },
       { /* row 89 mROW_ADVNCD_PASSWD_NOPASSWD */  .blkFlags=mBLOCKSTART|mBLOCKEND, .SPECIAL=mSPCL_EFCT_CONTINUOUS, .efctSound=mEFCT_UNIQ_CFG_SORRY_NO_PASSWORD, .efctLED=mEFCT_WAIT, .inputRBG=mINP_TRIG, .storeVal=mNONE, .storeAddr=mNONE, .gotoOnInput=mROW_POWERON, .gotoWithoutInput=mNONE, },
