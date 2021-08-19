@@ -15,10 +15,12 @@ A high-tech SciFi imagining of the rubber band gun.
 Here is a NEW (2020-09-25) video of the software running on a prototype:
 * https://youtu.be/njpYX-5Zv9Y
 
+![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/Jims_800_600.png "Top View of Jim's RBG with solenoid and sliding barrel")
+![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/both_800_600.png "Both RBGs side by side")
+![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/Jims_loading_800_600.png "Loading a rubber band in Jim's RBG")
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/Vid2020-09_A.png "Front view of Science Fiction Rubber Band Gun without Solenoid attachment")
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/Vid2020-09_B.png "Rear view of Science Fiction Rubber Band Gun without Solenoid attachment")
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/Vid2020-09_C.png "Side view of electronics in handle of Science Fiction Rubber Band Gun without solenoid attachment")
-![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/HandleSolenoid_rot8__small_2020-11-22.png "3D model of handle and solenoid attachment rotated")
 
 ## Introduction
 Jim and I are working on a Science-Fiction Rubber Band Gun!
