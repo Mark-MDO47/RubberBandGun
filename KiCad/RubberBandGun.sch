@@ -5,11 +5,11 @@ $Descr A 11000 8500
 encoding utf-8
 Sheet 1 4
 Title "FOOF Rubber Band Gun"
-Date "2020-09-12"
+Date "2021-09-05"
 Rev "---"
 Comp ""
-Comment1 ""
-Comment2 ""
+Comment1 "--- if wiring from bottom, reverse sides"
+Comment2 "NOTE: chips/modules shown top view with notch at top"
 Comment3 ""
 Comment4 ""
 $EndDescr

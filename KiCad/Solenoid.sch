@@ -5,7 +5,7 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 2 4
 Title "Detail: Solenoid Driver"
-Date "2020-09-12"
+Date "2021-09-05"
 Rev ""
 Comp ""
 Comment1 ""
