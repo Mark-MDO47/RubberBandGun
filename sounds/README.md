@@ -74,7 +74,7 @@ After creating the text-to-speech audio file(s), this is how I processed them to
 - for both tracks one at a time, echo effect (Effect->Echo, choose DelayTime about 0.01 sec and DecayFactor about 0.5)
 - select reversed track and reverse it back to normal order (select track, then Effect->Reverse)
 - select both tracks (ctrl-A) then render (Tracks->Mix->MixAndRender)
-- export as 22050Hz mono, "WAV (microsoft) signed 16-bit PCM" (File->Export->ExportAsWav)
+- export as 22050Hz mono, "WAV (microsoft) signed 16-bit PCM" (File->Export->ExportAsWav or for more options File->Export->ExportAudio)
 
 Audacity can be found at https://www.audacityteam.org/
 
