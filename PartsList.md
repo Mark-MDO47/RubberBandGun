@@ -14,7 +14,7 @@
 | 1 | $2.49 | $2.49 | small speaker: | https://smile.amazon.com/Uxcell-a15080600ux0275-Internal-Magnet-Speaker/dp/B0177ABRQ6/ |
 | 1 | $3.80 | $3.80 | 16Gbyte SD card for YX5200: | https://smile.amazon.com/Patriot-16GB-Micro-SDHC-PSF16GMCSDHC5PK/dp/B013P27MDW |
 | 1 | $3.55 | $3.55 | KCX_BT_EMITTER BlueTooth audio transmitter: | https://www.aliexpress.com/item/33058710334.html |
-| 1 | $35.99 | $35.99 | S1 Pro bluetooth speaker for the RBG: | https://smile.amazon.com/gp/product/B088H56DNY/ |
+| 1 | $35.99 | $35.99 | ZoeeTree S1Pro Bluetooth Speaker 20W , IPX7 Waterproof, for the RBG: | https://smile.amazon.com/gp/product/B088H56DNY/ (link expired) |
 | 1 | $0.95 | $0.95 | Mini On/Off Push-Button Switch: | https://www.adafruit.com/product/3870 |
 | 3 | $0.08 | $0.24 | colored push-buttons for configuration of effects: | https://www.amazon.com/gp/product/B07C7211PJ/ref=ppx_yo_dt_b_asin_image_o08_s00 |
 | 1 | $0.69 | $0.69 | 4610X-AP1-103LFCT-ND RES ARRAY 9 RES 10K OHM 10SIP - for pull-up resistors: | https://www.digikey.com/en/products/detail/bourns-inc/4610X-AP1-103LF/3741070 |
