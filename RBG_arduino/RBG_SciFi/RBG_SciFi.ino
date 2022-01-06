@@ -922,7 +922,7 @@ uint16_t RBG_waitForInput(uint16_t tmpVinputRBG) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RBG_specialProcessing(tmpVinputRBG, tmpSpecial, tmpStoreVal, tmpStoreAddr)
-//   do the SPECIAL processing - mostly the solenoid stuff
+//   do the SPECIAL processing - mostly the solenoid stuff (AKA motor if SIDEWINDER implementation)
 //
 // return mNONE to have next level up decide where to jump
 // otherwise return an mROW value
@@ -1144,6 +1144,9 @@ uint16_t RBG_specialProcCfgCpyRst_skip(uint8_t maxSkip) {
 //
 //   All RBG_specialProcXxx routines get called exactly one time then move to .gotoWithoutInput
 //
+//   SIDEWINDER initial approach - let the motor turn for 10,000 milliseconds or until firing sound finishes, whichever is first.
+//   CLOTHESPIN approach - hold the solenoid for 200 milliseconds or until firing sound finishes, whichever is first.
+//
 void RBG_specialProcShoot() {
   digitalWrite(DPIN_SOLENOID, HIGH);
   myState.timerForceSolenoidLow = millis() + DLYSOLENOID;
@@ -1154,6 +1157,9 @@ void RBG_specialProcShoot() {
 // RBG_specialProcSolenoid() - release the solenoid after shooting
 //
 //   All RBG_specialProcXxx routines get called exactly one time then move to .gotoWithoutInput
+//
+//   SIDEWINDER initial approach - let the motor turn for 10,000 milliseconds or until firing sound finishes, whichever is first.
+//   CLOTHESPIN approach - hold the solenoid for 200 milliseconds or until firing sound finishes, whichever is first.
 //
 void RBG_specialProcSolenoid() {
   digitalWrite(DPIN_SOLENOID, LOW);

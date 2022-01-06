@@ -362,8 +362,8 @@ static uint8_t cfgMaxLEDForType[EEPOFFSET(mEFCT_UNIQ)] = {
 
 // some delays in milliseconds
 //
-#define DLYSOLENOID 10000  // num milliseconds to leave solenoid on - SIDEWINDER
-//   SIDEWINDER initial approach - let the motor turn for 10 seconds or until firing sound finishes, whichever is first.
+#define DLYSOLENOID 10000  // num milliseconds to leave solenoid on if CLOTHESPIN (AKA motor if SIDEWINDER implementation)
+//   SIDEWINDER initial approach - let the motor turn for 10,000 milliseconds or until firing sound finishes, whichever is first.
 //   CLOTHESPIN approach - hold the solenoid for 200 milliseconds or until firing sound finishes, whichever is first.
 
 #define DLYLED_MIN 7
