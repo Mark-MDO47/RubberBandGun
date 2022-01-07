@@ -32,7 +32,7 @@
 // https://www.gw-openscience.org/audiogwtc1/
 // I particularly like GW170817-template.wav; it has the ramp-up and then the kick at the end.
 //
-// Here are the files I used, modified, and combined (or plan to use) for the sounds (other than GW170817-template.wav above)
+// Here are the files I used, modified, and combined (or plan to use) for the sounds
 // | Tag        | File Name                                      | URL                             | Who |
 // | ---        | ---                                            | ---                             | --- |
 // | N/A | GW170817-template.wav | https://www.gw-openscience.org/audiogwtc1/ | LIGO detectors |
