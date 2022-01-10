@@ -42,7 +42,13 @@ We are close to working prototype stage using these parts:
 
 The barrel of the Rubber Band Gun is made from wood, with a sliding barrel attachment to assist in stringing the rubber band through the LED rings. The rest including the handgrip is 3-D printed.
 
-The remaining work will mostly be the solenoid release mechanism for the rubber band.
+### Release Mechanism
+
+The "SILVER" RBG uses the solenoid release mechanism through the CLOTHESPIN to fire the rubber band. The current parts list and schematics are correct for this version.
+
+Jim felt like this wasn't reliable enough and designed a SIDEWINDER mechanism that uses a motor to release one or more rubber bands at a time; this will be used on the "ORANGE" RBG and is still in work.
+
+There is a definition of DLYSOLENOID in RBG_SciFi_StatesAndInputs.h that needs to be adjusted to account for the differences. See the comments near that definition if interested.
 
 ## Sounds
 See the Readme.md in https://github.com/Mark-MDO47/RubberBandGun/tree/master/sounds for attribution and other information about the sounds that are used in this project.
