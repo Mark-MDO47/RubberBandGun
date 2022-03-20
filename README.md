@@ -78,6 +78,7 @@ The basic information from the references below is also on this repository, but 
 Get tips and some code for using the YX5200 Audio module: https://github.com/Mark-MDO47/AudioPlayer-YX5200
 
 Get tips and some code for programming the KCX_BT_EMITTER Bluetooth Audio Transmitter module: https://github.com/Mark-MDO47/BluetoothAudioTransmitter_KCX_BT_EMITTER
+Be aware that the KCX_BT_EMITTER module expects 5V power and 5V serial interface signals; I have heard of people who found that the ESP32 did not work when directly used as the Programming Arduino. This can be easily accommodated by using a true Arduino version or a cheap clone Arduino Uno or Arduino Nano classic.
 
 ## Guide to README and Other Docs
 Here are the README docs available on this repository:
