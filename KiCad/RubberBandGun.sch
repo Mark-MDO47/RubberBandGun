@@ -5,12 +5,12 @@ $Descr A 11000 8500
 encoding utf-8
 Sheet 1 4
 Title "FOOF Rubber Band Gun"
-Date "2021-10-05"
+Date "2022-04-10"
 Rev "---"
 Comp ""
 Comment1 "--- if wiring from bottom, reverse sides"
 Comment2 "NOTE: chips/modules shown top view with notch at top"
-Comment3 ""
+Comment3 "Solenoid.sch is solenoid OR motor"
 Comment4 ""
 $EndDescr
 $Comp

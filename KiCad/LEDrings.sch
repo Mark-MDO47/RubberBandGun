@@ -5,7 +5,7 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 3 4
 Title "Detail: LED Ring Wiring"
-Date "2021-10-05"
+Date "2022-04-10"
 Rev ""
 Comp ""
 Comment1 ""
