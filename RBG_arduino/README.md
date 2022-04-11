@@ -102,7 +102,7 @@ NOTE: when the RBG power is on and the USB connector initially gets connected, i
 NOTE: The reason I suggest powering on the RBG while programming so the entire RBG is not being powered through our inexpensive clone Arduino Nano.
 
 ### Sounds
-Take the clear acrylic cover off, turn the RBG power off, hold the YX5200 on the far end while pushing the SD card in and releasing. The SD card should pop out partway; remove it. Connect to your PC and use the instructions for copyem.py described in https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsInfo/YX5200.md. Eject the SD card from your PC, hold the YX5200 on the far end while pushing the SD card back in. The SD card should stay almost all the way in. Put the clear acrylic cover back on.
+Take the clear acrylic cover off, turn the RBG power off, hold the YX5200 on the far end while pushing the SD card in and releasing. The SD card should pop out partway; remove it. Connect the SD card to your PC (typically using a USB adaptor) and use the instructions for copyem.py described in https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsInfo/YX5200.md. Eject the SD card from your PC, hold the YX5200 on the far end while pushing the SD card back in until it clicks. The SD card should stay almost all the way in. Put the clear acrylic cover back on.
 
 
 ### Separate Programming Arduino for Bluetooth Module
