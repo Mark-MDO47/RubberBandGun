@@ -22,15 +22,24 @@
 | 1 | $0.69 | $0.69 | 4610X-AP1-103LFCT-ND RES ARRAY 9 RES 10K OHM 10SIP - for pull-up resistors: | https://www.digikey.com/en/products/detail/bourns-inc/4610X-AP1-103LF/3741070 |
 | 2 | $0.10 | $0.20 | 220 Ohm resistor, 1/4 watt (optional): | https://www.digikey.com/en/products/detail/stackpole-electronics-inc/CF14JT220R/1741346 |
 | 1 | $0.84 | $0.84 | 1K Ohm resistor, 1/4 watt (absolutely needed): | https://www.digikey.com/en/products/detail/ohmite/OD102JE/823687 |
+| 1 | $0.71 | $0.71 | USB 2.0 Breakout Board type A Female | https://www.amazon.com/Breakout-MELIFE-Adapter-2-54mm-Pinboard/dp/B07W7XMV3W |
+| 1 | $0.71 | $0.71 | USB 2.0 Breakout Board type A Male | https://www.amazon.com/MELIFE-Converter-2-54mm-Adapter-Breadboard/dp/B07W6T9KPJ |
+| --- | --- | --- | --- | --- |
 | 0 | $0.00 | $0.00 | driver circuit for selenoid: | https://cdn-shop.adafruit.com/product-files/412/solenoid_driver.pdf |
 | 1 | $14.29 | $14.29 | small solenoid for rubber-band release coordinated with sound/light effects: | https://www.amazon.com/gp/product/B07TKTG3BH/ref=ox_sc_act_title_1?smid=A1THAZDOWP300U&psc=1 |
 | 1 | $0.83 | $0.83 | TIP120 Power Darlington Transistor: | https://www.adafruit.com/product/976 |
 | 1 | $0.10 | $0.10 | 1N4004 diode 1A 400V: | https://www.digikey.com/en/products/detail/nte-electronics-inc/1N4004/11645015 |
 | 1 | $0.10 | $0.10 | 2.2K Ohm resistor, 1/4 watt: | https://www.digikey.com/en/products/detail/stackpole-electronics-inc/RNMF14FTC2K20/2617325 |
-| 1 | $0.71 | $0.71 | USB 2.0 Breakout Board type A Female | https://www.amazon.com/Breakout-MELIFE-Adapter-2-54mm-Pinboard/dp/B07W7XMV3W |
-| 1 | $0.71 | $0.71 | USB 2.0 Breakout Board type A Male | https://www.amazon.com/MELIFE-Converter-2-54mm-Adapter-Breadboard/dp/B07W6T9KPJ |
+| --- | --- | --- | --- | --- |
+| 0 | $0.00 | $0.00 | driver circuit for motor (SIDEWINDER): |  |
+| 1 | $9.86 | $9.86 | Mini Motor Low-speed Gearbox (4-speed) by Tamiya 70189**860.  assembled with 661.2:1 gear ratio | https://www.robotshop.com/en/tamiya-4-speed-mini-gearbox-motor.html?gclid=CjwKCAjwjtOTBhAvEiwASG4bCAY395M_dBB8nr0g79zMdmdYRo1whBBhot3-KgAPBxbUhbIBIlP4YxoCVXIQAvD_BwE |
+| 1 | $1.25 | $1.25 | 3.3V 800mA Linear Voltage Regulator - LD1117-3.3 TO-220. | https://www.adafruit.com/product/2165 |
+| 1 | $0.15 | $0.15 | Diode, 1N4001 | https://www.adafruit.com/product/755 |
+| 1 | $0.84 | $0.84 | 1K ohm 1/4 watt resistor | https://www.digikey.com/en/products/detail/ohmite/OD102JE/823687 |
 
-Total cost (without wood or 3D printer parts or wire) $133.37
+Total cost (without wood or 3D printer parts or wire)
+* $133.37 - SOLENOID (SILVER)  version
+* $130.14 - MOTOR (SIDEWINDER) version
 - but about $36 of that cost is the bluetooth speaker which you may have or not need
 
 The barrel of the Rubber Band Gun is made from wood, with a sliding barrel attachment to assist in stringing the rubber band through the LED rings. The rest including the handgrip is 3-D printed. The clear cover for the handgrip is laser-cut acrylic; there is another acrylic board inside.
