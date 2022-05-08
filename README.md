@@ -1,6 +1,8 @@
 # RubberBandGun
 A high-tech SciFi imagining of the rubber band gun.
 
+Both working prototypes were shown at the Asheville Maker Faire on May 07, 2022 in Asheville, N.C. Estimates are that 100 people fired rubber bands out of the RBG!
+
 **Table of Contents**
 * [Top](#rubberbandgun "Top")
 * [Images and Videos](#images-and-videos "Images and Videos")
@@ -23,7 +25,7 @@ Here is a NEW (2020-09-25) video of the software running on a prototype:
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/Vid2020-09_C.png "Side view of electronics in handle of Science Fiction Rubber Band Gun without solenoid attachment")
 
 ## Introduction
-Jim and I are working on a Science-Fiction Rubber Band Gun!
+Jim and I made a Science-Fiction Rubber Band Gun!
 
 It has three rings of WS2812b 5050 RGB LED Ring proceeding up the barrel, each one larger than the previous in a "blunderbuss" shape. Note: this shape when applied to a handgun was known as a dragon, from which the term dragoon; see https://en.m.wikipedia.org/wiki/Blunderbuss
 
