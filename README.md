@@ -37,7 +37,7 @@ At the same time as the sound, the LED rings do patterns to make it look like th
 * https://github.com/Mark-MDO47/RubberBandGun/edit/master/PartsInfo/README.md
 
 ## Parts List
-We are close to working prototype stage using these parts:
+We have two working prototypes using these parts. The prices and parts availability have not been updated recently.
 * https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsList.md
 
 The barrel of the Rubber Band Gun is made from wood, with a sliding barrel attachment to assist in stringing the rubber band through the LED rings. The rest including the handgrip is 3-D printed.
