@@ -13,10 +13,11 @@ Both working prototypes were shown at the Asheville Maker Faire on May 07, 2022 
 * [Extras](#extras "Extras")
 * [Guide to README and Other Docs](#guide-to-readme-and-other-docs "Guide to README and Other Docs")
 
-## Images and Videos
+## Videos
 Here is a NEW (2020-09-25) video of the software running on a prototype:
 * https://youtu.be/njpYX-5Zv9Y
 
+## Images
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/RBG_lockedloaded_600x800.png "Top View of Jim's assembled silver RBG with solenoid and sliding barrel")
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/both_800_600.png "Both RBGs side by side")
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/RBG_loaded_800x350.png "Loading a rubber band in Jim's assembled silver RBG")
