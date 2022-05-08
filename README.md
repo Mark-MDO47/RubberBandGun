@@ -108,4 +108,4 @@ Here are some other useful docs etc. available on other repositories:
 * [AT Commands for KCX-BT-EMITTER Bluetooth Audio Module (use Google Translate)](https://item.taobao.com/item.htm?spm=a21wu.12321156-tw.0.0.7e76d1c7xEOcFZ&id=570274835710 "AT Commands for KCX-BT-EMITTER Bluetooth Audio Module (use Google Translate)")
 * [Electro-Tech-Online.com Forum Discussion on AT Commands for KCX-BT-EMITTER](https://www.electro-tech-online.com/threads/kcx_bt_emitter-low-cost-bluetooth-bt-audio-module.158156/ "Electro-Tech-Online.com Forum Discussion on AT Commands for KCX-BT-EMITTER")
 * [Details of WorldSemi WS2812B LED Operation](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf "Details of WorldSemi WS2812B LED Operation")
-* [Solenoid Driver Circuit](https://cdn-shop.adafruit.com/product-files/412/solenoid_driver.pdf "Solenoid Driver Circuit")
+* [Solenoid Driver Circuit from Adafruit](https://cdn-shop.adafruit.com/product-files/412/solenoid_driver.pdf "Solenoid Driver Circuit")
