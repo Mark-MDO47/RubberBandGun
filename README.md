@@ -5,8 +5,8 @@ Both working prototypes were shown at the Asheville Maker Faire on May 07, 2022 
 
 **Table of Contents**
 * [Top](#rubberbandgun "Top")
-* [Videos](#images-and-videos "Videos")
-* [Images](#images-and-videos "Images")
+* [Videos](#videos "Videos")
+* [Images](#images "Images")
 * [Introduction](#introduction "Introduction")
 * [Parts List](#parts-list "Parts List")
 * [Sounds](#sounds "Sounds")
