@@ -7,8 +7,8 @@
 # Used mostly to debug the state table machine.
 #
 
-import copy
-import sys
+# import copy
+# import sys
 
 myFirstInclude = """
 // DebugRBG01.cpp : This file contains the 'main' function. Program execution begins and ends there.

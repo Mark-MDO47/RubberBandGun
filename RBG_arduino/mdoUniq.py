@@ -8,7 +8,7 @@
 #
 
 import sys
-import io
+# import io
 
 argFname = 1
 argStart = 2

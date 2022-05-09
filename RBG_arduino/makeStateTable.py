@@ -100,9 +100,9 @@ def fill_state_table_pass1(row, state_idx):
             row_text = row_text.lower()[0] + row_text.upper()[1:] # enforce capitalization
         if row_text not in FOUNDINCOLUMN[key]:
             FOUNDINCOLUMN[key].append(row_text)
-        if key in translateToMasks.keys():
-            if row_text in translateToMasks[key]:
-                row_text = translateToMasks[key][row_text]
+        if key in TRANSLATETOMASKS.keys():
+            if row_text in TRANSLATETOMASKS[key]:
+                row_text = TRANSLATETOMASKS[key][row_text]
             else:
                 pass
         if key in STATETABLEROW.keys():

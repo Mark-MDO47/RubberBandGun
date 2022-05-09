@@ -43,7 +43,7 @@ FOUNDINCOLUMN = {
 COLTOINDEX = {"index": -1, "SPECIAL": -1, "efctSound": -1, "efctLED": -1, "inputRBG": -1, "storeVal": -1,
               "storeAddr": -1, "gotoOnInput": -1, "gotoWithoutInput": -1}
 
-translateToMasks = {
+TRANSLATETOMASKS = {
     "blkFlags": {},
     "SPECIAL": {},
     "efctSound": {},

@@ -38,8 +38,8 @@
 myPattern = "#define mEFCT_UNIQ_"
 COLTOINDEX =  {"usage": -1, "num": -1, "File Name": -1, "Description": -1, "all usage": -1, "License": -1, "Who": -1, "URL": -1, "Mnemonic": -1, "#define": -1}
 
-import io
-import sys
+# import io
+# import sys
 import pandas as pd
 
 def readSounds():

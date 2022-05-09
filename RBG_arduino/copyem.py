@@ -5,7 +5,7 @@
 #          root directory needs ###.wav with no gaps
 #
 import os
-import sys
+# import sys
 import argparse
 
 theFnames = []
@@ -16,7 +16,7 @@ def doCopyem(theFrom = None, theSD = None, fnameSilence = None, copyCmd = None, 
         if (fname.lower().endswith(".wav")) and (maxNum >= int(fname[:4])):
             theFnames.append(fname.lower())
     theFnames.sort()
-    theMaxNum = int(theFnames[-1][:4])
+    # theMaxNum = int(theFnames[-1][:4])
     
     """
     for fname in theFnames:
