@@ -50,7 +50,7 @@ The barrel of the Rubber Band Gun is made from wood, with a sliding barrel attac
 
 The "SILVER" RBG uses the solenoid release mechanism through the CLOTHESPIN to fire the rubber band. The current parts list and schematics are correct for this version.
 
-Jim felt like this wasn't reliable enough and designed a SIDEWINDER mechanism that uses a motor to release one or more rubber bands at a time; this will be used on the "ORANGE" RBG and is still in work.
+Jim felt like this wasn't reliable enough and designed a SIDEWINDER mechanism that uses a motor to release one or more rubber bands at a time; this was used on the "ORANGE" RBG.
 
 There is a definition of DLYSOLENOID in RBG_SciFi_StatesAndInputs.h that needs to be adjusted to account for the differences. See the comments near that definition if interested.
 
