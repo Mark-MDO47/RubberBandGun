@@ -97,7 +97,7 @@ FYI diskDownTheDrainOrRotate() was originally written for the Graduation Cap pro
 ### RBG_SciFi.ino
 Take the clear acrylic cover off, **pull back the barrel/solenoid assembly** as if loading, turn the RBG power on, plug in the Arduino NANO USB connector to your computer, and program. Reverse to disconnect.
 
-NOTE: when the RBG power is on and the USB connector initially gets connected, it continuously resets and pulses the solenoid at an interval of about 1.5 seconds. This might eventually damage the solenoid or its circuitry, so it is important to pull back the barrel/solenoid assembly.
+NOTE: when the RBG power is on while the USB connector is connected, it continuously resets and pulses the solenoid at an interval of about 1.5 seconds. This might eventually damage the solenoid or its circuitry, so it is important to pull back the barrel/solenoid assembly before powering on.
 
 NOTE: The reason I suggest powering on the RBG while programming so the entire RBG is not being powered through our inexpensive clone Arduino Nano.
 
