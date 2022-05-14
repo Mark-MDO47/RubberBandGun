@@ -30,7 +30,7 @@ The file **StateTable_minimal.xlsx** is the heart of RBG_SciFi.ino. It has multi
 * **FactorySettings:** This tab defines the Factory Settings for sounds and LED patterns to be used for all of the events (such as shooting a rubber band, "lock and load" reconnect of a loaded rubber band, etc.)
   * the PROGMEM stores four Factory Settings for all the sounds and LED effects.
   * EEPROM has a space for a copy of the settings; the EEPROM version is configurable via audio menus.
-  * At startup, if the checksum in EEPROM storage doesn't match the data, the four PROGMEM Factory Settings are copied into EEPROM. This is equivalent to a complete "Factor Reset" from the audio menus.
+  * At startup, if the checksum in EEPROM storage doesn't match the data, the four PROGMEM Factory Settings are copied into EEPROM. This is equivalent to a complete "Factory Reset" from the audio menus.
   * While running, the RBG cycles through the configurations automatically each time a rubber band is shot.
   * The configuration at position 0 is the position used for editing via audio menus; it can be copied back and forth to other positions via audio menus.
   * Factory Reset via the audio menus will set one or all four of these configurations back to the EEPROM default.
