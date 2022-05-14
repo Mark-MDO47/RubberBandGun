@@ -33,7 +33,7 @@ The file **StateTable_minimal.xlsx** is the heart of RBG_SciFi.ino. It has multi
   * At startup, if the checksum in EEPROM storage doesn't match the data, the four PROGMEM Factory Settings are copied into EEPROM. This is equivalent to a complete "Factory Reset" from the audio menus.
   * While running, the RBG cycles through the configurations automatically each time a rubber band is shot.
   * The configuration at position 0 is the position used for editing via audio menus; it can be copied back and forth to other positions via audio menus.
-  * Factory Reset via the audio menus will set one or all four of these configurations back to the EEPROM default.
+  * Factory Reset via the audio menus will set one or all four of these configurations back to the PROGMEM default.
 
 ## RBG_SciFi_StatesAndInputs.h
 If StateTable_minimal.xlsx is the heart of RBG_SciFi.ino, then... OK, I won't continue down that path.
