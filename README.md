@@ -41,6 +41,8 @@ See the [Sounds](#sounds "Sounds") section below and the sounds README for more 
 At the same time as the sound, the LED rings do patterns to make it look like they are being charged up followed by a sequential pulsing that would convince anyone who knows absolutely less than nothing about such things that a rail-gun effect is propelling the rubber band down the central tube. These rings are composed of WS2812B individually addressable color LEDs controlled by the fantastic FastLED library. See the [LED Patterns](#led-patterns "LED Patterns") section below and the PartsInfo README for more info.
 * https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsInfo/README.md
 
+And the RBG is a talking Rubber Band Gun! It can use its own built-in speaker or connect to a Bluetooth speaker, it has voice menus to allow configuration of sounds and LED effects. The video at https://youtu.be/njpYX-5Zv9Y goes through some of the menus using a Bluetooth speaker.
+
 ## Parts List
 We have two working prototypes using these parts. The prices and parts availability have not been updated recently.
 * https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsList.md
