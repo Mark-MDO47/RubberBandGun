@@ -38,7 +38,7 @@
 | 1 | $0.84 | $0.84 | 1K ohm 1/4 watt resistor | https://www.digikey.com/en/products/detail/ohmite/OD102JE/823687 |
 
 Total cost (without wood or 3D printer parts or wire)
-* $133.37 - SOLENOID (SILVER)  version
+* $133.37 - SOLENOID (SINGLETON)  version
 * $130.14 - MOTOR (SIDEWINDER) version
 - but about $36 of that cost is the bluetooth speaker which you may have or not need
 
