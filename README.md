@@ -51,7 +51,7 @@ The barrel of the Rubber Band Gun is made from wood, with a sliding barrel attac
 
 ### Release Mechanism
 
-The "SILVER" RBG uses the solenoid release mechanism through the CLOTHESPIN to fire the rubber band.
+The "SILVER" SINGLETON RBG uses the solenoid release mechanism through the CLOTHESPIN to fire the rubber band.
 
 Jim felt like this wasn't reliable enough and designed a SIDEWINDER mechanism that uses a motor to release one or more rubber bands at a time; this was used on the "ORANGE" RBG.
 
