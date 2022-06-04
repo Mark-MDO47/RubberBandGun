@@ -315,7 +315,8 @@ static decodeBits_t decodeBits_VinputRBG[] = {
 }; // decodeBits_VinputRBG
 
 // table to identify input pins and corresponding masks
-// DPIN_LOCK_LOAD handled separately in code
+// DPIN_LOCK_LOAD->mVINP_LOCK|mVINP_OPEN handled separately in code in getButtonInput()
+// DPIN_BTN_TRIGGER->mVINP_TRIG (edge detect) handled separately in code in getButtonInput()
 // the masks are used (only) in .VinputRBG in myState
 typedef struct _pins_to_vals_t {
   uint16_t pin; uint16_t val;
@@ -325,7 +326,7 @@ static pins_to_vals_t myPinsToVals[] = {
   { DPIN_BTN_GREEN,   mVINP_B02 },
   { DPIN_BTN_RED,     mVINP_B04 },
   { DPIN_AUDIO_BUSY,  mVINP_SOUNDACTV },
-  { DPIN_AUDIO_BUSY,  mVINP_TRUESOUNDACTV },
+  { DPIN_AUDIO_BUSY,  mVINP_TRUESOUNDACTV }, // this one is for debugging
 };
 
 static struct _myState_t {
