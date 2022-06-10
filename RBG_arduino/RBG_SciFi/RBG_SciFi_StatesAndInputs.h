@@ -332,13 +332,15 @@ static pins_to_vals_t myPinsToVals[] = {
 static struct _myState_t {
   uint16_t tableRow = 0;             // points to state that we will process or are processing
   uint16_t VinputRBG = 0;            // bits for input buttons and sound finish: mVINP_*
-  uint8_t  dynamicMode = EEPROM_CONFIG_RUNNING; // [0-3] for dynamic mode: switch through the saved configurations each time you shoot. Power cycle to exit dynamic mode.
   uint16_t currVolume = 0;           // avoid sending volume when not needed - FIXME FUTURE FEATURE
   uint32_t timerNow = 0;             // timer now
   uint32_t timerPrevState = 0;       // start timer from previous time through state loop
   uint32_t timerPrevLEDstep = 0;     // start timer from previous LED activity
   uint32_t timerForceSoundActv = 0;  // end timer for forcing mVINP_SOUNDACTV true
-  uint32_t timerForceSolenoidLow = 0; // end timer for forcing solenoid to go back low
+  uint32_t timerMinForceSolenoidLow = 0; // min end timer for forcing solenoid to go back low
+  uint32_t timerMaxForceSolenoidLow = 0; // max end timer for forcing solenoid to go back low
+  uint8_t  timerSoundFinishedMinForceSolenoidLow = 1; // zero - firing sound did not finish; nonzero = sound did finish
+  uint8_t  dynamicMode = EEPROM_CONFIG_RUNNING; // [0-3] for dynamic mode: switch through the saved configurations each time you shoot. Power cycle to exit dynamic mode.
   uint8_t  ptrnDelayLEDstep = 7;     // proper delta delay for Mark's patterns
   uint8_t  cfg_curnum = mNONE;       // current number for configuration list of choices
   uint8_t  cfg_maxnum = mNONE;       // maximum number for configuration list of choices
@@ -363,9 +365,12 @@ static uint8_t cfgMaxLEDForType[EEPOFFSET(mEFCT_UNIQ)] = {
 
 // some delays in milliseconds
 //
-#define DLYSOLENOID 200  // num milliseconds to leave solenoid on if CLOTHESPIN (AKA motor if SIDEWINDER implementation)
-//   SIDEWINDER initial approach - let the motor turn for 10,000 milliseconds or until firing sound finishes, whichever is first.
-//   CLOTHESPIN approach - hold the solenoid for 200 milliseconds or until firing sound finishes, whichever is first.
+#define DLYSOLENOID_MAX 1500  // num milliseconds to leave solenoid on if SIDEWINDER (AKA motor if SIDEWINDER implementation)
+#define DLYSOLENOID_MIN 500   // num milliseconds to leave solenoid on if SIDEWINDER (AKA motor if SIDEWINDER implementation)
+//   SIDEWINDER initial approach - let the motor turn for 1,500 milliseconds or until firing sound finishes, whichever is first (DLYSOLENOID_MAX)
+//                                 minimum time for motor turn is 500 millisec (DLYSOLENOID_MIN)
+//   CLOTHESPIN approach - hold the solenoid for 200 milliseconds or until firing sound finishes, whichever is first (DLYSOLENOID_MAX)
+//                                 minimum time for motor turn is 1 millisec (DLYSOLENOID_MIN)
 
 #define DLYLED_MIN 7
 #define DLYLED_ringRotateAndFade 7 // for RBG_ringRotateAndFade

@@ -225,7 +225,10 @@ void loop() {
   #endif // DEBUG_SHOW_MSEC
 
   // handle solenoid OFF processing quickly no matter how long the shooting sound is
-  if ((myState.timerForceSolenoidLow > 0) && (myState.timerNow > myState.timerForceSolenoidLow)) {
+  if ((myState.timerMaxForceSolenoidLow > 0) && (myState.timerNow > myState.timerMaxForceSolenoidLow)) {
+    RBG_specialProcSolenoid(); // digitalWrite(DPIN_SOLENOID, LOW);
+  }
+  if ((myState.timerMaxForceSolenoidLow > 0) && (myState.timerSoundFinishedMinForceSolenoidLow != 0) && (myState.timerNow > myState.timerMinForceSolenoidLow)) {
     RBG_specialProcSolenoid(); // digitalWrite(DPIN_SOLENOID, LOW);
   }
 
@@ -1153,8 +1156,10 @@ uint16_t RBG_specialProcCfgCpyRst_skip(uint8_t maxSkip) {
 //
 void RBG_specialProcShoot() {
   digitalWrite(DPIN_SOLENOID, HIGH);
-  myState.timerForceSolenoidLow = millis() + DLYSOLENOID;
-  Serial.print(F(" RBG_specialProcShoot HIGH timerForceSolenoidLow ")); Serial.print(myState.timerForceSolenoidLow); Serial.print(F(" timerNow ")); Serial.print(myState.timerNow); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
+  myState.timerMinForceSolenoidLow = millis() + DLYSOLENOID_MIN;
+  myState.timerMaxForceSolenoidLow = myState.timerMaxForceSolenoidLow + DLYSOLENOID_MAX - DLYSOLENOID_MIN;
+  myState.timerSoundFinishedMinForceSolenoidLow = 0; // will be nonzero if sound finishes before minimum time
+  Serial.print(F(" RBG_specialProcShoot HIGH timerMaxForceSolenoidLow ")); Serial.print(myState.timerMaxForceSolenoidLow); Serial.print(F(" timerNow ")); Serial.print(myState.timerNow); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
 } // end RBG_specialProcShoot()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1162,13 +1167,17 @@ void RBG_specialProcShoot() {
 //
 //   All RBG_specialProcXxx routines get called exactly one time then move to .gotoWithoutInput
 //
-//   SIDEWINDER initial approach - let the motor turn for 10,000 milliseconds or until firing sound finishes, whichever is first.
-//   CLOTHESPIN approach - hold the solenoid for 200 milliseconds or until firing sound finishes, whichever is first.
+//   SIDEWINDER and CLOTHESPIN approach the same, based on DLYSOLENOID_MAX, DLYSOLENOID_MIN
+//       run the motor/solenoid for a minimum of DLYSOLENOID_MIN milliseconds, then stop when either
+//            DLYSOLENOID_MAX time expires
+//            shooting sound has completed (we have special myState.timerSoundFinishedMinForceSolenoidLow to track edge cases)
 //
 void RBG_specialProcSolenoid() {
   digitalWrite(DPIN_SOLENOID, LOW);
-  Serial.print(F(" RBG_specialProcSolenoid LOW timerForceSolenoidLow ")); Serial.print(myState.timerForceSolenoidLow); Serial.print(F(" timerNow ")); Serial.print(myState.timerNow); Serial.print(F(" dynamicMode ")); Serial.print(myState.dynamicMode); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
-  myState.timerForceSolenoidLow = 0;
+  Serial.print(F(" RBG_specialProcSolenoid LOW timerMaxForceSolenoidLow ")); Serial.print(myState.timerMaxForceSolenoidLow); Serial.print(F(" timerNow ")); Serial.print(myState.timerNow); Serial.print(F(" dynamicMode ")); Serial.print(myState.dynamicMode); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
+  myState.timerMaxForceSolenoidLow = 0;
+  myState.timerMinForceSolenoidLow = 0;
+  myState.timerSoundFinishedMinForceSolenoidLow = 1;
 } // end RBG_specialProcSolenoid()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1279,9 +1288,10 @@ void  RBG_startEffectSound(uint16_t tmpEfctSound, uint16_t tmpSpecial) {
 // The lock/load input is 0 when connected and 1 when not lock/load
 // The sound complete is 0 when sound is complete
 //
-// NOTE: DPIN_BTN_TRIGGER handled in code: edge trigger, only goes 1 once on trigger press
-// NOTE: DPIN_LOCK_LOAD handled in code
+// NOTE: DPIN_BTN_TRIGGER handled in code in this routine: edge trigger, only goes 1 once on trigger press
+// NOTE: DPIN_LOCK_LOAD handled in code in this routine
 // NOTE: this is where we handle YX5200 active pin instability when interrupting previous play command
+// NOTE: and... this is where we look for sound inactive before minimum motor/solenoid pulse time
 //
 uint16_t getButtonInput() {
   static uint8_t debugThisManyCalls = DEBUG_INPUTS*10;
@@ -1664,7 +1674,7 @@ void printAllMyState() {
   Serial.print(F("  - timerPrevLEDstep: ")); Serial.println(myState.timerPrevLEDstep);
   Serial.print(F("  - timerForceSoundActv: ")); Serial.println(myState.timerForceSoundActv);
   Serial.print(F("  - timerForceSoundActv: ")); Serial.println(myState.timerForceSoundActv);
-  Serial.print(F("  - timerForceSolenoidLow: ")); Serial.println(myState.timerForceSolenoidLow);
+  Serial.print(F("  - timerMaxForceSolenoidLow: ")); Serial.println(myState.timerMaxForceSolenoidLow);
   Serial.print(F("  - ptrnDelayLEDstep: ")); Serial.println(myState.ptrnDelayLEDstep);
   Serial.print(F("  - cfg_curnum: ")); Serial.println(myState.cfg_curnum);
   Serial.print(F("  - cfg_maxnum: ")); Serial.println(myState.cfg_maxnum);
