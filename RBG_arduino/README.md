@@ -109,7 +109,7 @@ Take the clear acrylic cover off, turn the RBG power off, hold the YX5200 on the
 
 
 ### Separate Programming Arduino for Bluetooth Module
-There is an Arduino routine **ProgrammingArduino.ino** run on a physically separate Arduino to program the KCX_BT_EMITTER module to recognize your bluetooth speaker or headphones and not just connect to the first one it sees. You can read about this process here:
+There is an Arduino routine **ProgrammingArduino.ino** run on a physically separate external Arduino (not part of the RBG) to program the KCX_BT_EMITTER module to recognize your bluetooth speaker or headphones and not just connect to the first one it sees. You can read about this process here:
 * https://github.com/Mark-MDO47/RubberBandGun/blob/master/ProgrammingArduino_SerialMonitor_SampleOutput.pdf
 
 Why a physically separate Arduino? We used so many output pins on the Arduino in the RBG that there were not enough unused pins to do this job. Also, attempting to do this function using voice menus would be tedious.
