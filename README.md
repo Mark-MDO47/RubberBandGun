@@ -57,7 +57,12 @@ The "SILVER" SINGLETON RBG uses the solenoid release mechanism through the CLOTH
 Jim felt like this wasn't reliable enough and designed a SIDEWINDER mechanism that uses a motor to release one or more rubber bands at a time; this was used on the "ORANGE" RBG.
 
 The current parts list and schematics contain both the CLOTHESPIN (SOLENOID) and the SIDEWINDER (MOTOR) mechanisms.
+
+Git tag Silver-1.0 is the version of software that is in the SILVER CLOTHESPIN (SOLENOID) RBG
 * There is a definition of DLYSOLENOID in RBG_SciFi_StatesAndInputs.h that needs to be adjusted to account for the differences. See the comments near that definition if interested.
+
+Development is continuing to make a minimum as well as a maximum activation time for the solenoid or motor mechanism. This will get a tag when complete and tested.
+* This uses DLYSOLENOID_MIN and DLYSOLENOID_MAX. The Silver-1.0 version DLYSOLENOID corresponds to DLYSOLENOID_MAX in the later versions.
 
 ## Sounds
 
