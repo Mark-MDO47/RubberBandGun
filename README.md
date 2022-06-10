@@ -23,9 +23,10 @@ Here is a NEW (2020-09-25) video of the software running on a prototype:
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/RBG_lockedloaded_600x800.png "Top View of Jim's assembled SINGLETON SILVER RBG with solenoid and sliding barrel")
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/both_800_600.png "Both RBGs side by side")
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/RBG_loaded_800x350.png "Loading a rubber band in Jim's assembled SINGLETON SILVER RBG with solenoid and sliding barrel")
-![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/Vid2020-09_A.png "Front view of ORANGE SIDEWINDER Science Fiction Rubber Band Gun without Motor attachment")
-![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/Vid2020-09_B.png "Rear view of ORANGE SIDEWINDER Science Fiction Rubber Band Gun without Motor attachment")
-![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/Vid2020-09_C.png "Side view of electronics in handle of ORANGE SIDEWINDER Science Fiction Rubber Band Gun without Motor attachment")
+![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/OrangeExtended_854_641.jpg "Extended view of ORANGE SIDEWINDER Science Fiction Rubber Band Gun with Motor attachment")
+![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/OrangeTop_854_641.jpg "Top view of ORANGE SIDEWINDER Science Fiction Rubber Band Gun with Motor attachment")
+![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/OrangeMotorElec_854_641.jpg "View of ORANGE SIDEWINDER Science Fiction Rubber Band Gun Motor electronics")
+![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/OrangeDisplayStand_854_641.jpg "View of Display Stand for ORANGE SIDEWINDER Science Fiction Rubber Band Gun")
 
 ## Introduction
 Jim and I made a Science-Fiction Rubber Band Gun!
