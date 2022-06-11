@@ -143,8 +143,8 @@ void setup() {
 
   // take care of the solenoid output pin ASAP
   pinMode(DPIN_SOLENOID,   OUTPUT);        // fires the rubber band
-  // make sure solenoid is not drawing power
-  digitalWrite(DPIN_SOLENOID, LOW); // RBG_specialProcSolenoid(); // serial port not initialized yet
+  // make sure solenoid or motor is not drawing power
+  digitalWrite(DPIN_SOLENOID, LOW); // RBG_specialProcStopShoot(); // serial port not initialized yet so don't use routine
 
 #if USE_PROGMEM   
   memcpy_P(&loopRow, &myStateTable[myState.tableRow], sizeof(myStateTable[0]));
@@ -224,12 +224,12 @@ void loop() {
   globalLoopCount = myState.timerNow;
   #endif // DEBUG_SHOW_MSEC
 
-  // handle solenoid OFF processing quickly no matter how long the shooting sound is
+  // handle solenoid OFF or motor OFF processing quickly no matter how long the shooting sound is
   if ((myState.timerMaxForceSolenoidLow > 0) && (myState.timerNow > myState.timerMaxForceSolenoidLow)) {
-    RBG_specialProcSolenoid(); // digitalWrite(DPIN_SOLENOID, LOW);
+    RBG_specialProcStopShoot(); // digitalWrite(DPIN_SOLENOID, LOW);
   }
   if ((myState.timerMaxForceSolenoidLow > 0) && (myState.timerSoundFinishedMinForceSolenoidLow != 0) && (myState.timerNow > myState.timerMinForceSolenoidLow)) {
-    RBG_specialProcSolenoid(); // digitalWrite(DPIN_SOLENOID, LOW);
+    RBG_specialProcStopShoot(); // digitalWrite(DPIN_SOLENOID, LOW);
   }
 
   // see if time to run the state machine and process inputs
@@ -948,7 +948,7 @@ uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSpecial, uint1
         myState.dynamicMode = (myState.dynamicMode+1) % NUM_EEPROM_CONFIGURATIONS;
         copy_eeprom_to_ram_running_config(myState.dynamicMode);
       }
-      RBG_specialProcSolenoid(); // we also switch for Static mode here
+      RBG_specialProcStopShoot(); // we also switch for Static mode here
       break;
     case mSPCL_HANDLER_CFGSTART: // START CONFIGURATION CHOICES AT FIRST CHOICE
       RBG_specialProcConfigStart(tmpStoreAddr, tmpStoreVal);
@@ -1163,7 +1163,7 @@ void RBG_specialProcShoot() {
 } // end RBG_specialProcShoot()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-// RBG_specialProcSolenoid() - release the solenoid after shooting
+// RBG_specialProcStopShoot() - release the solenoid or stop the motor after shooting
 //
 //   All RBG_specialProcXxx routines get called exactly one time then move to .gotoWithoutInput
 //
@@ -1172,13 +1172,13 @@ void RBG_specialProcShoot() {
 //            DLYSOLENOID_MAX time expires
 //            shooting sound has completed (we have special myState.timerSoundFinishedMinForceSolenoidLow to track edge cases)
 //
-void RBG_specialProcSolenoid() {
+void RBG_specialProcStopShoot() {
   digitalWrite(DPIN_SOLENOID, LOW);
-  Serial.print(F(" RBG_specialProcSolenoid LOW timerMaxForceSolenoidLow ")); Serial.print(myState.timerMaxForceSolenoidLow); Serial.print(F(" timerNow ")); Serial.print(myState.timerNow); Serial.print(F(" dynamicMode ")); Serial.print(myState.dynamicMode); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
+  Serial.print(F(" RBG_specialProcStopShoot LOW timerMaxForceSolenoidLow ")); Serial.print(myState.timerMaxForceSolenoidLow); Serial.print(F(" timerNow ")); Serial.print(myState.timerNow); Serial.print(F(" dynamicMode ")); Serial.print(myState.dynamicMode); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
   myState.timerMaxForceSolenoidLow = 0;
   myState.timerMinForceSolenoidLow = 0;
   myState.timerSoundFinishedMinForceSolenoidLow = 1;
-} // end RBG_specialProcSolenoid()
+} // end RBG_specialProcStopShoot()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RBG_startEffectLED(tmpEfctLED, tmpSpecial) - starts a new LED pattern
