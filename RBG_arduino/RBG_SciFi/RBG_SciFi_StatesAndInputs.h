@@ -365,10 +365,12 @@ static uint8_t cfgMaxLEDForType[EEPOFFSET(mEFCT_UNIQ)] = {
 
 // some delays in milliseconds
 //
-#define DLYSOLENOID_MAX 1500  // num milliseconds to leave solenoid on if SIDEWINDER (AKA motor if SIDEWINDER implementation)
-#define DLYSOLENOID_MIN 500   // num milliseconds to leave solenoid on if SIDEWINDER (AKA motor if SIDEWINDER implementation)
-//   SIDEWINDER initial approach - let the motor turn for 1,500 milliseconds or until firing sound finishes, whichever is first (DLYSOLENOID_MAX)
-//                                 minimum time for motor turn is 500 millisec (DLYSOLENOID_MIN)
+#define DLYSOLENOID_MAX 4951  // num milliseconds to leave solenoid on if SIDEWINDER (AKA motor if SIDEWINDER implementation)
+#define DLYSOLENOID_MIN 4950  // num milliseconds to leave solenoid on if SIDEWINDER (AKA motor if SIDEWINDER implementation)
+//   SIDEWINDER second approach - let the motor turn for 4951 milliseconds or until firing sound finishes, whichever is first (DLYSOLENOID_MAX)
+//                                 minimum time for motor turn is 4950 millisec (DLYSOLENOID_MIN)
+//                                 NOTE that Tamiya 70189 Mini Motor with 661:1 ration runs at 9 RPM or about 6.6 sec per turn.
+//                                 These selected values make the motor turn about 3/4 times around per shot; should fire most rubber bands
 //   CLOTHESPIN approach - hold the solenoid for 200 milliseconds or until firing sound finishes, whichever is first (DLYSOLENOID_MAX)
 //                                 minimum time for motor turn is 1 millisec (DLYSOLENOID_MIN)
 
