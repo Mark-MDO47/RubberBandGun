@@ -65,6 +65,7 @@ I won't go into too much detail here, but this is a bit of a roadmap to **RBG_Sc
 * **RBG_waitForInput()** is where we wait for results of getButtonInput() to match something that would cause a state transition; also some logic for what we would do in certain circumstances.
 * **doPattern()** is used to continue an LED time-sequence pattern. Sounds continue by themselves to completion, so no such routine for sounds
 * **eeprom_check_init()** is used to verify we have a valid EEPROM configuration and if not to load the factory configuration
+* **RBG_specialProcShoot()** and **RBG_specialProcStopShoot()** - used to turn on and off the solenoid/motor depending if it is the CLOTHESPIN/SILVER or the SIDEWINDER/ORANGE RBG. After experimentation with the SIDEWINDER, I am leaning towards having part of the equation for when to StopShoot being when the trigger is released. Still experimenting, but it would give the ability to load 3 rubber bands and single-shoot them.
 
 #### Special Code Topic: LED Patterns
 I thought this could use some more explanation.
@@ -98,11 +99,11 @@ FYI diskDownTheDrainOrRotate() was originally written for the Graduation Cap pro
 ## Reprogramming in the Completed Rubber Band Gun
 
 ### RBG_SciFi.ino
-Take the clear acrylic cover off, **pull back the barrel/solenoid assembly** as if loading, turn the RBG power on, plug in the Arduino NANO USB connector to your computer, and program. Reverse to disconnect.
+Take the clear acrylic cover off, **pull back the barrel/solenoid/motor assembly** as if loading, turn the RBG power on, plug in the Arduino NANO USB connector to your computer, and program. Reverse to disconnect.
 
-NOTE: when the RBG power is on while the USB connector is connected, it continuously resets and pulses the solenoid at an interval of about 1.5 seconds. This might eventually damage the solenoid or its circuitry, so it is important to pull back the barrel/solenoid assembly before powering on.
+NOTE: when the RBG power is on while the USB connector is connected and periodically resetting the Arduino, it continuously resets and pulses the solenoid/motor circuit at an interval of about 1.5 seconds. This might eventually damage the solenoid/motor or its circuitry, so it is important to pull back the barrel/solenoid/motor assembly before powering on.
 
-NOTE: The reason I suggest powering on the RBG while programming so the entire RBG is not being powered through our inexpensive clone Arduino Nano.
+NOTE: The reason I suggest powering on the RBG while programming is so that the entire RBG is not being powered through our inexpensive clone Arduino Nano.
 
 ### Sounds
 Take the clear acrylic cover off, turn the RBG power off, hold the YX5200 on the far end while pushing the SD card in and releasing. The SD card should pop out partway; remove it. Connect the SD card to your PC (typically using a USB adaptor) and use the instructions for copyem.py described in https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsInfo/YX5200.md. Eject the SD card from your PC, hold the YX5200 on the far end while pushing the SD card back in until it clicks. The SD card should stay almost all the way in. Put the clear acrylic cover back on.
