@@ -294,20 +294,22 @@ typedef struct _decodeBits_t { uint16_t theBit; const char * theText; } decodeBi
 
 // masks for input values: button, trigger, sound module, and barrel states and state changes
 //   used (only) in .VinputRBG in myState
-#define mVINP_B01   0x0001     // mask for DPIN_BTN_YELLOW (currently depressed)
-#define mVINP_B02   0x0002     // mask for DPIN_BTN_GREEN (currently depressed)
-#define mVINP_B04   0x0004     // mask for DPIN_BTN_RED (currently depressed)
-#define mVINP_TRIG  0x0040     // mask for just depressed the trigger
-#define mVINP_LOCK  0x0100     // mask for barrel connected
-#define mVINP_OPEN  0x0200     // mask for barrel disconnected
+#define mVINP_B01   0x0001      // mask for DPIN_BTN_YELLOW (currently depressed)
+#define mVINP_B02   0x0002      // mask for DPIN_BTN_GREEN (currently depressed)
+#define mVINP_B04   0x0004      // mask for DPIN_BTN_RED (currently depressed)
+#define mVINP_TRIG_EDGE  0x0040 // mask for just depressed the trigger
+#define mVINP_LOCK  0x0100      // mask for barrel connected
+#define mVINP_OPEN  0x0200      // mask for barrel disconnected
 #define mVINP_SOUNDACTV  0x0400 // mask for sound was active last time we checked- twiddled by SW
+#define mVINP_TRIG_STATE 0x2000 // TRUE if trigger is down, FALSE if trigger is upp
 #define mVINP_TRUESOUNDACTV  0x4000 // TRUE mask for hardware sound was active last time we checked
 #define mDELAY_SOUNDACTV 250    // milliseconds to keep SW twiddled sound active after doing myDFPlayer.play(mySound)
 static decodeBits_t decodeBits_VinputRBG[] = {
     mVINP_B01,           " mVINP_B01 YELLOW",
     mVINP_B02,           " mVINP_B02 GREEN",
     mVINP_B04,           " mVINP_B04 RED",
-    mVINP_TRIG,          " mVINP_TRIG trigger",
+    mVINP_TRIG_EDGE,     " mVINP_TRIG_EDGE trigger, handled in SW",
+    mVINP_TRIG_STATE,    " mVINP_TRIG_STATE trigger 1=pressed",
     mVINP_LOCK,          " mVINP_LOCK barrel lock/load",
     mVINP_OPEN,          " mVINP_OPEN barrel open",
     mVINP_SOUNDACTV,     " mVINP_SOUNDACTV sound SW",
@@ -316,7 +318,7 @@ static decodeBits_t decodeBits_VinputRBG[] = {
 
 // table to identify input pins and corresponding masks
 // DPIN_LOCK_LOAD->mVINP_LOCK|mVINP_OPEN handled separately in code in getButtonInput()
-// DPIN_BTN_TRIGGER->mVINP_TRIG (edge detect) handled separately in code in getButtonInput()
+// DPIN_BTN_TRIGGER->mVINP_TRIG_EDGE (edge detect) handled separately in code in getButtonInput()
 // the masks are used (only) in .VinputRBG in myState
 typedef struct _pins_to_vals_t {
   uint16_t pin; uint16_t val;
@@ -325,6 +327,7 @@ static pins_to_vals_t myPinsToVals[] = {
   { DPIN_BTN_YELLOW,  mVINP_B01 },
   { DPIN_BTN_GREEN,   mVINP_B02 },
   { DPIN_BTN_RED,     mVINP_B04 },
+  { DPIN_BTN_TRIGGER, mVINP_TRIG_STATE }, # just the state, not the edge-detect
   { DPIN_AUDIO_BUSY,  mVINP_SOUNDACTV },
   { DPIN_AUDIO_BUSY,  mVINP_TRUESOUNDACTV }, // this one is for debugging
 };
