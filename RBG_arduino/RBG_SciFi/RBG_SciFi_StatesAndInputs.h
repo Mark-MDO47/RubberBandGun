@@ -327,7 +327,7 @@ static pins_to_vals_t myPinsToVals[] = {
   { DPIN_BTN_YELLOW,  mVINP_B01 },
   { DPIN_BTN_GREEN,   mVINP_B02 },
   { DPIN_BTN_RED,     mVINP_B04 },
-  { DPIN_BTN_TRIGGER, mVINP_TRIG_STATE }, # just the state, not the edge-detect
+  { DPIN_BTN_TRIGGER, mVINP_TRIG_STATE }, // just the state, not the edge-detect
   { DPIN_AUDIO_BUSY,  mVINP_SOUNDACTV },
   { DPIN_AUDIO_BUSY,  mVINP_TRUESOUNDACTV }, // this one is for debugging
 };
