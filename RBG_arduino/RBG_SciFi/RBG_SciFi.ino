@@ -942,6 +942,20 @@ uint16_t RBG_waitForInput(uint16_t tmpVinputRBG) {
 // RBG_specialProcessing(tmpVinputRBG, tmpSpecial, tmpStoreVal, tmpStoreAddr)
 //   do the SPECIAL processing - mostly the solenoid stuff (AKA motor if SIDEWINDER implementation)
 //
+// This is a belt-and-suspenders approach from the state table to have an alternate way of releasing the solenoid/motor.
+// Circumstances can happen where this routine would not release the solenoid; however, code in the main loop will
+//    keep monitoring all the factors below and catch that case.
+//
+// Five factors: SOLENOID_IF_NONZERO, DLYSOLENOID_MIN and _MAX, end of shooting sound, releasing the trigger
+//   SOLENOID/CLOTHESPIN approach - ignore the trigger, just use the edge signal to start
+//                         hold the solenoid for at least DLYSOLENOID_MIN milliseconds
+//                         after that, when shooting sound finishes, then release the solenoid
+//                         release the solenoid after DLYSOLENOID_MAX milliseconds no matter what
+//   MOTOR/SIDEWINDER approach - we also take into account how long the trigger is held in
+//                         run the motor for at least DLYSOLENOID_MIN milliseconds
+//                         after that, when BOTH the trigger is released AND shooting sound finishes, stop the motor
+//                         stop the motor after DLYSOLENOID_MAX milliseconds no matter what
+//
 // return mNONE to have next level up decide where to jump
 // otherwise return an mROW value
 //
@@ -961,7 +975,7 @@ uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSpecial, uint1
       }
       // this is a special function in the state table to make sure solenoid gets turned off. Shooting sound is finished.
       if (millis() > myState.timerMinForceSolenoidLow) { // we always wait at least the minimum
-        if ((SOLENOID_IF_NONZERO) || (0 == ( nowVinputRBG & mVINP_TRIG_STATE))) { // if MOTOR/SIDEWINDER, do not stop shooting here unless trigger is up
+        if ((SOLENOID_IF_NONZERO) || (0 == ( nowVinputRBG & mVINP_TRIG_STATE))) { // if MOTOR/SIDEWINDER, do not stop shooting here unless trigger is released
           RBG_specialProcStopShoot(SERIALDEBUG);
         }
       } // end if time is past the minimum solenoid/motor activation time
