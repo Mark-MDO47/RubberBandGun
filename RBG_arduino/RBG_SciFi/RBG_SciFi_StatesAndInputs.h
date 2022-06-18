@@ -368,14 +368,26 @@ static uint8_t cfgMaxLEDForType[EEPOFFSET(mEFCT_UNIQ)] = {
 
 // some delays in milliseconds
 //
-#define DLYSOLENOID_MAX 4951  // num milliseconds to leave solenoid on if SIDEWINDER (AKA motor if SIDEWINDER implementation)
-#define DLYSOLENOID_MIN 4950  // num milliseconds to leave solenoid on if SIDEWINDER (AKA motor if SIDEWINDER implementation)
-//   SIDEWINDER second approach - let the motor turn for 4951 milliseconds or until firing sound finishes, whichever is first (DLYSOLENOID_MAX)
-//                                 minimum time for motor turn is 4950 millisec (DLYSOLENOID_MIN)
-//                                 NOTE that Tamiya 70189 Mini Motor with 661:1 ration runs at 9 RPM or about 6.6 sec per turn.
-//                                 These selected values make the motor turn about 3/4 times around per shot; should fire most rubber bands
-//   CLOTHESPIN approach - hold the solenoid for 200 milliseconds or until firing sound finishes, whichever is first (DLYSOLENOID_MAX)
-//                                 minimum time for motor turn is 1 millisec (DLYSOLENOID_MIN)
+#define SOLENOID_IF_NONZERO 0 // 1 for CLOTHESPIN (SOLENOID), 0 for SIDEWINDER (MOTOR) processing
+#if SOLENOID_IF_NONZERO
+  #define DLYSOLENOID_MAX 3333  // max num milliseconds to leave motor on if SIDEWINDER (1/2 revolution)
+  #define DLYSOLENOID_MIN 250   // min num milliseconds to leave motor on if SIDEWINDER
+#else
+  #define DLYSOLENOID_MAX 201  // max num milliseconds to leave solenoid on if CLOTHESPIN
+  #define DLYSOLENOID_MIN 200  // min num milliseconds to leave solenoid on if CLOTHESPIN
+#endif
+// Five factors: SOLENOID_IF_NONZERO, DLYSOLENOID_MIN and _MAX, end of shooting sound, releasing the trigger
+//   SOLENOID/CLOTHESPIN approach - ignore the trigger, just use the edge signal to start
+//                         hold the solenoid for at least DLYSOLENOID_MIN milliseconds
+//                         after that, when shooting sound finishes, then release the solenoid
+//                         release the solenoid after DLYSOLENOID_MAX milliseconds no matter what
+//   MOTOR/SIDEWINDER approach - we also take into account how long the trigger is held in
+//                         run the motor for at least DLYSOLENOID_MIN milliseconds
+//                         after that, when BOTH the trigger is released AND shooting sound finishes, stop the motor
+//                         stop the motor after DLYSOLENOID_MAX milliseconds no matter what
+//                         NOTE that Tamiya 70189 Mini Motor with 661:1 ration runs at 9 RPM or about 6.6 sec per turn.
+//                         These selected values make the motor turn a max of about 1/2 times around per shot
+//                            should allow firing most rubber bands or most multi-rubber-band loads; also allow single shot with multi-load
 
 #define DLYLED_MIN 7
 #define DLYLED_ringRotateAndFade 7 // for RBG_ringRotateAndFade
