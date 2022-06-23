@@ -118,7 +118,7 @@ Here are the README docs available on this repository:
 * [Parts Info Overview](https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsInfo/README.md "Parts Info Overview")
 * [YX5200 Audio Module Info](https://github.com/Mark-MDO47/RubberBandGun/blob/master/PartsInfo/YX5200.md "YX5200 Audio Module Info")
 * [Sound Sources and Attribution](https://github.com/Mark-MDO47/RubberBandGun/blob/master/sounds/README.md "Sound Sources and Attribution")
-* [KiCad files for Schematic-Style Rubber Band Gun Wiring PDF](https://github.com/Mark-MDO47/RubberBandGun/blob/master/KiCad/README.md "KiCad files for Schematic-Style Rubber Band Gun Wiring PDF")
+* [KiCad files for Schematic-Style Rubber Band Gun Wiring PDF](https://github.com/Mark-MDO47/RubberBandGun/tree/master/KiCad "KiCad files for Schematic-Style Rubber Band Gun Wiring PDF")
 * [Autocad Fusion 360 files for 3D Printed Parts](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/ReadME.md "Autocad Fusion 360 files for 3D Printed Parts")
 
 
