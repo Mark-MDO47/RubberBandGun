@@ -1,2 +1,2 @@
 # KiCad files
-The file to open is RubberBandGun.pro
+The file to open in KiCad is RubberBandGun.pro
