@@ -62,7 +62,9 @@ Git tag Silver-1.0 is the version of software that is in the SILVER CLOTHESPIN (
 * There is a definition of DLYSOLENOID in RBG_SciFi_StatesAndInputs.h that needs to be adjusted to account for the differences. See the comments near that definition if interested.
 
 Development is continuing to make a minimum as well as a maximum activation time for the solenoid or motor mechanism. This will get a tag when complete and tested.
-* This uses DLYSOLENOID_MIN and DLYSOLENOID_MAX. The Silver-1.0 version DLYSOLENOID corresponds to DLYSOLENOID_MAX in the later versions.
+* SOLENOID_IF_NONZERO is defined as 1 for CLOTHESPIN (SOLENOID), 0 for SIDEWINDER (MOTOR) processing
+* This chooses values of DLYSOLENOID_MIN and DLYSOLENOID_MAX. The Silver-1.0 version DLYSOLENOID corresponds to DLYSOLENOID_MAX in the later versions.
+* Defining SOLENOID_IF_NONZERO as 0 also activates the ability to control the motor time with the trigger button between DLYSOLENOID_MIN and DLYSOLENOID_MAX, with some exceptions if the shooting sound has not completed.
 
 ## Sounds
 
