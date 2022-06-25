@@ -59,7 +59,7 @@ Jim felt like this wasn't reliable enough and designed a SIDEWINDER mechanism th
 The current parts list and schematics contain both the CLOTHESPIN (SOLENOID) and the SIDEWINDER (MOTOR) mechanisms.
 
 Git tag Silver-1.0 is the version of software that is in the SILVER CLOTHESPIN (SOLENOID) RBG
-* There is a definition of DLYSOLENOID in RBG_SciFi_StatesAndInputs.h that needs to be adjusted to account for the differences. See the comments near that definition if interested.
+* There is a definition of DLYSOLENOID in RBG_SciFi_StatesAndInputs.h that needs to be adjusted if using the SIDEWINDER (MOTOR). See the comments near that definition if interested.
 
 Development is continuing to make a minimum as well as a maximum activation time for the solenoid or motor mechanism. This will get a tag when complete and tested. SOLENOID_IF_NONZERO chooses CLOTHESPIN versus SIDEWINDER operation and sets the values of DLYSOLENOID_MIN and DLYSOLENOID_MAX.
 * Define SOLENOID_IF_NONZERO as 1 for CLOTHESPIN (SOLENOID) processing.
