@@ -99,8 +99,9 @@
 
 #define DEBUGALL_GLOBAL 0                    // sets many of the following
 #define DEBUG_STATE_MACHINE (0 | DEBUGALL_GLOBAL) // 1 to show state machine internals for transitions
-#define DEBUG_INPUTS (0 | DEBUGALL_GLOBAL)        // 1 to show all inputs
+#define DEBUG_INPUTS (1 | DEBUGALL_GLOBAL)        // 1 to show all inputs MDO_DEBUG_TURNOFFLATER
 #define DEBUG_CONFIG (0 | DEBUGALL_GLOBAL)        // 1 to show all CONFIGURATION special activity
+#define DEBUG_TRIGSTATE (1 | DEBUGALL_GLOBAL)     // 1 to show all new trigger state activity
 
 static uint32_t globalLoopCount = 0;  // based on DEBUG_SHOW_MSEC: this is either the milliseconds since startup or a count of times through loop()
 
@@ -224,6 +225,7 @@ void loop() {
   globalLoopCount = myState.timerNow;
   #endif // DEBUG_SHOW_MSEC
 
+
   // handle (most of) solenoid OFF or motor OFF processing
   // Five factors: SOLENOID_IF_NONZERO, DLYSOLENOID_MIN and _MAX, end of shooting sound, releasing the trigger
   //   SOLENOID/CLOTHESPIN approach - ignore the trigger, just use the edge signal to start
@@ -234,18 +236,27 @@ void loop() {
   //                         run the motor for at least DLYSOLENOID_MIN milliseconds
   //                         after that, when BOTH the trigger is released AND shooting sound finishes, stop the motor
   //                         stop the motor after DLYSOLENOID_MAX milliseconds no matter what
+  // NOTE: this part does not depend on getButtonInput() and should happen immediately if conditions are met
   if ((myState.timerMaxForceSolenoidLow > 0) && (myState.timerNow > myState.timerMinForceSolenoidLow)) { // shooting and passed minimum
     if (myState.timerNow > myState.timerMaxForceSolenoidLow) {
+      if (DEBUG_TRIGSTATE) { Serial.print(F("DEBUG TRIGSTATE 01 RBG_specialProcStopShoot() - nowVinputRBG 0x"));Serial.println(nowVinputRBG, HEX);  printAllMyState(); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
       RBG_specialProcStopShoot(SERIALDEBUG); // always turn off after maximum delay
-    }
-    else if ((SOLENOID_IF_NONZERO || (0 == (mVINP_TRIG_STATE & nowVinputRBG))) && (myState.timerSoundFinishedMinForceSolenoidLow != 0)) {
-      RBG_specialProcStopShoot(SERIALDEBUG); // (SOLENOID || trigger released), sound finished, beyond minimum time
     }
   }
 
   // see if time to run the state machine and process inputs
   if ((myState.timerNow-myState.timerPrevState) >= 40) { // || (myState.VinputRBG != nowVinputRBG)) { THIS MAKES RELEASING TRIGGER TOO FAST AFFECT SOUND START
     nowVinputRBG = getButtonInput();
+    if (myState.timerMaxForceSolenoidLow > 0) { // shooting
+      if ((myState.timerMaxForceSolenoidLow > 0) && (0 == (nowVinputRBG&mVINP_SOUNDACTV))) { // shooting and sound finished
+        if (DEBUG_TRIGSTATE) { Serial.println(F("DEBUG TRIGSTATE 00 - timerSoundFinishedCanForceSolenoidLow set to 1")); }
+        myState.timerSoundFinishedCanForceSolenoidLow = 1; // nonzero = sound did finish
+      }
+      if ((SOLENOID_IF_NONZERO || (0 == (mVINP_TRIG_STATE & nowVinputRBG))) && (myState.timerNow > myState.timerMinForceSolenoidLow) && (myState.timerSoundFinishedCanForceSolenoidLow != 0)) {
+        if (DEBUG_TRIGSTATE) { Serial.print(F("DEBUG TRIGSTATE 02 RBG_specialProcStopShoot() - nowVinputRBG 0x")); Serial.println(nowVinputRBG, HEX);  printAllMyState(); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
+        RBG_specialProcStopShoot(SERIALDEBUG); // (SOLENOID || trigger released), sound finished, beyond minimum time
+      }
+    }
     if (preVinputRBG != nowVinputRBG) {
       Serial.print(F("DEBUG loop() - nowVinputRBG 0x")); Serial.print(nowVinputRBG, HEX); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
     }
@@ -975,7 +986,8 @@ uint16_t RBG_specialProcessing(uint16_t tmpVinputRBG, uint16_t tmpSpecial, uint1
       }
       // this is a special function in the state table to make sure solenoid gets turned off. Shooting sound is finished.
       if (millis() > myState.timerMinForceSolenoidLow) { // we always wait at least the minimum
-        if ((SOLENOID_IF_NONZERO) || (0 == ( nowVinputRBG & mVINP_TRIG_STATE))) { // if MOTOR/SIDEWINDER, do not stop shooting here unless trigger is released
+        if ((SOLENOID_IF_NONZERO) || (1 == ( nowVinputRBG & mVINP_TRIG_STATE))) { // if MOTOR/SIDEWINDER, do not stop shooting here unless trigger is released
+          if (DEBUG_TRIGSTATE) { Serial.print(F("DEBUG TRIGSTATE 03 RBG_specialProcStopShoot() - nowVinputRBG 0x"));Serial.println(nowVinputRBG, HEX);  printAllMyState(); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount); }
           RBG_specialProcStopShoot(SERIALDEBUG);
         }
       } // end if time is past the minimum solenoid/motor activation time
@@ -1188,8 +1200,8 @@ uint16_t RBG_specialProcCfgCpyRst_skip(uint8_t maxSkip) {
 void RBG_specialProcShoot() {
   digitalWrite(DPIN_SOLENOID, HIGH);
   myState.timerMinForceSolenoidLow = millis() + DLYSOLENOID_MIN;
-  myState.timerMaxForceSolenoidLow = myState.timerMaxForceSolenoidLow + DLYSOLENOID_MAX - DLYSOLENOID_MIN;
-  myState.timerSoundFinishedMinForceSolenoidLow = 0; // will be nonzero if sound finishes before minimum time
+  myState.timerMaxForceSolenoidLow = myState.timerMinForceSolenoidLow + DLYSOLENOID_MAX - DLYSOLENOID_MIN;
+  myState.timerSoundFinishedCanForceSolenoidLow = 0; // will be nonzero if sound finishes before minimum time
   Serial.print(F(" RBG_specialProcShoot HIGH timerMaxForceSolenoidLow ")); Serial.print(myState.timerMaxForceSolenoidLow); Serial.print(F(" timerNow ")); Serial.print(myState.timerNow); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
 } // end RBG_specialProcShoot()
 
@@ -1203,16 +1215,16 @@ void RBG_specialProcShoot() {
 //   SIDEWINDER and CLOTHESPIN approach the same, based on DLYSOLENOID_MAX, DLYSOLENOID_MIN
 //       run the motor/solenoid for a minimum of DLYSOLENOID_MIN milliseconds, then stop when either
 //            DLYSOLENOID_MAX time expires
-//            shooting sound has completed (we have special myState.timerSoundFinishedMinForceSolenoidLow to track edge cases)
+//            shooting sound has completed (we have special myState.timerSoundFinishedCanForceSolenoidLow to track edge cases)
 //
 void RBG_specialProcStopShoot(uint16_t doDebugPrint) {
   digitalWrite(DPIN_SOLENOID, LOW);
-  if (doDebugPrint && SERIALDEBUG) {
-    Serial.print(F(" RBG_specialProcStopShoot LOW timerMaxForceSolenoidLow ")); Serial.print(myState.timerMaxForceSolenoidLow); Serial.print(F(" timerNow ")); Serial.print(myState.timerNow); Serial.print(F(" dynamicMode ")); Serial.print(myState.dynamicMode); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
+  if ((doDebugPrint && SERIALDEBUG) || DEBUG_TRIGSTATE) {
+    Serial.print(F(" RBG_specialProcStopShoot DPIN_SOLENOID=LOW timerMaxForceSolenoidLow ")); Serial.print(myState.timerMaxForceSolenoidLow); Serial.print(F(" timerMinForceSolenoidLow ")); Serial.print(myState.timerMinForceSolenoidLow); Serial.print(F(" timerSoundFinishedCanForceSolenoidLow ")); Serial.print(myState.timerSoundFinishedCanForceSolenoidLow); Serial.print(F(" timerNow ")); Serial.print(myState.timerNow); Serial.print(F(" dynamicMode ")); Serial.print(myState.dynamicMode); Serial.print(F(" loopCount ")); Serial.println(globalLoopCount);
   }
   myState.timerMaxForceSolenoidLow = 0;
   myState.timerMinForceSolenoidLow = 0;
-  myState.timerSoundFinishedMinForceSolenoidLow = 1;
+  myState.timerSoundFinishedCanForceSolenoidLow = 1;
 } // end RBG_specialProcStopShoot()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1349,7 +1361,7 @@ uint16_t getButtonInput() {
     returnInpMask |= mVINP_OPEN;
   }
 
-  // do trigger separately in code
+  // do trigger edge separately in code
   theVal = digitalRead(DPIN_BTN_TRIGGER);
   if ((0 == prevTrigstate) && (LOW == theVal)) { // this is our edge
     if (debugThisManyCalls > 0) { Serial.print(F(" getButtonInput ln ")); Serial.println((uint16_t) __LINE__); }
@@ -1708,8 +1720,9 @@ void printAllMyState() {
   Serial.print(F("  - timerPrevState: ")); Serial.println(myState.timerPrevState);
   Serial.print(F("  - timerPrevLEDstep: ")); Serial.println(myState.timerPrevLEDstep);
   Serial.print(F("  - timerForceSoundActv: ")); Serial.println(myState.timerForceSoundActv);
-  Serial.print(F("  - timerForceSoundActv: ")); Serial.println(myState.timerForceSoundActv);
+  Serial.print(F("  - timerMinForceSolenoidLow: ")); Serial.println(myState.timerMinForceSolenoidLow);
   Serial.print(F("  - timerMaxForceSolenoidLow: ")); Serial.println(myState.timerMaxForceSolenoidLow);
+  Serial.print(F("  - timerSoundFinishedCanForceSolenoidLow: ")); Serial.println(myState.timerSoundFinishedCanForceSolenoidLow);
   Serial.print(F("  - ptrnDelayLEDstep: ")); Serial.println(myState.ptrnDelayLEDstep);
   Serial.print(F("  - cfg_curnum: ")); Serial.println(myState.cfg_curnum);
   Serial.print(F("  - cfg_maxnum: ")); Serial.println(myState.cfg_maxnum);

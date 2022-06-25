@@ -301,7 +301,7 @@ typedef struct _decodeBits_t { uint16_t theBit; const char * theText; } decodeBi
 #define mVINP_LOCK  0x0100      // mask for barrel connected
 #define mVINP_OPEN  0x0200      // mask for barrel disconnected
 #define mVINP_SOUNDACTV  0x0400 // mask for sound was active last time we checked- twiddled by SW
-#define mVINP_TRIG_STATE 0x2000 // TRUE if trigger is down, FALSE if trigger is upp
+#define mVINP_TRIG_STATE 0x2000 // TRUE if trigger is down, FALSE if trigger is up
 #define mVINP_TRUESOUNDACTV  0x4000 // TRUE mask for hardware sound was active last time we checked
 #define mDELAY_SOUNDACTV 250    // milliseconds to keep SW twiddled sound active after doing myDFPlayer.play(mySound)
 static decodeBits_t decodeBits_VinputRBG[] = {
@@ -342,7 +342,7 @@ static struct _myState_t {
   uint32_t timerForceSoundActv = 0;  // end timer for forcing mVINP_SOUNDACTV true
   uint32_t timerMinForceSolenoidLow = 0; // min end timer for forcing solenoid to go back low
   uint32_t timerMaxForceSolenoidLow = 0; // max end timer for forcing solenoid to go back low
-  uint8_t  timerSoundFinishedMinForceSolenoidLow = 1; // zero - firing sound did not finish; nonzero = sound did finish
+  uint8_t  timerSoundFinishedCanForceSolenoidLow = 1; // zero - firing sound did not finish; nonzero = sound did finish
   uint8_t  dynamicMode = EEPROM_CONFIG_RUNNING; // [0-3] for dynamic mode: switch through the saved configurations each time you shoot. Power cycle to exit dynamic mode.
   uint8_t  ptrnDelayLEDstep = 7;     // proper delta delay for Mark's patterns
   uint8_t  cfg_curnum = mNONE;       // current number for configuration list of choices
@@ -370,11 +370,11 @@ static uint8_t cfgMaxLEDForType[EEPOFFSET(mEFCT_UNIQ)] = {
 //
 #define SOLENOID_IF_NONZERO 0 // 1 for CLOTHESPIN (SOLENOID), 0 for SIDEWINDER (MOTOR) processing
 #if SOLENOID_IF_NONZERO
-  #define DLYSOLENOID_MAX 3333  // max num milliseconds to leave motor on if SIDEWINDER (1/2 revolution)
-  #define DLYSOLENOID_MIN 250   // min num milliseconds to leave motor on if SIDEWINDER
-#else
   #define DLYSOLENOID_MAX 201  // max num milliseconds to leave solenoid on if CLOTHESPIN
   #define DLYSOLENOID_MIN 200  // min num milliseconds to leave solenoid on if CLOTHESPIN
+#else
+  #define DLYSOLENOID_MAX 6666  // max num milliseconds to leave motor on if SIDEWINDER (1 revolution)
+  #define DLYSOLENOID_MIN 1111   // min num milliseconds to leave motor on if SIDEWINDER
 #endif
 // Five factors: SOLENOID_IF_NONZERO, DLYSOLENOID_MIN and _MAX, end of shooting sound, releasing the trigger
 //   SOLENOID/CLOTHESPIN approach - ignore the trigger, just use the edge signal to start
@@ -386,7 +386,7 @@ static uint8_t cfgMaxLEDForType[EEPOFFSET(mEFCT_UNIQ)] = {
 //                         after that, when BOTH the trigger is released AND shooting sound finishes, stop the motor
 //                         stop the motor after DLYSOLENOID_MAX milliseconds no matter what
 //                         NOTE that Tamiya 70189 Mini Motor with 661:1 ration runs at 9 RPM or about 6.6 sec per turn.
-//                         These selected values make the motor turn a max of about 1/2 times around per shot
+//                         These selected values make the motor turn a min of 1/6 and a max of about 1 time around per shot
 //                            should allow firing most rubber bands or most multi-rubber-band loads; also allow single shot with multi-load
 
 #define DLYLED_MIN 7
