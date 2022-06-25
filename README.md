@@ -63,8 +63,9 @@ Git tag Silver-1.0 is the version of software that is in the SILVER CLOTHESPIN (
 
 Development is continuing to make a minimum as well as a maximum activation time for the solenoid or motor mechanism. This will get a tag when complete and tested.
 * SOLENOID_IF_NONZERO is defined as 1 for CLOTHESPIN (SOLENOID), 0 for SIDEWINDER (MOTOR) processing
-* This chooses values of DLYSOLENOID_MIN and DLYSOLENOID_MAX. The Silver-1.0 version DLYSOLENOID corresponds to DLYSOLENOID_MAX in the later versions.
+  * This chooses values of DLYSOLENOID_MIN and DLYSOLENOID_MAX. The Silver-1.0 version DLYSOLENOID corresponds to DLYSOLENOID_MAX in the later versions.
 * Defining SOLENOID_IF_NONZERO as 0 also activates the ability to control the motor time with the trigger button between DLYSOLENOID_MIN and DLYSOLENOID_MAX, with some exceptions if the shooting sound has not completed.
+  *  When it shoots, it will do a minimum of 1/4 turn and basically keep turning until you let the trigger off or it reaches 1 complete turn. This allows me to put a rubber band on every other notch and just get a single shot by momentary trigger press or multiple shots by holding the trigger.
 
 ## Sounds
 
