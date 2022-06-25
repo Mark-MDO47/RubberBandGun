@@ -373,8 +373,8 @@ static uint8_t cfgMaxLEDForType[EEPOFFSET(mEFCT_UNIQ)] = {
   #define DLYSOLENOID_MAX 201  // max num milliseconds to leave solenoid on if CLOTHESPIN
   #define DLYSOLENOID_MIN 200  // min num milliseconds to leave solenoid on if CLOTHESPIN
 #else
-  #define DLYSOLENOID_MAX 6666  // max num milliseconds to leave motor on if SIDEWINDER (1 revolution)
-  #define DLYSOLENOID_MIN 1111   // min num milliseconds to leave motor on if SIDEWINDER
+  #define DLYSOLENOID_MAX 6666  // max num milliseconds to leave motor on if SIDEWINDER (1 turn)
+  #define DLYSOLENOID_MIN 1666  // min num milliseconds to leave motor on if SIDEWINDER (1/4 turn)
 #endif
 // Five factors: SOLENOID_IF_NONZERO, DLYSOLENOID_MIN and _MAX, end of shooting sound, releasing the trigger
 //   SOLENOID/CLOTHESPIN approach - ignore the trigger, just use the edge signal to start
@@ -386,7 +386,7 @@ static uint8_t cfgMaxLEDForType[EEPOFFSET(mEFCT_UNIQ)] = {
 //                         after that, when BOTH the trigger is released AND shooting sound finishes, stop the motor
 //                         stop the motor after DLYSOLENOID_MAX milliseconds no matter what
 //                         NOTE that Tamiya 70189 Mini Motor with 661:1 ration runs at 9 RPM or about 6.6 sec per turn.
-//                         These selected values make the motor turn a min of 1/6 and a max of about 1 time around per shot
+//                         These selected values make the motor turn a min of 1/4 and a max of about 1 turn per shot
 //                            should allow firing most rubber bands or most multi-rubber-band loads; also allow single shot with multi-load
 
 #define DLYLED_MIN 7
