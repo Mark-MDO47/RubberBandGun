@@ -342,7 +342,6 @@ static struct _myState_t {
   uint32_t timerForceSoundActv = 0;  // end timer for forcing mVINP_SOUNDACTV true
   uint32_t timerMinForceSolenoidLow = 0; // min end timer for forcing solenoid to go back low
   uint32_t timerMaxForceSolenoidLow = 0; // max end timer for forcing solenoid to go back low
-  uint8_t  timerSoundFinishedCanForceSolenoidLow = 1; // zero - firing sound did not finish; nonzero = sound did finish
   uint8_t  dynamicMode = EEPROM_CONFIG_RUNNING; // [0-3] for dynamic mode: switch through the saved configurations each time you shoot. Power cycle to exit dynamic mode.
   uint8_t  ptrnDelayLEDstep = 7;     // proper delta delay for Mark's patterns
   uint8_t  cfg_curnum = mNONE;       // current number for configuration list of choices
@@ -376,14 +375,14 @@ static uint8_t cfgMaxLEDForType[EEPOFFSET(mEFCT_UNIQ)] = {
   #define DLYSOLENOID_MAX 6666  // max num milliseconds to leave motor on if SIDEWINDER (1 turn)
   #define DLYSOLENOID_MIN 1666  // min num milliseconds to leave motor on if SIDEWINDER (1/4 turn)
 #endif
-// Five factors: SOLENOID_IF_NONZERO, DLYSOLENOID_MIN and _MAX, end of shooting sound, releasing the trigger
+// Four factors: SOLENOID_IF_NONZERO, DLYSOLENOID_MIN and _MAX, releasing the trigger
 //   SOLENOID/CLOTHESPIN approach - ignore the trigger, just use the edge signal to start
 //                         hold the solenoid for at least DLYSOLENOID_MIN milliseconds
 //                         after that, when shooting sound finishes, then release the solenoid
 //                         release the solenoid after DLYSOLENOID_MAX milliseconds no matter what
 //   MOTOR/SIDEWINDER approach - we also take into account how long the trigger is held in
 //                         run the motor for at least DLYSOLENOID_MIN milliseconds
-//                         after that, when BOTH the trigger is released AND shooting sound finishes, stop the motor
+//                         after that, when the trigger is released, stop the motor
 //                         stop the motor after DLYSOLENOID_MAX milliseconds no matter what
 //                         NOTE that Tamiya 70189 Mini Motor with 661:1 ration runs at 9 RPM or about 6.6 sec per turn.
 //                         These selected values make the motor turn a min of 1/4 and a max of about 1 turn per shot
