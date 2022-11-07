@@ -1,7 +1,7 @@
 # RubberBandGun
 A high-tech SciFi imagining of the rubber band gun.
 
-Both working prototypes were shown at the Asheville Maker Faire on May 07, 2022 in Asheville, N.C. Estimates are that 100 people fired rubber bands out of the RBG!
+Both working prototypes were shown at the Asheville Maker Faire on May 07, 2022 in Asheville, N.C. Estimates are that 100 people fired rubber bands out of the RBG!<br>
 ![alt text](https://github.com/Mark-MDO47/RubberBandGun/blob/master/3D_model/IMG_6875_AshelandMakerFaire2022.png "Both Rubber Band Guns at Asheville Maker Faire on May 2022")
 
 **Table of Contents**
