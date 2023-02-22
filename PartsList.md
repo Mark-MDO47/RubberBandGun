@@ -45,7 +45,7 @@ The barrel of the Rubber Band Gun is made from wood, with a sliding barrel attac
 # Audio Player Part
 The YX5200 uses FAT32-formatted TF or microSD card up to 32 GByte
 
-These look like a helpful sites for the YX5200:
+These look like some helpful sites for the YX5200:
 * https://wiki.dfrobot.com/DFPlayer_Mini_SKU_DFR0299
 * https://github.com/DFRobot/DFRobotDFPlayerMini
 
