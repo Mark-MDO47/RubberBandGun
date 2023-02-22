@@ -35,7 +35,7 @@ If StateTable_minimal.xlsx is the heart of RBG_SciFi.ino, then... OK, I won't co
 ### RBG_SciFi_StatesAndInputs.h - Effect Types and Ranges
 Search for **mEFCT_** until you find mEFCT_WIND_UP and you will see a list of effect types in groups of 10. There are up to 9 (sorry, I wasted one for convenience) LED and Sound effects for each one of these effect groups. cfgMaxSoundForType and cfgMaxLEDForType show the end range for these effects per type. The effect type max ranges are: 001 to 009 - wind-up effects; 011 to 019 - shoot effects; 021 to 029 - open barrel effects; 031 to 039 - lock and load barrel effects; 041 to 049 - initial power-up effects; 051 to 059 - waiting for trigger. The last one is different: 061 to 127 - unique effects used to navigate menus or other activities.
 * the PROGMEM stores four Factory Settings for all the sounds and LED effects; each sound/LED combination is for a single effect (such as mEFCT_SHOOT) when active in a particular Factory Setting (0 through 3)
-* EEPROM has a space for a copy of the settings; the EEPROM version is configurable via audio menus.
+* EEPROM has a space for a copy of all four settings; the EEPROM version is configurable via audio menus.
 * At startup, if the checksum in EEPROM storage doesn't match the data in EEPROM, the four PROGMEM Factory Settings are copied into EEPROM. This is equivalent to a complete "Factory Reset" from the audio menus.
 * While running, the RBG cycles through the configurations automatically each time a rubber band is shot (activities effect).
 * The configuration at position 0 is the "running setting" position used for editing via audio menus; it can be copied back and forth to other positions via audio menus.
