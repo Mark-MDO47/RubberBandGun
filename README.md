@@ -18,6 +18,7 @@ Both working prototypes were shown at the Asheville Maker Faire on May 07, 2022 
 ## Videos
 Here is a NEW (2023-03-10) video showing the completed orange "Sidewinder" rubber band gun at night:
 * https://youtu.be/M4FHvP624Kg
+
 Here is a 2020-09-25 video demonstrating most of the software running on a prototype:
 * https://youtu.be/njpYX-5Zv9Y
 
