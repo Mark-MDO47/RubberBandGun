@@ -1,14 +1,15 @@
 # Arduino Code for the Rubber Band Gun (RBG): RBG_SciFi.ino
 The Arduino and its sketch RBG_SciFi.ino handily manage all the tasks including voice menus, storage of user configuration, LED rings, and sound generation. It can do this because RBG_SciFi.ino has pre-computed tables built in that guide it, especially for state transitions and special effects.
 
-**Table of Contents**
+**Table Of Contents**
+* [Top](#arduino-code-for-the-rubber-band-gun-(rbg)-rbg_scifiino "Top")
 * [Generating Tables for the Code](#generating-tables-for-the-code "Generating Tables for the Code")
-* [RBG_SciFi_StatesAndInputs.h](#rbg_scifi_statesandinputsh "")
-  * [RBG_SciFi_StatesAndInputs.h - Effect Types and Ranges](#rbg_scifi_statesandinputsh---effect-types-and-ranges "RBG_SciFi_StatesAndInputs.h - Effect Types and Ranges")
-  * [RBG_SciFi_StatesAndInputs.h - Factory Reset Configurations](#rbg_scifi_statesandinputsh---factory-reset-configurations "RBG_SciFi_StatesAndInputs.h - Factory Reset Configurations")
+* [RBG_SciFi_StatesAndInputs.h](#rbg_scifi_statesandinputsh "RBG_SciFi_StatesAndInputs.h")
+  * [RBG_SciFi_StatesAndInputs.h - Effect Types and Ranges](#rbg_scifi_statesandinputsh-\--effect-types-and-ranges "RBG_SciFi_StatesAndInputs.h - Effect Types and Ranges")
+  * [RBG_SciFi_StatesAndInputs.h - Factory Reset Configurations](#rbg_scifi_statesandinputsh-\--factory-reset-configurations "RBG_SciFi_StatesAndInputs.h - Factory Reset Configurations")
 * [Libraries and Capabilities Used](#libraries-and-capabilities-used "Libraries and Capabilities Used")
 * [The Code Itself](#the-code-itself "The Code Itself")
-  * [Special Code Topic: LED Patterns](#special-code-topic-led-patterns "Special Code Topic: LED Patterns")
+    * [Special Code Topic: LED Patterns](#special-code-topic-led-patterns "Special Code Topic: LED Patterns")
 * [Reprogramming in the Completed Rubber Band Gun](#reprogramming-in-the-completed-rubber-band-gun "Reprogramming in the Completed Rubber Band Gun")
   * [RBG_SciFi.ino](#rbg_scifiino "RBG_SciFi.ino")
   * [Sounds](#sounds "Sounds")
