@@ -1,5 +1,7 @@
 # Parts Info
 
+**Table Of Contents**
+
 ## Arduino Nano and ATMEGA 328P
 Lots of info on the Arduino Nano is found here (diagrams, not schematics)
 * https://www.circuitstoday.com/arduino-nano-tutorial-pinout-schematics
