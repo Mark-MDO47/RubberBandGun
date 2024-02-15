@@ -2,8 +2,8 @@
 
 **Table Of Contents**
 * [Top](#sounds-for-the-rubber-band-gun "Top")
-* [Sounds from SPACE!!! Colliding Celestial Bodies!](#sounds-from-space!!!-colliding-celestial-bodies! "Sounds from SPACE!!! Colliding Celestial Bodies!")
-* [Sounds from SPACE!!! Saturn is SO COOL!](#sounds-from-space!!!-saturn-is-so-cool! "Sounds from SPACE!!! Saturn is SO COOL!")
+* [Sounds from SPACE!!! Colliding Celestial Bodies!](#sounds-from-space-colliding-celestial-bodies "Sounds from SPACE!!! Colliding Celestial Bodies!")
+* [Sounds from SPACE!!! Saturn is SO COOL!](#sounds-from-space-saturn-is-so-cool "Sounds from SPACE!!! Saturn is SO COOL!")
 * [A few of the Sounds are Recordings of my Family  Members](#a-few-of-the-sounds-are-recordings-of-my-family--members "A few of the Sounds are Recordings of my Family  Members")
 * [Text-to-Speech Robotic Sounds](#text\-to\-speech-robotic-sounds "Text-to-Speech Robotic Sounds")
 * [Processing Text-to-Speech Robotic Sounds](#processing-text\-to\-speech-robotic-sounds "Processing Text-to-Speech Robotic Sounds")
