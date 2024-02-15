@@ -1,5 +1,7 @@
 # Sounds for the Rubber Band Gun
 
+**Table Of Contents**
+
 ## Sounds from SPACE!!! Colliding Celestial Bodies!
 
 Some of my favorite sounds for Rubber Band Gun firing are a sequence similar to the soundified neutron star collisions or black hole collisions.
