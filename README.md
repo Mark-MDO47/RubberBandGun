@@ -61,7 +61,7 @@ We have two working prototypes using these parts. The prices and parts availabil
 
 The barrel of the Rubber Band Gun is made from wood, with a sliding barrel attachment to assist in stringing the rubber band through the LED rings. The rest including the handgrip is 3-D printed.
 
-### Release Mechanism
+### Release Mechanism Software Dependency
 [Top](#rubberbandgun "Top")<br>
 The "SILVER" SINGLETON RBG uses the solenoid release mechanism through the CLOTHESPIN to fire the rubber band.
 
