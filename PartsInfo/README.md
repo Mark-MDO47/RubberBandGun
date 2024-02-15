@@ -1,6 +1,11 @@
 # Parts Info
 
 **Table Of Contents**
+* [Top](#parts-info "Top")
+* [Arduino Nano and ATMEGA 328P](#arduino-nano-and-atmega-328p "Arduino Nano and ATMEGA 328P")
+* [Sound Module](#sound-module "Sound Module")
+* [Bluetooth Module](#bluetooth-module "Bluetooth Module")
+* [WS2812 LED and serial communications](#ws2812-led-and-serial-communications "WS2812 LED and serial communications")
 
 ## Arduino Nano and ATMEGA 328P
 Lots of info on the Arduino Nano is found here (diagrams, not schematics)
