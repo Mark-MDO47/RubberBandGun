@@ -70,13 +70,13 @@ A web implementation of eSpeak can be found as below; it is great fun, and just 
 
 ## Processing Text-to-Speech Robotic Sounds
 
-I used the program RobotSounds.py to read StateTable_minimal.xlsx (which contains the text to generate) and make a Linux "bash" script that makes the sounds.
+I used my program RobotSounds.py to read StateTable_minimal.xlsx (which contains the text to generate) and make a Linux "bash" script that makes the sounds.
 - The bash script generates all the individual *.wav sound files and also a combined totString.wav.
 - - totString.wav separates the sounds by having "Ah. Ah. Ah." between each one so I could find the boundaries.
 - - You can do the Audacity processing either one at a time or using the totString.wav file, but you need to have individual numbered files when done.
 - - See https://github.com/Mark-MDO47/AudioPlayer-YX5200 for more information about the file numbering scheme
 - - The bash file invokes the "original" eSpeak program version 1.48.04.
-- I think the bash file could easily be converted to a Windows *.bat file.
+- I think the bash file could easily be converted to a Windows *.bat file. That is left as an exercise for the reader.
 
 After creating the text-to-speech audio file(s), this is how I processed them to make them even more robotic:
 - import file in Audacity, set to mono if not already set (File->Import->Audio)
